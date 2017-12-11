@@ -132,7 +132,7 @@ class SelectInput extends Component{
     const PStyle = this.props.Pstyle || {}
 
 
-    if(Platform.OS == 'android')
+    if(Platform.OS == 'ios')
     {
       return  <View style={[styles].concat(PStyle)}>
                 {this.state.openModal && <ModalSelect datas={datas} 
