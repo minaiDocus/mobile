@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {Text,TouchableOpacity,View,StyleSheet} from 'react-native'
-import XImage from './XImage'
+import {XImage} from './XComponents'
 import LinearGradient from 'react-native-linear-gradient'
 
 export class SimpleButton extends Component{

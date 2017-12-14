@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import Config from './Config'
+import base64 from 'base-64'
 import Screen from './components/screen'
 import Navigator from './components/navigator'
 import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
-import XImage from './components/XImage'
-// import ImagePicker from 'react-native-image-crop-picker'
+import {XImage} from './components/XComponents'
+import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
 import {SimpleButton, BoxButton, ImageButton} from './components/buttons'
 import Swiper from 'react-native-swiper'
@@ -20,6 +21,7 @@ class ImageSwipe extends Component{
   }
 
   refreshImage(){
+    this.props.imageLoaded()
     this.setState({ready: true})
   }
 
@@ -33,11 +35,10 @@ class ImageSwipe extends Component{
                     borderWidth:2
                   }
 
-      //Rendering state.ready is there for fixing bug on loading image swipe            
+      //Rendering state.ready is there for fixing bug on loading image swipe          
       return <XImage source={this.props.source} 
                     local={false}
-                    style={style} 
-                    loadingIndicatorSource={{uri:'loader'}} 
+                    style={style}
                     onLoadEnd={()=>this.refreshImage()}>
               {this.state.ready && <View />}
               {!this.state.ready && <View />}
@@ -50,15 +51,20 @@ class BoxZoom extends Component{
     super(props)
 
     this.state = {ready: false}
+    this.imageCounter = this.props.datas.length
+
     this.renderSwiper = this.renderSwiper.bind(this)
+    this.imageLoaded = this.imageLoaded.bind(this)
   }
 
-  componentDidMount(){
-    setTimeout(()=>{this.setState({ready: true})}, 1000)
+  imageLoaded(){
+    this.imageCounter = this.imageCounter - 1
+    if(this.imageCounter <= 0)
+      setTimeout(()=>{this.setState({ready: true})}, 500)
   }
 
   onSwipe(index){
-    GLOB.idZoom = this.props.datas[index].path.toString();
+    GLOB.idZoom = base64.encode(this.props.datas[index].path).toString();
   }
 
   hideModal(){
@@ -85,13 +91,13 @@ class BoxZoom extends Component{
 
     var embedContent = this.props.datas.map((img, key)=>
         {
-          if(img.path == GLOB.idZoom){ indexStart = key; }
-          return <ImageSwipe key={key} source={{uri: img.path.toString()}} />
+          if(base64.encode(img.path).toString() == GLOB.idZoom.toString()){ indexStart = key; }
+          return <ImageSwipe key={key} source={{uri: img.path.toString()}} imageLoaded={this.imageLoaded}/>
         })
 
-      return  <Swiper style={swipeStyle.wrapper} showsButtons={false} showsPagination={true} index={indexStart} onIndexChanged={(index)=>{this.onSwipe(index)}}>
-                { embedContent }
-              </Swiper>
+    return <Swiper style={swipeStyle.wrapper} showsButtons={false} showsPagination={true} index={indexStart} onIndexChanged={(index)=>{this.onSwipe(index)}}>
+            { embedContent }
+           </Swiper>
   }
 
   render(){
@@ -104,6 +110,19 @@ class BoxZoom extends Component{
       }
     })
 
+    const _opacity = this.state.ready? 1:0
+    const loader = {
+      backgroundColor:'#fff',
+      position:'absolute',
+      flex:1,
+      top:0,
+      bottom:0,
+      left:0,
+      right:0,
+      alignItems:'center',
+      justifyContent:'center'
+    }
+
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={true}
@@ -111,8 +130,12 @@ class BoxZoom extends Component{
             >
               <View style={zoomBox.boxZoom}>
                 <View style={{flex:1, marginBottom:15}}>
-                  {this.state.ready && this.renderSwiper()}
-                  {!this.state.ready && <Text style={{color:'#fff',flex:1,textAlign:'center'}}>Chargment ...</Text>}
+                  <View style={{flex: 1, opacity: _opacity}}>{this.renderSwiper()}</View>
+                  {
+                    !this.state.ready && <View style={loader}>
+                                          <XImage loader={true} />
+                                         </View>
+                  }
                 </View>
                 <View style={{flex:0,flexDirection:'row'}}>
                   <SimpleButton Pstyle={{flex:1, marginHorizontal:10}} onPress={()=>this.hideModal()} title="Retour" />
@@ -134,13 +157,13 @@ class ImgBox extends Component{
   }
 
   delete(){
-    GLOB.imgToDel = this.props.source.uri;
+    GLOB.imgToDel = base64.encode(this.props.source.uri).toString();
     this.props.deleteElement();
     this.toggleOpt();
   }
 
   zoom(){
-    GLOB.idZoom = this.props.source.uri;
+    GLOB.idZoom = base64.encode(this.props.source.uri).toString();
     this.props.toggleZoom();
     this.toggleOpt(); 
   }
@@ -156,6 +179,7 @@ class ImgBox extends Component{
       styleImg: {
           flexDirection:'row',
           borderColor:'#fff',
+          backgroundColor:'#000',
           borderWidth:3,
           borderRadius:5,
           width:127,
@@ -175,13 +199,13 @@ class ImgBox extends Component{
       options:{
           flex:0,
           flexDirection:'row',
-          height:'100%',
+          height:'30%',
           width:'100%',
       }
     });
 
     return  <TouchableOpacity style={imgBox.styleTouch} onPress={()=>this.toggleOpt()}>
-                <XImage source={this.props.source} resizeMode='cover' style={imgBox.styleImg} local={false} width={127} height={120} >
+                <XImage source={this.props.source} style={imgBox.styleImg} local={false}>
                   { this.state.options == true &&
                     <View style={imgBox.options}>   
                       <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={imgBox.btnText} Istyle={{width:30,height:30}} />
@@ -228,8 +252,8 @@ class SendScreen extends Component {
     }
   }
   
-  async openCamera(){
-    await ImagePicker.openCamera({
+  openCamera(){
+    ImagePicker.openCamera({
       width: 300,
       height: 400,
       cropping: true
@@ -242,7 +266,7 @@ class SendScreen extends Component {
     });
   }
 
-  async openRoll(){
+  openRoll(){
     ImagePicker.openPicker({
       multiple: true,
       mediaType: 'photo',
@@ -254,6 +278,7 @@ class SendScreen extends Component {
   }
 
   async renderImg(img){
+
     var imgToAdd = [].concat(img);
     var toAdd = true;
     var listAdd = [];
@@ -263,7 +288,7 @@ class SendScreen extends Component {
       toAdd = true;
       GLOB.images.map((i)=>
       {
-        if(i.path == j.path)
+        if(base64.encode(i.path).toString() == base64.encode(j.path).toString())
         {
           toAdd = false;
         }
@@ -280,7 +305,7 @@ class SendScreen extends Component {
     var imgSave = []; 
     GLOB.images.map((i)=>
     {
-      if(i.path != GLOB.imgToDel)
+      if(base64.encode(i.path).toString() != GLOB.imgToDel.toString())
       {
         imgSave = imgSave.concat(i);
       }
@@ -356,7 +381,14 @@ const styles = StyleSheet.create({
   boxPicture:{
       flex:1,
       borderRadius:10,
-      elevation: 7,
+      
+      elevation: 7, //Android shadow
+
+      shadowColor: '#000',                  //===
+      shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+      shadowOpacity: 0.8,                   //===
+      shadowRadius: 2,                      //===
+
       backgroundColor:"#E9E9E7",
       margin:10,
       padding:5

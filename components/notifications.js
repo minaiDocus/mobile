@@ -3,15 +3,6 @@ import {StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableHighlight
 import AnimatedBox from './animatedBox'
 import { EventRegister } from 'react-native-event-listeners'
 
-function compact(arr) {
-  return arr.map((value)=>{
-    if(value != null && typeof(value) !== 'undefined')
-    {
-      return value
-    }
-  })
-}
-
 class Message extends React.Component{
   constructor(props){
     super(props)
@@ -139,7 +130,6 @@ export class Notice {
 
   static _removeNoticeMessages(index){
     Notice._noticeMessages[index] = null
-    Notice._noticeMessages = compact(Notice._noticeMessages)
     EventRegister.emit('removeNoticeMessages', Notice._noticeMessages)
   }
 }

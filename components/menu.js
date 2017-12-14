@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Config from '../Config'
 import {Text,TouchableOpacity,TouchableWithoutFeedback,View,StyleSheet,Modal,Slider,ScrollView,findNodeHandle} from 'react-native'
-import XImage from './XImage'
+import {XImage} from './XComponents'
 import AnimatedBox from './animatedBox'
 import LinearGradient from 'react-native-linear-gradient'
 import { NavigationActions } from 'react-navigation'

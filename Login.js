@@ -2,23 +2,14 @@ import React, { Component } from 'react'
 import Config from './Config'
 import Screen from './components/screen'
 import { StyleSheet, Text, TextInput, View, ScrollView, Modal} from 'react-native'
-import XImage from './components/XImage'
+import {XImage, XTextInput} from './components/XComponents'
 import Navigator from './components/navigator'
 import {SimpleButton} from './components/buttons'
 import Fetcher from './components/dataFetcher'
-import SplashScreen from 'react-native-smart-splash-screen'
+import SplashScreen from 'react-native-splash-screen'
 import User from './models/User'
 
 var GLOB = {navigation: {}, login: '', password: ''}
-
-
-function hideSplash(){
-   SplashScreen.close({
-          animationType: SplashScreen.animationType.scale,
-          duration: 850,
-          delay: 500,
-      })
-}
 
 function goToHome(){
   Fetcher.wait_for(
@@ -27,7 +18,7 @@ function goToHome(){
       
       responses.map(r=>{if(r!=true)Notice.info(r)})
 
-      hideSplash()
+      SplashScreen.hide()
       
       GLOB.navigation.dismissTo('Home', {welcome: true})
   })
@@ -109,7 +100,7 @@ class LoginScreen extends Component {
         }
         else
         {
-          hideSplash()
+         SplashScreen.hide()
         }
       })
   }
@@ -146,19 +137,19 @@ class LoginScreen extends Component {
     return (
       <Screen style={{flex:1}}
               navigation={GLOB.navigation}>
-        <View style={styles.container}>      
+        <View style={styles.container}>   
           {this.state.loading == true && <ModalLoader dismiss={this.dismissLoader}/>}
-          <View style={{flex:1,flexDirection:'row',alignItems:'center', justifyContent:'center'}}>
+          <View style={{flex:1,flexDirection:'row',alignItems:'center'}}>
             <XImage style={styles.logo} source={{uri:"charge"}} />
           </View>
           <View style={styles.form}>
             <View style={styles.boxInput}>
               <XImage style={styles.icons} source={{uri:"userpic"}} />
-              <TextInput style={styles.inputs} placeholder="Identifiant(E-mail)" onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
+              <XTextInput style={styles.inputs} placeholder="Identifiant(E-mail)" onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
             </View>
             <View style={styles.boxInput}>
               <XImage style={styles.icons} source={{uri:"cadenas"}} />
-              <TextInput autoCorrect={false} secureTextEntry={true} style={styles.inputs} placeholder="Mot de passe" onChangeText={(text) => this.handlePass(text)}/>
+              <XTextInput autoCorrect={false} secureTextEntry={true} style={styles.inputs} placeholder="Mot de passe" onChangeText={(text) => this.handlePass(text)}/>
             </View>
             <SimpleButton onPress={() => this.submitForm()} Pstyle={styles.submit} Tstyle={{fontSize:18}} title="Connexion" />
           </View>
@@ -177,9 +168,8 @@ const styles = StyleSheet.create({
     backgroundColor:'#FFF'
   },
   logo: {
-    flex:0,
-    width:200,
-    // height:120,
+    flex:1,
+    height:120,
   },
   form:{
     flex:1,

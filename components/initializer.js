@@ -70,3 +70,14 @@ global.format_date = (date, format = "DD-MM-YYYY HH:ii") => {
 
   return dateFormat.toString()
 }
+
+global.arrayCompact = (arr) => {
+  let arrReturn = []
+  arr.forEach((elem)=>{
+    if(elem != null && typeof(elem) !== 'undefined')
+    {
+      arrReturn.push(elem)
+    }
+  })
+  return arrReturn
+}

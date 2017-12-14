@@ -3,7 +3,7 @@ import Config from './Config'
 import Screen from './components/screen'
 import Navigator from './components/navigator'
 import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
-import XImage from './components/XImage'
+import {XImage} from './components/XComponents'
 import { NavigationActions } from 'react-navigation'
 import Pdf from 'react-native-pdf'
 import {SimpleButton, ImageButton} from './components/buttons'
@@ -236,11 +236,13 @@ class ImgBox extends Component{
       styleImg: {
           flex:0,
           flexDirection:'row',
+          backgroundColor:'#FFF',
           borderColor:'#fff',
           borderWidth:3,
           borderRadius:5,
           height:89,
           width:71,
+          alignItems:'flex-end'
         },
       btnText: {
           flex:1,
@@ -254,7 +256,7 @@ class ImgBox extends Component{
       options:{
           flex:0,
           flexDirection:'row',
-          height:'100%',
+          height:'50%',
           width:'100%',
           backgroundColor:'#000'
       }
@@ -269,7 +271,7 @@ class ImgBox extends Component{
     }
 
     return  <TouchableOpacity style={imgBox.styleTouch} onPress={()=>this.toggleOpt()}>
-                <XImage style={imgBox.styleImg} source={src} local={local} width={71} height={89} resizeMode='cover'>
+                <XImage style={imgBox.styleImg} source={src} local={local}>
                   { this.state.options == true &&
                     <View style={imgBox.options}>
                       <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={imgBox.btnText} Istyle={{width:30,height:30}} />

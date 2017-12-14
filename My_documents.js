@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import Config from './Config'
 import Screen from './components/screen'
-import {StyleSheet,Text,View,TextInput,ScrollView,TouchableOpacity} from 'react-native'
-import XImage from './components/XImage'
+import {StyleSheet,Text,View,ScrollView,TouchableOpacity} from 'react-native'
+import {XImage, XTextInput} from './components/XComponents'
 import Navigator from './components/navigator'
 import SelectInput from './components/select'
 import Fetcher from './components/dataFetcher'
@@ -33,7 +33,8 @@ class Header extends Component{
   }
 
   async handleNameChange(value){
-    await (value.length >= 3)? this.setState({name: value}) : this.setState({name: ""})
+    // await (value.length >= 3)? this.setState({name: value}) : this.setState({name: ""})
+    await this.setState({name: value})
     this.dataFilter()
   }
 
@@ -86,23 +87,23 @@ class Header extends Component{
   }
   else
   {
-    inputSelection = <SelectInput dataOptions={this.clients} style={{color:'#707070'}} Pstyle={headStyle.select} onChange={(value) => this.handleClientChange(value)}/>
+    inputSelection = <SelectInput filterSearch={true} dataOptions={this.clients} style={{color:'#707070'}} Pstyle={headStyle.select} onChange={(value) => this.handleClientChange(value)}/>
   }
   
 
-  return ( <View style={headStyle.container}>
+  return  <View style={headStyle.container}>
               <View style={headStyle.left}>
                 <XImage source={{uri:"docs_ico"}} style={headStyle.image} />
               </View>
               <View style={headStyle.right}>
                 {inputSelection}
                 <View style={{flex:1, flexDirection:'row'}}>
-                  <TextInput style={headStyle.inputs} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleNameChange(value)}/>
-                  <XImage source={{uri:"zoom_x"}} style={{flex:0, marginTop:5, width:25, height:25}} />
+                  <XTextInput style={headStyle.inputs} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleNameChange(value)}/>
+                  {!this.props.loadingFilter && <XImage source={{uri:"zoom_x"}} style={{flex:0, marginTop:5, width:25, height:25}} />}
+                  {this.props.loadingFilter && <XImage loader={true} style={{flex:0, marginTop:5}} width={25} height={25} />}
                 </View>
               </View>
-           </View>
-          );
+          </View>
   }
 }
 
@@ -143,7 +144,7 @@ class DocumentsScreen extends Component {
   constructor(props){
     super(props)
     GLOB.navigation = new Navigator(this.props.navigation)
-    this.state = {ready: false, dataList: [] }
+    this.state = {ready: false, dataList: [], loadingFilter: false}
     this.dataFilter = this.dataFilter.bind(this)
   }
 
@@ -156,14 +157,36 @@ class DocumentsScreen extends Component {
     })
   }
 
-  dataFilter(client_id, name){
-    var where = [];
-    if(client_id > 0){ where.push(`owner_id = '${client_id}'`)}
-    if(name != ""){ where.push(`name CONTAINS[c] '${name}'`)}
-    if(where.length > 0)
-      this.setState({dataList: packs().filtered(where.join(' AND ')) });
-    else
-      this.setState({dataList: packs()});
+  dataFilter(client_id=0, text=''){
+    // var where = [];
+    // if(client_id > 0){ where.push(`owner_id = '${client_id}'`)}
+    // if(name != ""){ where.push(`name CONTAINS[c] '${name}'`)}
+    // if(where.length > 0)
+    //   this.setState({dataList: packs().filtered(where.join(' AND ')) });
+    // else
+    //   this.setState({dataList: packs()});
+
+    this.setState({loadingFilter: true, dataList: packs()})
+    Fetcher.wait_for(
+      [`filterPacks("${text}", "${client_id}")`],
+      (responses)=>{
+        responses.map(r=>{
+          if(r.error)
+          {
+            Notice.danger(r.message, true, "filterDanger")
+            this.setState({loadingFilter: false})
+          }
+          else
+          {
+            let where = ''
+            r.packs.forEach((el)=>{
+              where += `id_idocus = ${el} OR `
+            })
+            where += 'id_idocus = -10'
+            this.setState({loadingFilter: false, dataList: packs().filtered(where)})
+          }
+        })
+    })
   }
 
   renderDocuments(){
@@ -179,7 +202,7 @@ class DocumentsScreen extends Component {
       return (
         <Screen style={styles.container}
                 navigation={GLOB.navigation}>
-          <Header onFilter={this.dataFilter}/>
+          <Header onFilter={this.dataFilter} loadingFilter={this.state.loadingFilter}/>
           {this.state.ready && this.renderDocuments()}
           {!this.state.ready && <XImage loader={true} style={{alignSelf:'center', marginTop:10}} width={70} height={70} />}
         </Screen>

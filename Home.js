@@ -3,7 +3,7 @@ import { EventRegister } from 'react-native-event-listeners'
 import Config from './Config'
 import Screen from './components/screen'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native'
-import XImage from './components/XImage'
+import {XImage} from './components/XComponents'
 import Navigator from './components/navigator'
 import {BoxButton} from './components/buttons'
 import Menu from './components/menu'
@@ -49,6 +49,17 @@ class ViewState extends Component{
     this.state = {infos: -1}
   }
 
+  handleClickDocument(index){
+    if(this.props.type == "processed")
+    { 
+      this.goToDocument(index)
+    }
+    else
+    {
+      this.toggleInfos(index)
+    }
+  }
+
   toggleInfos(index){
     if(this.state.infos == index)
     {
@@ -58,6 +69,11 @@ class ViewState extends Component{
     {
       this.setState({infos: index})
     }
+  }
+
+  goToDocument(index){
+    const id = this.props.datas[index].id
+    GLOB.navigation.goTo('Publish', {idPack: id})
   }
 
   renderDetails(data, index){
@@ -104,7 +120,7 @@ class ViewState extends Component{
       return <Text key={index} style={style.champ}><Text style={style.label}>{info.label} : </Text>{value}</Text>
     })
 
-    return    <TouchableOpacity key={index} style={{flex:1}} onPress={()=>this.toggleInfos(index)}>
+    return    <TouchableOpacity key={index} style={{flex:1}} onPress={()=>this.handleClickDocument(index)}>
                 <View style={[style.details, {backgroundColor:colorStriped}]}>
                   <XImage source={{uri: arrow}} style={style.image} />
                   <Text>{data.name}</Text>
@@ -124,7 +140,14 @@ class ViewState extends Component{
         flex:1,
         flexDirection:'column',
         borderRadius:10,
-        elevation: 5,
+        
+        elevation: 7, //Android shadow
+
+        shadowColor: '#000',                  //===
+        shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+        shadowOpacity: 0.8,                   //===
+        shadowRadius: 2,                      //===
+
         margin:10,
         padding:10,
         backgroundColor:"#E9E9E7"
@@ -241,9 +264,9 @@ class TabNav extends Component{
 
   render(){
     return  <ScrollableTabView tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
-              <ViewState icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[{label:"Date", value:"updated_at"}]} />
-              <ViewState icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
-              <ViewState icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"error_message"}]}/>
+              <ViewState type={"processed"} icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[]} />
+              <ViewState type={"processing"} icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
+              <ViewState type={"errors"} icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"error_message"}]}/>
             </ScrollableTabView>
   }
 }

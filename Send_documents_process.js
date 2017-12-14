@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import Config from './Config'
 import Screen from './components/screen'
 import Navigator from './components/navigator';
-import {StyleSheet,Text,TextInput,View,ScrollView,ListView,TouchableOpacity,Picker} from 'react-native'
-import XImage from './components/XImage'
+import {StyleSheet,Text,View,ScrollView,ListView,TouchableOpacity,Picker} from 'react-native'
+import {XImage} from './components/XComponents'
 import { NavigationActions } from 'react-navigation'
 import * as Progress from 'react-native-progress';
 import {SimpleButton} from './components/buttons'
@@ -41,6 +41,7 @@ class ImgBox extends Component{
     const imgBox = StyleSheet.create({
       styleImg: {
           borderColor:'#fff',
+          backgroundColor:'#000',
           borderWidth:3,
           borderRadius:5,
           width:80,
@@ -51,7 +52,7 @@ class ImgBox extends Component{
         },
     });
     return  <View style={{flex:0}}>
-              <XImage style={imgBox.styleImg} local={false} source={this.props.source} resizeMode='cover'/>
+              <XImage style={imgBox.styleImg} local={false} source={this.props.source} />
             </View>
   }
 }
@@ -188,7 +189,7 @@ class Body extends Component{
   const colorBar = (valueProgress < 1)? "blue" : "#C0D838"
 
   return  <View style={{flex:1}}>
-            {this.clients && <SelectInput dataOptions={this.clients} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>}
+            {this.clients && <SelectInput filterSearch={true} dataOptions={this.clients} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>}
             <SelectInput dataOptions={this.state.journalsOptions} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
             <SelectInput dataOptions={this.state.periodsOptions} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
             {this.state.period_start != "" && 
@@ -229,7 +230,14 @@ class Body extends Component{
           flex:1,
           flexDirection:'column',
           borderRadius:10,
-          elevation: 7,
+         
+          elevation: 7, //Android shadow
+
+          shadowColor: '#000',                  //===
+          shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+          shadowOpacity: 0.8,                   //===
+          shadowRadius: 2,                      //===
+          
           backgroundColor:"#E9E9E7",
           margin:10,
           paddingHorizontal:20,

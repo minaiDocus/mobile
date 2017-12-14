@@ -52,4 +52,9 @@ buck-out/
 */fastlane/Preview.html
 */fastlane/screenshots
 
-./Config.js
+#ignoring ios and android and images folder
+ios/
+android/
+
+#ignoring Config file
+Config.js

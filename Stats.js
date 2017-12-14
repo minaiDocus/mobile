@@ -3,8 +3,8 @@ import Config from './Config'
 import Screen from './components/screen'
 import { EventRegister } from 'react-native-event-listeners'
 import AnimatedBox from './components/animatedBox'
-import {StyleSheet,Text,View,TextInput,ScrollView,TouchableOpacity,Modal} from 'react-native'
-import XImage from './components/XImage'
+import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import {XImage, XTextInput} from './components/XComponents'
 import Navigator from './components/navigator'
 import {LineList} from './components/lists'
 import Fetcher from './components/dataFetcher'
@@ -60,7 +60,7 @@ class Inputs extends Component{
     const type = this.props.type || 'input';
     return  <View style={[input.container, stylePlus]}>
               <Text style={[input.label, labelStyle]}>{this.props.label}</Text>
-              {type == 'input' && <TextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} style={[input.input, inputStyle]}></TextInput>}
+              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} style={[input.input, inputStyle]} />}
               {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
               {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1.3}} />}
             </View>
@@ -369,7 +369,7 @@ class StatsScreen extends Component {
        headerTitle: 'Suivi',
        headerRight: <ImageButton  source={{uri:"options"}} 
                                   Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
-                                  Istyle={{width:8, height:36}}
+                                  Istyle={{width:7, height:36}}
                                   onPress={()=>EventRegister.emit('clickOrderBox', true)} />
   }
 

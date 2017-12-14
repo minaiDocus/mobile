@@ -154,6 +154,22 @@ class Fetcher {
     }
   }
 
+  async filterPacks(text="", owner_id=0){
+    if(owner_id <= 0)
+    {
+      owner_id = 'all'
+    }
+
+    this.synchronious_response = ""
+    this.requestURI("api/mobile/data_loader/filter_packs", {method: 'POST', params: {page:1, view: owner_id, filter: text}}, (r) => {
+      this.synchronious_response = r
+    })
+    while(this.synchronious_response == "")
+    {
+      await sleep(300)
+    }
+  }
+
   remoteAUTH(options, callback=()=>{}){
     this.requestURI("api/mobile/remote_authentication/request_connexion",  {method: 'POST', params: options}, (r) => {
       if(r.error)
