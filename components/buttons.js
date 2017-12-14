@@ -84,7 +84,7 @@ export class BoxButton extends Component{
         borderRadius:100
       },
       icons:{
-        flex:1,
+        flex:0,
         width:"60%",
         height:"60%"
       },

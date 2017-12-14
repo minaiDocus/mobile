@@ -235,15 +235,19 @@ class ImgBox extends Component{
         },
       styleImg: {
           flex:0,
-          flexDirection:'row',
-          backgroundColor:'#FFF',
+          height:89,
+          width:71,
+        },
+      styleContainer:{
+          backgroundColor:'#fff',
           borderColor:'#fff',
           borderWidth:3,
           borderRadius:5,
-          height:89,
+          justifyContent:'center',
+          alignItems:'center',
+          height:95,
           width:71,
-          alignItems:'flex-end'
-        },
+      },
       btnText: {
           flex:1,
           borderColor:"#000",
@@ -256,7 +260,7 @@ class ImgBox extends Component{
       options:{
           flex:0,
           flexDirection:'row',
-          height:'50%',
+          height:'30%',
           width:'100%',
           backgroundColor:'#000'
       }
@@ -271,7 +275,7 @@ class ImgBox extends Component{
     }
 
     return  <TouchableOpacity style={imgBox.styleTouch} onPress={()=>this.toggleOpt()}>
-                <XImage style={imgBox.styleImg} source={src} local={local}>
+                <XImage type='container' PStyle={imgBox.styleContainer} style={imgBox.styleImg}  source={src} local={local} >
                   { this.state.options == true &&
                     <View style={imgBox.options}>
                       <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={imgBox.btnText} Istyle={{width:30,height:30}} />

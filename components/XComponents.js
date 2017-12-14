@@ -41,6 +41,11 @@ export class XImage extends Component{
     super(props)
 
     this.renderImage = this.renderImage.bind(this)
+    this.ajustImage = this.ajustImage.bind(this)
+  }
+
+  ajustImage(e){
+    console.error(e)
   }
 
   renderImage(){
@@ -68,17 +73,39 @@ export class XImage extends Component{
     }
     else
     {
-      return  <View>
-              <Image 
-                source={this.img_source} 
-                style={this.img_style} 
-                resizeMode={this.props.resizeMode||'contain'}
-                onLoadEnd={this.props.onLoadEnd}
-                loadingIndicatorSource={loader_img}
+      if(this.props.children || (typeof(this.props.type)!=='undefined' && this.props.type == 'container'))
+      {
+        const absolute = {
+          position:'absolute',
+          flex:0,
+          width:'100%',
+          height:'100%',
+          justifyContent:'flex-end'
+        }
+
+        return  <View style={[{flex:0}, this.props.PStyle]}>
+                  <Image 
+                    source={this.img_source} 
+                    style={this.img_style} 
+                    resizeMode={this.props.resizeMode||'contain'}
+                    onLoadEnd={this.props.onLoadEnd}
+                    loadingIndicatorSource={loader_img}
+                    />
+                  <View style={absolute}>
+                    {this.props.children}
+                  </View>
+                </View>
+      }
+      else
+      {
+        return  <Image 
+                    source={this.img_source} 
+                    style={this.img_style} 
+                    resizeMode={this.props.resizeMode||'contain'}
+                    onLoadEnd={this.props.onLoadEnd}
+                    loadingIndicatorSource={loader_img}
                 />
-                <View style={{flex:0}}/>
-                {this.props.children}
-              </View>
+      }
     }
   }
 }

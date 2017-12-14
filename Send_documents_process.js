@@ -40,19 +40,25 @@ class ImgBox extends Component{
   render(){
     const imgBox = StyleSheet.create({
       styleImg: {
+          flex:0,
+          width:80,
+          height:80
+        },
+      styleContainer:{
           borderColor:'#fff',
           backgroundColor:'#000',
           borderWidth:3,
           borderRadius:5,
-          width:80,
-          flex:1,
           marginVertical:10,
           marginHorizontal:5,
-          height:80
-        },
+          width:80,
+          height:86,
+          justifyContent:'center',
+          alignItems:'center',
+      },
     });
     return  <View style={{flex:0}}>
-              <XImage style={imgBox.styleImg} local={false} source={this.props.source} />
+              <XImage type='container' PStyle={imgBox.styleContainer} style={imgBox.styleImg} local={false} source={this.props.source} />
             </View>
   }
 }

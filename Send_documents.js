@@ -17,12 +17,10 @@ var GLOB = {images:[], imgToDel:"", idZoom:"", navigation:{}}
 class ImageSwipe extends Component{
   constructor(props){
     super(props)
-    this.state = {ready: false}
   }
 
   refreshImage(){
     this.props.imageLoaded()
-    this.setState({ready: true})
   }
 
   render(){
@@ -34,15 +32,11 @@ class ImageSwipe extends Component{
                     borderColor:'#fff',
                     borderWidth:2
                   }
-
-      //Rendering state.ready is there for fixing bug on loading image swipe          
+      
       return <XImage source={this.props.source} 
                     local={false}
                     style={style}
-                    onLoadEnd={()=>this.refreshImage()}>
-              {this.state.ready && <View />}
-              {!this.state.ready && <View />}
-            </XImage>
+                    onLoadEnd={()=>this.refreshImage()} />
   }
 }
 
@@ -177,16 +171,20 @@ class ImgBox extends Component{
           width:127
         },
       styleImg: {
-          flexDirection:'row',
+          flex:0,
+          width:127,
+          height:120,
+        },
+      styleContainer:{
           borderColor:'#fff',
           backgroundColor:'#000',
           borderWidth:3,
           borderRadius:5,
           width:127,
-          flex:0,
-          height:120,
-          alignItems:'flex-end'
-        },
+          height:126,
+          justifyContent:'center',
+          alignItems:'center',
+      },
       btnText: {
           flex:1,
           backgroundColor:'rgba(255,255,255,0.5)',
@@ -205,7 +203,7 @@ class ImgBox extends Component{
     });
 
     return  <TouchableOpacity style={imgBox.styleTouch} onPress={()=>this.toggleOpt()}>
-                <XImage source={this.props.source} style={imgBox.styleImg} local={false}>
+                <XImage type='container' PStyle={imgBox.styleContainer} source={this.props.source} style={imgBox.styleImg} local={false}>
                   { this.state.options == true &&
                     <View style={imgBox.options}>   
                       <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={imgBox.btnText} Istyle={{width:30,height:30}} />
