@@ -444,13 +444,15 @@ class StatsScreen extends Component {
 
   renderStats(){
 
-      const arrow_direction = this.state.direction? "n_arrow_down" : "n_arrow_up"
+      const arrow_direction = this.state.direction? 'V' : 'Λ'
 
      return  <ScrollView style={{flex:1, padding:3}}>
                 {this.state.orderText && 
                   <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
                     <Text style={{flex:0}}>Trie par: <Text style={{fontWeight:'bold'}}>{this.state.orderText}</Text></Text>
-                    <ImageButton Pstyle={{flex:0,width:30,alignItems:'center'}} Istyle={{flex:0,width:8,height:23}} source={{uri:arrow_direction}} onPress={()=>this.changeDirectionSort()} />
+                    <TouchableOpacity style={{flex:0,width:30,alignItems:'center'}} onPress={()=>this.changeDirectionSort()}>
+                      <Text style={{fontSize:14, fontWeight:'bold'}}>{arrow_direction}</Text>
+                    </TouchableOpacity>
                   </View>
                 }
                 <LineList datas={this.state.dataList} 
