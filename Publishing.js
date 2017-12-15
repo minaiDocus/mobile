@@ -236,17 +236,14 @@ class ImgBox extends Component{
       styleImg: {
           flex:0,
           height:89,
-          width:71,
+          width:70,
         },
       styleContainer:{
           backgroundColor:'#fff',
-          borderColor:'#fff',
-          borderWidth:3,
-          borderRadius:5,
           justifyContent:'center',
           alignItems:'center',
           height:95,
-          width:71,
+          width:77,
       },
       btnText: {
           flex:1,
@@ -337,7 +334,7 @@ class BoxPublish extends Component{
               }
               <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{this.props.datas.length} {this.props.title}</Text>
               <BoxList datas={this.props.datas}
-                       elementWidth={75}
+                       elementWidth={80}
                        renderItems={(data, index) => <ImgBox data={data} index={index} toggleZoom={()=>this.toggleZoom()}/> } />
           </ScrollView>
   }

@@ -45,13 +45,11 @@ class ImgBox extends Component{
           height:80
         },
       styleContainer:{
-          borderColor:'#fff',
-          backgroundColor:'#000',
-          borderWidth:3,
+          backgroundColor:'#fff',
           borderRadius:5,
           marginVertical:10,
           marginHorizontal:5,
-          width:80,
+          width:86,
           height:86,
           justifyContent:'center',
           alignItems:'center',

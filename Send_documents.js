@@ -8,37 +8,12 @@ import {XImage} from './components/XComponents'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
 import {SimpleButton, BoxButton, ImageButton} from './components/buttons'
-import Swiper from 'react-native-swiper'
+// import Swiper from 'react-native-swiper'
+import Swiper from './components/swiper'
 import {BoxList} from './components/lists'
 import {ProgressUpload} from './components/uploader'
 
 var GLOB = {images:[], imgToDel:"", idZoom:"", navigation:{}}
-
-class ImageSwipe extends Component{
-  constructor(props){
-    super(props)
-  }
-
-  refreshImage(){
-    this.props.imageLoaded()
-  }
-
-  render(){
-    const style = {
-                    flex:0,
-                    width:'100%',
-                    height:'100%',
-                    backgroundColor:'#fff',
-                    borderColor:'#fff',
-                    borderWidth:2
-                  }
-      
-      return <XImage source={this.props.source} 
-                    local={false}
-                    style={style}
-                    onLoadEnd={()=>this.refreshImage()} />
-  }
-}
 
 class BoxZoom extends Component{
   constructor(props){
@@ -48,13 +23,10 @@ class BoxZoom extends Component{
     this.imageCounter = this.props.datas.length
 
     this.renderSwiper = this.renderSwiper.bind(this)
-    this.imageLoaded = this.imageLoaded.bind(this)
   }
 
-  imageLoaded(){
-    this.imageCounter = this.imageCounter - 1
-    if(this.imageCounter <= 0)
-      setTimeout(()=>{this.setState({ready: true})}, 500)
+  componentDidMount(){
+    setTimeout(()=>{this.setState({ready: true})}, 1000)
   }
 
   onSwipe(index){
@@ -74,22 +46,38 @@ class BoxZoom extends Component{
   renderSwiper(){
     const swipeStyle = StyleSheet.create({
       wrapper:{
-            flex:0,
-            width:'100%',
-            height:'100%',
-            alignItems:'center',
+            flex:1,
             marginBottom:10,
-          }
+            borderColor:'#fff',
+            borderWidth:2
+      },
+      image:{
+        flex:0,
+        width:'100%',
+        height:'100%',
+      },
+      boxImage:{
+        backgroundColor:'#fff',
+        borderColor:'#fff',
+        borderLeftWidth:2,
+        borderRightWidth:2
+      }
     })
     var indexStart = 0
 
     var embedContent = this.props.datas.map((img, key)=>
-        {
-          if(base64.encode(img.path).toString() == GLOB.idZoom.toString()){ indexStart = key; }
-          return <ImageSwipe key={key} source={{uri: img.path.toString()}} imageLoaded={this.imageLoaded}/>
-        })
+    {
+      if(base64.encode(img.path).toString() == GLOB.idZoom.toString()){ indexStart = key; }
+      return <XImage  key={key}
+                      type='container'
+                      PStyle={swipeStyle.boxImage}
+                      style={swipeStyle.image}
+                      source={{uri: img.path.toString()}} 
+                      local={false}
+              />
+    })
 
-    return <Swiper style={swipeStyle.wrapper} showsButtons={false} showsPagination={true} index={indexStart} onIndexChanged={(index)=>{this.onSwipe(index)}}>
+    return <Swiper style={swipeStyle.wrapper} index={indexStart} onIndexChanged={(index)=>{this.onSwipe(index)}} count={this.props.datas.length}>
             { embedContent }
            </Swiper>
   }
@@ -104,7 +92,6 @@ class BoxZoom extends Component{
       }
     })
 
-    const _opacity = this.state.ready? 1:0
     const loader = {
       backgroundColor:'#fff',
       position:'absolute',
@@ -124,7 +111,7 @@ class BoxZoom extends Component{
             >
               <View style={zoomBox.boxZoom}>
                 <View style={{flex:1, marginBottom:15}}>
-                  <View style={{flex: 1, opacity: _opacity}}>{this.renderSwiper()}</View>
+                  {this.state.ready && this.renderSwiper()}
                   {
                     !this.state.ready && <View style={loader}>
                                           <XImage loader={true} />
@@ -172,16 +159,14 @@ class ImgBox extends Component{
         },
       styleImg: {
           flex:0,
-          width:127,
-          height:120,
+          width:120,
+          height:113,
         },
       styleContainer:{
-          borderColor:'#fff',
-          backgroundColor:'#000',
-          borderWidth:3,
+          backgroundColor:'#fff',
           borderRadius:5,
-          width:127,
-          height:126,
+          width:126,
+          height:119,
           justifyContent:'center',
           alignItems:'center',
       },
@@ -221,12 +206,10 @@ class Header extends Component{
   }
 
   render(){
-  return (
-            <View style={styles.minicontainer}>
+  return  <View style={styles.minicontainer}>
               <BoxButton onPress={this.props.takePhoto} source={{uri:"camera_icon"}} title="Prendre photo" />
               <BoxButton onPress={this.props.openRoll} source={{uri:"folder"}} title="Galerie photos" />
-            </View>
-          );
+          </View>
   }
 }
 
@@ -339,7 +322,7 @@ class SendScreen extends Component {
         var embedContent =  <ScrollView style={{flex:1, padding:3}}>
                                 <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.images.length} : Document(s)</Text>
                                 <BoxList datas={this.state.dataList}
-                                         elementWidth={127} 
+                                         elementWidth={130} 
                                          renderItems={(img) => <ImgBox source={{uri: img.path.toString()}} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
                             </ScrollView>
       }
