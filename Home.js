@@ -109,13 +109,20 @@ class ViewState extends Component{
     var infos = this.props.infos
 
     infos = infos.map((info, index) => {
+      let value = ''
       if(info.value == "updated_at")
       {
-        var value = format_date(eval("data."+info.value))
+        try{
+          value = format_date(eval("data."+info.value))
+        }
+        catch(e){}
       }
       else
       {
-        var value = eval("data."+info.value).toString()
+        try{
+          value = eval("data."+info.value).toString()
+        }
+        catch(e){}
       }
       return <Text key={index} style={style.champ}><Text style={style.label}>{info.label} : </Text>{value}</Text>
     })

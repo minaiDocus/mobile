@@ -173,17 +173,16 @@ class ImgBox extends Component{
       btnText: {
           flex:1,
           backgroundColor:'rgba(255,255,255,0.5)',
-          borderColor:"#000",
           padding:2,
-          borderWidth:1,
           justifyContent:'center',
-          alignItems:'center'
+          alignItems:'center',
+          borderColor:'#3E2F24'
         },
       options:{
           flex:0,
           flexDirection:'row',
           height:'30%',
-          width:'100%',
+          width:'100%'
       }
     });
 
@@ -191,8 +190,8 @@ class ImgBox extends Component{
                 <XImage type='container' PStyle={imgBox.styleContainer} source={this.props.source} style={imgBox.styleImg} local={false}>
                   { this.state.options == true &&
                     <View style={imgBox.options}>   
-                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={imgBox.btnText} Istyle={{width:30,height:30}} />
-                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} Pstyle={imgBox.btnText} Istyle={{width:30,height:30}} />
+                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[{borderRightWidth:1}, imgBox.btnText]} Istyle={{width:30,height:30}} />
+                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} Pstyle={[{borderLeftWidth:1},imgBox.btnText]} Istyle={{width:30,height:30}} />
                     </View>
                   }
                 </XImage>

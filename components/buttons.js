@@ -130,8 +130,8 @@ export class LinkButton extends Component{
               },
       image:  {
                 flex:1,
-                width:50,
-                height:30,
+                width:30,
+                height:20,
               }
     })
 

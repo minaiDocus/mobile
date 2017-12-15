@@ -217,8 +217,8 @@ class Header extends Component{
     },
     image:{
       flex:0,
-      width:60,
-      height:60,
+      width:40,
+      height:40,
       marginRight:15
     },
     filterbox:{
@@ -228,17 +228,16 @@ class Header extends Component{
       justifyContent:'center'
     }
   });
-  return ( <View style={headStyle.container}>
-              <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
-              <View style={headStyle.left}>
-                <XImage source={{uri:"suivi_ico"}} style={headStyle.image} />
-                <Text style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</Text>
-              </View>
-              <View style={headStyle.right}> 
-                <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
-              </View>
-           </View>
-          );
+  return  <View style={headStyle.container}>
+            <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
+            <View style={headStyle.left}>
+              <XImage source={{uri:"suivi_ico"}} style={headStyle.image} />
+              <Text style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</Text>
+            </View>
+            <View style={headStyle.right}> 
+              <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+            </View>
+          </View>
   }
 }
 
@@ -274,8 +273,10 @@ class BoxStat extends Component{
       },
       infos:{
         flex:1,
-        paddingHorizontal:30,
-        paddingTop:5
+        marginHorizontal:30,
+        marginTop:5,
+        borderTopWidth:1,
+        borderColor:'#A6A6A6'
       },
     })
     const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"

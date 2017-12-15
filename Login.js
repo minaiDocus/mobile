@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     flex:1,
-    height:120,
+    height:100,
   },
   form:{
     flex:1,

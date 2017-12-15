@@ -247,8 +247,6 @@ class ImgBox extends Component{
       },
       btnText: {
           flex:1,
-          borderColor:"#000",
-          borderWidth:1,
           padding:2,
           backgroundColor:'rgba(255,255,255,0.7)',
           justifyContent:'center',
