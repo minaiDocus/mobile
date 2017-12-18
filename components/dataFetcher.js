@@ -53,10 +53,10 @@ class Fetcher {
     }
   }
 
-  async get_list_collaborators(options_sharing){
+  async get_list_collaborators(){
     this.synchronious_response = ""
 
-    this.requestURI("api/mobile/account_sharing/get_list_collaborators", {method: 'POST', params:{options_sharing}}, (r) => {
+    this.requestURI("api/mobile/account_sharing/get_list_collaborators", {method: 'POST'}, (r) => {
       if(r.error){ 
         //handling errors
        this.synchronious_response = r
@@ -72,10 +72,10 @@ class Fetcher {
     }
   }
 
-  async addSharedDoc(account_sharing_params){
+  async addSharedDoc(account_sharing){
     this.synchronious_response = ""
 
-    this.requestURI("api/mobile/account_sharing/add_shared_docs", {method: 'POST', params:{account_sharing_params}}, (r) => {
+    this.requestURI("api/mobile/account_sharing/add_shared_docs", {method: 'POST', params:{account_sharing}}, (r) => {
       if(r.error){ 
         //handling errors
         this.synchronious_response = r

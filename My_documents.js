@@ -158,14 +158,6 @@ class DocumentsScreen extends Component {
   }
 
   dataFilter(client_id=0, text=''){
-    // var where = [];
-    // if(client_id > 0){ where.push(`owner_id = '${client_id}'`)}
-    // if(name != ""){ where.push(`name CONTAINS[c] '${name}'`)}
-    // if(where.length > 0)
-    //   this.setState({dataList: packs().filtered(where.join(' AND ')) });
-    // else
-    //   this.setState({dataList: packs()});
-
     this.setState({loadingFilter: true, dataList: packs()})
     Fetcher.wait_for(
       [`filterPacks("${text}", "${client_id}")`],
