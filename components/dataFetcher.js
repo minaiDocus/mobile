@@ -54,19 +54,19 @@ class Fetcher {
   }
 
   async get_list_collaborators(options_sharing){
-    this.synchronious_response['get_list_collaborators'] = ""
+    this.synchronious_response = ""
 
     this.requestURI("api/mobile/account_sharing/get_list_collaborators", {method: 'POST', params:{options_sharing}}, (r) => {
       if(r.error){ 
         //handling errors
-       this.synchronious_response['get_list_collaborators'] = r
+       this.synchronious_response = r
       }
       else
       {
-        this.synchronious_response['get_list_collaborators'] = r
+        this.synchronious_response = r
       }
     })
-    while(this.synchronious_response['get_list_collaborators'] == "")
+    while(this.synchronious_response == "")
     {
       await sleep(300)
     }
@@ -383,7 +383,7 @@ class Fetcher {
   }
 
   async wait_for(func=[], callback){
-    responses = []
+    let responses = []
     for(var i=0; i<func.length;i++)
     {
       await eval('this.'+func[i])

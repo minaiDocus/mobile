@@ -506,7 +506,6 @@ class SharingScreen extends Component {
 
   refreshDatas(){
     this.setState({ready: false, dataList: []})
-
     Fetcher.wait_for(
       [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)})`, 'get_list_collaborators()'],
       (responses)=>{
