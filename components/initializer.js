@@ -47,8 +47,9 @@ global.handlingHttpErrors = (request) => {
   return {error: true, message: errorMessage}
 }
 
-global.format_date = (date, format = "DD-MM-YYYY HH:ii") => {
-  var dateFormat = format
+global.format_date = (_date, format = "DD-MM-YYYY HH:ii") => {
+  let dateFormat = format
+  let date = new Date(_date)
 
   dateFormat = dateFormat.replace("DD", fill_with_zero(date.getDate()))   //Get the day as a number (1-31)
 

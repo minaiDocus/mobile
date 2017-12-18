@@ -8,6 +8,7 @@ import DocumentsScreen from './My_documents'
 import PublishScreen from './Publishing'
 import StatsScreen from './Stats'
 import SendingScreen from './Send_documents_process'
+import SharingScreen from './Sharing'
 import './components/initializer'
 
 const StackApp = StackNavigator({
@@ -31,6 +32,9 @@ const StackApp = StackNavigator({
                               },
                               Publish: {
                                 screen: PublishScreen
+                              },
+                              Sharing: {
+                                screen: SharingScreen
                               }
                           },{initialRouteName: 'Login'})
 

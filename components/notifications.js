@@ -96,8 +96,8 @@ export class Notice {
     EventRegister.emit('addNoticeMessages', null)
   }
 
-  static alert(title, message){
-    Alert.alert(title, message)
+  static alert(...args){
+    Alert.alert(...args)
   }
 
   static exist(name=""){

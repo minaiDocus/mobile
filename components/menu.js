@@ -113,6 +113,7 @@ class Body extends Component{
                 <LinkButton onPress={()=>{this.props.navigate('Send')}} source={{uri:'ico_send'}} resizeMode='contain' title='Envoi documents' Tstyle={styles.generalText} Pstyle={body.linkP} />
                 <LinkButton onPress={()=>{this.props.navigate('Documents')}} source={{uri:'ico_docs'}} resizeMode='contain' title='Mes documents' Tstyle={styles.generalText} Pstyle={body.linkP} />
                 <LinkButton onPress={()=>{this.props.navigate('Stats')}} source={{uri:'ico_suiv'}} resizeMode='contain' title='Suivi' Tstyle={styles.generalText} Pstyle={body.linkP} />
+                <LinkButton onPress={()=>{this.props.navigate('Sharing')}} source={{uri:'ico_suiv'}} resizeMode='contain' title='Partage dossier' Tstyle={styles.generalText} Pstyle={body.linkP} />
               </ScrollView>
             </View>
   }

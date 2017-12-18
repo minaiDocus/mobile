@@ -8,19 +8,14 @@ import {XImage, XTextInput} from './components/XComponents'
 import Navigator from './components/navigator'
 import {LineList} from './components/lists'
 import Fetcher from './components/dataFetcher'
-import {SimpleButton, BoxButton, LinkButton, ImageButton} from './components/buttons'
+import {SimpleButton, BoxButton, ImageButton, LinkButton} from './components/buttons'
 import SelectInput from './components/select'
-import DatePicker from './components/datePicker'
 
 var GLOB = {  navigation:{},
               datas:[],
-              dataFilter: {updated_at_start:'', 
-                          updated_at_end:'', 
-                          type:1,
-                          customer_code:'',
-                          customer_company:'',
-                          tracking_number:'',
-                          pack_name:''},
+              dataFilter: {account:'', collaborator:''},
+              optionsAccount: [],
+              optionsCollaborator: [],
               types: [{value:"", label:"---"},{value:"kit", label:"Kit"},{value:"receipt", label:"Réception"},{value:"scan", label:"Numérisation"},{value:"return", label:"Retour"}],
             }
 
@@ -62,7 +57,6 @@ class Inputs extends Component{
               <Text style={[input.label, labelStyle]}>{this.props.label}</Text>
               {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} style={[input.input, inputStyle]} />}
               {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
-              {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1.3}} />}
             </View>
   }
 }
@@ -79,13 +73,9 @@ class BoxFilter extends Component{
   filterProcess(type){
     if(type=="reInit")
     {
-      GLOB.dataFilter = { updated_at_start:'', 
-                          updated_at_end:'', 
-                          type:1,
-                          customer_code:'',
-                          customer_company:'',
-                          tracking_number:'',
-                          pack_name:''
+      GLOB.dataFilter = { 
+                          account:'',
+                          collaborator:''
                         }
     }
     this.dismiss(true);
@@ -156,13 +146,8 @@ class BoxFilter extends Component{
                     <Text style={{flex:1, textAlign:'center',fontSize:24}}>Filtres</Text>
                   </View>
                   <ScrollView style={boxFilter.body}>
-                    <Inputs label='Date de début :' name={'updated_at_start'} type='date'/>
-                    <Inputs label='Date de fin :' name={'updated_at_end'} type='date' />
-                    <Inputs label='Type :' name={'type'} type='select' dataOptions={GLOB.types}  />
-                    <Inputs label='Code client :' name={'customer_code'}/>
-                    <Inputs label='Nom de la société :' name={'customer_company'}/>
-                    <Inputs label='N° de suivi :' name={'tracking_number'} keyboardType='numeric' />
-                    <Inputs label='Nom du lot :' name={'pack_name'}/>
+                    <Inputs label='Dossier :' name={'account'} />
+                    <Inputs label='Client ou contact :' name={'collaborator'}/>
                   </ScrollView>
                   <View style={boxFilter.foot}>
                     <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
@@ -178,9 +163,48 @@ class BoxFilter extends Component{
 class Header extends Component{
   constructor(props){
     super(props)
-    this.state = {filter: false}
+
+    this.state = {
+                    filter: false, 
+                    collaborator: 0, 
+                    account: 0
+                }
 
     this.closeFilter = this.closeFilter.bind(this)
+  }
+
+  handleClientChange(value, target='collaborator'){
+    if(target == 'collaborator')
+    {
+      this.setState({collaborator: value})
+    }
+    else
+    {
+      this.setState({account: value})
+    }
+  }
+
+  addSharedDoc(){
+    if(this.state.collaborator > 0 && this.state.account > 0)
+    {
+      Fetcher.wait_for(
+        [`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`],
+        (responses)=>{
+          if(responses[0].error)
+          {
+            Notice.danger(responses[0].message)
+          }
+          else
+          {
+            Notice.info(responses[0].message)
+            EventRegister.emit('refreshPage')
+          }
+        })
+    }
+    else
+    {
+      Notice.info("Veuillez renseigner correctement les champs pour le partage de dossier!!")
+    }
   }
 
   openFilter(){
@@ -207,7 +231,7 @@ class Header extends Component{
       flex:2,
       flexDirection:'row',
       alignItems:'center',
-      paddingLeft:20,
+      marginLeft:20,
       justifyContent:'center',
     },
     right:{
@@ -221,6 +245,10 @@ class Header extends Component{
       height:40,
       marginRight:15
     },
+    select:{
+      flex:1,
+      width:'100%'
+    },
     filterbox:{
       flex:1,
       flexDirection:'row',
@@ -231,8 +259,22 @@ class Header extends Component{
   return  <View style={headStyle.container}>
             <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
             <View style={headStyle.left}>
-              <XImage source={{uri:"suivi_ico"}} style={headStyle.image} />
-              <Text style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</Text>
+              <View style={{flex:1, alignItems:'center'}}>
+                <SelectInput  filterSearch={true} 
+                              dataOptions={GLOB.optionsCollaborator}
+                              textInfo="Contact ou Client" 
+                              style={{color:'#707070'}} Pstyle={headStyle.select} 
+                              onChange={(value) => this.handleClientChange(value, "collaborator")}
+                />
+                <SelectInput  filterSearch={true} 
+                              dataOptions={GLOB.optionsAccount}
+                              textInfo="Dossier client" 
+                              style={{color:'#707070'}} 
+                              Pstyle={headStyle.select} 
+                              onChange={(value) => this.handleClientChange(value, "account")}
+                />
+                <SimpleButton Pstyle={{flex:0, height:30, width:100, margin:10}} onPress={()=>this.addSharedDoc()} title="Partager" />
+              </View>
             </View>
             <View style={headStyle.right}> 
               <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
@@ -244,8 +286,35 @@ class Header extends Component{
 class BoxStat extends Component{
   state = {showDetails: false}
 
- toggleDetails(){
+  toggleDetails(){
     this.setState({showDetails: !this.state.showDetails})
+  }
+
+  deleteSharedDoc(id_doc){
+    Fetcher.wait_for(
+      [`deleteSharedDoc(${id_doc})`],
+      (responses)=>{
+        if(responses[0].error)
+        {
+          GLOB.datas = []
+          Notice.danger(responses[0].message)
+        }
+        else
+        {
+          Notice.info('Partage supprimé avec succès!')
+          EventRegister.emit('refreshPage')
+        }
+      })
+  }
+
+  handleDelete(id_doc){
+    Notice.alert( 'Suppression partage', 
+                  'Êtes-vous sûr de vouloir annuler le partage du dossier',
+                  [
+                    {text: 'Non', onPress: () =>{}},
+                    {text: 'Oui', onPress: () =>{this.deleteSharedDoc(id_doc)}},
+                  ],
+                )
   }
 
   render(){
@@ -254,13 +323,12 @@ class BoxStat extends Component{
         flex:1,
         flexDirection:'row',
         alignItems:'center',
-        paddingLeft:8,
+        paddingHorizontal:8,
       },
       image:{
         flex:0,
         width:15,
-        height:15,
-        marginRight:8
+        height:15
       },
       champ:{
         flex:1,
@@ -281,19 +349,27 @@ class BoxStat extends Component{
     })
     const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"
 
+    let state = 'En attente de validation'
+    let action = 'zoom_x' // a modifier 'accept'
+    if(this.props.data.approval == true)
+    {
+      action = 'delete'
+      state = 'Partagé'
+    }  
+
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={boxStyle.container}>
-                <XImage source={{uri:arrow}} style={boxStyle.image} />
-                <Text style={{fontWeight:'bold', width:240}}>{this.props.data.packname.toString()}</Text>
+                <XImage source={{uri:arrow}} style={[{marginRight:8}, boxStyle.image]} />
+                <Text style={{fontWeight:'bold', width:220}}>{this.props.data.document.toString()}</Text>
+                <ImageButton source={{uri:action}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
               </View>
               {
                   this.state.showDetails == true && 
                     <View style={boxStyle.infos}>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Type : </Text>{this.props.data.type}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Société : </Text>{this.props.data.company}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>N°de suivi: </Text>{this.props.data.number}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Nom du lot: </Text>{this.props.data.packname}</Text>
+                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Dossier : </Text>{this.props.data.document}</Text>
+                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Client ou Contact : </Text>{this.props.data.client}</Text>
+                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Etat : </Text>{state}</Text>
                     </View>
               }
             </TouchableOpacity>
@@ -351,10 +427,9 @@ class OrderBox extends Component{
                   <Text style={styles.title}>Trier par : </Text>
                   <View style={{flex:1, marginTop:5}}>
                     <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Type','type'])} title='Type' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Société','company'])} title='Société' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['N°de suivi','number'])} title='N°de suivi' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Nom de lot','packname'])} title='Nom du lot' Pstyle={styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Dossier','document'])} title='Dossier' Pstyle={styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Client','client'])} title='Client' Pstyle={styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Etat','approval'])} title='Etat' Pstyle={styles.list} />
                   </View>
               </AnimatedBox>
     }
@@ -365,9 +440,9 @@ class OrderBox extends Component{
   }
 }
 
-class StatsScreen extends Component {
+class SharingScreen extends Component {
   static navigationOptions = {
-       headerTitle: 'Suivi',
+       headerTitle: 'Partage dossier',
        headerRight: <ImageButton  source={{uri:"options"}} 
                                   Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
                                   Istyle={{width:7, height:36}}
@@ -378,6 +453,7 @@ class StatsScreen extends Component {
     super(props);
     GLOB.navigation = new Navigator(this.props.navigation)
 
+    this.dontRefreshForm = false
     this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
 
     this.renderStats = this.renderStats.bind(this)
@@ -390,10 +466,15 @@ class StatsScreen extends Component {
     this.orderBoxListener = EventRegister.on('clickOrderBox', (data) => {
         this.toggleOrderBox()
     })
+
+    this.refreshPage = EventRegister.on('refreshPage', (data) => {
+        this.refreshDatas()
+    })
   }
 
   componentWillUnmount(){
     EventRegister.rm(this.orderBoxListener)
+    EventRegister.rm(this.refreshPage)
   }
 
   componentDidMount(){
@@ -427,16 +508,22 @@ class StatsScreen extends Component {
     this.setState({ready: false, dataList: []})
 
     Fetcher.wait_for(
-      [`getStats(${JSON.stringify(GLOB.dataFilter)})`],
+      [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)})`, 'get_list_collaborators()'],
       (responses)=>{
-        if(responses[0].error)
+        if(responses[0].error || responses[1].error)
         {
           GLOB.datas = []
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message || responses[1].message)
         }
         else
         {
-          GLOB.datas = Fetcher.create_temp_realm(responses[0].data_stats, "temp_states")
+          GLOB.datas = Fetcher.create_temp_realm(responses[0].data_shared, "temp_sharing")
+          if(this.dontRefreshForm == false)
+          {
+            GLOB.optionsCollaborator = [{value:0, label:'Contact ou Client'}].concat(responses[1].options)
+            GLOB.optionsAccount = [{value:0, label:'Dossier client'}].concat(responses[1].options)
+            this.dontRefreshForm = true
+          }
         }
 
         this.setState({ready: true, dataList: GLOB.datas})
@@ -444,8 +531,7 @@ class StatsScreen extends Component {
   }
 
   renderStats(){
-
-      const arrow_direction = this.state.direction? 'V' : 'Λ'
+    const arrow_direction = this.state.direction? 'V' : 'Λ'
 
      return  <ScrollView style={{flex:1, padding:3}}>
                 {this.state.orderText && 
@@ -457,7 +543,7 @@ class StatsScreen extends Component {
                   </View>
                 }
                 <LineList datas={this.state.dataList} 
-                          renderItems={(data) => <BoxStat data={data} /> } />
+                          renderItems={(data) => <BoxStat data={data} deleteSharedDoc={this.deleteSharedDoc}/> } />
              </ScrollView>
   }
 
@@ -465,7 +551,7 @@ class StatsScreen extends Component {
       return (
           <Screen style={styles.container}
                   navigation={GLOB.navigation}>
-            <Header dataCount={this.state.dataList.length} onFilter={()=>this.refreshDatas()}/>
+            <Header onFilter={()=>this.refreshDatas()}/>
               {this.state.ready && this.renderStats()}
               {!this.state.ready && <XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} />}
               <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
@@ -481,4 +567,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StatsScreen;
+export default SharingScreen;

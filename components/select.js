@@ -17,21 +17,28 @@ class ModalSelect extends Component{
   }
 
   async handleFilterChange(value){
-    if(value.length >= 3)
+    if(this.props.onFilter != null)
     {
-      const regEx = new RegExp(value, 'i')
-      let filterDatas = this.props.datas.map((dt)=>{
-        if(regEx.test(dt.label.toString()))
-        {
-          return dt
-        }
-      })
-      filterDatas = arrayCompact(filterDatas)
-      await this.setState({datas: filterDatas})
+      this.props.onFilter(value)
     }
     else
     {
-      await this.setState({datas: this.props.datas})
+      if(value.length >= 3)
+      {
+        const regEx = new RegExp(value, 'i')
+        let filterDatas = this.props.datas.map((dt)=>{
+          if(regEx.test(dt.label.toString()))
+          {
+            return dt
+          }
+        })
+        filterDatas = arrayCompact(filterDatas)
+        await this.setState({datas: filterDatas})
+      }
+      else
+      {
+        await this.setState({datas: this.props.datas})
+      }
     }
   }
 
@@ -122,6 +129,13 @@ class ModalSelect extends Component{
 
         borderBottomWidth:1
       },
+      infos:{
+        flex:0,
+        padding:3,
+        backgroundColor:'#FFF0BC',
+        borderBottomWidth:1,
+        borderColor:'#9E9E9E'
+      },
       body:{
         flex:1,
         backgroundColor:'#FFF'
@@ -155,6 +169,14 @@ class ModalSelect extends Component{
                       </TouchableOpacity>
                     </View>
                   </View>
+                  
+                  { 
+                    this.props.textInfo != '' && this.props.textInfo != null && 
+                    <View style={modal.infos}>
+                      <Text>{this.props.textInfo}</Text>
+                    </View>
+                  }
+
                   <View style={modal.body}>
                     {this.renderContent()}
                   </View>
@@ -242,8 +264,10 @@ class SelectInput extends Component{
     return  <View style={[styles].concat(PStyle)}>
               {this.state.openModal && <ModalSelect datas={datas}
                                                     filterSearch={this.props.filterSearch || false} 
-                                                    selectedItem={this.state.selectedItem} 
+                                                    selectedItem={this.state.selectedItem}
+                                                    textInfo={this.props.textInfo || null} 
                                                     changeItem={this.changeItem}
+                                                    onFilter={this.props.onFilter || null}
                                                     dismiss={this.hideModal} />}
               <View style={{flex:1}}>
                 <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center'}} onPress={this.showModal}>

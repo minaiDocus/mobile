@@ -34,6 +34,101 @@ class Fetcher {
   responseFetching = ""
   synchronious_response = ""
 
+  async getSharedDocs(dataFilters={}){
+    this.synchronious_response = ""
+
+    this.requestURI("api/mobile/account_sharing/load_shared_docs", {method: 'POST', params:{account_sharing_contains: dataFilters}}, (r) => {
+      if(r.error){ 
+        //handling errors
+        this.synchronious_response = r
+      }
+      else
+      {
+        this.synchronious_response = r
+      }
+    })
+    while(this.synchronious_response == "")
+    {
+      await sleep(300)
+    }
+  }
+
+  async get_list_collaborators(options_sharing){
+    this.synchronious_response['get_list_collaborators'] = ""
+
+    this.requestURI("api/mobile/account_sharing/get_list_collaborators", {method: 'POST', params:{options_sharing}}, (r) => {
+      if(r.error){ 
+        //handling errors
+       this.synchronious_response['get_list_collaborators'] = r
+      }
+      else
+      {
+        this.synchronious_response['get_list_collaborators'] = r
+      }
+    })
+    while(this.synchronious_response['get_list_collaborators'] == "")
+    {
+      await sleep(300)
+    }
+  }
+
+  async addSharedDoc(account_sharing_params){
+    this.synchronious_response = ""
+
+    this.requestURI("api/mobile/account_sharing/add_shared_docs", {method: 'POST', params:{account_sharing_params}}, (r) => {
+      if(r.error){ 
+        //handling errors
+        this.synchronious_response = r
+      }
+      else
+      {
+        this.synchronious_response = r
+      }
+    })
+    while(this.synchronious_response == "")
+    {
+      await sleep(300)
+    }
+  }
+
+  async acceptSharedDoc(id_doc){
+    this.synchronious_response = ""
+
+    this.requestURI("api/mobile/account_sharing/accept_shared_docs", {method: 'POST', params:{id: id_doc}}, (r) => {
+      if(r.error){ 
+        //handling errors
+        this.synchronious_response = r
+      }
+      else
+      {
+        this.synchronious_response = r
+      }
+    })
+    while(this.synchronious_response == "")
+    {
+      await sleep(300)
+    }
+  }
+
+  async deleteSharedDoc(id_doc){
+    this.synchronious_response = ""
+
+    this.requestURI("api/mobile/account_sharing/delete_shared_docs", {method: 'POST', params:{id: id_doc}}, (r) => {
+      if(r.error){ 
+        //handling errors
+        this.synchronious_response = r
+      }
+      else
+      {
+        this.synchronious_response = r
+      }
+    })
+    while(this.synchronious_response == "")
+    {
+      await sleep(300)
+    }
+  }
+
   async getStats(dataFilters={}){
     this.synchronious_response = ""
 
@@ -215,7 +310,7 @@ class Fetcher {
     Pack.deleteAll()
   }
 
-  create_temp_realm(datas, name="temp"){
+  create_temp_realm(datas, realm_schema="_temp", name="temp"){
       if(!Array.isArray(datas)){datas = [datas]}
       if(datas.length > 0)
       {
@@ -226,8 +321,10 @@ class Fetcher {
                               properties
                            }
 
-      const realm = new Realm({path: '_temp.realm', schema: [temp_schema], inMemory: true})
+      const realm = new Realm({path: realm_schema+'.realm', schema: [temp_schema], inMemory: true})
       realm.write(()=>{
+          realm.delete(realm.objects(name)) //erase datas
+
           datas.map((value, key)=>{ 
             Object.assign(value, {id: key}, value)
             realm.create(name, value, true); 
