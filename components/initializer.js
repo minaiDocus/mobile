@@ -82,3 +82,13 @@ global.arrayCompact = (arr) => {
   })
   return arrReturn
 }
+
+global.actionLock = false
+global.actionLocker = (callback) => {
+  if(actionLock==false)
+  {
+    actionLock = true
+    callback()
+    setTimeout(()=>{actionLock = false}, 1000)
+  }
+}

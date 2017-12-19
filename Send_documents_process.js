@@ -193,9 +193,9 @@ class Body extends Component{
   const colorBar = (valueProgress < 1)? "blue" : "#C0D838"
 
   return  <View style={{flex:1}}>
-            {this.clients && <SelectInput filterSearch={true} dataOptions={this.clients} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>}
-            <SelectInput dataOptions={this.state.journalsOptions} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
-            <SelectInput dataOptions={this.state.periodsOptions} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
+            {this.clients && <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>}
+            <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
+            <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
             {this.state.period_start != "" && 
               <View style={bodyStyle.warning}>
                 <Text style={bodyStyle.warntitle} >
@@ -265,19 +265,19 @@ class Footer extends Component{
   }
 
   sendingDocs(){
-    if(GLOB.period != "" && GLOB.journal != "" && GLOB.customer != "")
-    {
-      this.setState({sending: true})
-      CronTask.addTask(UploderFiles)
-      CronTask.task.launchUpload(loadData())
-    }
-    else
-    {
-      Notice.alert("Attention", "Veuillez renseigner correctement les champs avant l'envoi")
-    }
-    // this.setState({sending: true})
-    // CronTask.addTask(UploderFiles)
-    // CronTask.task.launchUpload({})
+    const call = ()=> {
+                        if(GLOB.period != "" && GLOB.journal != "" && GLOB.customer != "")
+                        {
+                          this.setState({sending: true})
+                          CronTask.addTask(UploderFiles)
+                          CronTask.task.launchUpload(loadData())
+                        }
+                        else
+                        {
+                          Notice.alert("Attention", "Veuillez renseigner correctement les champs avant l'envoi")
+                        }
+                      }
+    actionLocker(call)
   }
 
   leaveScreen(){

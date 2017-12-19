@@ -33,13 +33,16 @@ class BoxZoom extends Component{
   }
 
   hideModal(){
-    this.props.hide();
+    this.props.hide()
   }
 
   deleteElement(){
-    GLOB.imgToDel = GLOB.idZoom;
-    this.hideModal();
-    this.props.deleteElement();
+    const call = ()=>{
+                      GLOB.imgToDel = GLOB.idZoom
+                      this.hideModal()
+                      this.props.deleteElement()
+                     }
+    actionLocker(call)
   }
 
   renderSwiper(){
@@ -232,28 +235,34 @@ class SendScreen extends Component {
   }
   
   openCamera(){
-    ImagePicker.openCamera({
-      width: 300,
-      height: 400,
-      cropping: true
-    })
-    .then(image => {
-      this.renderImg(image);
-    })
-    .catch(error => {
-      this.renderError(error);
-    });
+    const call = ()=>{
+                        ImagePicker.openCamera({
+                          width: 300,
+                          height: 400,
+                          cropping: true
+                        })
+                        .then(image => {
+                          this.renderImg(image);
+                        })
+                        .catch(error => {
+                          this.renderError(error);
+                        });
+                      }
+    actionLocker(call)
   }
 
   openRoll(){
-    ImagePicker.openPicker({
-      multiple: true,
-      mediaType: 'photo',
-    }).then(images => {
-      this.renderImg(images);
-    }).catch(error => {
-      this.renderError(error);
-    });
+    const call = ()=>{
+                        ImagePicker.openPicker({
+                          multiple: true,
+                          mediaType: 'photo',
+                        }).then(images => {
+                          this.renderImg(images);
+                        }).catch(error => {
+                          this.renderError(error);
+                        });
+                      }
+    actionLocker(call)
   }
 
   async renderImg(img){

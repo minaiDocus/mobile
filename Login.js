@@ -123,14 +123,17 @@ class LoginScreen extends Component {
   }
 
   submitForm(){
-    if(GLOB.login == "" || GLOB.password == "")
-    {
-      Notice.alert("Erreur connexion", "Login / Mot de passe incorrect!")
-    }
-    else
-    {
-      this.setState({loading: true})
-    }
+    const call = ()=>{
+                        if(GLOB.login == "" || GLOB.password == "")
+                        {
+                          Notice.alert("Erreur connexion", "Login / Mot de passe incorrect!")
+                        }
+                        else
+                        {
+                          this.setState({loading: true})
+                        }
+                      }
+    actionLocker(call)
   }
 
   render() {
@@ -187,7 +190,7 @@ const styles = StyleSheet.create({
   },
   icons:{
     flex:1,
-    height:14,
+    height:20,
   },
   inputs:{
     flex:6,

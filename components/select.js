@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Picker, View, Platform, Modal, Text, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
 import {XImage, XTextInput} from './XComponents'
+import {ImageButton} from './buttons'
 import AnimatedBox from './animatedBox'
 
 class ModalSelect extends Component{
@@ -143,7 +144,7 @@ class ModalSelect extends Component{
       touchable:{
         flex:0,
         height:35,
-        width:25,
+        width:30,
         marginVertical:2,
         marginRight:5,
         paddingHorizontal:5,
@@ -164,9 +165,7 @@ class ModalSelect extends Component{
                       {this.props.filterSearch && this.renderSearch()}
                     </View>
                     <View style={{flex:1, alignItems: 'flex-end'}}>
-                      <TouchableOpacity style={modal.touchable} onPress={()=>this.dismiss()}>
-                        <Text style={{flex:1, fontSize:24}}>√</Text>
-                      </TouchableOpacity>
+                      <ImageButton source={{uri:'validate'}} onPress={()=>this.dismiss()} Pstyle={modal.touchable} Istyle={{flex:1, width:20}} />
                     </View>
                   </View>
                   

@@ -87,13 +87,13 @@ class Header extends Component{
   }
   else
   {
-    inputSelection = <SelectInput filterSearch={true} dataOptions={this.clients} style={{color:'#707070'}} Pstyle={headStyle.select} onChange={(value) => this.handleClientChange(value)}/>
+    inputSelection = <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} style={{color:'#707070'}} Pstyle={headStyle.select} onChange={(value) => this.handleClientChange(value)}/>
   }
   
 
   return  <View style={headStyle.container}>
               <View style={headStyle.left}>
-                <XImage source={{uri:"docs_ico"}} style={headStyle.image} />
+                <XImage source={{uri:"ico_docs"}} style={headStyle.image} />
               </View>
               <View style={headStyle.right}>
                 {inputSelection}

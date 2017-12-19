@@ -25,38 +25,44 @@ class Navigator {
   }
 
   goTo(screen, params={}){
-    const parameters = {}
-    const p_default = {
-                prevScreen: this.navigation.state.key,
-                initScreen: true
-              }
-    Object.assign(parameters, p_default, params)
+    const call = ()=>{
+                        const parameters = {}
+                        const p_default = {
+                                    prevScreen: this.navigation.state.key,
+                                    initScreen: true
+                                  }
+                        Object.assign(parameters, p_default, params)
 
-    const navigateAction = NavigationActions.navigate({
-      routeName: screen,
-      params: parameters
-    })
-    this.navigation.dispatch(navigateAction)
+                        const navigateAction = NavigationActions.navigate({
+                          routeName: screen,
+                          params: parameters
+                        })
+                        this.navigation.dispatch(navigateAction)
+                      }
+    actionLocker(call)
   }
 
   dismissTo(screen, params={}){
-    const parameters = {}
-    const p_default = {
-                initScreen: true
-              }
-    Object.assign(parameters, p_default, params)
-    
-    const resetAction = NavigationActions.reset({
-        index: 0,
-        actions: [
-                    NavigationActions.navigate({routeName: screen, params: parameters})
-                  ]
-    })
-    this.navigation.dispatch(resetAction)
+    const call = ()=>{
+                        const parameters = {}
+                        const p_default = {
+                                    initScreen: true
+                                  }
+                        Object.assign(parameters, p_default, params)
+                        
+                        const resetAction = NavigationActions.reset({
+                            index: 0,
+                            actions: [
+                                        NavigationActions.navigate({routeName: screen, params: parameters})
+                                      ]
+                        })
+                        this.navigation.dispatch(resetAction)
+                      }
+    actionLocker(call)
   }
 
   goBack(){
-    this.navigation.goBack()
+    actionLocker(this.navigation.goBack)
   }
 
   screenClose(){

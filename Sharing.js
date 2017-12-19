@@ -185,26 +185,29 @@ class Header extends Component{
   }
 
   addSharedDoc(){
-    if(this.state.collaborator > 0 && this.state.account > 0)
-    {
-      Fetcher.wait_for(
-        [`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`],
-        (responses)=>{
-          if(responses[0].error)
-          {
-            Notice.danger(responses[0].message)
-          }
-          else
-          {
-            Notice.info(responses[0].message)
-            EventRegister.emit('refreshPage')
-          }
-        })
-    }
-    else
-    {
-      Notice.info("Veuillez renseigner correctement les champs pour le partage de dossier!!")
-    }
+    const call = ()=>{
+                        if(this.state.collaborator > 0 && this.state.account > 0)
+                        {
+                          Fetcher.wait_for(
+                            [`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`],
+                            (responses)=>{
+                              if(responses[0].error)
+                              {
+                                Notice.danger(responses[0].message)
+                              }
+                              else
+                              {
+                                Notice.info(responses[0].message)
+                                EventRegister.emit('refreshPage')
+                              }
+                            })
+                        }
+                        else
+                        {
+                          Notice.info("Veuillez renseigner correctement les champs pour le partage de dossier!!")
+                        }
+                      }
+    actionLocker(call)
   }
 
   openFilter(){
@@ -284,7 +287,13 @@ class Header extends Component{
 }
 
 class BoxStat extends Component{
-  state = {showDetails: false}
+  constructor(props){
+    super(props)
+
+    this.state = {showDetails: false}
+    this.handleDelete = this.handleDelete.bind(this)
+    this.handleValidate = this.handleValidate.bind(this)
+  }
 
   toggleDetails(){
     this.setState({showDetails: !this.state.showDetails})
@@ -296,23 +305,49 @@ class BoxStat extends Component{
       (responses)=>{
         if(responses[0].error)
         {
-          GLOB.datas = []
           Notice.danger(responses[0].message)
         }
         else
         {
-          Notice.info('Partage supprimé avec succès!')
+          Notice.info(responses[0].message)
+          EventRegister.emit('refreshPage')
+        }
+      })
+  }
+
+
+  acceptSharedDoc(id_doc){
+    Fetcher.wait_for(
+      [`acceptSharedDoc(${id_doc})`],
+      (responses)=>{
+        if(responses[0].error)
+        {
+          Notice.danger(responses[0].message)
+        }
+        else
+        {
+          Notice.info(responses[0].message)
           EventRegister.emit('refreshPage')
         }
       })
   }
 
   handleDelete(id_doc){
-    Notice.alert( 'Suppression partage', 
+    Notice.alert( 'Suppression de partage', 
                   'Êtes-vous sûr de vouloir annuler le partage du dossier',
                   [
                     {text: 'Non', onPress: () =>{}},
                     {text: 'Oui', onPress: () =>{this.deleteSharedDoc(id_doc)}},
+                  ],
+                )
+  }
+
+  handleValidate(id_doc){
+    Notice.alert( 'Validation de partage', 
+                  'Êtes-vous sûr de vouloir accepter le partage du dossier',
+                  [
+                    {text: 'Non', onPress: () =>{}},
+                    {text: 'Oui', onPress: () =>{this.acceptSharedDoc(id_doc)}},
                   ],
                 )
   }
@@ -350,10 +385,12 @@ class BoxStat extends Component{
     const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"
 
     let state = 'En attente de validation'
-    let action = 'zoom_x' // a modifier 'accept'
+    let ico_action = 'validate'
+    let action = this.handleValidate
     if(this.props.data.approval == true)
     {
-      action = 'delete'
+      action = this.handleDelete
+      ico_action = 'delete'
       state = 'Partagé'
     }  
 
@@ -361,7 +398,7 @@ class BoxStat extends Component{
               <View style={boxStyle.container}>
                 <XImage source={{uri:arrow}} style={[{marginRight:8}, boxStyle.image]} />
                 <Text style={{fontWeight:'bold', width:220}}>{this.props.data.document.toString()}</Text>
-                <ImageButton source={{uri:action}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
+                <ImageButton source={{uri:ico_action}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>action(this.props.data.id_idocus)}/>
               </View>
               {
                   this.state.showDetails == true && 

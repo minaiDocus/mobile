@@ -231,7 +231,7 @@ class Header extends Component{
   return  <View style={headStyle.container}>
             <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
             <View style={headStyle.left}>
-              <XImage source={{uri:"suivi_ico"}} style={headStyle.image} />
+              <XImage source={{uri:"ico_suiv"}} style={headStyle.image} />
               <Text style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</Text>
             </View>
             <View style={headStyle.right}> 
