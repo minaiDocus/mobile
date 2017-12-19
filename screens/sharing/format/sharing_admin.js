@@ -139,6 +139,7 @@ class BoxFilter extends Component{
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={this.props.visible}
+                   supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
               <View style={boxFilter.container} >
@@ -275,7 +276,7 @@ class Header extends Component{
       elevation: 7, //Android Shadow
       
       shadowColor: '#000',                  //===
-      shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+      shadowOffset: {width: 0, height: 0},  //=== iOs shadow    
       shadowOpacity: 0.8,                   //===
       shadowRadius: 2,                      //===
 

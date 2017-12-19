@@ -152,6 +152,7 @@ class BoxFilter extends Component{
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={this.props.visible}
+                   supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
               <View style={boxFilter.container} >

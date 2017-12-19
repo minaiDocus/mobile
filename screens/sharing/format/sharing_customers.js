@@ -192,6 +192,7 @@ class ModalSharing extends Component{
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={true}
+                   supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
               <View style={boxFilter.container} >

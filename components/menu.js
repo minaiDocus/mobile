@@ -154,6 +154,7 @@ class ModalMenu extends Component{
     return  <Modal transparent={true}
                    animationType="fade" 
                    visible={true}
+                   supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
             <View style={menuStyle.container}>

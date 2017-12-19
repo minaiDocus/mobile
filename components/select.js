@@ -155,6 +155,7 @@ class ModalSelect extends Component{
     return  <Modal transparent={true}
                    animationType="fade" 
                    visible={true}
+                   supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
               <View style={modal.container}>
@@ -317,6 +318,7 @@ class SelectInput extends Component{
       paddingLeft:5,
       marginRight:5,
       maxHeight:20,
+      overflow:'hidden' //For iOS overflow content
     }
 
     let datas = []

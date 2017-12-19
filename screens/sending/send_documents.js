@@ -109,6 +109,7 @@ class BoxZoom extends Component{
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={true}
+                   supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
               <View style={zoomBox.boxZoom}>
