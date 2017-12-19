@@ -78,6 +78,7 @@ class LoginScreen extends Component {
     GLOB.login = GLOB.password = ""
     this.state = {loading: false}
     this.dismissLoader = this.dismissLoader.bind(this)
+    this.submitForm = this.submitForm.bind(this)
   }
   
   componentDidMount(){
@@ -100,7 +101,7 @@ class LoginScreen extends Component {
         }
         else
         {
-         SplashScreen.hide()
+          SplashScreen.hide()
         }
       })
   }
@@ -123,17 +124,14 @@ class LoginScreen extends Component {
   }
 
   submitForm(){
-    const call = ()=>{
-                        if(GLOB.login == "" || GLOB.password == "")
-                        {
-                          Notice.alert("Erreur connexion", "Login / Mot de passe incorrect!")
-                        }
-                        else
-                        {
-                          this.setState({loading: true})
-                        }
-                      }
-    actionLocker(call)
+    if(GLOB.login == "" || GLOB.password == "")
+    {
+      Notice.alert("Erreur connexion", "Login / Mot de passe incorrect!")
+    }
+    else
+    {
+      this.setState({loading: true})
+    }
   }
 
   render() {
@@ -141,7 +139,7 @@ class LoginScreen extends Component {
       <Screen style={{flex:1}}
               navigation={GLOB.navigation}>
         <View style={styles.container}>   
-          {this.state.loading == true && <ModalLoader dismiss={this.dismissLoader}/>}
+          {this.state.loading && <ModalLoader dismiss={this.dismissLoader}/>}
           <View style={{flex:1,flexDirection:'row',alignItems:'center'}}>
             <XImage style={styles.logo} source={{uri:"charge"}} />
           </View>
