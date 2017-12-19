@@ -351,15 +351,32 @@ class Fetcher {
     if (/https/i.test(Config.http_host)) //if accessing https server
     {request.setRequestHeader("Authorization", "Basic " + base64.encode(Config.user + ":" + Config.pass))}
 
+    //Aborting query if too long (For fixing bug http request on iOS)
+    const aborting = (callback) => {
+        if(this.responseFetching == "")
+        {
+          request.abort()
+          this.responseFetching = {error: true, message: "Impossible de se connecter au serveur!!"}
+          callback(this.responseFetching)
+        }
+    }
+
+
     if(method == 'POST')
     {
       const parameters = {}
       const auth_token = {auth_token: User.getMaster().auth_token}
       Object.assign(parameters, auth_token, options.params)
+      setTimeout(()=>{
+        aborting(callback)
+      }, 15000)
       request.send(JSON.stringify(parameters)) 
     }
     else 
     {
+      setTimeout(()=>{
+        aborting(callback)
+      }, 15000)
       request.send()
     }
 
@@ -377,7 +394,6 @@ class Fetcher {
 
     request.onerror = (e) => {
       this.responseFetching = handlingHttpErrors(request)
-      
       callback(this.responseFetching)
     }
   }

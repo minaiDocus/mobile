@@ -32,7 +32,7 @@ global.handlingHttpErrors = (request) => {
   let errorMessage = ""
   switch(request.status){
     case 0 :
-      errorMessage = "Impossible de se connecter au serveur iDocus"
+      errorMessage = "Impossible de se connecter au serveur iDocus!!"
       break;
     case 401:
       errorMessage = "Vous n'avez pas l'autorisation necessaire pour effectuer cette action"

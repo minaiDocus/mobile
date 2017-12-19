@@ -27,6 +27,7 @@ function goToHome(){
 class ModalLoader extends Component{
   constructor(props){
     super(props)
+    this.message = ""
   }
 
   componentDidMount(){
@@ -57,9 +58,9 @@ class ModalLoader extends Component{
       }
     });
     return <Modal transparent={true}
-           animationType="fade" 
-           visible={true}
-           onRequestClose={()=>{}}
+             animationType="fade" 
+             visible={true}
+             onRequestClose={()=>{}}
           >
             <View style={styles.container}>
               <XImage loader={true} width={90} height={90} />
@@ -76,8 +77,10 @@ class LoginScreen extends Component {
     GLOB.navigation = new Navigator(this.props.navigation)
 
     GLOB.login = GLOB.password = ""
-    this.state = {loading: false}
+    this.state = {loading: false, focusInput: false}
     this.dismissLoader = this.dismissLoader.bind(this)
+    this.focusInput = this.focusInput.bind(this)
+    this.leaveFocusInput = this.leaveFocusInput.bind(this)
     this.submitForm = this.submitForm.bind(this)
   }
   
@@ -111,7 +114,7 @@ class LoginScreen extends Component {
   }
 
   dismissLoader(message){
-    Notice.alert("Erreur connexion", message)
+    setTimeout(()=>{Notice.alert("Erreur connexion", message)}, 1000)
     this.setState({loading: false})
   }
 
@@ -121,6 +124,14 @@ class LoginScreen extends Component {
 
   handlePass(text){
     GLOB.password = text
+  }
+
+  focusInput(){
+    this.setState({focusInput: true})
+  }
+
+  leaveFocusInput(){
+    this.setState({focusInput: false})
   }
 
   submitForm(){
@@ -140,17 +151,19 @@ class LoginScreen extends Component {
               navigation={GLOB.navigation}>
         <View style={styles.container}>   
           {this.state.loading && <ModalLoader dismiss={this.dismissLoader}/>}
-          <View style={{flex:1,flexDirection:'row',alignItems:'center'}}>
-            <XImage style={styles.logo} source={{uri:"charge"}} />
-          </View>
+          { this.state.focusInput == false && 
+            <View style={{flex:1,flexDirection:'row',alignItems:'center'}}>
+              <XImage style={styles.logo} source={{uri:"charge"}} />
+            </View>
+          }
           <View style={styles.form}>
             <View style={styles.boxInput}>
               <XImage style={styles.icons} source={{uri:"userpic"}} />
-              <XTextInput style={styles.inputs} placeholder="Identifiant(E-mail)" onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
+              <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} style={styles.inputs} placeholder="Identifiant(E-mail)" onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
             </View>
             <View style={styles.boxInput}>
               <XImage style={styles.icons} source={{uri:"cadenas"}} />
-              <XTextInput autoCorrect={false} secureTextEntry={true} style={styles.inputs} placeholder="Mot de passe" onChangeText={(text) => this.handlePass(text)}/>
+              <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} autoCorrect={false} secureTextEntry={true} style={styles.inputs} placeholder="Mot de passe" onChangeText={(text) => this.handlePass(text)}/>
             </View>
             <SimpleButton onPress={() => this.submitForm()} Pstyle={styles.submit} Tstyle={{fontSize:18}} title="Connexion" />
           </View>

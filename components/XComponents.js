@@ -116,6 +116,7 @@ export class XTextInput extends Component{
       prevStyle = {
         borderBottomWidth:1,
         borderColor:'#707070',
+        minHeight:30
       }
     }
 
