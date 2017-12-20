@@ -10,10 +10,13 @@ import {SimpleButton} from '../../components/buttons'
 import SelectInput from '../../components/select'
 import User from '../../models/User'
 import { EventRegister } from 'react-native-event-listeners'
-import Fetcher from '../../components/dataFetcher';
 import UploderFiles from '../../components/uploader'
 
-var GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: []}
+import Cfetcher from '../../components/dataFetcher'
+import request1 from "../../requests/file_uploader"
+
+let Fetcher = new Cfetcher(request1)
+let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: []}
 
 function loadData(){
   const auth_token = User.getMaster().auth_token

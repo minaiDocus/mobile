@@ -5,12 +5,15 @@ import {StyleSheet,Text,View,ScrollView,TouchableOpacity} from 'react-native'
 import {XImage, XTextInput} from '../../components/XComponents'
 import Navigator from '../../components/navigator'
 import SelectInput from '../../components/select'
-import Fetcher from '../../components/dataFetcher'
 import User from '../../models/User'
 import Pack from '../../models/Pack'
 import {LineList} from '../../components/lists'
 
-var GLOB = { navigation:{} }
+import Cfetcher from '../../components/dataFetcher'
+import request1 from "../../requests/data_loader"
+
+let Fetcher = new Cfetcher(request1)
+let GLOB = { navigation:{} }
 
 function packs(){ 
   try{memo_packs[0].updated_at}catch(e){memo_packs = null}

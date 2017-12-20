@@ -7,11 +7,14 @@ import Navigator from '../../components/navigator'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import {XImage, XTextInput} from '../../components/XComponents'
 import {LineList} from '../../components/lists'
-import Fetcher from '../../components/dataFetcher'
 import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
 import SelectInput from '../../components/select'
 
-var GLOB = {  navigation:{},
+import Cfetcher from '../../components/dataFetcher'
+import request1 from "../../requests/account_sharing"
+
+let Fetcher = new Cfetcher(request1)
+let GLOB = {  navigation:{},
               datas:[],
               dataFilter: {email:'', company:'', first_name: '', last_name:''},
               dataForm:{}

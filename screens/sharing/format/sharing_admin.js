@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
-import Config from '../../Config'
-import Screen from '../../components/screen'
+import Config from '../../../Config'
+import Screen from '../../../components/screen'
 import { EventRegister } from 'react-native-event-listeners'
-import AnimatedBox from '../../components/animatedBox'
+import AnimatedBox from '../../../components/animatedBox'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
-import {XImage, XTextInput} from '../../components/XComponents'
-import {LineList} from '../../components/lists'
-import Fetcher from '../../components/dataFetcher'
-import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
-import SelectInput from '../../components/select'
+import {XImage, XTextInput} from '../../../components/XComponents'
+import {LineList} from '../../../components/lists'
+import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../../components/buttons'
+import SelectInput from '../../../components/select'
 
-var GLOB = {  navigation:{},
+import Cfetcher from '../../../components/dataFetcher'
+import request1 from "../../../requests/account_sharing"
+
+let Fetcher = new Cfetcher(request1)
+let GLOB = {  navigation:{},
               datas:[],
               dataFilter: {account:'', collaborator:''},
               optionsAccount: [],

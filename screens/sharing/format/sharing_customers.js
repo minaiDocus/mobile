@@ -1,17 +1,20 @@
 import React, { Component } from 'react'
-import Config from '../../Config'
-import Screen from '../../components/screen'
+import Config from '../../../Config'
+import Screen from '../../../components/screen'
 import { EventRegister } from 'react-native-event-listeners'
-import AnimatedBox from '../../components/animatedBox'
+import AnimatedBox from '../../../components/animatedBox'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
-import {XImage, XTextInput} from '../../components/XComponents'
-import {LineList} from '../../components/lists'
-import Fetcher from '../../components/dataFetcher'
-import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
-import SelectInput from '../../components/select'
+import {XImage, XTextInput} from '../../../components/XComponents'
+import {LineList} from '../../../components/lists'
+import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../../components/buttons'
+import SelectInput from '../../../components/select'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-var GLOB = {
+import Cfetcher from '../../../components/dataFetcher'
+import request1 from "../../../requests/account_sharing"
+
+let Fetcher = new Cfetcher(request1)
+let GLOB = {
               navigation:{},
               dataForm: {email:'', company: '', first_name: '', last_name: ''}
             }
@@ -388,7 +391,7 @@ class TabNav extends Component{
           borderColor:'#DFE0DF',
           borderBottomWidth:1,
           marginTop:10,
-        }
+        },
         touchable:{
           flex:1,
         },

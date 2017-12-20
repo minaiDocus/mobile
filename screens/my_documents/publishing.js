@@ -7,13 +7,16 @@ import {XImage} from '../../components/XComponents'
 import { NavigationActions } from 'react-navigation'
 import Pdf from 'react-native-pdf'
 import {SimpleButton, ImageButton} from '../../components/buttons'
-import Fetcher from '../../components/dataFetcher'
 import {BoxList, LineList} from '../../components/lists'
 import Pack from '../../models/Pack'
 import User from '../../models/User'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-var GLOB = {Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", navigation:{}}
+import Cfetcher from '../../components/dataFetcher'
+import request1 from "../../requests/data_loader"
+
+let Fetcher = new Cfetcher(request1)
+let GLOB = {Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", navigation:{}}
 
 function pagesPublished(){}
 
@@ -101,7 +104,7 @@ class BoxZoom extends Component{
       }
     });
     
-    const src = Fetcher.render_document_uri(this.props.data.large, this.props.data.force_temp_doc)
+    const src = Fetcher.request.render_document_uri(this.props.data.large, this.props.data.force_temp_doc)
 
     return  <Modal transparent={false}
                    animationType="slide" 
@@ -265,7 +268,7 @@ class ImgBox extends Component{
     let local = true
     if(this.props.data.thumb)
     {
-      src = Fetcher.render_document_uri(this.props.data.thumb)
+      src = Fetcher.request.render_document_uri(this.props.data.thumb)
       local = false
     }
 

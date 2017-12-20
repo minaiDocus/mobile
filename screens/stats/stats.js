@@ -7,12 +7,16 @@ import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-nati
 import {XImage, XTextInput} from '../../components/XComponents'
 import Navigator from '../../components/navigator'
 import {LineList} from '../../components/lists'
-import Fetcher from '../../components/dataFetcher'
 import {SimpleButton, BoxButton, LinkButton, ImageButton} from '../../components/buttons'
 import SelectInput from '../../components/select'
 import DatePicker from '../../components/datePicker'
 
-var GLOB = {  navigation:{},
+
+import Cfetcher from '../../components/dataFetcher'
+import request1 from "../../requests/data_loader"
+
+let Fetcher = new Cfetcher(request1)
+let GLOB = {  navigation:{},
               datas:[],
               dataFilter: {updated_at_start:'', 
                           updated_at_end:'', 

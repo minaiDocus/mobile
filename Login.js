@@ -5,14 +5,18 @@ import { StyleSheet, Text, TextInput, View, ScrollView, Modal} from 'react-nativ
 import {XImage, XTextInput} from './components/XComponents'
 import Navigator from './components/navigator'
 import {SimpleButton} from './components/buttons'
-import Fetcher from './components/dataFetcher'
 import SplashScreen from 'react-native-splash-screen'
 import User from './models/User'
 
-var GLOB = {navigation: {}, login: '', password: ''}
+import Cfetcher from './components/dataFetcher'
+import request1 from "./requests/remote_authentication"
+import request2 from "./requests/data_loader"
+
+let Fetcher = new Cfetcher()
+let GLOB = {navigation: {}, login: '', password: ''}
 
 function goToHome(){
-  Fetcher.wait_for(
+  Fetcher.setRequest(request2).wait_for(
     ['refreshCustomers()', 'refreshPacks()'],
     (responses)=>{
       
@@ -36,7 +40,7 @@ class ModalLoader extends Component{
       // GLOB.login = "luc@idocus.com"
       // GLOB.password = "1234567"
       const params = { user_login: {login: GLOB.login, password: GLOB.password} }
-      Fetcher.remoteAUTH(params, (type, message) => {
+      Fetcher.setRequest(request1).request.remoteAUTH(params, (type, message) => {
         if(type=='error'){this.props.dismiss(message)}
         if(type=='success'){goToHome()}
       })
@@ -90,7 +94,7 @@ class LoginScreen extends Component {
       setTimeout(()=>Notice.info(`A bientot !!`), 1000)
     }
     
-    Fetcher.wait_for(
+    Fetcher.setRequest(request1).wait_for(
       ['ping_server()'],
       (responses)=>{
         if(responses[0] != "Ping success!")
