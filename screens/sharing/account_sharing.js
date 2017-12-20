@@ -40,7 +40,6 @@ class SharingScreen extends Component {
 
   constructor(props){
     super(props)
-    console.error("To dismiss")
     GLOB.navigation = new Navigator(this.props.navigation)
     this.current_user = User.getMaster()
   }
