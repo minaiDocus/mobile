@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
-import Config from './Config'
-import Screen from './components/screen'
-import Navigator from './components/navigator';
+import Config from '../../Config'
+import Screen from '../../components/screen'
+import Navigator from '../../components/navigator';
 import {StyleSheet,Text,View,ScrollView,ListView,TouchableOpacity,Picker} from 'react-native'
-import {XImage} from './components/XComponents'
+import {XImage} from '../../components/XComponents'
 import { NavigationActions } from 'react-navigation'
 import * as Progress from 'react-native-progress';
-import {SimpleButton} from './components/buttons'
-import SelectInput from './components/select'
-import User from './models/User'
+import {SimpleButton} from '../../components/buttons'
+import SelectInput from '../../components/select'
+import User from '../../models/User'
 import { EventRegister } from 'react-native-event-listeners'
-import Fetcher from './components/dataFetcher';
-import UploderFiles from './components/uploader'
+import Fetcher from '../../components/dataFetcher';
+import UploderFiles from '../../components/uploader'
 
 var GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: []}
 

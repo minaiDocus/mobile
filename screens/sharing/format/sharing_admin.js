@@ -1,22 +1,20 @@
 import React, { Component } from 'react'
-import Config from './Config'
-import Screen from './components/screen'
+import Config from '../../Config'
+import Screen from '../../components/screen'
 import { EventRegister } from 'react-native-event-listeners'
-import AnimatedBox from './components/animatedBox'
+import AnimatedBox from '../../components/animatedBox'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
-import {XImage, XTextInput} from './components/XComponents'
-import Navigator from './components/navigator'
-import {LineList} from './components/lists'
-import Fetcher from './components/dataFetcher'
-import {SimpleButton, BoxButton, ImageButton, LinkButton} from './components/buttons'
-import SelectInput from './components/select'
+import {XImage, XTextInput} from '../../components/XComponents'
+import {LineList} from '../../components/lists'
+import Fetcher from '../../components/dataFetcher'
+import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
+import SelectInput from '../../components/select'
 
 var GLOB = {  navigation:{},
               datas:[],
               dataFilter: {account:'', collaborator:''},
               optionsAccount: [],
-              optionsCollaborator: [],
-              types: [{value:"", label:"---"},{value:"kit", label:"Kit"},{value:"receipt", label:"Réception"},{value:"scan", label:"Numérisation"},{value:"return", label:"Retour"}],
+              optionsCollaborator: []
             }
 
 class Inputs extends Component{
@@ -164,11 +162,11 @@ class Header extends Component{
   constructor(props){
     super(props)
 
-    this.state = {
+    this.state =  {
                     filter: false, 
                     collaborator: 0, 
                     account: 0
-                }
+                  }
 
     this.closeFilter = this.closeFilter.bind(this)
   }
@@ -222,8 +220,16 @@ class Header extends Component{
     }
   }
 
+  openModalSharing(type){
+    this.setState({openModal: true, typeModal: type})
+  }
+
+  closeModalSharing(){
+    this.setState({openModal: false})
+  }
+
   render(){
-  const headStyle = StyleSheet.create({
+    const headStyle = StyleSheet.create({
     container:{
       flex:0,
       flexDirection:'row',
@@ -258,7 +264,8 @@ class Header extends Component{
       alignItems:'center',
       justifyContent:'center'
     }
-  });
+  })
+
   return  <View style={headStyle.container}>
             <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
             <View style={headStyle.left}>
@@ -277,12 +284,12 @@ class Header extends Component{
                               onChange={(value) => this.handleClientChange(value, "account")}
                 />
                 <SimpleButton Pstyle={{flex:0, height:30, width:100, margin:10}} onPress={()=>this.addSharedDoc()} title="Partager" />
-              </View>
+            </View>
             </View>
             <View style={headStyle.right}> 
               <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
             </View>
-          </View>
+          </View> 
   }
 }
 
@@ -291,6 +298,8 @@ class BoxStat extends Component{
     super(props)
 
     this.state = {showDetails: false}
+
+    this.toggleDetails = this.toggleDetails.bind(this)
     this.handleDelete = this.handleDelete.bind(this)
     this.handleValidate = this.handleValidate.bind(this)
   }
@@ -343,13 +352,16 @@ class BoxStat extends Component{
   }
 
   handleValidate(id_doc){
-    Notice.alert( 'Validation de partage', 
-                  'Êtes-vous sûr de vouloir accepter le partage du dossier',
-                  [
-                    {text: 'Non', onPress: () =>{}},
-                    {text: 'Oui', onPress: () =>{this.acceptSharedDoc(id_doc)}},
-                  ],
-                )
+    if(!this.props.data.approval)
+    {
+      Notice.alert( 'Validation de partage', 
+                    'Êtes-vous sûr de vouloir accepter le partage du dossier',
+                    [
+                      {text: 'Non', onPress: () =>{}},
+                      {text: 'Oui', onPress: () =>{this.acceptSharedDoc(id_doc)}},
+                    ],
+                  )
+    }
   }
 
   render(){
@@ -384,21 +396,18 @@ class BoxStat extends Component{
     })
     const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"
 
-    let state = 'En attente de validation'
-    let ico_action = 'validate'
-    let action = this.handleValidate
-    if(this.props.data.approval == true)
-    {
-      action = this.handleDelete
-      ico_action = 'delete'
-      state = 'Partagé'
-    }  
+    const styleApproved = {
+                            opacity: this.props.data.approval? 0.3 : 1
+                          }
+
+    const state = this.props.data.approval? 'Partagé' : 'En attente de validation'
 
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={boxStyle.container}>
                 <XImage source={{uri:arrow}} style={[{marginRight:8}, boxStyle.image]} />
-                <Text style={{fontWeight:'bold', width:220}}>{this.props.data.document.toString()}</Text>
-                <ImageButton source={{uri:ico_action}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>action(this.props.data.id_idocus)}/>
+                <Text style={{fontWeight:'bold', width:'70%'}}>{this.props.data.document.toString()}</Text>
+                <ImageButton source={{uri:'validate'}} Pstyle={{padding:8}} Istyle={[boxStyle.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
+                <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
               </View>
               {
                   this.state.showDetails == true && 
@@ -478,17 +487,9 @@ class OrderBox extends Component{
 }
 
 class SharingScreen extends Component {
-  static navigationOptions = {
-       headerTitle: 'Partage dossier',
-       headerRight: <ImageButton  source={{uri:"options"}} 
-                                  Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
-                                  Istyle={{width:7, height:36}}
-                                  onPress={()=>EventRegister.emit('clickOrderBox', true)} />
-  }
-
   constructor(props){
     super(props);
-    GLOB.navigation = new Navigator(this.props.navigation)
+    GLOB.navigation = this.props.navigation
 
     this.dontRefreshForm = false
     this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
@@ -578,7 +579,8 @@ class SharingScreen extends Component {
                     </TouchableOpacity>
                   </View>
                 }
-                <LineList datas={this.state.dataList} 
+                <LineList datas={this.state.dataList}
+                          title={`Dossiers partagés (${this.state.dataList.length})`}
                           renderItems={(data) => <BoxStat data={data} deleteSharedDoc={this.deleteSharedDoc}/> } />
              </ScrollView>
   }
@@ -589,8 +591,9 @@ class SharingScreen extends Component {
                   navigation={GLOB.navigation}>
             <Header onFilter={()=>this.refreshDatas()}/>
               {this.state.ready && this.renderStats()}
-              {!this.state.ready && <XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} />}
-              <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
+              {!this.state.ready && <View style={{flex:1}}><XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} /></View>}
+            <SimpleButton title='Contacts >>' Pstyle={{flex:0, maxHeight:30}} onPress={()=>GLOB.navigation.goTo("SharingContacts")} />
+            <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>
       );
     }

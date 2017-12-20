@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
-import Config from './Config'
-import Screen from './components/screen'
+import Config from '../../Config'
+import Screen from '../../components/screen'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity} from 'react-native'
-import {XImage, XTextInput} from './components/XComponents'
-import Navigator from './components/navigator'
-import SelectInput from './components/select'
-import Fetcher from './components/dataFetcher'
-import User from './models/User'
-import Pack from './models/Pack'
-import {LineList} from './components/lists'
+import {XImage, XTextInput} from '../../components/XComponents'
+import Navigator from '../../components/navigator'
+import SelectInput from '../../components/select'
+import Fetcher from '../../components/dataFetcher'
+import User from '../../models/User'
+import Pack from '../../models/Pack'
+import {LineList} from '../../components/lists'
 
 var GLOB = { navigation:{} }
 

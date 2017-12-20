@@ -28,6 +28,10 @@ function require_images(name){
     validate:require('../images/validate.png'),
     userpic:require('../images/userpic.png'),
     cadenas:require('../images/cadenas.png'),
+    add_contact:require('../images/add_contact.png'),
+    edition:require('../images/edition.png'),
+    sharing_account:require('../images/sharing_account.png'),
+    request_access:require('../images/request_access.png'),
     default: require("../images/loader.gif"),
   }
   const loaded_img = eval('images.'+name) || images.default
