@@ -12,7 +12,11 @@ import Swiper from '../../components/swiper'
 import {BoxList} from '../../components/lists'
 import {ProgressUpload} from '../../components/uploader'
 
-var GLOB = {images:[], imgToDel:"", idZoom:"", navigation:{}}
+import Cfetcher from '../../components/dataFetcher'
+import request1 from "../../requests/data_loader"
+
+let Fetcher = new Cfetcher(request1)
+let GLOB = {images:[], imgToDel:"", idZoom:"", navigation:{}}
 
 class BoxZoom extends Component{
   constructor(props){
@@ -233,6 +237,14 @@ class SendScreen extends Component {
     {
       Notice.info("Un transfert est en cours, Veuillez patienter avant de lancer un autre!!")
     }
+  }
+
+  componentWillMount(){
+    Fetcher.wait_for(
+      ['refreshCustomers()'],
+      (responses)=>{
+        responses.map(r=>{if(r!=true)Notice.info(r)})
+    })
   }
   
   openCamera(){
