@@ -49,6 +49,3 @@ const StackApp = StackNavigator({
                           },{initialRouteName: 'Login'})
 
 export default StackApp
-
-//version: 1.2,
-//platform: "ios",
