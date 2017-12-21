@@ -12,7 +12,7 @@ import User from './models/User'
 import Pack from './models/Pack'
 import {ProgressUpload} from './components/uploader'
 
-var GLOB = { navigation:{} }
+let GLOB = { navigation:{} }
 
 function docs_processed(){ 
   try{memo_processed[0].updated_at}catch(e){memo_processed = null}

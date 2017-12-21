@@ -28,6 +28,7 @@ const UserSchema = {
                         first_name: 'string',
                         code: 'string',
                         email: 'string',
+                        is_admin: 'bool',
                         company: 'string',
                         is_prescriber: 'bool',
                         organization_id: 'int',
@@ -38,7 +39,7 @@ const UserSchema = {
 
 
 class RealmData {
-  static realm = new Realm({schema:[PackSchema, UserSchema], encryptionKey: Config.keydb})
+  static realm = new Realm({path: 'datas00.realm', schema:[PackSchema, UserSchema], encryptionKey: Config.keydb})
 
   constructor(objectName){
     this.objectName = objectName 

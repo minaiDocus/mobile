@@ -153,7 +153,7 @@ class DocumentsScreen extends Component {
 
   componentDidMount(){
     Fetcher.wait_for(
-      ['refreshCustomers()', 'refreshPacks()'],
+      ['refreshPacks()'],
       (responses)=>{
         responses.map(r=>{if(r!=true)Notice.danger(r)})
         this.setState({ready: true, dataList: packs()})

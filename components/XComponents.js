@@ -64,7 +64,7 @@ export class XImage extends Component{
 
   render(){
     this.renderImage()
-    const loader_img = require('../images/loader.gif')
+    let loader_img = require('../images/loader.gif')
     if(this.props.loader == true)
     {
       const width = this.props.width || 60
@@ -75,6 +75,7 @@ export class XImage extends Component{
     }
     else
     {
+      loader = require('../images/img_loader.gif')
       if(this.props.children || (typeof(this.props.type)!=='undefined' && this.props.type == 'container'))
       {
         const absolute = {
@@ -91,7 +92,7 @@ export class XImage extends Component{
                     style={this.img_style} 
                     resizeMode={this.props.resizeMode||'contain'}
                     onLoadEnd={this.props.onLoadEnd}
-                    loadingIndicatorSource={loader_img}
+                    loadingIndicatorSource={loader}
                     />
                   <View style={absolute}>
                     {this.props.children}
@@ -105,7 +106,7 @@ export class XImage extends Component{
                     style={this.img_style} 
                     resizeMode={this.props.resizeMode||'contain'}
                     onLoadEnd={this.props.onLoadEnd}
-                    loadingIndicatorSource={loader_img}
+                    loadingIndicatorSource={loader}
                 />
       }
     }

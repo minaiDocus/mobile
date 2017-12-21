@@ -9,6 +9,7 @@ import {XImage, XTextInput} from '../../components/XComponents'
 import {LineList} from '../../components/lists'
 import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
 import SelectInput from '../../components/select'
+import User from '../../models/User'
 
 import Cfetcher from '../../components/dataFetcher'
 import request1 from "../../requests/account_sharing"
@@ -114,8 +115,8 @@ class ModalForm extends Component{
                 id_idocus: this.props.data.id_idocus,
                 email:this.props.data.email, 
                 company: this.props.data.company, 
-                first_name: this.props.data.name.split(' ')[0], 
-                last_name: this.props.data.name.split(' ')[1]
+                first_name: this.props.data.first_name, 
+                last_name: this.props.data.last_name
               }
     }
 
@@ -447,7 +448,7 @@ class BoxStat extends Component{
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Email : </Text>{this.props.data.email}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Société : </Text>{this.props.data.company}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Nom : </Text>{this.props.data.name}</Text>
+                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Nom : </Text>{User.fullName_of(this.props.data)}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Nb. de dossiers : </Text>{this.props.data.account_size}</Text>
                     </View>
               }

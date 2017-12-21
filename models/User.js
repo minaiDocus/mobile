@@ -24,6 +24,7 @@ class User extends RealmData{
                       last_name: params.last_name,
                       code: params.code, 
                       email: params.email,
+                      is_admin: params.is_admin,
                       is_prescriber: params.is_prescriber,
                       organization_id: params.organization_id,
                       company: params.company,

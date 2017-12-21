@@ -46,7 +46,8 @@ class Message extends React.Component{
                   alignItems:'center',
                   borderBottomWidth:1,
                   borderColor:'#AFAFAF',
-                  padding:5
+                  padding:5,
+                  elevation: 10 //for fixing bug position on Android
                 },
     text:{
            flex:1,

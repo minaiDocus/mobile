@@ -6,10 +6,11 @@ import AnimatedBox from './animatedBox'
 import LinearGradient from 'react-native-linear-gradient'
 import { NavigationActions } from 'react-navigation'
 import {SimpleButton, LinkButton, ImageButton} from './buttons'
-import Fetcher from './dataFetcher'
 import User from '../models/User'
+import Cfetcher from './dataFetcher'
 
-var GLOB = {navigation: {}};
+let Fetcher = new Cfetcher()
+let GLOB = {navigation: {}}
 
 class Header extends Component{
   constructor(props){

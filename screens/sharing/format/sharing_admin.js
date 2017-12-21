@@ -266,13 +266,27 @@ class Header extends Component{
       flexDirection:'row',
       alignItems:'center',
       justifyContent:'center'
+    },
+    form:{
+      flex:1,
+      backgroundColor:'#FFF',
+      paddingHorizontal:8,
+
+      elevation: 7, //Android Shadow
+      
+      shadowColor: '#000',                  //===
+      shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+      shadowOpacity: 0.8,                   //===
+      shadowRadius: 2,                      //===
+
+      alignItems:'center'
     }
   })
 
   return  <View style={headStyle.container}>
             <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
             <View style={headStyle.left}>
-              <View style={{flex:1, alignItems:'center'}}>
+              <View style={headStyle.form}>
                 <SelectInput  filterSearch={true} 
                               dataOptions={GLOB.optionsCollaborator}
                               textInfo="Contact ou Client" 

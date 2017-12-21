@@ -17,13 +17,10 @@ let GLOB = {navigation: {}, login: '', password: ''}
 
 function goToHome(){
   Fetcher.setRequest(request2).wait_for(
-    ['refreshCustomers()', 'refreshPacks()'],
+    ['refreshCustomers()','refreshPacks()'],
     (responses)=>{
-      
       responses.map(r=>{if(r!=true)Notice.info(r)})
-
       SplashScreen.hide()
-      
       GLOB.navigation.dismissTo('Home', {welcome: true})
   })
 }
@@ -183,7 +180,14 @@ const styles = StyleSheet.create({
     flexDirection:'column',
     paddingHorizontal:20,
     marginHorizontal:20,
-    backgroundColor:'#FFF'
+    backgroundColor:'#FFF',
+
+    elevation: 7, //Android Shadow
+      
+    shadowColor: '#000',                  //===
+    shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+    shadowOpacity: 0.8,                   //===
+    shadowRadius: 2,                      //===
   },
   logo: {
     flex:1,

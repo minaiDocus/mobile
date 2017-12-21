@@ -7,8 +7,11 @@ import User from '../../models/User'
 import SharingAdmin from './format/sharing_admin'
 import SharingCustomers from './format/sharing_customers'
 
+import Cfetcher from '../../components/dataFetcher'
+import request1 from "../../requests/data_loader"
 
-var GLOB = { navigation:{} }
+let Fetcher = new Cfetcher()
+let GLOB = { navigation:{} }
 
 class HeaderOptions extends Component{
   constructor(props){
@@ -17,7 +20,7 @@ class HeaderOptions extends Component{
   }
 
   render() {
-    if(this.current_user.is_prescriber)
+    if(this.current_user.is_prescriber || this.current_user.is_admin)
     {
       return <ImageButton  source={{uri:"options"}} 
                           Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
@@ -44,8 +47,16 @@ class SharingScreen extends Component {
     this.current_user = User.getMaster()
   }
 
+  componentWillUnmount(){
+    Fetcher.setRequest(request1).wait_for(
+      ['refreshCustomers()'],
+      (responses)=>{
+        responses.map(r=>{if(r!=true)Notice.info(r)})
+    })
+  }
+
   render() {
-    if(this.current_user.is_prescriber)
+    if(this.current_user.is_prescriber || this.current_user.is_admin)
     {
       return <SharingAdmin navigation={GLOB.navigation}/>
     }

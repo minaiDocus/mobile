@@ -448,8 +448,7 @@ class SharingScreen extends Component {
     this.data_shared = []
     this.contacts = []
     this.access = []
-
-    this.renderStats = this.renderStats.bind(this)
+    
     this.refreshDatas = this.refreshDatas.bind(this)
   }
 
@@ -492,7 +491,7 @@ class SharingScreen extends Component {
           <Screen style={styles.container}
                   navigation={GLOB.navigation}>
             <Header />
-            {this.state.ready && <TabNav datas_shared={this.data_shared} contacts={this.contacts} access={this.access}/>}
+            {this.state.ready && <TabNav datas_shared={this.datas_shared} contacts={this.contacts} access={this.access}/>}
             {!this.state.ready && <XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} />}
           </Screen>
       )
