@@ -31,10 +31,10 @@ class Fetcher{
       var parse = item.split(":")
       var key = parse[0]
       var value = parse[1]
-      var type = "string"
+      var type = "string?"
 
-      if(value == "true" || value == "false" ){type = "bool"}
-      if(/^[0-9]+$/.test(value)){type = "int"} 
+      // if(value == "true" || value == "false" ){type = "bool"}
+      // if(/^[0-9]+$/.test(value)){type = "int"} 
 
       if(key!='id'){object += `"${key}":"${type}", ` }
     })

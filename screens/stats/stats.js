@@ -18,15 +18,21 @@ import request1 from "../../requests/data_loader"
 let Fetcher = new Cfetcher(request1)
 let GLOB = {  navigation:{},
               datas:[],
-              dataFilter: {updated_at_start:'', 
-                          updated_at_end:'', 
-                          type:1,
-                          customer_code:'',
-                          customer_company:'',
-                          tracking_number:'',
-                          pack_name:''},
+              dataFilter: { created_at_start:'', 
+                            created_at_end:'', 
+                            type:'',
+                            customer_code:'',
+                            customer_company:'',
+                            tracking_number:'',
+                            pack_name:''},
               types: [{value:"", label:"---"},{value:"kit", label:"Kit"},{value:"receipt", label:"Réception"},{value:"scan", label:"Numérisation"},{value:"return", label:"Retour"}],
             }
+
+function getType(value=""){
+  let response = "---"
+  GLOB.types.map(i => { if(i.value==value){response = i.label} })
+  return response
+}
 
 class Inputs extends Component{
   constructor(props){
@@ -83,9 +89,9 @@ class BoxFilter extends Component{
   filterProcess(type){
     if(type=="reInit")
     {
-      GLOB.dataFilter = { updated_at_start:'', 
-                          updated_at_end:'', 
-                          type:1,
+      GLOB.dataFilter = { created_at_start:'', 
+                          created_at_end:'', 
+                          type:'',
                           customer_code:'',
                           customer_company:'',
                           tracking_number:'',
@@ -161,8 +167,8 @@ class BoxFilter extends Component{
                     <Text style={{flex:1, textAlign:'center',fontSize:24}}>Filtres</Text>
                   </View>
                   <ScrollView style={boxFilter.body}>
-                    <Inputs label='Date de début :' name={'updated_at_start'} type='date'/>
-                    <Inputs label='Date de fin :' name={'updated_at_end'} type='date' />
+                    <Inputs label='Date de début :' name={'created_at_start'} type='date'/>
+                    <Inputs label='Date de fin :' name={'created_at_end'} type='date' />
                     <Inputs label='Type :' name={'type'} type='select' dataOptions={GLOB.types}  />
                     <Inputs label='Code client :' name={'customer_code'}/>
                     <Inputs label='Nom de la société :' name={'customer_company'}/>
@@ -295,7 +301,7 @@ class BoxStat extends Component{
                   this.state.showDetails == true && 
                     <View style={boxStyle.infos}>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Type : </Text>{this.props.data.type}</Text>
+                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Type : </Text>{getType(this.props.data.type)}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Société : </Text>{this.props.data.company}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>N°de suivi: </Text>{this.props.data.number}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Nom du lot: </Text>{this.props.data.packname}</Text>
@@ -444,7 +450,7 @@ class StatsScreen extends Component {
           GLOB.datas = Fetcher.create_temp_realm(responses[0].data_stats, "temp_states")
         }
 
-        this.setState({ready: true, dataList: GLOB.datas})
+        this.setState({ready: true, dataList: GLOB.datas, orderText: null})
       })
   }
 
@@ -453,7 +459,7 @@ class StatsScreen extends Component {
       const arrow_direction = this.state.direction? 'V' : 'Λ'
 
      return  <ScrollView style={{flex:1, padding:3}}>
-                {this.state.orderText && 
+                {this.state.orderText && this.state.dataList.length > 0 && 
                   <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
                     <Text style={{flex:0}}>Trie par: <Text style={{fontWeight:'bold'}}>{this.state.orderText}</Text></Text>
                     <TouchableOpacity style={{flex:0,width:30,alignItems:'center'}} onPress={()=>this.changeDirectionSort()}>

@@ -32,6 +32,7 @@ function require_images(name){
     edition:require('../images/edition.png'),
     sharing_account:require('../images/sharing_account.png'),
     request_access:require('../images/request_access.png'),
+    infos:require('../images/infos.png'),
     default: require("../images/loader.gif"),
   }
   const loaded_img = eval('images.'+name) || images.default

@@ -47,14 +47,6 @@ class SharingScreen extends Component {
     this.current_user = User.getMaster()
   }
 
-  componentWillUnmount(){
-    Fetcher.setRequest(request1).wait_for(
-      ['refreshCustomers()'],
-      (responses)=>{
-        responses.map(r=>{if(r!=true)Notice.info(r)})
-    })
-  }
-
   render() {
     if(this.current_user.is_prescriber || this.current_user.is_admin)
     {

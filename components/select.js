@@ -9,44 +9,76 @@ class ModalSelect extends Component{
   constructor(props){
     super(props)
 
-    this.state = {datas: this.props.datas, selectedItem: this.props.selectedItem}
+    this.state = {loading: false, textFilter: "", datas: this.props.datas, selectedItem: this.props.selectedItem}
+
+    this.filterType = 'simple'
+    this.filterLocked = false
+    this.filterCount = 0
+    this.filterClock = null
 
     this.changeItem = this.changeItem.bind(this)
     this.renderContent = this.renderContent.bind(this)
     this.renderSearch = this.renderSearch.bind(this)
     this.handleFilterChange = this.handleFilterChange.bind(this)
+    this.filterLock = this.filterLock.bind(this)
   }
 
-  async handleFilterChange(value){
-    if(this.props.onFilter != null)
+  componentWillReceiveProps(nextProps){
+    if(nextProps.datas != this.state.datas)
     {
-      this.props.onFilter(value)
+      if(this.filterType == 'advance'){
+        this.setState({datas: nextProps.datas, loading: false})
+      }
+    }
+  }
+
+  filterLock()
+  {
+    this.filterCount--
+    if(this.filterCount <= 0)
+    {
+      this.filterLocked = false
+      this.props.filterCallback(this.state.textFilter)
+      setTimeout(()=>{this.setState({loading: false})}, 4000)
+      clearTimeout(this.filterClock)
     }
     else
     {
-      if(value.length >= 3)
+      this.filterClock = setTimeout(this.filterLock, 1000)
+    }
+  }
+
+  async handleFilterChange(value){
+    if(this.props.filterCallback != null)
+    {
+      this.filterType = 'advance'
+      await this.setState({textFilter: value, loading: true})
+      this.filterCount = 2
+      if(!this.filterLocked)
       {
-        const regEx = new RegExp(value, 'i')
-        let filterDatas = this.props.datas.map((dt)=>{
-          if(regEx.test(dt.label.toString()))
-          {
-            return dt
-          }
-        })
-        filterDatas = arrayCompact(filterDatas)
-        await this.setState({datas: filterDatas})
+        this.filterLocked = true
+        this.filterLock()
       }
-      else
-      {
-        await this.setState({datas: this.props.datas})
-      }
+    }
+    else
+    {
+      this.filterType = 'simple'
+      const regEx = new RegExp(value, 'i')
+      let filterDatas = this.props.datas.map((dt)=>{
+        if(regEx.test(dt.label.toString()))
+        {
+          return dt
+        }
+      })
+      filterDatas = arrayCompact(filterDatas)
+      await this.setState({datas: filterDatas})
     }
   }
 
   changeItem(itemValue){
     this.setState({selectedItem: itemValue})
     let valueText = ''
-    this.props.datas.map((val, key)=>{
+    this.state.datas.map((val, key)=>{
       if(val.value == itemValue){valueText=val.label}
     })
     this.props.changeItem(itemValue, valueText)
@@ -60,9 +92,10 @@ class ModalSelect extends Component{
       paddingLeft:11,
       color:'#707070',
     }
+    const icon = this.state.loading? 'loader' : 'zoom_x'
     return <View style={{flex:1, flexDirection:'row', maxWidth:200}}>
               <XTextInput style={style} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleFilterChange(value)}/>
-              <XImage source={{uri:"zoom_x"}} style={{flex:0, marginTop:5, width:25, height:25}} />
+              <XImage source={{uri:icon}} style={{flex:0, marginTop:5, width:25, height:25}} />
             </View>
   }
 
@@ -195,7 +228,8 @@ class SelectInput extends Component{
                     valueText:"", 
                     openModal: false,
                     ready: false,
-                    cssAnim: 0
+                    cssAnim: 0,
+                    dataOptions: this.props.dataOptions || []
                   }
     this.layoutWidth = 0
 
@@ -208,7 +242,7 @@ class SelectInput extends Component{
   }
 
   componentDidMount(){
-    this.initValue(this.props.dataOptions, this.props.selectedItem)
+    this.initValue(this.state.dataOptions, this.props.selectedItem)
     this.cssAnim = 0
     this.animateText()
   }
@@ -273,20 +307,22 @@ class SelectInput extends Component{
   }
 
   initValue(datas, value=""){
+    let options = this.clearOptions(datas)
     let initValue = value || ""
     let textValue = ''
-    if(datas.length > 0)
+    if(options.length > 0)
     {
-      if(initValue=="" && datas[0].value != "")
+      if(initValue=="" && options[0].value != "")
       {
-        initValue = datas[0].value
+        initValue = options[0].value
       }
 
-      datas.map((val, key)=>{
+      options.map((val, key)=>{
         if(val.value == initValue || val.value == ""){textValue=val.label}  
       })
     }
-    this.setState({selectedItem: initValue, valueText: textValue})
+    
+    this.setState({selectedItem: initValue, valueText: textValue, dataOptions: options})
   }
 
   changeItem(itemValue, valueText=""){
@@ -305,6 +341,26 @@ class SelectInput extends Component{
     this.setState({openModal: false})
   }
 
+  clearOptions(options){
+    if(options.length > 1)
+    {
+      let arrReturn = []
+      options.forEach((elem)=>{
+        try{
+          if(typeof(elem.value) != 'undefined' && typeof(elem.label) != 'undefined')
+          {
+            arrReturn.push(elem)
+          }
+        }catch(e){}
+      })
+      return arrReturn
+    } 
+    else
+    {
+      return options
+    }
+  }
+
   render(){
     const styles = {
       flex:1,
@@ -321,17 +377,13 @@ class SelectInput extends Component{
       overflow:'hidden' //For iOS overflow content
     }
 
-    let datas = []
-    if(this.props.dataOptions)
-      datas = this.props.dataOptions
-
-
     const stylePlus = this.props.style || {}
     const PStyle = this.props.Pstyle || {}
 
     return  <View style={[styles].concat(PStyle)}>
-              {this.state.openModal && <ModalSelect datas={datas}
+              {this.state.openModal && <ModalSelect datas={this.state.dataOptions || []}
                                                     filterSearch={this.props.filterSearch || false} 
+                                                    filterCallback={this.props.filterCallback || null}
                                                     selectedItem={this.state.selectedItem}
                                                     textInfo={this.props.textInfo || null} 
                                                     changeItem={this.changeItem}

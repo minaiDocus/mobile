@@ -96,10 +96,29 @@ export default class account_sharing extends Requester{
     }
   }
 
-  async get_list_collaborators(){
+  async getListCollaborators(text=""){
     this.synchronious_response = ""
 
-    this.requestURI("api/mobile/account_sharing/get_list_collaborators", {method: 'POST'}, (r) => {
+    this.requestURI("api/mobile/account_sharing/get_list_collaborators", {method: 'POST', params:{q: text}}, (r) => {
+      if(r.error){ 
+        //handling errors
+       this.synchronious_response = r
+      }
+      else
+      {
+        this.synchronious_response = r
+      }
+    })
+    while(this.synchronious_response == "")
+    {
+      await this.sleep(300)
+    }
+  }
+
+  async getListCustomers(text=""){
+    this.synchronious_response = ""
+
+    this.requestURI("api/mobile/account_sharing/get_list_customers", {method: 'POST', params:{q: text}}, (r) => {
       if(r.error){ 
         //handling errors
        this.synchronious_response = r

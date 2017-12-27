@@ -6,12 +6,14 @@ class User extends RealmData{
   }
 
   fullName_of(usr){
-    return `${usr.first_name} ${usr.last_name}`
+    return [usr.first_name, usr.last_name].join(" ").trim()
   }
 
   create_Selection(users){
     return users.map((usr) => { 
-              return {value:usr.id_idocus, label:`${usr.code} - ${usr.company}`} 
+              let label = [usr.code, usr.company, this.fullName_of(usr)].join(" - ").trim()
+              label = label.replace(/^(- )+|( -)+$/g, '');
+              return {value:usr.id_idocus, label:`${label}`} 
             })
   }
 

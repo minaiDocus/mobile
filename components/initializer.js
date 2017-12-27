@@ -49,27 +49,34 @@ global.handlingHttpErrors = (request) => {
 
 global.format_date = (_date, format = "DD-MM-YYYY HH:ii") => {
   let dateFormat = format
-  let date = new Date(_date)
+  if(_date != null && typeof(_date) !== 'undefined')
+  {
+    let date = new Date(_date)
 
-  dateFormat = dateFormat.replace("DD", fill_with_zero(date.getDate()))   //Get the day as a number (1-31)
+    dateFormat = dateFormat.replace("DD", fill_with_zero(date.getDate()))   //Get the day as a number (1-31)
 
-  const dayWeek = date.getDay()  //Get the weekday as a number (0-6)
+    const dayWeek = date.getDay()  //Get the weekday as a number (0-6)
 
-  dateFormat = dateFormat.replace("YYYY", date.getFullYear())   //Get the four digit year (yyyy)
+    dateFormat = dateFormat.replace("YYYY", date.getFullYear())   //Get the four digit year (yyyy)
 
-  dateFormat = dateFormat.replace("HH", fill_with_zero(date.getHours()))  //Get the hour (0-23)
+    dateFormat = dateFormat.replace("HH", fill_with_zero(date.getHours()))  //Get the hour (0-23)
 
-  const millisec = date.getMilliseconds()  //Get the milliseconds (0-999)
+    const millisec = date.getMilliseconds()  //Get the milliseconds (0-999)
 
-  dateFormat = dateFormat.replace("ii", fill_with_zero(date.getMinutes()))  //Get the minutes (0-59)
+    dateFormat = dateFormat.replace("ii", fill_with_zero(date.getMinutes()))  //Get the minutes (0-59)
 
-  dateFormat = dateFormat.replace("MM", fill_with_zero(date.getMonth()))  //Get the month (0-11)
+    dateFormat = dateFormat.replace("MM", fill_with_zero(date.getMonth() + 1))  //Get the month (0-11)
 
-  dateFormat = dateFormat.replace("ss", fill_with_zero(date.getSeconds()))  //Get the seconds (0-59)
+    dateFormat = dateFormat.replace("ss", fill_with_zero(date.getSeconds()))  //Get the seconds (0-59)
 
-  const time = date.getTime()  //Get the time (milliseconds since January 1, 1970)
+    const time = date.getTime()  //Get the time (milliseconds since January 1, 1970)
 
-  return dateFormat.toString()
+    return dateFormat.toString()
+  }
+  else
+  {
+    return "-"
+  }
 }
 
 global.arrayCompact = (arr) => {

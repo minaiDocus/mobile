@@ -16,27 +16,48 @@ let Fetcher = new Cfetcher(request1)
 let GLOB = { navigation:{} }
 
 function packs(){ 
-  try{memo_packs[0].updated_at}catch(e){memo_packs = null}
-  return memo_packs || Pack.find("type='pack'").sorted("updated_at", true) 
+  try{memo_packs[0].id_idocus}catch(e){memo_packs = null}
+  return memo_packs || Pack.find("type='pack'").sorted("created_at", true) 
 }
-var memo_packs = packs()
+let memo_packs = packs()
 
 
 class Header extends Component{
   constructor(props){
     super(props)
-    this.state = {client: 0, name: "", ready: false}
+    this.state = {client: 0, search: "", ready: false, loading: false}
+
+    this.filterLocked = false
+    this.filterCount = 0
+    this.filterClock = null
 
     this.renderCustomerSelection = this.renderCustomerSelection.bind(this)
+    this.filterLock = this.filterLock.bind(this)
   }
 
   componentDidMount(){
     const call = ()=>{
-      users = User.getCustomers().sorted("company")
+      users = User.getCustomers().sorted("code")
       this.clients = [{value:0, label:"Tous"}].concat(User.create_Selection(users))
       this.setState({ready: true})
     }
     setTimeout(call, 1000)
+  }
+
+  async filterLock()
+  {
+    this.filterCount--
+    if(this.filterCount <= 0)
+    {
+      await this.setState({loading: false})
+      this.filterLocked = false
+      this.dataFilter()
+      clearTimeout(this.filterClock)
+    }
+    else
+    {
+      this.filterClock = setTimeout(this.filterLock, 1000)
+    }
   }
 
   async handleClientChange(value){
@@ -44,14 +65,18 @@ class Header extends Component{
     this.dataFilter()
   }
 
-  async handleNameChange(value){
-    // await (value.length >= 3)? this.setState({name: value}) : this.setState({name: ""})
-    await this.setState({name: value})
-    this.dataFilter()
+  async handleFilterChange(value){
+    await this.setState({search: value, loading: true})
+    this.filterCount = 2
+    if(!this.filterLocked)
+    {
+      this.filterLocked = true
+      this.filterLock()
+    }
   }
 
   dataFilter(){
-    this.props.onFilter(this.state.client, this.state.name)
+    this.props.onFilter(this.state.client, this.state.search)
   }
 
   renderCustomerSelection(){
@@ -102,6 +127,17 @@ class Header extends Component{
       }
     })
 
+    const imageInput = ()=>{
+      if(this.props.loadingFilter || this.state.loading)
+      {
+        return <XImage loader={true} style={{flex:0, marginTop:5}} width={25} height={25} />
+      }
+      else
+      {
+        return <XImage source={{uri:"zoom_x"}} style={{flex:0, marginTop:5, width:25, height:25}} />
+      }
+    }
+
     return  <View style={headStyle.container}>
                 <View style={headStyle.left}>
                   <XImage source={{uri:"ico_docs"}} style={headStyle.image} />
@@ -109,9 +145,8 @@ class Header extends Component{
                 <View style={headStyle.right}>
                   {this.state.ready && this.renderCustomerSelection()}
                   <View style={{flex:1, flexDirection:'row'}}>
-                    <XTextInput style={headStyle.inputs} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleNameChange(value)}/>
-                    {!this.props.loadingFilter && <XImage source={{uri:"zoom_x"}} style={{flex:0, marginTop:5, width:25, height:25}} />}
-                    {this.props.loadingFilter && <XImage loader={true} style={{flex:0, marginTop:5}} width={25} height={25} />}
+                    <XTextInput style={headStyle.inputs} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleFilterChange(value)}/>
+                    {imageInput()}
                   </View>
                 </View>
             </View>
@@ -119,6 +154,10 @@ class Header extends Component{
 }
 
 class BoxDocs extends Component{
+
+  constructor(props){
+    super(props)
+  }
 
   handleClick(id){
     GLOB.navigation.goTo('Publish', {idPack: id})
@@ -140,7 +179,8 @@ class BoxDocs extends Component{
         marginRight:20
       }
     })
-    return  <TouchableOpacity style={{flex:1}} onPress={()=>this.handleClick(this.props.data.id)} >
+    const id_idocus = this.props.data.id
+    return  <TouchableOpacity style={{flex:1}} onPress={()=>this.handleClick(id_idocus)} >
               <View style={boxDocs.container}>
                 <XImage source={{uri:"arrow_doc"}} style={boxDocs.image} />
                 <Text>{this.props.data.name.toString()}</Text>
@@ -156,6 +196,7 @@ class DocumentsScreen extends Component {
     super(props)
     GLOB.navigation = new Navigator(this.props.navigation)
     this.state = {ready: false, dataList: [], loadingFilter: false}
+
     this.dataFilter = this.dataFilter.bind(this)
   }
 
@@ -178,7 +219,7 @@ class DocumentsScreen extends Component {
   }
 
   dataFilter(client_id=0, text=''){
-    this.setState({loadingFilter: true, dataList: packs()})
+    this.setState({loadingFilter: true})
     Fetcher.wait_for(
       [`filterPacks("${text}", "${client_id}")`],
       (responses)=>{
@@ -186,7 +227,7 @@ class DocumentsScreen extends Component {
           if(r.error)
           {
             Notice.danger(r.message, true, "filterDanger")
-            this.setState({loadingFilter: false})
+            this.setState({loadingFilter: false, dataList: packs()})
           }
           else
           {
@@ -197,7 +238,7 @@ class DocumentsScreen extends Component {
             where += 'id_idocus = -10'
             this.setState({loadingFilter: false, dataList: packs().filtered(where)})
           }
-        })
+      })
     })
   }
 

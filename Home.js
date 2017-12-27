@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
 import Config from './Config'
 import Screen from './components/screen'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native'
 import {XImage} from './components/XComponents'
 import Navigator from './components/navigator'
-import {BoxButton} from './components/buttons'
+import {BoxButton, ImageButton} from './components/buttons'
 import Menu from './components/menu'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import User from './models/User'
@@ -18,19 +18,19 @@ function docs_processed(){
   try{memo_processed[0].updated_at}catch(e){memo_processed = null}
   return memo_processed || Pack.find("type = 'pack'").sorted("updated_at", true).slice(0,5) 
 }
-var memo_processed = docs_processed()
+let memo_processed = docs_processed()
 
 function docs_processing(){ 
   try{memo_processing[0].updated_at}catch(e){memo_processing = null}
   return memo_processing || Pack.find("type = 'temp_pack'").sorted("updated_at", true).slice(0,5) 
 }
-var memo_processing = docs_processing()
+let memo_processing = docs_processing()
 
 function docs_errors(){ 
   try{memo_errors[0].updated_at}catch(e){memo_errors = null}
   return memo_errors || Pack.find("type = 'error'").sorted("updated_at", true).slice(0,5) 
 }
-var memo_errors = docs_errors()
+let memo_errors = docs_errors()
 
 class Header extends Component{
   render(){
@@ -279,12 +279,32 @@ class TabNav extends Component{
 }
 
 class HomeScreen extends Component {
-  static navigationOptions = { headerTitle:'Accueil', headerLeft: <MenuLoader />, headerRight: <ProgressUpload />};
+  static navigationOptions = {  headerTitle:'Accueil', 
+                                headerLeft: <MenuLoader />, headerRight: <ProgressUpload />,
+                                headerRight: <ImageButton  source={{uri:"infos"}} 
+                                        Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
+                                        Istyle={{width:20, height:20}}
+                                        onPress={()=>EventRegister.emit('clickInfosApp', true)} />
+                              }
 
   constructor(props){
     super(props)
     this.master = User.getMaster()
     GLOB.navigation = new Navigator(this.props.navigation)
+
+    this.state = {showInfos: false}
+
+    this.toggleInfos = this.toggleInfos.bind(this)
+  }
+
+  componentWillMount(){
+    this.clickInfosApp = EventRegister.on('clickInfosApp', (data) => {
+        this.toggleInfos()
+    })
+  }
+
+  componentWillUnmount(){
+    EventRegister.rm(this.clickInfosApp)
   }
 
   componentDidMount(){
@@ -293,13 +313,63 @@ class HomeScreen extends Component {
       setTimeout(()=>Notice.info(`Bienvenue ${User.fullName_of(this.master)}`), 1000)
     }
   }
+
+  toggleInfos(){
+    this.setState({showInfos: !this.state.showInfos})
+  }
   
   render() {
+    const styleInfo = StyleSheet.create({
+      content : {
+        flex:1,
+        alignItems:'center',
+        justifyContent:'center',
+        backgroundColor:'rgba(0,0,0,0.4)',
+      },
+      box:{
+        flex:0,
+        width:200,
+        height:130,
+        padding:10,
+        backgroundColor:'#fff',
+        borderRadius:10,
+      },
+      title:{
+        flex:0,
+        height:35, 
+        fontWeight:'bold',
+        fontSize:24,
+        textAlign:'center', 
+        borderBottomWidth:1, 
+        borderColor:'#000',
+        marginBottom:10
+      }
+    })
+
     return (
         <Screen style={{flex:1}} 
                 navigation={GLOB.navigation}>
           <Header />
           <TabNav />
+          {this.state.showInfos &&
+             <Modal  transparent={true}
+                     animationType="fade" 
+                     visible={true}
+                     supportedOrientations={['portrait', 'landscape']}
+                     onRequestClose={()=>{}}
+            >
+              <TouchableWithoutFeedback onPress={this.toggleInfos}>
+                <View style={styleInfo.content}>
+                    <View style={styleInfo.box}>
+                      <Text style={styleInfo.title}>iDocus</Text>
+                      <Text>www.idocus.com</Text>
+                      <Text>version : {Config.version.toString()}</Text>
+                      <Text>IDOCUS © Copyright 2017</Text>
+                    </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal> 
+          }
         </Screen>
     );
   }

@@ -16,8 +16,6 @@ let Fetcher = new Cfetcher(request1)
 let GLOB = {  navigation:{},
               datas:[],
               dataFilter: {account:'', collaborator:''},
-              optionsAccount: [],
-              optionsCollaborator: []
             }
 
 class Inputs extends Component{
@@ -169,10 +167,44 @@ class Header extends Component{
     this.state =  {
                     filter: false, 
                     collaborator: 0, 
-                    account: 0
+                    account: 0,
+                    optionsCollaborator: [{value:0, label:"Contact ou client"}],
+                    optionsAccount: [{value:0, label:"Dossier client"}]
                   }
 
     this.closeFilter = this.closeFilter.bind(this)
+    this.filterAccount = this.filterAccount.bind(this)
+    this.filterCollaborator = this.filterCollaborator.bind(this)
+  }
+
+  filterAccount(text=""){
+    Fetcher.setRequest(request1).wait_for(
+      [`getListCustomers("${text}")`],
+      (responses)=>{
+        if(responses[0].error)
+        {
+          Notice.info(r.message)
+        }
+        else
+        {
+          this.setState({optionsAccount: [{value:0, label:"Dossier client"}].concat(responses[0].dataList)})
+        }
+    })
+  }
+
+  filterCollaborator(text=""){
+    Fetcher.setRequest(request1).wait_for(
+      [`getListCollaborators("${text}")`],
+      (responses)=>{
+        if(responses[0].error)
+        {
+          Notice.info(r.message)
+        }
+        else
+        {
+          this.setState({optionsCollaborator: [{value:0, label:"Contact ou client"}].concat(responses[0].dataList)})
+        }
+    })
   }
 
   handleClientChange(value, target='collaborator'){
@@ -288,15 +320,17 @@ class Header extends Component{
             <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
             <View style={headStyle.left}>
               <View style={headStyle.form}>
-                <SelectInput  filterSearch={true} 
-                              dataOptions={GLOB.optionsCollaborator}
-                              textInfo="Contact ou Client" 
+                <SelectInput  filterSearch={true}
+                              filterCallback={this.filterCollaborator} 
+                              dataOptions={this.state.optionsCollaborator}
+                              textInfo="Contact ou Client - (Tapez un therme à rechercher)" 
                               style={{color:'#707070'}} Pstyle={headStyle.select} 
                               onChange={(value) => this.handleClientChange(value, "collaborator")}
                 />
-                <SelectInput  filterSearch={true} 
-                              dataOptions={GLOB.optionsAccount}
-                              textInfo="Dossier client" 
+                <SelectInput  filterSearch={true}
+                              filterCallback={this.filterAccount} 
+                              dataOptions={this.state.optionsAccount}
+                              textInfo="Dossier client - (Tapez un therme à rechercher)" 
                               style={{color:'#707070'}} 
                               Pstyle={headStyle.select} 
                               onChange={(value) => this.handleClientChange(value, "account")}
@@ -509,7 +543,6 @@ class SharingScreen extends Component {
     super(props);
     GLOB.navigation = this.props.navigation
 
-    this.dontRefreshForm = false
     this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
 
     this.renderStats = this.renderStats.bind(this)
@@ -563,25 +596,19 @@ class SharingScreen extends Component {
   refreshDatas(){
     this.setState({ready: false, dataList: []})
     Fetcher.wait_for(
-      [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)})`, 'get_list_collaborators()'],
+      [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)})`],
       (responses)=>{
-        if(responses[0].error || responses[1].error)
+        if(responses[0].error)
         {
           GLOB.datas = []
-          Notice.danger(responses[0].message || responses[1].message)
+          Notice.danger(responses[0].message)
         }
         else
         {
           GLOB.datas = Fetcher.create_temp_realm(responses[0].data_shared, "temp_sharing")
-          if(this.dontRefreshForm == false)
-          {
-            GLOB.optionsCollaborator = [{value:0, label:'Contact ou Client'}].concat(responses[1].options)
-            GLOB.optionsAccount = [{value:0, label:'Dossier client'}].concat(responses[1].options)
-            this.dontRefreshForm = true
-          }
         }
 
-        this.setState({ready: true, dataList: GLOB.datas})
+        this.setState({ready: true, dataList: GLOB.datas, orderText: null})
       })
   }
 
@@ -589,7 +616,7 @@ class SharingScreen extends Component {
     const arrow_direction = this.state.direction? 'V' : 'Λ'
 
      return  <ScrollView style={{flex:1, padding:3}}>
-                {this.state.orderText && 
+                {this.state.orderText && this.state.dataList.length > 0 && 
                   <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
                     <Text style={{flex:0}}>Trie par: <Text style={{fontWeight:'bold'}}>{this.state.orderText}</Text></Text>
                     <TouchableOpacity style={{flex:0,width:30,alignItems:'center'}} onPress={()=>this.changeDirectionSort()}>
