@@ -31,10 +31,10 @@ export default class data_loader extends Requester{
     return src
   }
 
-  async getStats(dataFilters={}){
+  async getStats(dataFilters={}, page=1){
     this.synchronious_response = ""
 
-    this.requestURI("api/mobile/data_loader/load_stats", {method: 'POST', params:{paper_process_contains: dataFilters}}, (r) => {
+    this.requestURI("api/mobile/data_loader/load_stats", {method: 'POST', params:{paper_process_contains: dataFilters, page: page}}, (r) => {
       if(r.error){ 
         //handling errors
         this.synchronious_response = r

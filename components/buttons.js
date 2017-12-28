@@ -69,11 +69,9 @@ export class BoxButton extends Component{
       touchable:{
         flex:1,
         margin:10,
-        flexDirection:'column',
         alignItems:'center'
       },
       boxControl:{
-        flexDirection:'column',
         alignItems:'center',
         justifyContent:'center',
         flex:0,
@@ -90,7 +88,6 @@ export class BoxButton extends Component{
       },
       text:{
         flex:0,
-        minWidth:65,
         fontWeight:'bold',
         color:'#fff',
         backgroundColor:'#AEAEAE',

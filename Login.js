@@ -13,7 +13,7 @@ import request1 from "./requests/remote_authentication"
 import request2 from "./requests/data_loader"
 
 let Fetcher = new Cfetcher()
-let GLOB = {navigation: {}, login: '', password: ''}
+let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
 
 function goToHome(){
   Fetcher.setRequest(request2).wait_for(
@@ -34,8 +34,6 @@ class ModalLoader extends Component{
   componentDidMount(){
     if(GLOB.password != "" && GLOB.login != "")
     {
-      // GLOB.login = "luc@idocus.com"
-      // GLOB.password = "1234567"
       const params = { user_login: {login: GLOB.login, password: GLOB.password} }
       Fetcher.setRequest(request1).request.remoteAUTH(params, (type, message) => {
         if(type=='error'){this.props.dismiss(message)}
@@ -93,14 +91,20 @@ class LoginScreen extends Component {
     }
     
     Fetcher.setRequest(request1).wait_for(
-      ['ping_server()'],
+      [`ping_server("${Config.version}", "${Config.platform}")`],
       (responses)=>{
-        if(responses[0] != "Ping success!")
+        if(responses[0].code != 200)
         {
-          Notice.danger(responses[0])
+          Notice.danger(responses[0].message, true, "ping_info")
+          if(responses[0].code == 500)
+          { //automatic logout
+            //remove data cache (REALM)
+            Fetcher.clearAll()
+            GLOB.system_reject = true
+          }
         }
         const user = User.getMaster()
-        if(user.id)
+        if(user.id && responses[0].code != 500)
         {
           this.setState({loading: true})
         }
@@ -137,13 +141,20 @@ class LoginScreen extends Component {
   }
 
   submitForm(){
-    if(GLOB.login == "" || GLOB.password == "")
+    if(!GLOB.system_reject)
     {
-      Notice.alert("Erreur connexion", "Login / Mot de passe incorrect!")
+      if(GLOB.login == "" || GLOB.password == "")
+      {
+        Notice.alert("Erreur connexion", "Login / Mot de passe incorrect!")
+      }
+      else
+      {
+        this.setState({loading: true})
+      }
     }
     else
     {
-      this.setState({loading: true})
+      Notice.danger("Erreur système, Veuillez mettre à jour votre application. Merci")
     }
   }
 
@@ -209,11 +220,12 @@ const styles = StyleSheet.create({
     maxHeight:50,
   },
   icons:{
-    flex:1,
+    flex:0,
+    width:20,
     height:20,
   },
   inputs:{
-    flex:6,
+    flex:1,
   },
   submit: {
     flex:0,

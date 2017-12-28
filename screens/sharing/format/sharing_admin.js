@@ -232,7 +232,7 @@ class Header extends Component{
                               else
                               {
                                 Notice.info(responses[0].message)
-                                EventRegister.emit('refreshPage')
+                                EventRegister.emit('refreshPage', true)
                               }
                             })
                         }
@@ -371,7 +371,7 @@ class BoxStat extends Component{
         else
         {
           Notice.info(responses[0].message)
-          EventRegister.emit('refreshPage')
+          EventRegister.emit('refreshPage', true)
         }
       })
   }
@@ -388,7 +388,7 @@ class BoxStat extends Component{
         else
         {
           Notice.info(responses[0].message)
-          EventRegister.emit('refreshPage')
+          EventRegister.emit('refreshPage', true)
         }
       })
   }
@@ -543,12 +543,13 @@ class SharingScreen extends Component {
     super(props);
     GLOB.navigation = this.props.navigation
 
-    this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+    this.state = {page:1, more_result:false, ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
 
     this.renderStats = this.renderStats.bind(this)
     this.refreshDatas = this.refreshDatas.bind(this)
     this.toggleOrderBox = this.toggleOrderBox.bind(this)
     this.handleOrder = this.handleOrder.bind(this)
+    this.nextPage = this.nextPage.bind(this)
   }
 
   componentWillMount(){
@@ -556,8 +557,8 @@ class SharingScreen extends Component {
         this.toggleOrderBox()
     })
 
-    this.refreshPage = EventRegister.on('refreshPage', (data) => {
-        this.refreshDatas()
+    this.refreshPage = EventRegister.on('refreshPage', (data=false) => {
+        this.refreshDatas(data)
     })
   }
 
@@ -577,6 +578,10 @@ class SharingScreen extends Component {
     }
   }
 
+  nextPage(){
+    this.refreshDatas()
+  }
+
   handleOrder(orderBy=[], direction = false){ 
     if(orderBy.length > 0) this.toggleOrderBox()
 
@@ -593,22 +598,39 @@ class SharingScreen extends Component {
     this.handleOrder([], this.state.direction)
   }
 
-  refreshDatas(){
+  refreshDatas(renew=false){
+    let nextPage = this.state.page
+    if(renew)
+    {
+      nextPage = 1
+    }
+
     this.setState({ready: false, dataList: []})
     Fetcher.wait_for(
-      [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)})`],
+      [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${nextPage})`],
       (responses)=>{
+        let more_result = false
         if(responses[0].error)
         {
-          GLOB.datas = []
+          // GLOB.datas = []
           Notice.danger(responses[0].message)
         }
         else
         {
-          GLOB.datas = Fetcher.create_temp_realm(responses[0].data_shared, "temp_sharing")
+          const dataFetched = Fetcher.create_temp_realm(responses[0].data_shared, "temp_sharing", nextPage)
+          if(!(nextPage > 1 && dataFetched.length == 0))
+          {
+            GLOB.datas = dataFetched
+          }
+
+          if(responses[0].more_result)
+          {
+            more_result = true
+            nextPage = nextPage + 1
+          }
         }
 
-        this.setState({ready: true, dataList: GLOB.datas, orderText: null})
+        this.setState({ready: true, dataList: GLOB.datas, orderText: null, page: nextPage, more_result: more_result})
       })
   }
 
@@ -627,6 +649,7 @@ class SharingScreen extends Component {
                 <LineList datas={this.state.dataList}
                           title={`Dossiers partagés (${this.state.dataList.length})`}
                           renderItems={(data) => <BoxStat data={data} deleteSharedDoc={this.deleteSharedDoc}/> } />
+                {this.state.more_result && <SimpleButton title="+ plus" onPress={this.nextPage} Pstyle={{marginBottom:10}}/>}
              </ScrollView>
   }
 
@@ -634,7 +657,7 @@ class SharingScreen extends Component {
       return (
           <Screen style={styles.container}
                   navigation={GLOB.navigation}>
-            <Header onFilter={()=>this.refreshDatas()}/>
+            <Header onFilter={()=>this.refreshDatas(true)}/>
               {this.state.ready && this.renderStats()}
               {!this.state.ready && <View style={{flex:1}}><XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} /></View>}
             <SimpleButton title='Contacts >>' Pstyle={{flex:0, maxHeight:30}} onPress={()=>GLOB.navigation.goTo("SharingContacts")} />

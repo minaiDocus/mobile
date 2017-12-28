@@ -17,7 +17,7 @@ let GLOB = { navigation:{} }
 
 function packs(){ 
   try{memo_packs[0].id_idocus}catch(e){memo_packs = null}
-  return memo_packs || Pack.find("type='pack'").sorted("created_at", true) 
+  return memo_packs || Pack.find("type='pack'").sorted("updated_at", true) 
 }
 let memo_packs = packs()
 

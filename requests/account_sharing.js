@@ -20,10 +20,10 @@ export default class account_sharing extends Requester{
     }
   }
 
-  async getSharedContacts(dataFilters={}){
+  async getSharedContacts(dataFilters={}, page=1){
     this.synchronious_response = ""
 
-    this.requestURI("api/mobile/account_sharing/load_shared_contacts", {method: 'POST', params:{guest_collaborator_contains: dataFilters}}, (r) => {
+    this.requestURI("api/mobile/account_sharing/load_shared_contacts", {method: 'POST', params:{guest_collaborator_contains: dataFilters, page: page}}, (r) => {
       if(r.error){ 
         //handling errors
         this.synchronious_response = r
@@ -77,10 +77,10 @@ export default class account_sharing extends Requester{
     }
   }
 
-  async getSharedDocs(dataFilters={}){
+  async getSharedDocs(dataFilters={}, page=1){
     this.synchronious_response = ""
 
-    this.requestURI("api/mobile/account_sharing/load_shared_docs", {method: 'POST', params:{account_sharing_contains: dataFilters}}, (r) => {
+    this.requestURI("api/mobile/account_sharing/load_shared_docs", {method: 'POST', params:{account_sharing_contains: dataFilters, page: page}}, (r) => {
       if(r.error){ 
         //handling errors
         this.synchronious_response = r

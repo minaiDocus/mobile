@@ -33,7 +33,7 @@ class Fetcher{
       var value = parse[1]
       var type = "string?"
 
-      // if(value == "true" || value == "false" ){type = "bool"}
+      if(value == "true" || value == "false" ){type = "bool"}
       // if(/^[0-9]+$/.test(value)){type = "int"} 
 
       if(key!='id'){object += `"${key}":"${type}", ` }
@@ -42,10 +42,10 @@ class Fetcher{
     return JSON.parse(`{${object} "id":"int"}`)
   }
 
-  create_temp_realm(datas, realm_schema="_temp", name="temp"){
-      if(!Array.isArray(datas)){datas = [datas]}
-      if(datas.length > 0)
-      {
+  create_temp_realm(datas, realm_schema="_temp", page=1, name="temp"){
+    if(!Array.isArray(datas)){datas = [datas]}
+    if(datas.length > 0)
+    {
       const properties = this.extract_structure_json(datas[0])
 
       const temp_schema = {   name: name,
@@ -55,11 +55,17 @@ class Fetcher{
 
       const realm = new Realm({path: realm_schema+'.realm', schema: [temp_schema], inMemory: true})
       realm.write(()=>{
-          realm.delete(realm.objects(name)) //erase datas
+          if(page == 1){realm.delete(realm.objects(name))} //erase datas
 
-          datas.map((value, key)=>{ 
-            Object.assign(value, {id: key}, value)
-            realm.create(name, value, true); 
+          datas.map((value, key)=>{
+            let _id = 0
+            try
+            {_id = parseInt(value.id_idocus)}
+            catch(e)
+            {_id = key}
+            
+            Object.assign(value, {id: _id}, value)
+            realm.create(name, value, true)
           })
         });
 

@@ -65,9 +65,9 @@ export class XImage extends Component{
 
   render(){
     this.renderImage()
-    let loader_img = require('../images/loader.gif')
     if(this.props.loader == true)
     {
+      const loader_img = require('../images/loader.gif')
       const width = this.props.width || 60
       const height = this.props.height || 60
       const style = this.props.style || {}
@@ -76,7 +76,7 @@ export class XImage extends Component{
     }
     else
     {
-      loader = require('../images/img_loader.gif')
+      const loader = require('../images/img_loader.gif')
       if(this.props.children || (typeof(this.props.type)!=='undefined' && this.props.type == 'container'))
       {
         const absolute = {

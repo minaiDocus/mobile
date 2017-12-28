@@ -12,6 +12,11 @@ import User from './models/User'
 import Pack from './models/Pack'
 import {ProgressUpload} from './components/uploader'
 
+import Cfetcher from './components/dataFetcher'
+import request1 from "./requests/data_loader"
+
+let Fetcher = new Cfetcher(request1)
+
 let GLOB = { navigation:{} }
 
 function docs_processed(){ 
