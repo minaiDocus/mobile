@@ -169,7 +169,8 @@ class Header extends Component{
                     collaborator: 0, 
                     account: 0,
                     optionsCollaborator: [{value:0, label:"Contact ou client"}],
-                    optionsAccount: [{value:0, label:"Dossier client"}]
+                    optionsAccount: [{value:0, label:"Dossier client"}],
+                    loading_add: false
                   }
 
     this.closeFilter = this.closeFilter.bind(this)
@@ -222,6 +223,7 @@ class Header extends Component{
     const call = ()=>{
                         if(this.state.collaborator > 0 && this.state.account > 0)
                         {
+                          this.setState({loading_add: true})
                           Fetcher.wait_for(
                             [`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`],
                             (responses)=>{
@@ -233,6 +235,7 @@ class Header extends Component{
                               {
                                 Notice.info(responses[0].message)
                                 EventRegister.emit('refreshPage', true)
+                                this.setState({loading_add: false})
                               }
                             })
                         }
@@ -316,6 +319,12 @@ class Header extends Component{
     }
   })
 
+  let loading_add = null
+  if(this.state.loading_add)
+  {
+    loading_add = {uri:"img_loader"}
+  }  
+
   return  <View style={headStyle.container}>
             <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
             <View style={headStyle.left}>
@@ -335,7 +344,7 @@ class Header extends Component{
                               Pstyle={headStyle.select} 
                               onChange={(value) => this.handleClientChange(value, "account")}
                 />
-                <SimpleButton Pstyle={{flex:0, height:30, width:100, margin:10}} onPress={()=>this.addSharedDoc()} title="Partager" />
+                <SimpleButton Pstyle={{flex:0, height:30, width:100, margin:10}} RImage={loading_add} onPress={()=>this.addSharedDoc()} title="Partager" />
             </View>
             </View>
             <View style={headStyle.right}> 
