@@ -19,7 +19,7 @@ export default class Requester {
     request.open(method, url)
     request.setRequestHeader("Content-Type", "application/json")
 
-    if (/https/i.test(Config.http_host)) //if accessing https server
+    if(Config.server == "staging") //if accessing staging server
     {request.setRequestHeader("Authorization", "Basic " + base64.encode(Config.user + ":" + Config.pass))}
 
     //Aborting query if too long (For fixing bug http request on iOS)

@@ -135,7 +135,7 @@ class UploderFiles{
           var xhr = new XMLHttpRequest()
           xhr.open('post', url)
           
-          if (/https/i.test(Config.http_host)) //if accessing https server
+          if(Config.server == "staging") //if accessing staging server
           {xhr.setRequestHeader("Authorization", "Basic " + base64.encode(Config.user + ":" + Config.pass))}
 
           for (var k in opts.headers||{})

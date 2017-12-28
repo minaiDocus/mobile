@@ -14,7 +14,7 @@ export default class data_loader extends Requester{
     }
     const uri = encodeURI(`${Config.http_host}api/mobile/data_loader/render_image_documents/?auth_token=${User.getMaster().auth_token}&id=${data.id}&style=${data.style}&${data.filter}${forcing}`)
     let src = ''
-    if(/https/i.test(Config.http_host)) //if accessing https server
+    if(Config.server == "staging") //if accessing staging server
     {
       src = {
               uri: uri,
