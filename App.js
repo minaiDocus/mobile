@@ -50,4 +50,5 @@ const StackApp = StackNavigator({
 
 export default StackApp
 
-//147038
+//version: 1.2,
+//platform: "ios",

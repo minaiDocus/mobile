@@ -108,9 +108,11 @@ class ModalForm extends Component{
   }
 
   formContact(){
+    let edit = true
     let datas = {email:'', company: '', first_name: '', last_name: ''}
     if(typeof(this.props.data.id_idocus) !== "undefined" && this.props.data.id_idocus > 0)
     {
+      edit = false
       datas = {
                 id_idocus: this.props.data.id_idocus,
                 email:this.props.data.email, 
@@ -122,7 +124,7 @@ class ModalForm extends Component{
 
     GLOB.dataForm = datas
     return <ScrollView style={{flex:1, backgroundColor:'#fff'}}>
-              <Inputs label='* Couriel :' name={'email'} dataForm="GLOB.dataForm"/>
+              <Inputs label='* Couriel :' name={'email'} dataForm="GLOB.dataForm" editable={edit}/>
               <Inputs label='* Nom de la société :' name={'company'} dataForm="GLOB.dataForm"/>
               <Inputs label='Prénom :' name={'first_name'} dataForm="GLOB.dataForm"/>
               <Inputs label='Nom :' name={'last_name'} dataForm="GLOB.dataForm"/>
