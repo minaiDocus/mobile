@@ -79,11 +79,11 @@ class Inputs extends Component{
 
 class BoxFilter extends Component{
   constructor(props){
-    super(props);
+    super(props)
   }
 
   dismiss(type){
-    this.props.dismiss(type);
+    this.props.dismiss(type)
   }
 
   filterProcess(type){
@@ -302,6 +302,7 @@ class BoxStat extends Component{
                     <View style={boxStyle.infos}>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Type : </Text>{getType(this.props.data.type)}</Text>
+                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Code client : </Text>{this.props.data.code}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Société : </Text>{this.props.data.company}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>N°de suivi: </Text>{this.props.data.number}</Text>
                       <Text style={boxStyle.champ}><Text style={boxStyle.label}>Nom du lot: </Text>{this.props.data.packname}</Text>
@@ -363,6 +364,7 @@ class OrderBox extends Component{
                   <View style={{flex:1, marginTop:5}}>
                     <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['Type','type'])} title='Type' Pstyle={styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Code client','code'])} title='Code client' Pstyle={styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['Société','company'])} title='Société' Pstyle={styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['N°de suivi','number'])} title='N°de suivi' Pstyle={styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['Nom de lot','packname'])} title='Nom du lot' Pstyle={styles.list} />

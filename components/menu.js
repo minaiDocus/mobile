@@ -95,7 +95,6 @@ class Footer extends Component{
 class Body extends Component{
   constructor(props){
     super(props)
-    this.master = User.getMaster()
   }
 
   render(){
@@ -114,7 +113,7 @@ class Body extends Component{
                 <LinkButton onPress={()=>{this.props.navigate(null)}} source={{uri:'ico_home'}} resizeMode='contain' title='Accueil' Tstyle={styles.generalText} Pstyle={body.linkP} />
                 <LinkButton onPress={()=>{this.props.navigate('Send')}} source={{uri:'ico_send'}} resizeMode='contain' title='Envoi documents' Tstyle={styles.generalText} Pstyle={body.linkP} />
                 <LinkButton onPress={()=>{this.props.navigate('Documents')}} source={{uri:'ico_docs'}} resizeMode='contain' title='Mes documents' Tstyle={styles.generalText} Pstyle={body.linkP} />
-                {this.master.is_prescriber && <LinkButton onPress={()=>{this.props.navigate('Stats')}} source={{uri:'ico_suiv'}} resizeMode='contain' title='Suivi' Tstyle={styles.generalText} Pstyle={body.linkP} />}
+                <LinkButton onPress={()=>{this.props.navigate('Stats')}} source={{uri:'ico_suiv'}} resizeMode='contain' title='Suivi' Tstyle={styles.generalText} Pstyle={body.linkP} />
                 <LinkButton onPress={()=>{this.props.navigate('Sharing')}} source={{uri:'ico_sharing'}} resizeMode='contain' title='Partage dossier' Tstyle={styles.generalText} Pstyle={body.linkP} />
               </ScrollView>
             </View>
