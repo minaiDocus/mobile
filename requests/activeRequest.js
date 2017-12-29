@@ -5,13 +5,15 @@ import User from '../models/User'
 export default class Requester {
   responseFetching = ""
   synchronious_response = ""
+  request_retry = 2
 
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  requestURI(uri, options, callback){
+  requestURI(uri, options={}, callback={}, retry=0){
     this.responseFetching = ""
+    let timer = null
     const url = Config.http_host + uri
     const method = options.method || 'GET'
     var request = new XMLHttpRequest()
@@ -37,14 +39,14 @@ export default class Requester {
       const parameters = {}
       const auth_token = {auth_token: User.getMaster().auth_token}
       Object.assign(parameters, auth_token, options.params)
-      setTimeout(()=>{
+      timer = setTimeout(()=>{
         aborting(callback)
       }, 15000)
       request.send(JSON.stringify(parameters)) 
     }
     else 
     {
-      setTimeout(()=>{
+      timer = setTimeout(()=>{
         aborting(callback)
       }, 15000)
       request.send()
@@ -54,17 +56,39 @@ export default class Requester {
       if (request.readyState === 4)
       {
         if(request.status != 200)
-          this.responseFetching = handlingHttpErrors(request)
+        {
+          if(retry<this.request_retry)
+          {
+            clearTimeout(timer)
+            const nextRetry=retry+1
+            setTimeout(()=>{this.requestURI(uri, options, callback, nextRetry)}, 2000)
+          }
+          else
+          {
+            this.responseFetching = handlingHttpErrors(request)
+            callback(this.responseFetching) 
+          }
+        }
         else
+        {
           this.responseFetching = JSON.parse(request.responseText)
-
-        callback(this.responseFetching)  
+          callback(this.responseFetching) 
+        } 
       }
     }
 
     request.onerror = (e) => {
-      this.responseFetching = handlingHttpErrors(request)
-      callback(this.responseFetching)
+      if(retry<this.request_retry)
+      {
+        clearTimeout(timer)
+        const nextRetry=retry+1
+        setTimeout(()=>{this.requestURI(uri, options, callback, nextRetry)}, 2000)
+      }
+      else
+      {
+        this.responseFetching = handlingHttpErrors(request)
+        callback(this.responseFetching)
+      }
     }
   }
 }

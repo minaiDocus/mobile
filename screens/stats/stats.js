@@ -176,9 +176,9 @@ class BoxFilter extends Component{
                     <Inputs label='Nom du lot :' name={'pack_name'}/>
                   </ScrollView>
                   <View style={boxFilter.foot}>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
+                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
+                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
+                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
                   </View>
                 </View>
               </View>

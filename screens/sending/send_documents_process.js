@@ -347,7 +347,11 @@ class SendScreen extends Component {
   }
 
   uploadError(result){
-    Notice.alert("Envoi", result)
+    try{
+      Notice.alert("Envoi", result.message)
+    }catch(e){
+      Notice.alert("Envoi", "Une erreur s'est produite lors de l'envoi de document!!!")
+    }
   }
 
   render() {

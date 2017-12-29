@@ -109,24 +109,7 @@ class UploderFiles{
           .then((res) => this.onComplete(res), (err) => this.onError(err))
 
     UploadingFiles = true
-    // this.count = {loaded: 0, total: 60}
-    // this.timeout = null
-    // this.test(this.onProgress, this.onComplete)
   }
-
-  // test(){
-  //     this.count.loaded = this.count.loaded + 1
-  //     this.onProgress(this.count)
-  //     if(this.count.loaded <= this.count.total)
-  //     {
-  //       this.timeout = setTimeout(this.test, 1000)
-  //     }
-  //     else
-  //     {
-  //       clearTimeout(this.timeout)
-  //       this.onComplete("test")
-  //     }
-  // }
 
   upload(opts={}, onProgress){
   url = Config.http_host + "api/mobile/file_uploader"

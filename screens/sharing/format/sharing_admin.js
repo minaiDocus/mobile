@@ -150,9 +150,9 @@ class BoxFilter extends Component{
                     <Inputs label='Client ou contact :' name={'collaborator'}/>
                   </ScrollView>
                   <View style={boxFilter.foot}>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
+                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
+                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
+                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
                   </View>
                 </View>
               </View>
@@ -223,6 +223,7 @@ class Header extends Component{
     const call = ()=>{
                         if(this.state.collaborator > 0 && this.state.account > 0)
                         {
+                          Notice.info("Partage en cours ...")
                           this.setState({loading_add: true})
                           Fetcher.wait_for(
                             [`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`],
@@ -234,9 +235,9 @@ class Header extends Component{
                               else
                               {
                                 Notice.info(responses[0].message)
-                                EventRegister.emit('refreshPage', true)
                                 this.setState({loading_add: false})
                               }
+                              EventRegister.emit('refreshPage', true)
                             })
                         }
                         else
@@ -257,14 +258,6 @@ class Header extends Component{
     {
       this.props.onFilter()
     }
-  }
-
-  openModalSharing(type){
-    this.setState({openModal: true, typeModal: type})
-  }
-
-  closeModalSharing(){
-    this.setState({openModal: false})
   }
 
   render(){

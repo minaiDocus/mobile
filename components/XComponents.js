@@ -33,6 +33,7 @@ function require_images(name){
     sharing_account:require('../images/sharing_account.png'),
     request_access:require('../images/request_access.png'),
     infos:require('../images/infos.png'),
+    img_crop:require('../images/img_crop.png'),
     default: require("../images/loader.gif"),
   }
   const loaded_img = eval('images.'+name) || images.default

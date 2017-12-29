@@ -80,14 +80,21 @@ class ModalForm extends Component{
     else
     {
       if(this.type == "add")
+      {
         url = `addSharedContact(${JSON.stringify(GLOB.dataForm)})`
+        flash = "Ajout contact en cours ..."
+      }
       else
+      {
         url = `editSharedContact(${JSON.stringify(GLOB.dataForm)})`
+        flash = "Modification contact en cours ..."
+      }
     }
     
     if(url != '')
     {
       const call = ()=>{
+                          Notice.info(flash)
                           Fetcher.wait_for(
                             [url],
                             (responses)=>{
@@ -98,8 +105,8 @@ class ModalForm extends Component{
                               else
                               {
                                 Notice.info(responses[0].message)
-                                EventRegister.emit('refreshPage_contacts', true)
                               }
+                              EventRegister.emit('refreshPage_contacts', true)
                             })
                         }
       actionLocker(call)
@@ -293,9 +300,9 @@ class BoxFilter extends Component{
                     <Inputs label='Nom :' name={'last_name'}/>
                   </ScrollView>
                   <View style={boxFilter.foot}>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
+                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
+                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
+                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
                   </View>
                 </View>
               </View>

@@ -24,6 +24,7 @@ class BoxZoom extends Component{
 
     this.state = {ready: false}
     this.imageCounter = this.props.datas.length
+    this.currIndex = 0
 
     this.renderSwiper = this.renderSwiper.bind(this)
   }
@@ -33,6 +34,7 @@ class BoxZoom extends Component{
   }
 
   onSwipe(index){
+    this.currIndex = index
     GLOB.idZoom = base64.encode(this.props.datas[index].path).toString();
   }
 
@@ -47,6 +49,12 @@ class BoxZoom extends Component{
                       this.props.deleteElement()
                      }
     actionLocker(call)
+  }
+
+  cropElement(){
+    const path = base64.decode(GLOB.idZoom).toString()
+    this.hideModal()
+    this.props.cropElement(path, this.currIndex)
   }
 
   renderSwiper(){
@@ -73,7 +81,7 @@ class BoxZoom extends Component{
 
     var embedContent = this.props.datas.map((img, key)=>
     {
-      if(base64.encode(img.path).toString() == GLOB.idZoom.toString()){ indexStart = key; }
+      if(base64.encode(img.path).toString() == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
       return <XImage  key={key}
                       type='container'
                       PStyle={swipeStyle.boxImage}
@@ -126,8 +134,9 @@ class BoxZoom extends Component{
                   }
                 </View>
                 <View style={{flex:0,flexDirection:'row'}}>
-                  <SimpleButton Pstyle={{flex:1, marginHorizontal:10}} onPress={()=>this.hideModal()} title="Retour" />
-                  <SimpleButton Pstyle={{flex:1, marginHorizontal:10}} onPress={()=>this.deleteElement()} title="Enlever" />
+                  <SimpleButton Pstyle={{flex:1, marginHorizontal:3}} onPress={()=>this.hideModal()} title="Retour" />
+                  <SimpleButton Pstyle={{flex:1, marginHorizontal:3}} onPress={()=>this.cropElement()} title="Recadrer" />
+                  <SimpleButton Pstyle={{flex:1, marginHorizontal:3}} onPress={()=>this.deleteElement()} title="Enlever" />
                 </View>
               </View>
             </Modal>
@@ -153,6 +162,11 @@ class ImgBox extends Component{
   zoom(){
     GLOB.idZoom = base64.encode(this.props.source.uri).toString();
     this.props.toggleZoom();
+    this.toggleOpt(); 
+  }
+
+  crop(){
+    this.props.cropElement(this.props.source.uri, this.props.index);
     this.toggleOpt(); 
   }
 
@@ -197,8 +211,9 @@ class ImgBox extends Component{
                 <XImage type='container' PStyle={imgBox.styleContainer} source={this.props.source} style={imgBox.styleImg} local={false}>
                   { this.state.options == true &&
                     <View style={imgBox.options}>   
-                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[{borderRightWidth:1}, imgBox.btnText]} Istyle={{width:30,height:30}} />
-                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} Pstyle={[{borderLeftWidth:1},imgBox.btnText]} Istyle={{width:30,height:30}} />
+                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} Pstyle={[imgBox.btnText]} Istyle={{width:30,height:30}} />
+                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[{borderLeftWidth:1, borderRightWidth: 1}, imgBox.btnText]} Istyle={{width:30,height:30}} />
+                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} Pstyle={[imgBox.btnText]} Istyle={{width:30,height:30}} />
                     </View>
                   }
                 </XImage>
@@ -278,28 +293,50 @@ class SendScreen extends Component {
     actionLocker(call)
   }
 
-  async renderImg(img){
+  openCrop(img, index){
+    const call = ()=>{
+                        ImagePicker.openCropper({
+                          path: img,
+                          width: 300,
+                          height: 400
+                        }).then(image => {
+                          this.renderImg(image, index)
+                        }).catch(error => {
+                          this.renderError(error)
+                        });
+                      }
+    actionLocker(call)
+  }
 
-    var imgToAdd = [].concat(img);
-    var toAdd = true;
-    var listAdd = [];
-
-    imgToAdd.map((j)=>
+  async renderImg(img, index=null){
+    if(index != null)
     {
-      toAdd = true;
-      GLOB.images.map((i)=>
+      GLOB.images[index] = img
+      await this.setState({dataList: GLOB.images});
+    }
+    else
+    {
+      var imgToAdd = [].concat(img);
+      var toAdd = true;
+      var listAdd = [];
+
+      imgToAdd.map((j)=>
       {
-        if(base64.encode(i.path).toString() == base64.encode(j.path).toString())
+        toAdd = true;
+        GLOB.images.map((i)=>
         {
-          toAdd = false;
-        }
+          if(base64.encode(i.path).toString() == base64.encode(j.path).toString())
+          {
+            toAdd = false;
+          }
+        });
+
+        if(toAdd==true){ listAdd = listAdd.concat(j); }
       });
 
-      if(toAdd==true){ listAdd = listAdd.concat(j); }
-    });
-
-    GLOB.images = GLOB.images.concat(listAdd);
-    await this.setState({dataList: GLOB.images});
+      GLOB.images = GLOB.images.concat(listAdd);
+      await this.setState({dataList: GLOB.images});
+    }
   }
 
   async deleteElement(){
@@ -343,7 +380,7 @@ class SendScreen extends Component {
                                 <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.images.length} : Document(s)</Text>
                                 <BoxList datas={this.state.dataList}
                                          elementWidth={130} 
-                                         renderItems={(img) => <ImgBox source={{uri: img.path.toString()}} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
+                                         renderItems={(img, index) => <ImgBox index={index} source={{uri: img.path.toString()}} cropElement={(path, index)=>this.openCrop(path, index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
                             </ScrollView>
       }
       else
@@ -357,7 +394,7 @@ class SendScreen extends Component {
         <Screen style={styles.container}
                 navigation={GLOB.navigation}>
           <Header takePhoto={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
-          {this.state.zoomActive && <BoxZoom visible={this.state.zoomActive} datas={this.state.dataList} deleteElement={this.deleteElement} hide={this.toggleZoom} />}
+          {this.state.zoomActive && <BoxZoom visible={this.state.zoomActive} datas={this.state.dataList} cropElement={(path, index)=>this.openCrop(path, index)} deleteElement={this.deleteElement} hide={this.toggleZoom} />}
           { embedContent }
           <View style={styles.minicontainer}>
             <SimpleButton Pstyle={styles.button} onPress={()=>this.sendList()} title="Suivant >>" />

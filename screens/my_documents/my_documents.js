@@ -232,9 +232,12 @@ class DocumentsScreen extends Component {
           else
           {
             let where = ''
-            r.packs.forEach((el)=>{
-              where += `id_idocus = ${el} OR `
-            })
+            if(r.packs.length > 0)
+            {
+              r.packs.forEach((el)=>{
+                where += `id_idocus = ${el} OR `
+              })
+            }
             where += 'id_idocus = -10'
             this.setState({loadingFilter: false, dataList: packs().filtered(where)})
           }
