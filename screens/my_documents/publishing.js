@@ -8,7 +8,7 @@ import { NavigationActions } from 'react-navigation'
 import Pdf from 'react-native-pdf'
 import {SimpleButton, ImageButton} from '../../components/buttons'
 import {BoxList, LineList} from '../../components/lists'
-// import Pack from '../../models/Pack'
+import Pagination from '../../components/pagination'
 import User from '../../models/User'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
@@ -17,8 +17,6 @@ import request1 from "../../requests/data_loader"
 
 let Fetcher = new Cfetcher(request1)
 let GLOB = {Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", navigation:{}}
-
-function pagesPublished(){}
 
 
 class BoxZoom extends Component{
@@ -201,8 +199,8 @@ class BoxInfos extends Component{
                     {label: "Nom du documents :", value: GLOB.Pack.name},
                     {label: "Date de mise en ligne :", value: format_date(GLOB.Pack.created_at)},
                     {label: "Date de modification :", value: format_date(GLOB.Pack.updated_at)},
-                    {label: "Nombre de page :", value: GLOB.pagesPublished.length},
-                    {label: "Nombre de pièce en cours de traitement :", value: GLOB.pagesPublishing.length},
+                    {label: "Nombre de page :", value: this.props.nb_published || 0},
+                    {label: "Nombre de pièce en cours de traitement :", value: this.props.nb_publishing || 0},
                   ]
 
     return  <ScrollView style={{flex:0, padding:3}}>
@@ -289,6 +287,7 @@ class BoxPublish extends Component{
   constructor(props){
     super(props)
     this.state = { zoomActive: false}
+
     this.toggleZoom = this.toggleZoom.bind(this)
     this.renderResult = this.renderResult.bind(this)
     this.nextElement = this.nextElement.bind(this)
@@ -334,10 +333,11 @@ class BoxPublish extends Component{
                                                   data={this.props.datas[GLOB.idZoom]} 
                                                   total={this.props.datas.length}/>
               }
-              <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{this.props.datas.length} {this.props.title}</Text>
+              <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{this.props.totalCount} {this.props.title}</Text>
               <BoxList datas={this.props.datas}
                        elementWidth={80}
                        renderItems={(data, index) => <ImgBox data={data} index={index} toggleZoom={()=>this.toggleZoom()}/> } />
+              <Pagination onPageChanged={(page)=>this.props.onChangePage(page)} nb_pages={this.props.nb_pages || 1} page={this.props.page || 1} />
           </ScrollView>
   }
 
@@ -359,11 +359,34 @@ class TabNav extends Component{
   constructor(props){
     super(props);
     this.state = {index: 0, published_ready: false, publishing_ready: false}
+
+    this.pagePublished = this.limit_pagePublished = 1
+    this.totalPublished = 0
+
+    this.refreshDocsPublished = this.refreshDocsPublished.bind(this)
+    this.refreshDocsPublishing = this.refreshDocsPublishing.bind(this)
+
+    this.changePagePublished = this.changePagePublished.bind(this)
   }
 
   componentDidMount(){
+    this.refreshDocsPublished(true, true)
+  }
+
+  changePagePublished(page=1){
+    this.pagePublished = page
+    this.refreshDocsPublished(false)
+  }
+
+  refreshDocsPublished(renew = true, load_publishing=false){
+    if(renew)
+    {
+      this.pagePublished = 1
+    }
+
+    this.setState({published_ready: false})
     Fetcher.wait_for(
-        [`getPackDocuments(${GLOB.Pack.id})`],
+        [`getDocumentsProcessed(${GLOB.Pack.id}, ${this.pagePublished})`],
         (responses) => {
           if(responses[0].error)
           {
@@ -372,11 +395,36 @@ class TabNav extends Component{
           else
           {
             GLOB.pagesPublished = [].concat(responses[0].published.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:false} }))
+            this.totalPublished = responses[0].total
+            this.limit_pagePublished = responses[0].nb_pages
+          }
+
+          if(load_publishing)
+          {
+            this.refreshDocsPublishing()
+          }
+
+          this.setState({published_ready: true})
+        })
+  }
+
+  refreshDocsPublishing(renew = true){
+    this.setState({publishing_ready: false})
+    Fetcher.wait_for(
+        [`getDocumentsProcessing(${GLOB.Pack.id})`],
+        (responses) => {
+          if(responses[0].error)
+          {
+            Notice.danger(responses[0].message)
+          }
+          else
+          {
             GLOB.pagesPublishing = [].concat(responses[0].publishing.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:true} }))
           }
 
-          this.setState({published_ready: true, publishing_ready: true})
+          this.setState({publishing_ready: true})
         })
+    
   }
 
   handleIndexChange(index){
@@ -445,9 +493,23 @@ class TabNav extends Component{
 
   render(){
     return  <ScrollableTabView tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
-              <BoxInfos key={0} />
-              <BoxPublish key={1} datas={GLOB.pagesPublishing} ready={this.state.published_ready} title="piece(s) en cours de traitement"/>
-              <BoxPublish key={2} datas={GLOB.pagesPublished} ready={this.state.publishing_ready} title="page(s)"/>
+              <BoxInfos key={0} nb_published={this.totalPublished} nb_publishing={GLOB.pagesPublishing.length}/>
+              <BoxPublish key={1} 
+                          datas={GLOB.pagesPublishing}
+                          totalCount={GLOB.pagesPublishing.length || 0} 
+                          ready={this.state.publishing_ready} 
+                          title="piece(s) en cours de traitement"
+                          onChangePage={(page)=>{}} 
+                          nb_pages={1} 
+                          page={1} />
+              <BoxPublish key={2} 
+                          datas={GLOB.pagesPublished}
+                          totalCount={this.totalPublished || 0}  
+                          ready={this.state.published_ready} 
+                          title="pages(s)" 
+                          onChangePage={(page)=>this.changePagePublished(page)} 
+                          nb_pages={this.limit_pagePublished} 
+                          page={this.pagePublished} />
             </ScrollableTabView>
   }
 }

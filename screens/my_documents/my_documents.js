@@ -188,9 +188,10 @@ class DocumentsScreen extends Component {
   constructor(props){
     super(props)
     GLOB.navigation = new Navigator(this.props.navigation)
-    this.state = {ready: false, dataList: [], loadingFilter: false, total: 0}
+    this.state = {ready: false, dataList: [], loadingFilter: false}
 
     this.page = this.limit_page = 1
+    this.total = 0
     this.text = ""
     this.client_id = 0
     
@@ -233,7 +234,8 @@ class DocumentsScreen extends Component {
               else
               {
                 this.limit_page = r.nb_pages
-                this.setState({ready: true, loadingFilter: false, dataList: r.packs, total: r.total})
+                this.total = r.total
+                this.setState({ready: true, loadingFilter: false, dataList: r.packs})
               }
           })
     })
@@ -248,7 +250,7 @@ class DocumentsScreen extends Component {
   renderDocuments(){
     return  <ScrollView style={{flex:1, padding:3}}>
               <LineList datas={this.state.dataList}
-                        title={`${this.state.total} : Document(s)`} 
+                        title={`${this.total} : Document(s)`} 
                         renderItems={(data) => <BoxDocs data={data} /> } />
 
               <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />

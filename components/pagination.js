@@ -48,7 +48,7 @@ class Pagination extends Component{
     let activeText = {}
     const touchStyle = {
       flex:0, 
-      width:18, 
+      paddingHorizontal:3, 
       height:20, 
       margin:1,
       alignItems:'center',

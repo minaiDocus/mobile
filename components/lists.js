@@ -57,7 +57,7 @@ export class BoxList extends Component{
   }
 
   render(){
-    this.datas = this.props.datas
+    this.datas = this.props.datas || []
     return <View style={[this.styles, this.stylesPlus]} onLayout={this.onLayout} >
               {this.state.dimensionReady && this.datas.map((item, index) => {return this.renderItems(item, index)}) }
            </View> 
@@ -106,7 +106,7 @@ export class LineList extends Component{
   }
 
   render(){
-    this.datas = this.props.datas
+    this.datas = this.props.datas || []
     return <View style={{flex:1}}>
                 {this.props.title && <Text style={{flex:1,marginTop:10,textAlign:'center',fontSize:16,fontWeight:"bold"}}>{this.props.title}</Text>}
                 <View style={[this.styles, this.stylesPlus]}>

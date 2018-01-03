@@ -14,6 +14,7 @@ export default class Requester {
   requestURI(uri, options={}, callback={}, retry=0){
     this.responseFetching = ""
     let timer = null
+    const timeout = 60000 //Request timeout = 60 seconds
     const url = Config.http_host + uri
     const method = options.method || 'GET'
     var request = new XMLHttpRequest()
@@ -41,14 +42,14 @@ export default class Requester {
       Object.assign(parameters, auth_token, options.params)
       timer = setTimeout(()=>{
         aborting(callback)
-      }, 15000)
+      }, timeout)
       request.send(JSON.stringify(parameters)) 
     }
     else 
     {
       timer = setTimeout(()=>{
         aborting(callback)
-      }, 15000)
+      }, timeout)
       request.send()
     }
 

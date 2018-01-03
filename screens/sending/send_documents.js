@@ -387,7 +387,7 @@ class SendScreen extends Component {
       else
       {
         var embedContent = <View style={styles.boxPicture}>
-                              <Text style={{padding:10}}>Veuillez selectionner des photos de votre galerie d'image, ou prendre de nouvelles photos pour l'envoie ...</Text>
+                              <Text style={{padding:10}}>Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ...</Text>
                             </View>
 
       }
