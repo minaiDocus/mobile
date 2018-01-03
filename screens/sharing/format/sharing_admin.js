@@ -7,6 +7,7 @@ import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-nati
 import {XImage, XTextInput} from '../../../components/XComponents'
 import {LineList} from '../../../components/lists'
 import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../../components/buttons'
+import Pagination from '../../../components/pagination'
 import SelectInput from '../../../components/select'
 
 import Cfetcher from '../../../components/dataFetcher'
@@ -363,6 +364,7 @@ class BoxStat extends Component{
   }
 
   deleteSharedDoc(id_doc){
+    Notice.info("Suppression de partage en cours ...")
     Fetcher.wait_for(
       [`deleteSharedDoc(${id_doc})`],
       (responses)=>{
@@ -380,6 +382,7 @@ class BoxStat extends Component{
 
 
   acceptSharedDoc(id_doc){
+    Notice.info("Partage en cours ...")
     Fetcher.wait_for(
       [`acceptSharedDoc(${id_doc})`],
       (responses)=>{
@@ -527,8 +530,10 @@ class OrderBox extends Component{
                   <Text style={styles.title}>Trier par : </Text>
                   <View style={{flex:1, marginTop:5}}>
                     <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Dossier','document'])} title='Dossier' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Client','client'])} title='Client' Pstyle={styles.list} />
+                    {
+                    // <LinkButton onPress={()=>this.handleOrder(['Dossier','document'])} title='Dossier' Pstyle={styles.list} />
+                    // <LinkButton onPress={()=>this.handleOrder(['Client','client'])} title='Client' Pstyle={styles.list} />
+                    }
                     <LinkButton onPress={()=>this.handleOrder(['Etat','approval'])} title='Etat' Pstyle={styles.list} />
                   </View>
               </AnimatedBox>
@@ -545,13 +550,17 @@ class SharingScreen extends Component {
     super(props);
     GLOB.navigation = this.props.navigation
 
-    this.state = {page:1, more_result:false, ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+    this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+
+    this.page = this.limit_page = 1
+    this.order = {}
+    this.total = 0
 
     this.renderStats = this.renderStats.bind(this)
     this.refreshDatas = this.refreshDatas.bind(this)
     this.toggleOrderBox = this.toggleOrderBox.bind(this)
     this.handleOrder = this.handleOrder.bind(this)
-    this.nextPage = this.nextPage.bind(this)
+    this.changePage = this.changePage.bind(this)
   }
 
   componentWillMount(){
@@ -580,8 +589,9 @@ class SharingScreen extends Component {
     }
   }
 
-  nextPage(){
-    this.refreshDatas()
+  changePage(page=1){
+    this.page = page
+    this.refreshDatas(false)
   }
 
   handleOrder(orderBy=[], direction = false){ 
@@ -590,9 +600,13 @@ class SharingScreen extends Component {
     order_text = orderBy[0] || this.state.orderText
     order_by = orderBy[1] || this.state.orderBy
 
-    this.setState({ready: false})
-    GLOB.datas = GLOB.datas.sorted(order_by, direction)
-    this.setState({orderText: order_text, ready: true, dataList: GLOB.datas, orderBy:order_by, direction: direction})
+    this.order={
+                  order_by: order_by,
+                  direction: direction
+                }
+
+    this.refreshDatas()
+    this.setState({orderText: order_text, orderBy:order_by, direction: direction})
   }
 
   async changeDirectionSort(){
@@ -600,39 +614,28 @@ class SharingScreen extends Component {
     this.handleOrder([], this.state.direction)
   }
 
-  refreshDatas(renew=false){
-    let nextPage = this.state.page
-    if(renew)
-    {
-      nextPage = 1
+  refreshDatas(renew=true){
+    if(renew){
+      this.page = 1
     }
 
     this.setState({ready: false, dataList: []})
     Fetcher.wait_for(
-      [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${nextPage})`],
+      [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
       (responses)=>{
-        let more_result = false
         if(responses[0].error)
         {
-          // GLOB.datas = []
           Notice.danger(responses[0].message)
         }
         else
         {
-          const dataFetched = Fetcher.create_temp_realm(responses[0].data_shared, "temp_sharing", nextPage)
-          if(!(nextPage > 1 && dataFetched.length == 0))
-          {
-            GLOB.datas = dataFetched
-          }
-
-          if(responses[0].more_result)
-          {
-            more_result = true
-            nextPage = nextPage + 1
-          }
+          // const dataFetched = Fetcher.create_temp_realm(responses[0].data_shared, "temp_sharing", nextPage)
+          GLOB.datas = responses[0].data_shared || []
+          this.limit_page = responses[0].nb_pages
+          this.total = responses[0].total
         }
 
-        this.setState({ready: true, dataList: GLOB.datas, orderText: null, page: nextPage, more_result: more_result})
+       this.setState({ready: true, dataList: GLOB.datas})
       })
   }
 
@@ -649,9 +652,9 @@ class SharingScreen extends Component {
                   </View>
                 }
                 <LineList datas={this.state.dataList}
-                          title={`Dossiers partagés (${this.state.dataList.length})`}
+                          title={`Dossiers partagés (${this.total})`}
                           renderItems={(data) => <BoxStat data={data} deleteSharedDoc={this.deleteSharedDoc}/> } />
-                {this.state.more_result && <SimpleButton title="+ plus" onPress={this.nextPage} Pstyle={{marginBottom:10}}/>}
+                <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
              </ScrollView>
   }
 

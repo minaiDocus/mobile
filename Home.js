@@ -9,7 +9,6 @@ import {BoxButton, ImageButton} from './components/buttons'
 import Menu from './components/menu'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import User from './models/User'
-import Pack from './models/Pack'
 import {ProgressUpload} from './components/uploader'
 
 import Cfetcher from './components/dataFetcher'
@@ -17,25 +16,35 @@ import request1 from "./requests/data_loader"
 
 let Fetcher = new Cfetcher(request1)
 
-let GLOB = { navigation:{} }
+let GLOB = { navigation:{}, datas: []}
 
-function docs_processed(){ 
-  try{memo_processed[0].updated_at}catch(e){memo_processed = null}
-  return memo_processed || Pack.find("type = 'pack'").sorted("updated_at", true).slice(0,5) 
+function docs_processed(){
+  let result = [] 
+  GLOB.datas.forEach((elem)=>{
+    if (elem.type == "pack")
+      result = result.concat(elem)
+  })
+  return result
 }
-let memo_processed = docs_processed()
 
 function docs_processing(){ 
-  try{memo_processing[0].updated_at}catch(e){memo_processing = null}
-  return memo_processing || Pack.find("type = 'temp_pack'").sorted("updated_at", true).slice(0,5) 
+  let result = [] 
+  GLOB.datas.forEach((elem)=>{
+    if (elem.type == "temp_pack")
+      result = result.concat(elem)
+  })
+  return result
 }
-let memo_processing = docs_processing()
 
 function docs_errors(){ 
-  try{memo_errors[0].updated_at}catch(e){memo_errors = null}
-  return memo_errors || Pack.find("type = 'error'").sorted("updated_at", true).slice(0,5) 
+  let result = [] 
+  GLOB.datas.forEach((elem)=>{
+    if (elem.type == "error")
+      result = result.concat(elem)
+  })
+  return result
 }
-let memo_errors = docs_errors()
+
 
 class Header extends Component{
   render(){
@@ -77,8 +86,8 @@ class ViewState extends Component{
   }
 
   goToDocument(index){
-    const id = this.props.datas[index].id
-    GLOB.navigation.goTo('Publish', {idPack: id})
+    const pack = this.props.datas[index]
+    GLOB.navigation.goTo('Publish', {pack: pack})
   }
 
   renderDetails(data, index){
@@ -187,6 +196,7 @@ class ViewState extends Component{
                   </View>
                 </View>
                 <View style={{flex:1, marginTop:10}}>
+                  {this.props.ready && null}
                   {details}
                 </View>
              </View>
@@ -276,9 +286,9 @@ class TabNav extends Component{
 
   render(){
     return  <ScrollableTabView tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
-              <ViewState type={"processed"} icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[]} />
-              <ViewState type={"processing"} icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
-              <ViewState type={"errors"} icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"error_message"}]}/>
+              <ViewState ready={this.props.ready} type={"processed"} icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[]} />
+              <ViewState ready={this.props.ready} type={"processing"} icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
+              <ViewState ready={this.props.ready} type={"errors"} icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"error_message"}]}/>
             </ScrollableTabView>
   }
 }
@@ -297,9 +307,17 @@ class HomeScreen extends Component {
     this.master = User.getMaster()
     GLOB.navigation = new Navigator(this.props.navigation)
 
-    this.state = {showInfos: false}
+    this.state = {showInfos: false, ready: false}
 
     this.toggleInfos = this.toggleInfos.bind(this)
+    this.refreshDatas = this.refreshDatas.bind(this)
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(nextProps.navigation.state.params.initScreen)
+    {
+      this.refreshDatas()
+    }
   }
 
   componentWillMount(){
@@ -313,10 +331,28 @@ class HomeScreen extends Component {
   }
 
   componentDidMount(){
+    this.refreshDatas()
     if(GLOB.navigation.getParams("welcome"))
     {
       setTimeout(()=>Notice.info(`Bienvenue ${User.fullName_of(this.master)}`), 1000)
     }
+  }
+
+  refreshDatas(){
+    this.setState({ready: false})
+    Fetcher.wait_for(
+    ['refreshPacks()'],
+    (responses)=>{
+        if(responses[0].error)
+        {
+          Notice.danger(responses[0].message)
+        }
+        else
+        {
+          GLOB.datas = responses[0].packs || []
+          this.setState({ready: true})
+        }
+    })
   }
 
   toggleInfos(){
@@ -355,7 +391,7 @@ class HomeScreen extends Component {
         <Screen style={{flex:1}} 
                 navigation={GLOB.navigation}>
           <Header />
-          <TabNav />
+          <TabNav ready={this.state.ready} />
           {this.state.showInfos &&
              <Modal  transparent={true}
                      animationType="fade" 

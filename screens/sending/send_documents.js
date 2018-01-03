@@ -193,7 +193,7 @@ class ImgBox extends Component{
       },
       btnText: {
           flex:1,
-          backgroundColor:'rgba(255,255,255,0.5)',
+          backgroundColor:'rgba(255,255,255,0.8)',
           padding:2,
           justifyContent:'center',
           alignItems:'center',
@@ -211,9 +211,9 @@ class ImgBox extends Component{
                 <XImage type='container' PStyle={imgBox.styleContainer} source={this.props.source} style={imgBox.styleImg} local={false}>
                   { this.state.options == true &&
                     <View style={imgBox.options}>   
-                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} Pstyle={[imgBox.btnText]} Istyle={{width:30,height:30}} />
-                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[{borderLeftWidth:1, borderRightWidth: 1}, imgBox.btnText]} Istyle={{width:30,height:30}} />
-                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} Pstyle={[imgBox.btnText]} Istyle={{width:30,height:30}} />
+                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[imgBox.btnText]} Istyle={{width:20,height:20}} />
+                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} Pstyle={[{borderLeftWidth:1, borderRightWidth: 1}, imgBox.btnText]} Istyle={{width:20,height:20}} />
+                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} Pstyle={[imgBox.btnText]} Istyle={{width:20,height:20}} />
                     </View>
                   }
                 </XImage>
@@ -284,6 +284,7 @@ class SendScreen extends Component {
                         ImagePicker.openPicker({
                           multiple: true,
                           mediaType: 'photo',
+                          maxFiles : 10 //For iOS only
                         }).then(images => {
                           this.renderImg(images);
                         }).catch(error => {

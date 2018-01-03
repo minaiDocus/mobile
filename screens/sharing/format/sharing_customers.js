@@ -69,8 +69,10 @@ class ModalSharing extends Component{
 
   validateProcess(){
     let url = ""
+    let message = ""
     if(this.type == "sharing")
     {
+      message = "Partage en cours d'envoi ..."
       if(GLOB.dataForm.email == '' || GLOB.dataForm.company == '')
       {
         Notice.alert("Erreur", "Veuillez remplir les champs obligatoires (*) svp!")
@@ -82,6 +84,7 @@ class ModalSharing extends Component{
     }
     else
     {
+      message = "Demande en cours d'envoi ..."
       if(GLOB.dataForm.code_or_email == '')
       {
         Notice.alert("Erreur", "Veuillez remplir les champs obligatoires (*) svp!")
@@ -95,6 +98,7 @@ class ModalSharing extends Component{
     if(url != '')
     {
       const call = ()=>{
+                          Notice.info(message)
                           Fetcher.wait_for(
                             [url],
                             (responses)=>{

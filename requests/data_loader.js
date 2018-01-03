@@ -2,7 +2,6 @@ import Requester from './activeRequest'
 import Config from '../Config'
 import base64 from 'base-64'
 import User from '../models/User'
-import Pack from '../models/Pack'
 
 export default class data_loader extends Requester{
 
@@ -31,10 +30,10 @@ export default class data_loader extends Requester{
     return src
   }
 
-  async getStats(dataFilters={}, page=1){
+  async getStats(dataFilters={}, page=1, order={}){
     this.synchronious_response = ""
 
-    this.requestURI("api/mobile/data_loader/load_stats", {method: 'POST', params:{paper_process_contains: dataFilters, page: page}}, (r) => {
+    this.requestURI("api/mobile/data_loader/load_stats", {method: 'POST', params:{paper_process_contains: dataFilters, page: page, order: order}}, (r) => {
       if(r.error){ 
         //handling errors
         this.synchronious_response = r
@@ -74,15 +73,11 @@ export default class data_loader extends Requester{
     this.requestURI("api/mobile/data_loader/load_packs", {method: 'POST'}, (r) => {
       if(r.error){ 
         //handling errors
-        this.synchronious_response = r.message
+        this.synchronious_response = r
       }
       else
       {
-        Pack.deleteAll()
-        r.packs.map((pack, index)=>{
-          Pack.create_or_update((index+1), pack)
-        })
-        this.synchronious_response = true
+        this.synchronious_response = r
       }
     })
     while(this.synchronious_response == "")
@@ -113,14 +108,14 @@ export default class data_loader extends Requester{
     }
   }
 
-  async filterPacks(text="", owner_id=0){
+  async getPacks(page=1, text="", owner_id=0){
     if(owner_id <= 0)
     {
       owner_id = 'all'
     }
 
     this.synchronious_response = ""
-    this.requestURI("api/mobile/data_loader/filter_packs", {method: 'POST', params: {page:1, view: owner_id, filter: text}}, (r) => {
+    this.requestURI("api/mobile/data_loader/get_packs", {method: 'POST', params: {page: page, view: owner_id, filter: text}}, (r) => {
       this.synchronious_response = r
     })
     while(this.synchronious_response == "")

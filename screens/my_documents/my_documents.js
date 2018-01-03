@@ -5,8 +5,8 @@ import {StyleSheet,Text,View,ScrollView,TouchableOpacity} from 'react-native'
 import {XImage, XTextInput} from '../../components/XComponents'
 import Navigator from '../../components/navigator'
 import SelectInput from '../../components/select'
+import Pagination from '../../components/pagination'
 import User from '../../models/User'
-import Pack from '../../models/Pack'
 import {LineList} from '../../components/lists'
 
 import Cfetcher from '../../components/dataFetcher'
@@ -14,13 +14,6 @@ import request1 from "../../requests/data_loader"
 
 let Fetcher = new Cfetcher(request1)
 let GLOB = { navigation:{} }
-
-function packs(){ 
-  try{memo_packs[0].id_idocus}catch(e){memo_packs = null}
-  return memo_packs || Pack.find("type='pack'").sorted("updated_at", true) 
-}
-let memo_packs = packs()
-
 
 class Header extends Component{
   constructor(props){
@@ -159,8 +152,8 @@ class BoxDocs extends Component{
     super(props)
   }
 
-  handleClick(id){
-    GLOB.navigation.goTo('Publish', {idPack: id})
+  handleClick(){
+    GLOB.navigation.goTo('Publish', {pack: this.props.data})
   }
 
   render(){
@@ -179,8 +172,8 @@ class BoxDocs extends Component{
         marginRight:20
       }
     })
-    const id_idocus = this.props.data.id
-    return  <TouchableOpacity style={{flex:1}} onPress={()=>this.handleClick(id_idocus)} >
+
+    return  <TouchableOpacity style={{flex:1}} onPress={()=>this.handleClick()} >
               <View style={boxDocs.container}>
                 <XImage source={{uri:"arrow_doc"}} style={boxDocs.image} />
                 <Text>{this.props.data.name.toString()}</Text>
@@ -195,66 +188,74 @@ class DocumentsScreen extends Component {
   constructor(props){
     super(props)
     GLOB.navigation = new Navigator(this.props.navigation)
-    this.state = {ready: false, dataList: [], loadingFilter: false}
+    this.state = {ready: false, dataList: [], loadingFilter: false, total: 0}
 
+    this.page = this.limit_page = 1
+    this.text = ""
+    this.client_id = 0
+    
     this.dataFilter = this.dataFilter.bind(this)
+    this.changePage = this.changePage.bind(this)
+    this.refreshDatas = this.refreshDatas.bind(this)
   }
 
   //For refreshing Account list
-  componentWillMount(){
+  componentDidMount(){
     Fetcher.wait_for(
       ['refreshCustomers()'],
       (responses)=>{
         responses.map(r=>{if(r!=true)Notice.info(r)})
+        this.refreshDatas()
     })
   }
 
-  componentDidMount(){
+  changePage(page=1){
+    this.page = page
+    this.refreshDatas(false)
+  }
+
+  refreshDatas(renew = true){
+    if(renew){
+      this.page = 1
+    }
+
+    this.setState({ready: false, loadingFilter: true})
+
     Fetcher.wait_for(
-      ['refreshPacks()'],
-      (responses)=>{
-        responses.map(r=>{if(r!=true)Notice.danger(r)})
-        this.setState({ready: true, dataList: packs()})
+          [`getPacks(${this.page}, "${this.text}", "${this.client_id}")`],
+          (responses)=>{
+            responses.map(r=>{
+              if(r.error)
+              {
+                Notice.danger(r.message, true, "filterDanger")
+                this.setState({ready: true, loadingFilter: false})
+              }
+              else
+              {
+                this.limit_page = r.nb_pages
+                this.setState({ready: true, loadingFilter: false, dataList: r.packs, total: r.total})
+              }
+          })
     })
   }
 
-  dataFilter(client_id=0, text=''){
-    this.setState({loadingFilter: true})
-    Fetcher.wait_for(
-      [`filterPacks("${text}", "${client_id}")`],
-      (responses)=>{
-        responses.map(r=>{
-          if(r.error)
-          {
-            Notice.danger(r.message, true, "filterDanger")
-            this.setState({loadingFilter: false, dataList: packs()})
-          }
-          else
-          {
-            let where = ''
-            if(r.packs.length > 0)
-            {
-              r.packs.forEach((el)=>{
-                where += `id_idocus = ${el} OR `
-              })
-            }
-            where += 'id_idocus = -10'
-            this.setState({loadingFilter: false, dataList: packs().filtered(where)})
-          }
-      })
-    })
+  dataFilter(client_id=0, text=""){
+    this.client_id = client_id
+    this.text = text
+    this.refreshDatas()
   }
 
   renderDocuments(){
     return  <ScrollView style={{flex:1, padding:3}}>
               <LineList datas={this.state.dataList}
-                        title={`${this.state.dataList.length} / ${packs().length} : Document(s)`} 
+                        title={`${this.state.total} : Document(s)`} 
                         renderItems={(data) => <BoxDocs data={data} /> } />
+
+              <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
             </ScrollView>
   }
 
   render() {
-     
       return (
         <Screen style={styles.container}
                 navigation={GLOB.navigation}>

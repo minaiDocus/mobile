@@ -1,23 +1,6 @@
 import Config from '../Config'
 import Realm from 'realm'
 
-const PackSchema = {
-                      name: 'Pack',
-                      primaryKey: 'id',
-                      properties: {
-                        id: 'int',
-                        id_idocus: 'int',
-                        created_at: 'date', 
-                        updated_at: 'date', 
-                        name: 'string',
-                        owner_id: 'int',
-                        page_number: 'int?',
-                        message: 'string?',
-                        error_message: 'string?',
-                        type: 'string'
-                      }
-                    }
-
 const UserSchema = {
                       name: 'User',
                       primaryKey: 'id',
@@ -39,7 +22,7 @@ const UserSchema = {
 
 
 class RealmData {
-  static realm = new Realm({path: 'datas00.realm', schema:[PackSchema, UserSchema], encryptionKey: Config.keydb})
+  static realm = new Realm({path: 'datas00.realm', schema:[UserSchema], encryptionKey: Config.keydb})
 
   constructor(objectName){
     this.objectName = objectName 

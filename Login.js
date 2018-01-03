@@ -17,7 +17,7 @@ let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
 
 function goToHome(){
   Fetcher.setRequest(request2).wait_for(
-    ['refreshCustomers()','refreshPacks()'],
+    ['refreshCustomers()'],
     (responses)=>{
       responses.map(r=>{if(r!=true)Notice.info(r)})
       SplashScreen.hide()

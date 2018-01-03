@@ -8,7 +8,7 @@ import { NavigationActions } from 'react-navigation'
 import Pdf from 'react-native-pdf'
 import {SimpleButton, ImageButton} from '../../components/buttons'
 import {BoxList, LineList} from '../../components/lists'
-import Pack from '../../models/Pack'
+// import Pack from '../../models/Pack'
 import User from '../../models/User'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
@@ -363,7 +363,7 @@ class TabNav extends Component{
 
   componentDidMount(){
     Fetcher.wait_for(
-        [`getPackDocuments(${GLOB.Pack.id_idocus})`],
+        [`getPackDocuments(${GLOB.Pack.id})`],
         (responses) => {
           if(responses[0].error)
           {
@@ -371,8 +371,8 @@ class TabNav extends Component{
           }
           else
           {
-            GLOB.pagesPublished = [].concat(responses[0].published.map((doc, index)=>{return {id:index, thumb:doc.thumb, large:doc.large, id_idocus: doc.id, force_temp_doc:false} }))
-            GLOB.pagesPublishing = [].concat(responses[0].publishing.map((doc, index)=>{return {id:index, thumb:doc.thumb, large:doc.large, id_idocus: doc.id, force_temp_doc:true} }))
+            GLOB.pagesPublished = [].concat(responses[0].published.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:false} }))
+            GLOB.pagesPublishing = [].concat(responses[0].publishing.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:true} }))
           }
 
           this.setState({published_ready: true, publishing_ready: true})
@@ -458,7 +458,7 @@ class PublishScreen extends Component {
   constructor(props){
     super(props);
     GLOB.navigation = new Navigator(this.props.navigation)
-    GLOB.Pack = Pack.find(`id = ${GLOB.navigation.getParams('idPack')}`)[0] || {};
+    GLOB.Pack = GLOB.navigation.getParams('pack') || {}
     GLOB.pagesPublished = GLOB.pagesPublishing = []
   }  
 

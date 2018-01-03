@@ -8,6 +8,7 @@ import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-nati
 import {XImage, XTextInput} from '../../components/XComponents'
 import {LineList} from '../../components/lists'
 import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
+import Pagination from '../../components/pagination'
 import SelectInput from '../../components/select'
 import User from '../../models/User'
 
@@ -73,6 +74,8 @@ class ModalForm extends Component{
 
   validateProcess(){
     let url = ""
+    let reload = true
+    
     if(GLOB.dataForm.email == '' || GLOB.dataForm.company == '')
     {
       Notice.alert("Erreur", "Veuillez remplir les champs obligatoires (*) svp")
@@ -82,11 +85,13 @@ class ModalForm extends Component{
       if(this.type == "add")
       {
         url = `addSharedContact(${JSON.stringify(GLOB.dataForm)})`
+        reload = true
         flash = "Ajout contact en cours ..."
       }
       else
       {
         url = `editSharedContact(${JSON.stringify(GLOB.dataForm)})`
+        reload = false
         flash = "Modification contact en cours ..."
       }
     }
@@ -106,7 +111,7 @@ class ModalForm extends Component{
                               {
                                 Notice.info(responses[0].message)
                               }
-                              EventRegister.emit('refreshPage_contacts', true)
+                              EventRegister.emit('refreshPage_contacts', reload)
                             })
                         }
       actionLocker(call)
@@ -385,6 +390,7 @@ class BoxStat extends Component{
   }
 
   deleteSharedContact(_id){
+    Notice.info("Suppression de contact en cours ...")
     Fetcher.wait_for(
       [`deleteSharedContact(${_id})`],
       (responses)=>{
@@ -544,13 +550,17 @@ class SharingScreen extends Component {
     GLOB.navigation = new Navigator(this.props.navigation)
 
     this.dontRefreshForm = false
-    this.state = {page:1, more_result:false, ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+    this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+
+    this.page = this.limit_page = 1
+    this.order = {}
+    this.total = 0
 
     this.renderStats = this.renderStats.bind(this)
     this.refreshDatas = this.refreshDatas.bind(this)
     this.toggleOrderBox = this.toggleOrderBox.bind(this)
     this.handleOrder = this.handleOrder.bind(this)
-    this.nextPage = this.nextPage.bind(this)
+    this.changePage = this.changePage.bind(this)
   }
 
   componentWillMount(){
@@ -579,8 +589,9 @@ class SharingScreen extends Component {
     }
   }
 
-  nextPage(){
-    this.refreshDatas()
+  changePage(page=1){
+    this.page = page
+    this.refreshDatas(false)
   }
 
   handleOrder(orderBy=[], direction = false){ 
@@ -589,9 +600,13 @@ class SharingScreen extends Component {
     order_text = orderBy[0] || this.state.orderText
     order_by = orderBy[1] || this.state.orderBy
 
-    this.setState({ready: false})
-    GLOB.datas = GLOB.datas.sorted(order_by, direction)
-    this.setState({orderText: order_text, ready: true, dataList: GLOB.datas, orderBy:order_by, direction: direction})
+    this.order={
+                  order_by: order_by,
+                  direction: direction
+                }
+
+    this.refreshDatas()
+    this.setState({orderText: order_text, orderBy:order_by, direction: direction})
   }
 
   async changeDirectionSort(){
@@ -599,39 +614,28 @@ class SharingScreen extends Component {
     this.handleOrder([], this.state.direction)
   }
 
-  refreshDatas(renew=false){
-    let nextPage = this.state.page
-    if(renew)
-    {
-      nextPage = 1
+  refreshDatas(renew=true){
+    if(renew){
+      this.page = 1
     }
 
     this.setState({ready: false, dataList: []})
     Fetcher.wait_for(
-      [`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${nextPage})`],
+      [`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
       (responses)=>{
-        let more_result = false
         if(responses[0].error)
         {
-          // GLOB.datas = []
           Notice.danger(responses[0].message)
         }
         else
         {
-          const dataFetched = Fetcher.create_temp_realm(responses[0].contacts, "temp_sharing_contacts", nextPage)
-          if(!(nextPage > 1 && dataFetched.length == 0))
-          {
-            GLOB.datas = dataFetched
-          }
-
-          if(responses[0].more_result)
-          {
-            more_result = true
-            nextPage = nextPage + 1
-          }
+          // const dataFetched = Fetcher.create_temp_realm(responses[0].contacts, "temp_sharing_contacts", nextPage)
+          GLOB.datas = responses[0].contacts || []
+          this.limit_page = responses[0].nb_pages
+          this.total = responses[0].total
         }
 
-        this.setState({ready: true, dataList: GLOB.datas, orderText: null, page: nextPage, more_result: more_result})
+        this.setState({ready: true, dataList: GLOB.datas})
       })
   }
 
@@ -648,9 +652,9 @@ class SharingScreen extends Component {
                   </View>
                 }
                 <LineList datas={this.state.dataList}
-                          title={`Contacts (${this.state.dataList.length})`}
+                          title={`Contacts (${this.total})`}
                           renderItems={(data) => <BoxStat data={data} deleteSharedDoc={this.deleteSharedDoc}/> } />
-                {this.state.more_result && <SimpleButton title="+ plus" onPress={this.nextPage} Pstyle={{marginBottom:10}}/>}
+                <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
              </ScrollView>
   }
 

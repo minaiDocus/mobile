@@ -8,6 +8,7 @@ import {XImage, XTextInput} from '../../components/XComponents'
 import Navigator from '../../components/navigator'
 import {LineList} from '../../components/lists'
 import {SimpleButton, BoxButton, LinkButton, ImageButton} from '../../components/buttons'
+import Pagination from '../../components/pagination'
 import SelectInput from '../../components/select'
 import DatePicker from '../../components/datePicker'
 
@@ -295,7 +296,7 @@ class BoxStat extends Component{
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={boxStyle.container}>
                 <XImage source={{uri:arrow}} style={boxStyle.image} />
-                <Text style={{fontWeight:'bold', width:240}}>{this.props.data.packname.toString()}</Text>
+                <Text style={{fontSize:12,fontWeight:'bold', width:240}}>{this.props.data.company} (<Text style={{fontSize:9}}>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>)</Text>
               </View>
               {
                   this.state.showDetails == true && 
@@ -365,7 +366,6 @@ class OrderBox extends Component{
                     <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['Type','type'])} title='Type' Pstyle={styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['Code client','code'])} title='Code client' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Société','company'])} title='Société' Pstyle={styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['N°de suivi','number'])} title='N°de suivi' Pstyle={styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['Nom de lot','packname'])} title='Nom du lot' Pstyle={styles.list} />
                   </View>
@@ -391,13 +391,17 @@ class StatsScreen extends Component {
     super(props);
     GLOB.navigation = new Navigator(this.props.navigation)
 
-    this.state = {page:1, more_result:false, ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+    this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+
+    this.page = this.limit_page = 1
+    this.order = {}
+    this.total = 0
 
     this.renderStats = this.renderStats.bind(this)
     this.refreshDatas = this.refreshDatas.bind(this)
     this.toggleOrderBox = this.toggleOrderBox.bind(this)
     this.handleOrder = this.handleOrder.bind(this)
-    this.nextPage = this.nextPage.bind(this)
+    this.changePage = this.changePage.bind(this)
   }
 
   componentWillMount(){
@@ -421,8 +425,9 @@ class StatsScreen extends Component {
     }
   }
 
-  nextPage(){
-    this.refreshDatas()
+  changePage(page=1){
+    this.page = page
+    this.refreshDatas(false)
   }
 
   handleOrder(orderBy=[], direction = false){ 
@@ -431,9 +436,13 @@ class StatsScreen extends Component {
     order_text = orderBy[0] || this.state.orderText
     order_by = orderBy[1] || this.state.orderBy
 
-    this.setState({ready: false})
-    GLOB.datas = GLOB.datas.sorted(order_by, direction)
-    this.setState({orderText: order_text, ready: true, dataList: GLOB.datas, orderBy:order_by, direction: direction})
+    this.order={
+                  order_by: order_by,
+                  direction: direction
+                }
+
+    this.refreshDatas()
+    this.setState({orderText: order_text, orderBy:order_by, direction: direction})
   }
 
   async changeDirectionSort(){
@@ -441,19 +450,16 @@ class StatsScreen extends Component {
     this.handleOrder([], this.state.direction)
   }
 
-  refreshDatas(renew=false){
-    let nextPage = this.state.page
-    if(renew)
-    {
-      nextPage = 1
+  refreshDatas(renew = true){
+    if(renew){
+      this.page = 1
     }
 
     this.setState({ready: false, dataList: []})
 
     Fetcher.wait_for(
-      [`getStats(${JSON.stringify(GLOB.dataFilter)}, ${nextPage})`],
+      [`getStats(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
       (responses)=>{
-        let more_result = false
         if(responses[0].error)
         {
           // GLOB.datas = []
@@ -461,20 +467,13 @@ class StatsScreen extends Component {
         }
         else
         {
-          const dataFetched = Fetcher.create_temp_realm(responses[0].data_stats, "temp_states", nextPage)
-          if(!(nextPage > 1 && dataFetched.length == 0))
-          {
-            GLOB.datas = dataFetched
-          }
-
-          if(responses[0].more_result)
-          {
-            more_result = true
-            nextPage = nextPage + 1
-          }
+          // const dataFetched = Fetcher.create_temp_realm(responses[0].data_stats, "temp_states", nextPage)
+          GLOB.datas = responses[0].data_stats || []
+          this.limit_page = responses[0].nb_pages
+          this.total = responses[0].total
         }
 
-        this.setState({ready: true, dataList: GLOB.datas, orderText: null, page: nextPage, more_result: more_result})
+        this.setState({ready: true, dataList: GLOB.datas})
       })
   }
 
@@ -493,7 +492,7 @@ class StatsScreen extends Component {
                 }
                 <LineList datas={this.state.dataList} 
                           renderItems={(data) => <BoxStat data={data} /> } />
-                {this.state.more_result && <SimpleButton title="+ plus" onPress={this.nextPage} Pstyle={{marginBottom:10}} />}
+                <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
              </ScrollView>
   }
 
@@ -501,7 +500,7 @@ class StatsScreen extends Component {
       return (
           <Screen style={styles.container}
                   navigation={GLOB.navigation}>
-            <Header dataCount={this.state.dataList.length} onFilter={()=>this.refreshDatas(true)}/>
+            <Header dataCount={this.total} onFilter={()=>this.refreshDatas()}/>
               {this.state.ready && this.renderStats()}
               {!this.state.ready && <XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} />}
               <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>

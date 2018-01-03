@@ -2,7 +2,6 @@ import Config from '../Config'
 import base64 from 'base-64'
 import Realm from 'realm'
 import User from '../models/User'
-import Pack from '../models/Pack'
 
 class Fetcher{
   constructor(name=""){
@@ -12,11 +11,9 @@ class Fetcher{
 
   clearAll(){
     User.deleteAll()
-    Pack.deleteAll()
   }
 
   setRequest(name){
-    // const class_name = require(name)
     this.request = new name
     return this
   }
