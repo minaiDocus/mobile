@@ -135,7 +135,7 @@ class Header extends Component{
                 <View style={headStyle.right}>
                   {this.state.ready && this.renderCustomerSelection()}
                   <View style={{flex:1, flexDirection:'row'}}>
-                    <XTextInput TStyle={{paddingLeft:11}} PStyle={headStyle.inputs} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleFilterChange(value)}/>
+                    <XTextInput TStyle={{paddingLeft:6}} PStyle={headStyle.inputs} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleFilterChange(value)}/>
                     {imageInput()}
                   </View>
                 </View>

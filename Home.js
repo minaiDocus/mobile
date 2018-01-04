@@ -376,12 +376,15 @@ class HomeScreen extends Component {
         borderRadius:10,
       },
       title:{
-        flex:0,
-        height:35, 
+        flex:1, 
         fontWeight:'bold',
         fontSize:24,
-        textAlign:'center', 
-        borderBottomWidth:1, 
+        textAlign:'center'
+      },
+      boxTitle:{
+      	flex:0,
+      	height:45,
+      	borderBottomWidth:1, 
         borderColor:'#000',
         marginBottom:10
       }
@@ -402,7 +405,9 @@ class HomeScreen extends Component {
               <TouchableWithoutFeedback onPress={this.toggleInfos}>
                 <View style={styleInfo.content}>
                     <View style={styleInfo.box}>
-                      <Text style={styleInfo.title}>iDocus</Text>
+                      <View style={styleInfo.boxTitle}>
+                      	<Text style={styleInfo.title}>iDocus</Text>
+                      </View>
                       <Text>www.idocus.com</Text>
                       <Text>version : {Config.version.toString()}</Text>
                       <Text>IDOCUS © Copyright 2017</Text>

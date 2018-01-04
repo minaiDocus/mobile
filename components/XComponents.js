@@ -119,11 +119,12 @@ export class XImage extends Component{
 export class XTextInput extends Component{
   constructor(props){
     super(props)
+
+    this.initValue = this.props.value || this.props.defaultValue || ""
     this.state = {
                    openKeyboard: false,
-                   value: this.props.value || this.props.defaultValue || "",
+                   value: this.initValue,
                  }
-    this.initValue = null
     this.liveChange = this.props.liveChange || false
     this.label = this.props.placeholder || this.props.label || ""
 
@@ -148,7 +149,7 @@ export class XTextInput extends Component{
                         }
                         try{this.props.onBlur()}
                         catch(e){}
-                        this.initValue = null
+                        this.initValue = this.state.value
                       }
     this.refs.animatedInput.leave(exit)
   }
@@ -164,10 +165,6 @@ export class XTextInput extends Component{
   }
 
   renderModalText(){
-    if(this.initValue == null)
-    {
-      this.initValue = this.state.value
-    }
     const styles = StyleSheet.create({
       content:{
         flex:1,
@@ -190,22 +187,27 @@ export class XTextInput extends Component{
         color:'#707070'
       },
       input:{
+        flex:1,
+        fontSize:14,
+        borderWidth:0
+      },
+      boxInput: {
         flex:0,
         width:180,
-        fontSize:14,
         height:28,
+        borderColor:'#707070',
+        borderBottomWidth: 1,
         paddingVertical:7,
         paddingHorizontal:8,
-        backgroundColor:'#FFF'
+        backgroundColor:'#FFF',
       }
     })
 
     let iosStyle = {}
-    if(Platform.os == 'ios')
+    if(Platform.OS == 'ios')
     {
       iosStyle={
-        borderColor:'#707070',
-        borderBottomWidth: 1
+        marginTop: 20,
       }
     }
     return <Modal  transparent={true}
@@ -215,18 +217,20 @@ export class XTextInput extends Component{
                    onRequestClose={()=>{this.closeKeyboard()}}
             >
               <TouchableWithoutFeedback onPress={()=>this.closeKeyboard()}>
-                <View style={styles.content}>
+                <View style={[styles.content, iosStyle]}>
                   <AnimatedBox ref="animatedInput" style={styles.box} type='DownSlide' durationIn={300} >
                     {this.label != "" && <Text style={styles.label}>{this.label}</Text>}
-                    <TextInput ref="input"
-                               autoFocus={true}
-                               autoCorrect={this.props.autoCorrect || true}
-                               secureTextEntry={this.props.secureTextEntry || false}
-                               defaultValue={this.state.value}
-                               onChangeText={(value)=>this.changeText(value)}
-                               onBlur={()=>{this.closeKeyboard()}}
-                               keyboardType={this.props.keyboardType}
-                               style={[styles.input, iosStyle]}/>
+                    <View style={styles.boxInput}>
+                      <TextInput ref="input"
+                                 autoFocus={true}
+                                 autoCorrect={this.props.autoCorrect || true}
+                                 secureTextEntry={this.props.secureTextEntry || false}
+                                 defaultValue={this.state.value}
+                                 onChangeText={(value)=>this.changeText(value)}
+                                 onBlur={()=>{this.closeKeyboard()}}
+                                 keyboardType={this.props.keyboardType}
+                                 style={styles.input}/>
+                    </View>
                   </AnimatedBox>
                   <View style={{flex:1}} />
                 </View>       
@@ -243,10 +247,8 @@ export class XTextInput extends Component{
     const textStyle = {
       flex:1,
       color: '#707070',
-      borderBottomWidth:1,
-      borderColor:'#909090',
       fontSize:14,
-      padding:5,
+      borderWidth:0
     }
 
     const PStyle = this.props.PStyle
@@ -263,7 +265,9 @@ export class XTextInput extends Component{
     }
     return <TouchableOpacity style={[prevStyle, PStyle]} onPress={()=>this.openKeyboard()} >
             {this.state.openKeyboard && this.renderModalText()}  
-            <Text style={[textStyle, TStyle]}>{value}</Text>
+            <View style={{flex:1,borderBottomWidth:1,borderColor:'#909090',padding:5}}>
+              <Text style={[textStyle, TStyle]}>{value}</Text>
+            </View>
            </TouchableOpacity>
            
   }
