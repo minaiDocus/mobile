@@ -49,9 +49,9 @@ export default class data_loader extends Requester{
     }
   }
 
-  async getDocumentsProcessed(pack_id, page=1){
+  async getDocumentsProcessed(pack_id, page=1, text=""){
     this.synchronious_response = ""
-    this.requestURI("api/mobile/data_loader/load_documents_processed", {method: 'POST', params:{id: pack_id, page: page}}, (r) => {
+    this.requestURI("api/mobile/data_loader/load_documents_processed", {method: 'POST', params:{id: pack_id, page: page, filter: text}}, (r) => {
       if(r.error){ 
         //handling errors
         this.synchronious_response = r

@@ -30,7 +30,7 @@ class BoxZoom extends Component{
   }
 
   componentDidMount(){
-    setTimeout(()=>{this.setState({ready: true})}, 1000)
+    setTimeout(()=>{this.setState({ready: true})}, 2000)
   }
 
   onSwipe(index){
@@ -54,7 +54,7 @@ class BoxZoom extends Component{
   cropElement(){
     const path = base64.decode(GLOB.idZoom).toString()
     this.hideModal()
-    this.props.cropElement(path, this.currIndex)
+    setTimeout(()=>{this.props.cropElement(path, this.currIndex)}, 1000)
   }
 
   renderSwiper(){
@@ -63,7 +63,9 @@ class BoxZoom extends Component{
             flex:1,
             marginBottom:10,
             borderColor:'#fff',
-            borderWidth:2
+            borderWidth:2,
+            width:'100%',
+            height:'100%'
       },
       image:{
         flex:0,
@@ -71,9 +73,12 @@ class BoxZoom extends Component{
         height:'100%',
       },
       boxImage:{
+        flex:0,
         backgroundColor:'#fff',
         borderColor:'#fff',
         borderLeftWidth:2,
+        width:'100%',
+        height:'100%',
         borderRightWidth:2
       }
     })
@@ -92,7 +97,7 @@ class BoxZoom extends Component{
     })
 
     return <Swiper style={swipeStyle.wrapper} index={indexStart} onIndexChanged={(index)=>{this.onSwipe(index)}} count={this.props.datas.length}>
-            { embedContent }
+            {embedContent}
            </Swiper>
   }
 
@@ -395,7 +400,7 @@ class SendScreen extends Component {
         <Screen style={styles.container}
                 navigation={GLOB.navigation}>
           <Header takePhoto={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
-          {this.state.zoomActive && <BoxZoom visible={this.state.zoomActive} datas={this.state.dataList} cropElement={(path, index)=>this.openCrop(path, index)} deleteElement={this.deleteElement} hide={this.toggleZoom} />}
+          {this.state.zoomActive && <BoxZoom datas={this.state.dataList} cropElement={(path, index)=>this.openCrop(path, index)} deleteElement={this.deleteElement} hide={this.toggleZoom} />}
           { embedContent }
           <View style={styles.minicontainer}>
             <SimpleButton Pstyle={styles.button} onPress={()=>this.sendList()} title="Suivant >>" />

@@ -16,7 +16,7 @@ import Cfetcher from '../../components/dataFetcher'
 import request1 from "../../requests/data_loader"
 
 let Fetcher = new Cfetcher(request1)
-let GLOB = {Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", navigation:{}}
+let GLOB = {Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", navigation:{}, filterText: ""}
 
 
 class BoxZoom extends Component{
@@ -152,7 +152,7 @@ class Header extends Component{
   const styles = StyleSheet.create({
    minicontainer:{
       flex:0, 
-      flexDirection:'row',
+      flexDirection:'column',
       backgroundColor:'#E1E2DD',
       alignItems:'center',
       justifyContent:'center',
@@ -161,11 +161,19 @@ class Header extends Component{
     text:{
       fontSize:18,
       fontWeight:"bold"
+    },
+    filter:{
+      fontSize:10,
+      fontWeight:"bold"
     }
   });
   return (
             <View style={styles.minicontainer}>
               <Text style={styles.text}>{GLOB.Pack.name || "test"}</Text>
+              {
+                GLOB.filterText != "" &&
+                <Text style={styles.filter}>(Filtre actif: <Text style={{color:"#F7230C", fontStyle:'italic'}}>{GLOB.filterText}</Text>)</Text>
+              }
             </View>
           );
   }
@@ -386,7 +394,7 @@ class TabNav extends Component{
 
     this.setState({published_ready: false})
     Fetcher.wait_for(
-        [`getDocumentsProcessed(${GLOB.Pack.id}, ${this.pagePublished})`],
+        [`getDocumentsProcessed(${GLOB.Pack.id}, ${this.pagePublished}, "${GLOB.filterText}")`],
         (responses) => {
           if(responses[0].error)
           {
@@ -409,22 +417,28 @@ class TabNav extends Component{
   }
 
   refreshDocsPublishing(renew = true){
-    this.setState({publishing_ready: false})
-    Fetcher.wait_for(
-        [`getDocumentsProcessing(${GLOB.Pack.id})`],
-        (responses) => {
-          if(responses[0].error)
-          {
-            Notice.danger(responses[0].message)
-          }
-          else
-          {
-            GLOB.pagesPublishing = [].concat(responses[0].publishing.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:true} }))
-          }
+    if(GLOB.filterText == "" || typeof(GLOB.filterText) === "undefined")
+    {
+      this.setState({publishing_ready: false})
+      Fetcher.wait_for(
+          [`getDocumentsProcessing(${GLOB.Pack.id})`],
+          (responses) => {
+            if(responses[0].error)
+            {
+              Notice.danger(responses[0].message)
+            }
+            else
+            {
+              GLOB.pagesPublishing = [].concat(responses[0].publishing.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:true} }))
+            }
 
-          this.setState({publishing_ready: true})
-        })
-    
+            this.setState({publishing_ready: true})
+          })
+    }
+    else
+    {
+      this.setState({publishing_ready: true})
+    }
   }
 
   handleIndexChange(index){
@@ -521,6 +535,7 @@ class PublishScreen extends Component {
     super(props);
     GLOB.navigation = new Navigator(this.props.navigation)
     GLOB.Pack = GLOB.navigation.getParams('pack') || {}
+    GLOB.filterText = GLOB.navigation.getParams('text') || ""
     GLOB.pagesPublished = GLOB.pagesPublishing = []
   }  
 

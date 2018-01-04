@@ -13,7 +13,7 @@ import Cfetcher from '../../components/dataFetcher'
 import request1 from "../../requests/data_loader"
 
 let Fetcher = new Cfetcher(request1)
-let GLOB = { navigation:{} }
+let GLOB = { navigation:{}, filterText: "", clientId: 0 }
 
 class Header extends Component{
   constructor(props){
@@ -153,7 +153,7 @@ class BoxDocs extends Component{
   }
 
   handleClick(){
-    GLOB.navigation.goTo('Publish', {pack: this.props.data})
+    GLOB.navigation.goTo('Publish', {pack: this.props.data, text: GLOB.filterText})
   }
 
   render(){
@@ -192,9 +192,7 @@ class DocumentsScreen extends Component {
 
     this.page = this.limit_page = 1
     this.total = 0
-    this.text = ""
-    this.client_id = 0
-    
+
     this.dataFilter = this.dataFilter.bind(this)
     this.changePage = this.changePage.bind(this)
     this.refreshDatas = this.refreshDatas.bind(this)
@@ -223,7 +221,7 @@ class DocumentsScreen extends Component {
     this.setState({ready: false, loadingFilter: true})
 
     Fetcher.wait_for(
-          [`getPacks(${this.page}, "${this.text}", "${this.client_id}")`],
+          [`getPacks(${this.page}, "${GLOB.filterText}", "${GLOB.clientId}")`],
           (responses)=>{
             responses.map(r=>{
               if(r.error)
@@ -242,8 +240,8 @@ class DocumentsScreen extends Component {
   }
 
   dataFilter(client_id=0, text=""){
-    this.client_id = client_id
-    this.text = text
+    GLOB.clientId = client_id
+    GLOB.filterText = text
     this.refreshDatas()
   }
 

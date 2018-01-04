@@ -87,7 +87,7 @@ class ViewState extends Component{
 
   goToDocument(index){
     const pack = this.props.datas[index]
-    GLOB.navigation.goTo('Publish', {pack: pack})
+    GLOB.navigation.goTo('Publish', {pack: pack, text:""})
   }
 
   renderDetails(data, index){

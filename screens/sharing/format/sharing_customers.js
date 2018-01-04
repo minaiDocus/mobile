@@ -402,6 +402,8 @@ class TabNav extends Component{
         },
         title:{
           flex:1,
+          borderTopLeftRadius:10,
+          borderTopRightRadius:10,
           fontSize:12,
           fontWeight:'bold',
           textAlign:'center'

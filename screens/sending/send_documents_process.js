@@ -207,7 +207,7 @@ class Body extends Component{
                 <Text>
                   Pour des raisons de clôture de période comptable,
                   vous ne pouvez plus affecter de documents à la période {this.state.period_start} 
-                  après le {this.state.period_expired}.
+                   après le {this.state.period_expired}.
                 </Text>
               </View>
             }
