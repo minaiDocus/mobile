@@ -98,9 +98,6 @@ class Header extends Component{
       inputs:{
         flex: 1,
         height:40,
-        fontSize:16,
-        paddingLeft:11,
-        color:'#707070',
       },
       left:{
         flex:1,
@@ -138,7 +135,7 @@ class Header extends Component{
                 <View style={headStyle.right}>
                   {this.state.ready && this.renderCustomerSelection()}
                   <View style={{flex:1, flexDirection:'row'}}>
-                    <XTextInput style={headStyle.inputs} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleFilterChange(value)}/>
+                    <XTextInput TStyle={{paddingLeft:11}} PStyle={headStyle.inputs} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleFilterChange(value)}/>
                     {imageInput()}
                   </View>
                 </View>

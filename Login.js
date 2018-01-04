@@ -172,11 +172,11 @@ class LoginScreen extends Component {
           <View style={styles.form}>
             <View style={styles.boxInput}>
               <XImage style={styles.icons} source={{uri:"userpic"}} />
-              <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} style={styles.inputs} placeholder="Identifiant(E-mail)" onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
+              <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} PStyle={styles.inputs} placeholder="Identifiant(E-mail)" onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
             </View>
             <View style={styles.boxInput}>
               <XImage style={styles.icons} source={{uri:"cadenas"}} />
-              <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} autoCorrect={false} secureTextEntry={true} style={styles.inputs} placeholder="Mot de passe" onChangeText={(text) => this.handlePass(text)}/>
+              <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} autoCorrect={false} secureTextEntry={true} PStyle={styles.inputs} placeholder="Mot de passe" onChangeText={(text) => this.handlePass(text)}/>
             </View>
             <SimpleButton onPress={() => this.submitForm()} Pstyle={styles.submit} Tstyle={{fontSize:18}} title="Connexion" />
           </View>
@@ -226,6 +226,8 @@ const styles = StyleSheet.create({
   },
   inputs:{
     flex:1,
+    height:40,
+    marginLeft:5
   },
   submit: {
     flex:0,

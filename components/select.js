@@ -85,16 +85,24 @@ class ModalSelect extends Component{
   }
 
   renderSearch(){
-    const style = {
+    const PStyle = {
       flex: 1,
       height:40,
-      fontSize:16,
-      paddingLeft:11,
-      color:'#707070',
+      paddingLeft:11
     }
+    const TStyle = {
+      fontSize:16
+    }
+
+    let liveChange = true
+    if(this.props.filterCallback != null)
+    {
+      liveChange = false
+    }
+    
     const icon = this.state.loading? 'loader' : 'zoom_x'
     return <View style={{flex:1, flexDirection:'row', maxWidth:200}}>
-              <XTextInput style={style} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleFilterChange(value)}/>
+              <XTextInput PStyle={PStyle} TStyle={TStyle} placeholder="Filtre" autoCorrect={false} liveChange={liveChange} onChangeText={(value) => this.handleFilterChange(value)}/>
               <XImage source={{uri:icon}} style={{flex:0, marginTop:5, width:25, height:25}} />
             </View>
   }

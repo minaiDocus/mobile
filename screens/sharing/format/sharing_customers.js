@@ -55,7 +55,7 @@ class Inputs extends Component{
     const type = this.props.type || 'input';
     return  <View style={[input.container, stylePlus]}>
               <Text style={[input.label, labelStyle]}>{this.props.label}</Text>
-              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} style={[input.input, inputStyle]} />}
+              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[input.input, inputStyle]} />}
               {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
             </View>
   }
