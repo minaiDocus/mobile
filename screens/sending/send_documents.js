@@ -61,25 +61,17 @@ class BoxZoom extends Component{
     const swipeStyle = StyleSheet.create({
       wrapper:{
             flex:1,
-            marginBottom:10,
-            borderColor:'#fff',
-            borderWidth:2,
-            width:'100%',
-            height:'100%'
       },
       image:{
-        flex:0,
-        width:'100%',
-        height:'100%',
+        flex:1,
       },
       boxImage:{
-        flex:0,
+        flex:1,
         backgroundColor:'#fff',
         borderColor:'#fff',
         borderLeftWidth:2,
-        width:'100%',
-        height:'100%',
-        borderRightWidth:2
+        borderRightWidth:2,
+        marginHorizontal:0
       }
     })
     var indexStart = 0
@@ -130,7 +122,7 @@ class BoxZoom extends Component{
                    onRequestClose={()=>{}}
             >
               <View style={zoomBox.boxZoom}>
-                <View style={{flex:1, marginBottom:15}}>
+                <View style={{flex:1, marginBottom:15, borderColor:'#fff', borderWidth:2}}>
                   {this.state.ready && this.renderSwiper()}
                   {
                     !this.state.ready && <View style={loader}>

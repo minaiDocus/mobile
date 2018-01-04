@@ -64,17 +64,13 @@ class BoxZoom extends Component{
         marginBottom:10
       },
       wrapper:{
-        flex:0,
+        flex:1,
         alignItems:'center',
         marginBottom:10,
-        width:'100%',
-        height:'100%',
         backgroundColor:'#FFF'
       },
       pdf:{
-        flex:0,
-        width:'100%',
-        height:'100%',
+        flex:1,
         backgroundColor:'#000',
       },
       text:{

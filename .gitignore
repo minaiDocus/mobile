@@ -58,3 +58,7 @@ android/
 
 #ignoring Config file
 Config.js
+
+#ignoring package
+package-lock.json
+package.json
