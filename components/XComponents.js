@@ -239,17 +239,24 @@ export class XTextInput extends Component{
   }
 
   render(){
-    const prevStyle = {
-      minHeight:30,
-      paddingBottom:8
-    }
-
-    const textStyle = {
-      flex:1,
-      color: '#707070',
-      fontSize:14,
-      borderWidth:0
-    }
+    const styles = StyleSheet.create({
+      prevStyle: {
+        minHeight:30,
+        paddingBottom:8
+      },
+      textStyle: {
+        flex:1,
+        color: '#707070',
+        fontSize:14,
+        borderWidth:0
+      },
+      boxText: {
+        flex:1,
+        borderBottomWidth:1,
+        borderColor:'#909090',
+        padding:5
+      }
+    })
 
     const PStyle = this.props.PStyle
     const TStyle = this.props.TStyle
@@ -263,10 +270,10 @@ export class XTextInput extends Component{
       }
       value = password
     }
-    return <TouchableOpacity style={[prevStyle, PStyle]} onPress={()=>this.openKeyboard()} >
+    return <TouchableOpacity style={[styles.prevStyle, PStyle]} onPress={()=>this.openKeyboard()} >
             {this.state.openKeyboard && this.renderModalText()}  
-            <View style={{flex:1,borderBottomWidth:1,borderColor:'#909090',padding:5}}>
-              <Text style={[textStyle, TStyle]}>{value}</Text>
+            <View style={styles.boxText}>
+              <Text style={[styles.textStyle, TStyle]}>{value}</Text>
             </View>
            </TouchableOpacity>
            
