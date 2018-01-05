@@ -217,17 +217,11 @@ class BoxInfos extends Component{
 class ImgBox extends Component{
   constructor(props){
     super (props)
-    this.state = {options: false}
-  }
-
-  toggleOpt(){
-    this.setState({options: !this.state.options})
   }
 
   zoom(){
     GLOB.idZoom = this.props.index
     this.props.toggleZoom()
-    this.toggleOpt()
   }
 
   render(){
@@ -275,14 +269,8 @@ class ImgBox extends Component{
       local = false
     }
 
-    return  <TouchableOpacity style={imgBox.styleTouch} onPress={()=>this.toggleOpt()}>
-                <XImage type='container' PStyle={imgBox.styleContainer} style={imgBox.styleImg}  source={src} local={local} >
-                  { this.state.options == true &&
-                    <View style={imgBox.options}>
-                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={imgBox.btnText} Istyle={{width:30,height:30}} />
-                    </View>
-                  }
-                </XImage>
+    return  <TouchableOpacity style={imgBox.styleTouch} onPress={()=>this.zoom()}>
+              <XImage type='container' PStyle={imgBox.styleContainer} style={imgBox.styleImg}  source={src} local={local} />
             </TouchableOpacity>
   }
 }

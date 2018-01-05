@@ -189,7 +189,6 @@ export class XTextInput extends Component{
       input:{
         flex:1,
         fontSize:14,
-        borderWidth:0
       },
       boxInput: {
         flex:0,
@@ -203,11 +202,19 @@ export class XTextInput extends Component{
       }
     })
 
-    let iosStyle = {}
+    let iosStyle = androidStyle = {}
     if(Platform.OS == 'ios')
     {
       iosStyle={
         marginTop: 20,
+      }
+    }
+    else if(Platform.OS == 'android')
+    {
+      androidStyle={
+        paddingVertical:0,
+        borderBottomWidth:0,
+        height:35
       }
     }
     return <Modal  transparent={true}
@@ -220,7 +227,7 @@ export class XTextInput extends Component{
                 <View style={[styles.content, iosStyle]}>
                   <AnimatedBox ref="animatedInput" style={styles.box} type='DownSlide' durationIn={300} >
                     {this.label != "" && <Text style={styles.label}>{this.label}</Text>}
-                    <View style={styles.boxInput}>
+                    <View style={[styles.boxInput, androidStyle]}>
                       <TextInput ref="input"
                                  autoFocus={true}
                                  autoCorrect={this.props.autoCorrect || true}
@@ -246,9 +253,8 @@ export class XTextInput extends Component{
       },
       textStyle: {
         flex:1,
-        color: '#707070',
+        color: '#422D14',
         fontSize:14,
-        borderWidth:0
       },
       boxText: {
         flex:1,

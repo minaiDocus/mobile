@@ -80,7 +80,7 @@ class Header extends Component{
     }
     else
     {
-      inputSelection = <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} style={{color:'#707070'}} Pstyle={{flex:0, height:35}} onChange={(value) => this.handleClientChange(value)}/>
+      inputSelection = <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} Pstyle={{flex:0, height:35}} onChange={(value) => this.handleClientChange(value)}/>
     }
 
     return inputSelection
