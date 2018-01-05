@@ -401,7 +401,7 @@ class SelectInput extends Component{
                 <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center'}} onPress={this.showModal}>
                   <View style={selectStyle} onLayout={this.getWidthLayout}> 
                     <View style={{width: 500, left: this.state.cssAnim}} >
-                      <Text style={[{color:'#422D14'}, stylePlus]}>{this.state.valueText}</Text>
+                      <Text style={[{color:'#7F7979'}, stylePlus]}>{this.state.valueText}</Text>
                     </View>
                   </View>
                   <Text style={{flex:0, fontSize:10, fontWeight:'bold'}}>V</Text>

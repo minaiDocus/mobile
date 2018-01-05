@@ -125,6 +125,13 @@ export class XTextInput extends Component{
                    openKeyboard: false,
                    value: this.initValue,
                  }
+
+    this.editable = true
+    if(this.props.editable == false)
+    {
+      this.editable = false
+    }             
+
     this.liveChange = this.props.liveChange || false
     this.label = this.props.placeholder || this.props.label || ""
 
@@ -133,8 +140,10 @@ export class XTextInput extends Component{
   }
 
   openKeyboard(){
-    if(this.props.onFocus){this.props.onFocus()}
-    this.setState({openKeyboard: true})
+    if(this.editable){
+      if(this.props.onFocus){this.props.onFocus()}
+      this.setState({openKeyboard: true})
+    }
   }
 
   closeKeyboard(){
@@ -234,6 +243,7 @@ export class XTextInput extends Component{
                                  secureTextEntry={this.props.secureTextEntry || false}
                                  defaultValue={this.state.value}
                                  onChangeText={(value)=>this.changeText(value)}
+                                 editable={this.editable}
                                  onBlur={()=>{this.closeKeyboard()}}
                                  keyboardType={this.props.keyboardType}
                                  style={styles.input}/>
@@ -253,7 +263,7 @@ export class XTextInput extends Component{
       },
       textStyle: {
         flex:1,
-        color: '#422D14',
+        color: this.editable? '#7F7979' : '#A6A6A6',
         fontSize:14,
       },
       boxText: {
