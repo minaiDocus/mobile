@@ -26,10 +26,10 @@ class PDFView extends Component{
     }
   }
 
-  endLoading(){
+  endLoading(pageCount, filePath){
     this.pageCount = 1
     this.props.onLoadComplete(this.pageCount, filePath)
-    this.setState({ready: true})
+    setTimeout(()=>this.setState({ready: true}), 1000)
   }
 
   loading(){
