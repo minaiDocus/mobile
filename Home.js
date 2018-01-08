@@ -5,7 +5,7 @@ import Screen from './components/screen'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native'
 import {XImage} from './components/XComponents'
 import Navigator from './components/navigator'
-import {BoxButton, ImageButton} from './components/buttons'
+import {BoxButton, ImageButton, LinkButton} from './components/buttons'
 import Menu from './components/menu'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import User from './models/User'
@@ -61,6 +61,8 @@ class ViewState extends Component{
   constructor(props){
     super(props);
     this.state = {infos: -1}
+
+    this.renderLink = this.renderLink.bind(this)
   }
 
   handleClickDocument(index){
@@ -88,6 +90,16 @@ class ViewState extends Component{
   goToDocument(index){
     const pack = this.props.datas[index]
     GLOB.navigation.goTo('Publish', {pack: pack, text:""})
+  }
+
+  renderLink(index){
+    if(this.props.type == "processing" && this.props.datas[index].pack_id > 0){
+      return <LinkButton onPress={()=>{this.goToDocument(index)}} title='Voir details ...' Tstyle={{flex:1, textAlign:'right', color:'#003366'}} Pstyle={{flex:1, marginTop:10}} />
+    }
+    else
+    {
+      return null
+    }
   }
 
   renderDetails(data, index){
@@ -150,6 +162,7 @@ class ViewState extends Component{
                   this.state.infos == index && 
                     <View style={[style.infos, {backgroundColor:colorStriped}]}>
                       {infos}
+                      {this.renderLink(index)}
                     </View>
                 }
               </TouchableOpacity>

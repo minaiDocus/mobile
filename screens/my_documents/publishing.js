@@ -290,7 +290,7 @@ class BoxPublish extends Component{
     {
       GLOB.idZoom = 0
     }
-    setTimeout(this.toggleZoom, 1000)
+    setTimeout(this.toggleZoom, 500)
   }
 
   prevElement(){
@@ -299,7 +299,7 @@ class BoxPublish extends Component{
     {
       GLOB.idZoom = this.props.datas.length - 1
     }
-    setTimeout(this.toggleZoom, 1000)
+    setTimeout(this.toggleZoom, 500)
   }
   
   renderResult(){
@@ -371,8 +371,9 @@ class TabNav extends Component{
     }
 
     this.setState({published_ready: false})
+    const pack_id = GLOB.Pack.pack_id || GLOB.Pack.id
     Fetcher.wait_for(
-        [`getDocumentsProcessed(${GLOB.Pack.id}, ${this.pagePublished}, "${GLOB.filterText}")`],
+        [`getDocumentsProcessed(${pack_id}, ${this.pagePublished}, "${GLOB.filterText}")`],
         (responses) => {
           if(responses[0].error)
           {
@@ -398,8 +399,9 @@ class TabNav extends Component{
     if(GLOB.filterText == "" || typeof(GLOB.filterText) === "undefined")
     {
       this.setState({publishing_ready: false})
+      const pack_id = GLOB.Pack.pack_id || GLOB.Pack.id
       Fetcher.wait_for(
-          [`getDocumentsProcessing(${GLOB.Pack.id})`],
+          [`getDocumentsProcessing(${pack_id})`],
           (responses) => {
             if(responses[0].error)
             {
