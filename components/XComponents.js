@@ -263,7 +263,7 @@ export class XTextInput extends Component{
       },
       textStyle: {
         flex:1,
-        color: this.editable? '#7F7979' : '#A6A6A6',
+        color: this.editable? '#606060' : '#A6A6A6',
         fontSize:14,
       },
       boxText: {

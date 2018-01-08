@@ -224,10 +224,12 @@ class DocumentsScreen extends Component {
               if(r.error)
               {
                 Notice.danger(r.message, true, "filterDanger")
+                this.limit_page = 1
+                this.total = 0
                 this.setState({ready: true, loadingFilter: false})
               }
               else
-              {
+              {  
                 this.limit_page = r.nb_pages
                 this.total = r.total
                 this.setState({ready: true, loadingFilter: false, dataList: r.packs})

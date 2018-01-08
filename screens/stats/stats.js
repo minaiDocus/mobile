@@ -266,7 +266,7 @@ class BoxStat extends Component{
         flex:1,
         flexDirection:'row',
         alignItems:'center',
-        paddingLeft:8,
+        paddingHorizontal:8,
       },
       image:{
         flex:0,
@@ -296,7 +296,7 @@ class BoxStat extends Component{
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={boxStyle.container}>
                 <XImage source={{uri:arrow}} style={boxStyle.image} />
-                <Text style={{fontSize:12,fontWeight:'bold', width:240}}>{this.props.data.company} (<Text style={{fontSize:9}}>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>)</Text>
+                <Text style={{fontSize:12, fontWeight:'bold', flex:1}}>{this.props.data.company} (<Text style={{fontSize:9}}>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>)</Text>
               </View>
               {
                   this.state.showDetails == true && 
@@ -469,10 +469,10 @@ class StatsScreen extends Component {
         {
           // const dataFetched = Fetcher.create_temp_realm(responses[0].data_stats, "temp_states", nextPage)
           GLOB.datas = responses[0].data_stats || []
-          this.limit_page = responses[0].nb_pages
-          this.total = responses[0].total
         }
 
+        this.limit_page = responses[0].nb_pages || 1
+        this.total = responses[0].total || 0
         this.setState({ready: true, dataList: GLOB.datas})
       })
   }

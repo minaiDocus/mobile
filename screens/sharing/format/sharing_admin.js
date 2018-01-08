@@ -461,10 +461,14 @@ class BoxStat extends Component{
 
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={boxStyle.container}>
-                <XImage source={{uri:arrow}} style={[{marginRight:8}, boxStyle.image]} />
-                <Text style={{fontWeight:'bold', width:'70%'}}>{this.props.data.document.toString()}</Text>
-                <ImageButton source={{uri:'validate'}} Pstyle={{padding:8}} Istyle={[boxStyle.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
-                <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
+                <XImage source={{uri:arrow}} style={[{flex:0, width:20, marginRight:8}, boxStyle.image]} />
+                <View style={{flex:1}}>
+                  <Text style={{fontWeight:'bold'}}>{this.props.data.document.toString()}</Text>
+                </View>
+                <View style={{flex:0, width:70, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                  <ImageButton source={{uri:'validate'}} Pstyle={{padding:8}} Istyle={[boxStyle.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
+                  <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
+                </View>
               </View>
               {
                   this.state.showDetails == true && 
@@ -631,11 +635,10 @@ class SharingScreen extends Component {
         {
           // const dataFetched = Fetcher.create_temp_realm(responses[0].data_shared, "temp_sharing", nextPage)
           GLOB.datas = responses[0].data_shared || []
-          this.limit_page = responses[0].nb_pages
-          this.total = responses[0].total
         }
-
-       this.setState({ready: true, dataList: GLOB.datas})
+        this.limit_page = responses[0].nb_pages || 1
+        this.total = responses[0].total || 0
+        this.setState({ready: true, dataList: GLOB.datas})
       })
   }
 

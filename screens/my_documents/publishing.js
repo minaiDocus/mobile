@@ -5,7 +5,7 @@ import Navigator from '../../components/navigator'
 import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
 import {XImage} from '../../components/XComponents'
 import { NavigationActions } from 'react-navigation'
-import Pdf from 'react-native-pdf'
+import PDFView from '../../components/pdfView'
 import {SimpleButton, ImageButton} from '../../components/buttons'
 import {BoxList, LineList} from '../../components/lists'
 import Pagination from '../../components/pagination'
@@ -21,7 +21,7 @@ let GLOB = {Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", navigatio
 
 class BoxZoom extends Component{
   constructor(props){
-    super(props);
+    super(props)
     this.state = {nb_pages: 0, current_page: 1}
   }
 
@@ -31,12 +31,12 @@ class BoxZoom extends Component{
 
   nextElement(){
     this.hideModal()
-    this.props.nextElement()
+    setTimeout(()=>this.props.nextElement(), 1000)
   }
 
   prevElement(){
     this.hideModal()
-    this.props.prevElement()
+    setTimeout(()=>this.props.prevElement(), 1000)
   }
 
   indicator(){
@@ -68,10 +68,6 @@ class BoxZoom extends Component{
         alignItems:'center',
         marginBottom:10,
         backgroundColor:'#FFF'
-      },
-      pdf:{
-        flex:1,
-        backgroundColor:'#000',
       },
       text:{
         flex:0,
@@ -116,9 +112,8 @@ class BoxZoom extends Component{
                   </View>
                 </View>
                 <View style={{flex:1,marginBottom:5, borderColor:'#000', borderWidth:2}}>
-                  <Pdf
+                  <PDFView
                     source={src}
-                    activityIndicator={this.indicator()}
                     onLoadComplete={(pageCount, filePath)=>{
                       this.setState({nb_pages: pageCount})
                     }}
@@ -127,8 +122,7 @@ class BoxZoom extends Component{
                     }}
                     onError={(error)=>{
                       Notice.alert("Erreur loading pdf", error)
-                    }}
-                    style={zoomBox.pdf}/>
+                    }} />
                 </View>
                 <View style={{flex:0,flexDirection:'row'}}>
                   <Text style={[zoomBox.text, zoomBox.textFoot, {textAlign:'left'}]}>{this.state.current_page}</Text>
@@ -296,7 +290,7 @@ class BoxPublish extends Component{
     {
       GLOB.idZoom = 0
     }
-    setTimeout(this.toggleZoom, 500)
+    setTimeout(this.toggleZoom, 1000)
   }
 
   prevElement(){
@@ -305,7 +299,7 @@ class BoxPublish extends Component{
     {
       GLOB.idZoom = this.props.datas.length - 1
     }
-    setTimeout(this.toggleZoom, 500)
+    setTimeout(this.toggleZoom, 1000)
   }
   
   renderResult(){

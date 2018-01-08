@@ -280,8 +280,8 @@ class ViewState extends Component{
     return  <View key={index} style={{flex:1}}>
                 <View style={[style.details, {backgroundColor:colorStriped}]}>
                   <XImage source={{uri: 'arrow_up'}} style={style.image} />
-                  <Text style={{paddingHorizontal:10, width:'85%'}}>{data.name}</Text>
-                  <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={style.image} onPress={()=>this.handleDelete(data.id_idocus)}/>
+                  <Text style={{paddingHorizontal:10, flex:1}}>{data.name}</Text>
+                  <ImageButton source={{uri:'delete'}} Pstyle={{flex:0, width:20, padding:8}} Istyle={style.image} onPress={()=>this.handleDelete(data.id_idocus)}/>
                 </View>
             </View>
   }
@@ -404,6 +404,7 @@ class TabNav extends Component{
           flex:1,
           borderTopLeftRadius:10,
           borderTopRightRadius:10,
+          backgroundColor:'rgba(0,0,0,0)', //for fixing bug on ios
           fontSize:12,
           fontWeight:'bold',
           textAlign:'center'
