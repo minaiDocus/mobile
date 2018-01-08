@@ -26,14 +26,14 @@ class PDFView extends Component{
     }
   }
 
-  endLoading(pageCount, filePath){
+  endLoading(){
     this.pageCount = 1
-    this.props.onLoadComplete(this.pageCount, filePath)
+    this.props.onLoadComplete(this.pageCount, "")
     setTimeout(()=>this.setState({ready: true}), 1000)
   }
 
   loading(){
-     return <View style={{flex:0, width:'100%', height:'100%', backgroundColor:'#FFF', alignItems:'center', justifyContent:'center'}}>
+     return <View style={{position:'absolute', flex:0, width:'100%', height:'100%', backgroundColor:'#FFF', alignItems:'center', justifyContent:'center'}}>
               <XImage loader={true} width={70} height={70} style={{marginTop:10}} />
             </View> 
   }
@@ -41,31 +41,24 @@ class PDFView extends Component{
   render(){
     const style = {
       flex:1,
-      backgroundColor:'#000',
-    }
-
-    let readyCss = {}
-    if(!this.state.ready){
-      readyCss = {opacity: 0, flex:0, width:0, height:0}
+      backgroundColor: '#000'
     }
 
     if(Platform.OS == 'ios')
     {
       return  <View style={{flex:1, backgroundColor:'#fff'}}>
-                {!this.state.ready && this.loading()}
-                <WebView
-                  source={this.source}
-                  dataDetectorTypes="none"
-                  onLoadEnd={(pageCount, filePath)=>{
-                    this.endLoading(pageCount, filePath)
-                  }}
-                  onPageChanged={(page, pageCount)=>{
-                    this.props.onPageChanged(page, pageCount)
-                  }}
-                  onError={(error)=>{
-                    this.props.onError(error)
-                  }}
-                  style={[style, readyCss]}/>
+                  <WebView
+                    source={this.source}
+                    dataDetectorTypes="none"
+                    renderLoading={()=>this.loading()}
+                    onLoadEnd={()=>{
+                      this.endLoading()
+                    }}
+                    onError={(error)=>{
+                      this.props.onError(error)
+                    }}
+                    style={style}/>
+                    {!this.state.ready && this.loading()}
               </View>
     }
     else

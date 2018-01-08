@@ -94,7 +94,7 @@ class ViewState extends Component{
 
   renderLink(index){
     if(this.props.type == "processing" && this.props.datas[index].pack_id > 0){
-      return <LinkButton onPress={()=>{this.goToDocument(index)}} title='Voir details ...' Tstyle={{flex:1, textAlign:'right', color:'#003366'}} Pstyle={{flex:1, marginTop:10}} />
+      return <LinkButton onPress={()=>{this.goToDocument(index)}} title='Voir détails ...' Tstyle={{flex:1, textAlign:'right', color:'#003366'}} Pstyle={{flex:1, marginTop:10}} />
     }
     else
     {
