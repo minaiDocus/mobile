@@ -31,12 +31,12 @@ class BoxZoom extends Component{
 
   nextElement(){
     this.hideModal()
-    setTimeout(()=>this.props.nextElement(), 1000)
+    setTimeout(()=>this.props.nextElement(), 300)
   }
 
   prevElement(){
     this.hideModal()
-    setTimeout(()=>this.props.prevElement(), 1000)
+    setTimeout(()=>this.props.prevElement(), 300)
   }
 
   indicator(){
