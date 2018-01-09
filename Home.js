@@ -308,11 +308,14 @@ class TabNav extends Component{
 
 class HomeScreen extends Component {
   static navigationOptions = {  headerTitle:'Accueil', 
-                                headerLeft: <MenuLoader />, headerRight: <ProgressUpload />,
-                                headerRight: <ImageButton  source={{uri:"infos"}} 
-                                        Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
-                                        Istyle={{width:20, height:20}}
-                                        onPress={()=>EventRegister.emit('clickInfosApp', true)} />
+                                headerLeft: <MenuLoader />,
+                                headerRight: <View style={{flex:1}}>
+                                              <ImageButton  source={{uri:"infos"}} 
+                                              Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
+                                              Istyle={{width:20, height:20}}
+                                              onPress={()=>EventRegister.emit('clickInfosApp', true)} />
+                                              <ProgressUpload />
+                                             </View>
                               }
 
   constructor(props){

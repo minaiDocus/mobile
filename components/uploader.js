@@ -63,6 +63,7 @@ export class ProgressUpload extends Component{
         borderWidth:2,
         marginRight:3,
         marginTop:3,
+        position:'absolute'
       },
       gradient:{
         flex:0,
