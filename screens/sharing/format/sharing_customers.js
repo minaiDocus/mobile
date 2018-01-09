@@ -281,7 +281,7 @@ class ViewState extends Component{
                 <View style={[style.details, {backgroundColor:colorStriped}]}>
                   <XImage source={{uri: 'arrow_up'}} style={style.image} />
                   <Text style={{paddingHorizontal:10, flex:1}}>{data.name}</Text>
-                  <ImageButton source={{uri:'delete'}} Pstyle={{flex:0, width:20, padding:8}} Istyle={style.image} onPress={()=>this.handleDelete(data.id_idocus)}/>
+                  <ImageButton source={{uri:'delete'}} Pstyle={{flex:0, width:20, padding:8, alignItems:'center', justifyContent:'center'}} Istyle={style.image} onPress={()=>this.handleDelete(data.id_idocus)}/>
                 </View>
             </View>
   }
