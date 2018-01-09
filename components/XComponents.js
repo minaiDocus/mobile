@@ -130,7 +130,9 @@ export class XTextInput extends Component{
     if(this.props.editable == false)
     {
       this.editable = false
-    }             
+    }
+
+    this.closing = false             
 
     this.liveChange = this.props.liveChange || false
     this.label = this.props.placeholder || this.props.label || ""
@@ -147,20 +149,25 @@ export class XTextInput extends Component{
   }
 
   closeKeyboard(){
-    this.refs.input.blur()
-    const exit = ()=>{
-                        this.setState({openKeyboard: false})
-                        if(this.state.value != this.initValue && this.liveChange == false)
-                        {
-                          try
-                          {this.props.onChangeText(this.state.value)}
+    if(this.closing == false)
+    {
+      this.closing = true
+      this.refs.input.blur()
+      const exit = ()=>{
+                          this.setState({openKeyboard: false})
+                          if(this.state.value != this.initValue && this.liveChange == false)
+                          {
+                            try
+                            {this.props.onChangeText(this.state.value)}
+                            catch(e){}
+                          }
+                          try{this.props.onBlur()}
                           catch(e){}
+                          this.closing = false
+                          this.initValue = this.state.value
                         }
-                        try{this.props.onBlur()}
-                        catch(e){}
-                        this.initValue = this.state.value
-                      }
-    this.refs.animatedInput.leave(exit)
+      this.refs.animatedInput.leave(exit)
+    }
   }
 
   async changeText(value=""){
@@ -170,6 +177,12 @@ export class XTextInput extends Component{
       try
       {this.props.onChangeText(this.state.value)}
       catch(e){}
+    }
+  }
+
+  handleLayout(){
+    if(this.editable){
+      setTimeout(()=>{this.refs.input.focus()}, 300)
     }
   }
 
@@ -239,6 +252,7 @@ export class XTextInput extends Component{
                     <View style={[styles.boxInput, androidStyle]}>
                       <TextInput ref="input"
                                  autoFocus={true}
+                                 onLayout={this.handleLayout.bind(this)}
                                  autoCorrect={this.props.autoCorrect || true}
                                  secureTextEntry={this.props.secureTextEntry || false}
                                  defaultValue={this.state.value}
