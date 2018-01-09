@@ -17,7 +17,7 @@ export default class Requester {
     const timeout = 60000 //Request timeout = 60 seconds
     const url = Config.http_host + uri
     const method = options.method || 'GET'
-    var request = new XMLHttpRequest()
+    let request = new XMLHttpRequest()
 
     request.open(method, url)
     request.setRequestHeader("Content-Type", "application/json")
@@ -29,8 +29,9 @@ export default class Requester {
     const aborting = (callback) => {
         if(this.responseFetching == "")
         {
+          clearTimeout(timer)
           request.abort()
-          this.responseFetching = {error: true, message: "Impossible de se connecter au serveur!!"}
+          this.responseFetching = {error: true, message: "Impossible de se connecter au serveur!!!"}
           callback(this.responseFetching)
         }
     }
@@ -56,11 +57,11 @@ export default class Requester {
     request.onload = (e) => {
       if (request.readyState === 4)
       {
+        clearTimeout(timer)
         if(request.status != 200)
         {
           if(retry<this.request_retry)
           {
-            clearTimeout(timer)
             const nextRetry=retry+1
             setTimeout(()=>{this.requestURI(uri, options, callback, nextRetry)}, 2000)
           }
@@ -79,9 +80,9 @@ export default class Requester {
     }
 
     request.onerror = (e) => {
+      clearTimeout(timer)
       if(retry<this.request_retry)
       {
-        clearTimeout(timer)
         const nextRetry=retry+1
         setTimeout(()=>{this.requestURI(uri, options, callback, nextRetry)}, 2000)
       }
