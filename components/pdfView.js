@@ -26,10 +26,15 @@ class PDFView extends Component{
     }
   }
 
-  endLoading(){
-    this.pageCount = 1
-    this.props.onLoadComplete(this.pageCount, "")
+  handleLayout(){
+    this.setState({ready: false})
     setTimeout(()=>this.setState({ready: true}), 1000)
+  }
+
+  endLoading(){
+    //this.pageCount = 1
+    //this.props.onLoadComplete(this.pageCount, "")
+    //setTimeout(()=>this.setState({ready: true}), 1000)
   }
 
   loading(){
@@ -46,19 +51,23 @@ class PDFView extends Component{
 
     if(Platform.OS == 'ios')
     {
-      return  <View style={{flex:1, backgroundColor:'#fff'}}>
-                  <WebView
-                    source={this.source}
-                    dataDetectorTypes="none"
-                    renderLoading={()=>this.loading()}
-                    onLoadEnd={()=>{
-                      this.endLoading()
-                    }}
-                    onError={(error)=>{
-                      this.props.onError(error)
-                    }}
-                    style={style}/>
-                    {!this.state.ready && this.loading()}
+      return  <View style={{flex:1, backgroundColor:'#fff'}} onLayout={this.handleLayout.bind(this)}>
+                  {this.state.ready && <Pdf
+                                          source={this.source}
+                                          scale={1}
+                                          activityIndicator={this.loading()}
+                                          onLoadComplete={(pageCount, filePath)=>{
+                                            this.props.onLoadComplete(pageCount, filePath)
+                                          }}
+                                          onPageChanged={(page,pageCount)=>{
+                                            this.props.onPageChanged(page, pageCount)
+                                          }}
+                                          onError={(error)=>{
+                                            this.props.onError(error)
+                                          }}
+                                          style={style}/>
+                  }
+                  {!this.state.ready && this.loading()}
               </View>
     }
     else

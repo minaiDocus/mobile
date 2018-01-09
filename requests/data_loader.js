@@ -17,7 +17,7 @@ export default class data_loader extends Requester{
     {
       src = {
               uri: uri,
-              cached: false,
+              cached: true,
               headers:  {
                           Authorization: "Basic " + base64.encode(Config.user + ":" + Config.pass)
                         }
