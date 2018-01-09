@@ -296,7 +296,7 @@ class BoxStat extends Component{
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={boxStyle.container}>
                 <XImage source={{uri:arrow}} style={boxStyle.image} />
-                <Text style={{fontSize:10, fontWeight:'bold', flex:1}}>{this.props.data.company}
+                <Text style={{fontSize:12, fontWeight:'bold', flex:1}}>{this.props.data.company}
                   {' ('} 
                     <Text style={{fontSize:9}}>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii") 
                     + ' | ' + getType(this.props.data.type)}
