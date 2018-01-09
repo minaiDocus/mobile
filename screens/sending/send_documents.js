@@ -237,6 +237,8 @@ class SendScreen extends Component {
   constructor(props){
     super(props)
     GLOB.images = []
+    GLOB.imgToDel = ""
+    GLOB.idZoom = ""
     GLOB.navigation = new Navigator(this.props.navigation)
     this.state = { dataList: [], zoomActive: false}
 

@@ -185,6 +185,8 @@ class DocumentsScreen extends Component {
   constructor(props){
     super(props)
     GLOB.navigation = new Navigator(this.props.navigation)
+    GLOB.filterText = ""
+    GLOB.clientId = 0
     this.state = {ready: false, dataList: [], loadingFilter: false}
 
     this.page = this.limit_page = 1

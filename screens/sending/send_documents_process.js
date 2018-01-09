@@ -302,6 +302,11 @@ class SendScreen extends Component {
     super(props)
     GLOB.navigation = new Navigator(this.props.navigation)
     GLOB.dataList = GLOB.navigation.getParams('images')
+    GLOB.customer = ''
+    GLOB.period = ''
+    GLOB.journal = ''
+    GLOB.file_upload_params = []
+    
     this.state = {progress: 0, sending: false}
 
     this.uploadProgress = this.uploadProgress.bind(this)

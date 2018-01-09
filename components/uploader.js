@@ -115,7 +115,7 @@ class UploderFiles{
   url = Config.http_host + "api/mobile/file_uploader"
 
   return new Promise( (success, error)=>{
-          var xhr = new XMLHttpRequest()
+          let xhr = new XMLHttpRequest()
           xhr.open('post', url)
           
           if(Config.server == "staging") //if accessing staging server

@@ -77,7 +77,7 @@ class LoginScreen extends Component {
     GLOB.navigation = new Navigator(this.props.navigation)
 
     GLOB.login = GLOB.password = ""
-    this.state = {loading: false, focusInput: false}
+    this.state = {loading: false, focusInput: false, ready: false}
     this.dismissLoader = this.dismissLoader.bind(this)
     this.focusInput = this.focusInput.bind(this)
     this.leaveFocusInput = this.leaveFocusInput.bind(this)
@@ -89,10 +89,11 @@ class LoginScreen extends Component {
     {
       setTimeout(()=>Notice.info(`A bientot !!`), 1000)
     }
-    
+
     Fetcher.setRequest(request1).wait_for(
       [`ping_server("${Config.version}", "${Config.platform}")`],
       (responses)=>{
+        this.setState({ready: true})
         if(responses[0].code != 200)
         {
           Notice.danger(responses[0].message, true, "ping_info")
@@ -169,17 +170,22 @@ class LoginScreen extends Component {
               <XImage style={styles.logo} source={{uri:"charge"}} />
             </View>
           }
-          <View style={styles.form}>
-            <View style={styles.boxInput}>
-              <XImage style={styles.icons} source={{uri:"userpic"}} />
-              <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} PStyle={styles.inputs} placeholder="Identifiant(E-mail)" onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
+          {
+            !this.state.ready && <Text style={{fontSize:10, color:'#6D071A', textAlign:'center', flex:1}}>Communication au serveur en cours ..., Veuillez patienter svp</Text>
+          }
+          {this.state.ready && 
+            <View style={styles.form}>
+              <View style={styles.boxInput}>
+                <XImage style={styles.icons} source={{uri:"userpic"}} />
+                <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} PStyle={styles.inputs} placeholder="Identifiant(E-mail)" onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
+              </View>
+              <View style={styles.boxInput}>
+                <XImage style={styles.icons} source={{uri:"cadenas"}} />
+                <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} autoCorrect={false} secureTextEntry={true} PStyle={styles.inputs} placeholder="Mot de passe" onChangeText={(text) => this.handlePass(text)}/>
+              </View>
+              <SimpleButton onPress={() => this.submitForm()} Pstyle={styles.submit} Tstyle={{fontSize:18}} title="Connexion" />
             </View>
-            <View style={styles.boxInput}>
-              <XImage style={styles.icons} source={{uri:"cadenas"}} />
-              <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} autoCorrect={false} secureTextEntry={true} PStyle={styles.inputs} placeholder="Mot de passe" onChangeText={(text) => this.handlePass(text)}/>
-            </View>
-            <SimpleButton onPress={() => this.submitForm()} Pstyle={styles.submit} Tstyle={{fontSize:18}} title="Connexion" />
-          </View>
+          }
         </View>
       </Screen>
     );

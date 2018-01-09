@@ -319,7 +319,7 @@ class HomeScreen extends Component {
     super(props)
     this.master = User.getMaster()
     GLOB.navigation = new Navigator(this.props.navigation)
-
+    GLOB.datas = []
     this.state = {showInfos: false, ready: false}
 
     this.toggleInfos = this.toggleInfos.bind(this)
