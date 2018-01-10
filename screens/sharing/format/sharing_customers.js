@@ -453,7 +453,7 @@ class SharingScreen extends Component {
 
     this.state = {ready: false}
 
-    this.data_shared = []
+    this.datas_shared = []
     this.contacts = []
     this.access = []
     
