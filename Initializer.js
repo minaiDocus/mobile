@@ -1,5 +1,5 @@
-import {Notice} from './notifications'
-import CronTask from './cronTask'
+import {Notice} from './components/notifications'
+import CronTask from './components/cronTask'
 
 //Private functions
 function fill_with_zero(date, length_to = 2){

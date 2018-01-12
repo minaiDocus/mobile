@@ -1,9 +1,7 @@
-// import React, { Component } from 'react'
-import Config from './Config'
 import { StackNavigator } from 'react-navigation'
 
-import LoginScreen from './Login'
-import HomeScreen from './Home'
+import LoginScreen from './screens/Login'
+import HomeScreen from './screens/Home'
 
 import SendScreen from './screens/sending/send_documents'
 import SendingScreen from './screens/sending/send_documents_process'
@@ -16,7 +14,7 @@ import StatsScreen from './screens/stats/stats'
 import SharingScreen from './screens/sharing/account_sharing'
 import SharingContactsScreen from './screens/sharing/sharing_contacts'
 
-import './components/initializer'
+import './Initializer'
 
 const StackApp = StackNavigator({
                               Login: {

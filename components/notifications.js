@@ -3,77 +3,6 @@ import {StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableHighlight
 import AnimatedBox from './animatedBox'
 import { EventRegister } from 'react-native-event-listeners'
 
-class Message extends React.Component{
-  constructor(props){
-    super(props)
-    this.index = this.props.index
-    this.options = this.props.data.options
-
-    this.closeMessage = this.closeMessage.bind(this)
-    this.activeClosing = this.activeClosing.bind(this)
-  }
-
-  componentDidMount(){
-    if(this.options.permanent == false)
-    {
-      this._timeout = setTimeout(this.closeMessage, 5000)
-    }
-  }
-
-  componentWillUnmount(){
-    if(this._timeout)
-    {
-      clearTimeout(this._timeout)
-    }
-  }
-
-  closeMessage(){
-    this.refs.animatedMessage.leave(this.activeClosing)
-  }
-
-  activeClosing(){
-    Notice._removeNoticeMessages(this.index)
-  }
-
-  render(){
-    this.message = this.props.data.message
-    const colorText = (this.options.type == 'danger')? '#EC5656' : '#C0D838'
-    const style = StyleSheet.create({
-    messageView:{
-                  backgroundColor:'rgba(48,48,48,0.8)',
-                  flex:1,
-                  flexDirection:'row',
-                  alignItems:'center',
-                  borderBottomWidth:1,
-                  borderColor:'#AFAFAF',
-                  padding:5,
-                  elevation: 10 //for fixing bug position on Android
-                },
-    text:{
-           flex:1,
-           textAlign:'left',
-           color:colorText,
-           paddingHorizontal:20
-         },
-    close:{
-            flex:0,
-            textAlign:'right',
-            fontSize:18,
-            fontWeight:'bold',
-            color:colorText,
-            paddingHorizontal:10
-          }
-    })
-    return  <AnimatedBox ref="animatedMessage" style={style.messageView}>
-              <Text style={style.text}>{this.message}</Text>
-              <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                <Text style={style.close}>X</Text>
-              </TouchableHighlight>
-            </AnimatedBox>
-  }
-}
-
-
 export class Notice {
   static _noticeMessages = [];
 
@@ -135,6 +64,80 @@ export class Notice {
   }
 }
 
+class Message extends React.Component{
+  constructor(props){
+    super(props)
+    this.index = this.props.index
+    this.options = this.props.data.options
+
+    this.closeMessage = this.closeMessage.bind(this)
+    this.activeClosing = this.activeClosing.bind(this)
+
+    this.generateStyles()
+  }
+
+  componentDidMount(){
+    if(this.options.permanent == false)
+    {
+      this._timeout = setTimeout(this.closeMessage, 5000)
+    }
+  }
+
+  componentWillUnmount(){
+    if(this._timeout)
+    {
+      clearTimeout(this._timeout)
+    }
+  }
+
+  closeMessage(){
+    this.refs.animatedMessage.leave(this.activeClosing)
+  }
+
+  activeClosing(){
+    Notice._removeNoticeMessages(this.index)
+  }
+
+  generateStyles(){
+    const colorText = (this.options.type == 'danger')? '#EC5656' : '#C0D838'
+    this.styles = StyleSheet.create({
+      messageView:{
+                    backgroundColor:'rgba(48,48,48,0.8)',
+                    flex:1,
+                    flexDirection:'row',
+                    alignItems:'center',
+                    borderBottomWidth:1,
+                    borderColor:'#AFAFAF',
+                    padding:5
+                  },
+      text:{
+             flex:1,
+             textAlign:'left',
+             color:colorText,
+             paddingHorizontal:20
+           },
+      close:{
+              flex:0,
+              textAlign:'right',
+              fontSize:18,
+              fontWeight:'bold',
+              color:colorText,
+              paddingHorizontal:10
+            }
+      })
+  }
+
+  render(){
+    this.message = this.props.data.message
+    return  <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
+              <Text style={this.styles.text}>{this.message}</Text>
+              <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
+                <Text style={this.styles.close}>X</Text>
+              </TouchableHighlight>
+            </AnimatedBox>
+  }
+}
+
 class NoticeBox extends React.Component{
   constructor(props){
     super(props)
@@ -144,6 +147,8 @@ class NoticeBox extends React.Component{
     this.state = {refresh: 0}
     this.renderMessage = this.renderMessage.bind(this)
     this.renderItems = this.renderItems.bind(this)
+
+    this.generateStyles()
   }
 
   componentDidMount(){
@@ -186,17 +191,19 @@ class NoticeBox extends React.Component{
     return content
   }
 
-  render(){
-    const notice = StyleSheet.create({
-      box:{
-            position: 'absolute',
-            bottom:0,
-            left:0,
-            right:0
-          }
-    })
+  generateStyles(){
+    this.styles = {
+                    box:{
+                          position: 'absolute',
+                          bottom:0,
+                          left:0,
+                          right:0
+                        }
+                  }
+  }
 
-    return <View style={notice.box}>
+  render(){
+    return <View style={this.styles.box}>
               {this.renderItems()}
            </View> 
   }

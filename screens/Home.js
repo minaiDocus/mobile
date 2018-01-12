@@ -1,18 +1,18 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import Config from './Config'
-import Screen from './components/screen'
+import Config from '../Config'
+import Screen from '../components/screen'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native'
-import {XImage} from './components/XComponents'
-import Navigator from './components/navigator'
-import {BoxButton, ImageButton, LinkButton} from './components/buttons'
-import Menu from './components/menu'
+import {XImage} from '../components/XComponents'
+import Navigator from '../components/navigator'
+import {BoxButton, ImageButton, LinkButton} from '../components/buttons'
+import Menu from '../components/menu'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
-import User from './models/User'
-import {ProgressUpload} from './components/uploader'
+import User from '../models/User'
+import {ProgressUpload} from '../components/uploader'
 
-import Cfetcher from './components/dataFetcher'
-import request1 from "./requests/data_loader"
+import Cfetcher from '../components/dataFetcher'
+import request1 from '../requests/data_loader'
 
 let Fetcher = new Cfetcher(request1)
 
@@ -47,9 +47,26 @@ function docs_errors(){
 
 
 class Header extends Component{
+  constructor(props){
+    super(props)
+    this.generateStyles() //style generation
+  }
+
+  generateStyles(){
+    this.styles = {
+                    minicontainer:{
+                                    flex:0, 
+                                    flexDirection:'row',
+                                    backgroundColor:'#E1E2DD',
+                                    alignItems:'center',
+                                    justifyContent:'center',
+                                  },
+                  }
+  }
+
   render(){
     return (
-              <View style={styles.minicontainer}>
+              <View style={this.styles.minicontainer}>
                 <BoxButton onPress={()=>{GLOB.navigation.goTo('Send')}} source={{uri:"plane"}} title='Envoi documents' />
                 <BoxButton onPress={()=>{GLOB.navigation.goTo('Documents')}} source={{uri:"documents"}} title='Mes documents' />
               </View>
@@ -63,6 +80,7 @@ class ViewState extends Component{
     this.state = {infos: -1}
 
     this.renderLink = this.renderLink.bind(this)
+    this.generateStyles() //style generation
   }
 
   handleClickDocument(index){
@@ -92,8 +110,63 @@ class ViewState extends Component{
     GLOB.navigation.goTo('Publish', {pack: pack, text:""})
   }
 
+  generateStyles(){
+    this.stylesDetails = StyleSheet.create({
+      image:{
+              flex:0,
+              width:15,
+              height:15,
+              marginRight:20
+            },
+      infos:{
+              flex:1,
+              paddingHorizontal:30,
+              paddingVertical:5
+            },
+      details:{
+                flex:1,
+                flexDirection:'row',
+                paddingHorizontal:15,
+                paddingVertical:10,
+                borderBottomWidth:1,
+                borderColor:'#D6D6D6'
+              },
+    })
+
+    this.styles = StyleSheet.create({
+      container:  {
+                    flex:1,
+                    flexDirection:'column',
+                    borderRadius:10,
+                    
+                    elevation: 7, //Android shadow
+
+                    shadowColor: '#000',                  //===
+                    shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+                    shadowOpacity: 0.8,                   //===
+                    shadowRadius: 2,                      //===
+
+                    margin:10,
+                    padding:10,
+                    backgroundColor:"#E9E9E7"
+                  },
+      boxIco: {
+                flex:1, 
+                flexDirection:'row',
+                alignItems:'center',
+                justifyContent:'center'
+             },
+      icons:{
+              flex:0,
+              width:40,
+              height:40
+            },
+    })
+  }
+
   renderLink(index){
-    if(this.props.type == "processing" && this.props.datas[index].pack_id > 0){
+    if(this.props.type == "processing" && this.props.datas[index].pack_id > 0)
+    {
       return <LinkButton onPress={()=>{this.goToDocument(index)}} title='Voir détails ...' Tstyle={{flex:1, textAlign:'right', color:'#003366'}} Pstyle={{flex:1, marginTop:10}} />
     }
     else
@@ -103,33 +176,6 @@ class ViewState extends Component{
   }
 
   renderDetails(data, index){
-    const style = StyleSheet.create({
-      image:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      infos:{
-        flex:1,
-        paddingHorizontal:30,
-        paddingVertical:5
-      },
-      details:{
-        flex:1,
-        flexDirection:'row',
-        paddingHorizontal:15,
-        paddingVertical:10,
-        borderBottomWidth:1,
-        borderColor:'#D6D6D6'
-      },
-      champ:{
-        fontSize:14
-      },
-      label:{
-        fontWeight:"bold",
-      }
-    });
     const colorStriped = ((index % 2) == 0)? "#F2F2F2" : "#FFF";
     const arrow = (this.state.infos == index)? "arrow_down" : "arrow_up";
     var infos = this.props.infos
@@ -150,17 +196,17 @@ class ViewState extends Component{
         }
         catch(e){}
       }
-      return <Text key={index} style={style.champ}><Text style={style.label}>{info.label} : </Text>{value}</Text>
+      return <Text key={index} style={{fontSize:14}}><Text style={{fontWeight:"bold"}}>{info.label} : </Text>{value}</Text>
     })
 
     return    <TouchableOpacity key={index} style={{flex:1}} onPress={()=>this.handleClickDocument(index)}>
-                <View style={[style.details, {backgroundColor:colorStriped}]}>
-                  <XImage source={{uri: arrow}} style={style.image} />
+                <View style={[this.stylesDetails.details, {backgroundColor:colorStriped}]}>
+                  <XImage source={{uri: arrow}} style={this.stylesDetails.image} />
                   <Text>{data.name}</Text>
                 </View>
                 {
                   this.state.infos == index && 
-                    <View style={[style.infos, {backgroundColor:colorStriped}]}>
+                    <View style={[this.stylesDetails.infos, {backgroundColor:colorStriped}]}>
                       {infos}
                       {this.renderLink(index)}
                     </View>
@@ -169,29 +215,6 @@ class ViewState extends Component{
   }
 
   render(){
-    const boxState = StyleSheet.create({
-      container: {
-        flex:1,
-        flexDirection:'column',
-        borderRadius:10,
-        
-        elevation: 7, //Android shadow
-
-        shadowColor: '#000',                  //===
-        shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
-        shadowOpacity: 0.8,                   //===
-        shadowRadius: 2,                      //===
-
-        margin:10,
-        padding:10,
-        backgroundColor:"#E9E9E7"
-      },
-      icons:{
-        flex:0,
-        width:40,
-        height:40
-      },
-    });
     const icon = this.props.icon;
     const title = this.props.title;
     const counts = this.props.datas.length;
@@ -199,10 +222,10 @@ class ViewState extends Component{
     const details = this.props.datas.map((dt, index) => {return this.renderDetails(dt, index)});
 
     return  <ScrollView>
-              <View style={boxState.container}>
+              <View style={this.styles.container}>
                 <View style={{flex:1, flexDirection:'row'}}>
-                  <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                    <XImage source={{uri:icon}} style={boxState.icons} />
+                  <View style={this.styles.boxIco}>
+                    <XImage source={{uri:icon}} style={this.styles.icons} />
                   </View>
                   <View style={{flex:4}}>
                     <Text style={{fontSize:16,color:'#463119'}}>{title} <Text style={{color:'#EC5656',fontWeight:'bold'}}>({counts})</Text></Text>
@@ -218,23 +241,57 @@ class ViewState extends Component{
 }
 
 class MenuLoader extends Component{
-  constructor(props){
-    super(props);
-  }
   render(){ 
     return <Menu navigation={GLOB.navigation} /> 
   }
 }
 
-
 class TabNav extends Component{
   constructor(props){
     super(props);
     this.state = {index: 0}
+    this.generateStyles() //style generation
   }
 
   handleIndexChange(index){
     this.setState({index: index})
+  }
+
+  generateStyles(){
+    this.stylesTabBar = StyleSheet.create({
+      container:{
+                  flex:0,
+                  flexDirection:'row',
+                  width:'100%',
+                  height:50,
+                  borderColor:'#DFE0DF',
+                  borderBottomWidth:1,
+                  marginTop:10,
+                },
+      icons:{
+              flex:0,
+              marginLeft:5,
+              width:30,
+              height:30,
+            },
+      title:{
+              flex:1,
+              fontSize:12,
+              fontWeight:'bold',
+              textAlign:'center'
+            },
+      box:{
+            flex:1,
+            borderTopLeftRadius:10,
+            borderTopRightRadius:10,
+            marginHorizontal:2,
+            backgroundColor:"#BEBEBD",
+            borderColor:'#DFE0DF',
+            borderWidth:1,
+            flexDirection:'row',
+            alignItems:'center',
+          },
+    })
   }
 
   renderTabBar(){
@@ -242,57 +299,21 @@ class TabNav extends Component{
       {title: "Traités", icon:"doc_trait"},
       {title: "En cours", icon:"doc_curr"},
       {title: "Erreurs", icon:"doc_view"},
-    ];
-    const styles = StyleSheet.create({
-        container:{
-          flex:0,
-          flexDirection:'row',
-          width:'100%',
-          height:50,
-          borderColor:'#DFE0DF',
-          borderBottomWidth:1,
-          marginTop:10,
-        },
-        icons:{
-          flex:0,
-          marginLeft:5,
-          width:30,
-          height:30,
-        },
-        touchable:{
-          flex:1
-        },
-        title:{
-          flex:1,
-          fontSize:12,
-          fontWeight:'bold',
-          textAlign:'center'
-        },
-        box:{
-          flex:1,
-          borderTopLeftRadius:10,
-          borderTopRightRadius:10,
-          marginHorizontal:2,
-          backgroundColor:"#BEBEBD",
-          borderColor:'#DFE0DF',
-          borderWidth:1,
-          flexDirection:'row',
-          alignItems:'center',
-        },
-    });
-    var indexStyle = "";
+    ]
+
+    let indexStyle = ""
     const content = tabs.map((tb, index) => {
           indexStyle = (index == this.state.index)? {backgroundColor:'#E9E9E7',borderColor:'#C0D838'} : {};
           return (
-           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={styles.touchable}>
-            <View style={[styles.box, indexStyle]}>
-              <XImage source={{uri:tb.icon}} style={styles.icons} />
-              <Text style={styles.title}>{tb.title}</Text>
+           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
+            <View style={[this.stylesTabBar.box, indexStyle]}>
+              <XImage source={{uri:tb.icon}} style={this.stylesTabBar.icons} />
+              <Text style={this.stylesTabBar.title}>{tb.title}</Text>
             </View>
           </TouchableOpacity>
-      )});
+      )})
 
-    return <View style={styles.container}>
+    return <View style={this.stylesTabBar.container}>
              {content}
            </View>  
   }
@@ -327,6 +348,7 @@ class HomeScreen extends Component {
 
     this.toggleInfos = this.toggleInfos.bind(this)
     this.refreshDatas = this.refreshDatas.bind(this)
+    this.generateStyles() //style generation
   }
 
   componentWillReceiveProps(nextProps){
@@ -374,38 +396,40 @@ class HomeScreen extends Component {
   toggleInfos(){
     this.setState({showInfos: !this.state.showInfos})
   }
+
+  generateStyles(){
+    this.styles = StyleSheet.create({
+      content : {
+                  flex:1,
+                  alignItems:'center',
+                  justifyContent:'center',
+                  backgroundColor:'rgba(0,0,0,0.4)',
+                },
+      box:{
+            flex:0,
+            width:200,
+            height:130,
+            padding:10,
+            backgroundColor:'#fff',
+            borderRadius:10,
+          },
+      boxTitle: {
+                  flex:0,
+                  height:45,
+                  borderBottomWidth:1, 
+                  borderColor:'#000',
+                  marginBottom:10
+                },
+      title:{
+              flex:1, 
+              fontWeight:'bold',
+              fontSize:24,
+              textAlign:'center'
+            },
+    })
+  }
   
   render() {
-    const styleInfo = StyleSheet.create({
-      content : {
-        flex:1,
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'rgba(0,0,0,0.4)',
-      },
-      box:{
-        flex:0,
-        width:200,
-        height:130,
-        padding:10,
-        backgroundColor:'#fff',
-        borderRadius:10,
-      },
-      title:{
-        flex:1, 
-        fontWeight:'bold',
-        fontSize:24,
-        textAlign:'center'
-      },
-      boxTitle:{
-      	flex:0,
-      	height:45,
-      	borderBottomWidth:1, 
-        borderColor:'#000',
-        marginBottom:10
-      }
-    })
-
     return (
         <Screen style={{flex:1}} 
                 navigation={GLOB.navigation}>
@@ -419,10 +443,10 @@ class HomeScreen extends Component {
                      onRequestClose={()=>{}}
             >
               <TouchableWithoutFeedback onPress={this.toggleInfos}>
-                <View style={styleInfo.content}>
-                    <View style={styleInfo.box}>
-                      <View style={styleInfo.boxTitle}>
-                      	<Text style={styleInfo.title}>iDocus</Text>
+                <View style={this.styles.content}>
+                    <View style={this.styles.box}>
+                      <View style={this.styles.boxTitle}>
+                      	<Text style={this.styles.title}>iDocus</Text>
                       </View>
                       <Text>www.idocus.com</Text>
                       <Text>version : {Config.version.toString()}</Text>
@@ -436,28 +460,5 @@ class HomeScreen extends Component {
     );
   }
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-    paddingTop: 5,
-  },
-  minicontainer:{
-    flex:0, 
-    flexDirection:'row',
-    backgroundColor:'#E1E2DD',
-    alignItems:'center',
-    justifyContent:'center',
-  },
-  headeView: {
-    flex:1,
-    padding:10,
-    backgroundColor: "#FF8C00",
-  }
-});
-
-
 
 export default HomeScreen

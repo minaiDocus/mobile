@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import {Image, View, Text, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, Modal, StyleSheet} from 'react-native'
 import AnimatedBox from './animatedBox'
 
+//Function for declaring image to React
 function require_images(name){
   const images = {
     arrow_doc:require('../images/arrow_doc.png'),
@@ -93,7 +94,7 @@ export class XImage extends Component{
                   <Image 
                     source={this.img_source} 
                     style={this.img_style} 
-                    resizeMode={this.props.resizeMode||'contain'}
+                    resizeMode={this.props.resizeMode || 'contain'}
                     onLoadEnd={this.props.onLoadEnd}
                     loadingIndicatorSource={loader}
                     />
@@ -107,7 +108,7 @@ export class XImage extends Component{
         return  <Image 
                     source={this.img_source} 
                     style={this.img_style} 
-                    resizeMode={this.props.resizeMode||'contain'}
+                    resizeMode={this.props.resizeMode || 'contain'}
                     onLoadEnd={this.props.onLoadEnd}
                     loadingIndicatorSource={loader}
                 />
@@ -139,6 +140,8 @@ export class XTextInput extends Component{
 
     this.renderModalText = this.renderModalText.bind(this)
     this.closeKeyboard = this.closeKeyboard.bind(this)
+
+    this.generateStyles()
   }
 
   openKeyboard(){
@@ -186,44 +189,60 @@ export class XTextInput extends Component{
     }
   }
 
-  renderModalText(){
-    const styles = StyleSheet.create({
+  generateStyles(){
+    this.stylesModalText = StyleSheet.create({
       content:{
-        flex:1,
-        flexDirection:'column',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'rgba(0,0,0,0.7)'
-      },
+                flex:1,
+                flexDirection:'column',
+                alignItems:'center',
+                justifyContent:'center',
+                backgroundColor:'rgba(0,0,0,0.7)'
+              },
       box:{
-        flex:0,
-        height:53,
-        width:'100%',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'#F1F1F1' 
-      },
+            flex:0,
+            height:53,
+            width:'100%',
+            alignItems:'center',
+            justifyContent:'center',
+            backgroundColor:'#F1F1F1' 
+          },
       label:{
-        flex:0,
-        fontSize:14,
-        color:'#707070'
-      },
-      input:{
-        flex:1,
-        fontSize:14,
-      },
+              flex:0,
+              fontSize:14,
+              color:'#707070'
+            },
       boxInput: {
-        flex:0,
-        width:180,
-        height:28,
-        borderColor:'#707070',
-        borderBottomWidth: 1,
-        paddingVertical:7,
-        paddingHorizontal:8,
-        backgroundColor:'#FFF',
-      }
+                  flex:0,
+                  width:180,
+                  height:28,
+                  borderColor:'#707070',
+                  borderBottomWidth: 1,
+                  paddingVertical:7,
+                  paddingHorizontal:8,
+                  backgroundColor:'#FFF',
+                }
     })
 
+    this.styles = StyleSheet.create({
+      prevStyle:  {
+                    minHeight:30,
+                    paddingBottom:8
+                  },
+      textStyle:  {
+                    flex:1,
+                    color: this.editable? '#606060' : '#A6A6A6',
+                    fontSize:14,
+                  },
+      boxText:  {
+                  flex:1,
+                  borderBottomWidth:1,
+                  borderColor:'#909090',
+                  padding:5
+                }
+    })
+  }
+
+  renderModalText(){
     let iosStyle = androidStyle = {}
     if(Platform.OS == 'ios')
     {
@@ -246,10 +265,10 @@ export class XTextInput extends Component{
                    onRequestClose={()=>{this.closeKeyboard()}}
             >
               <TouchableWithoutFeedback onPress={()=>this.closeKeyboard()}>
-                <View style={[styles.content, iosStyle]}>
-                  <AnimatedBox ref="animatedInput" style={styles.box} type='DownSlide' durationIn={300} >
-                    {this.label != "" && <Text style={styles.label}>{this.label}</Text>}
-                    <View style={[styles.boxInput, androidStyle]}>
+                <View style={[this.stylesModalText.content, iosStyle]}>
+                  <AnimatedBox ref="animatedInput" style={this.stylesModalText.box} type='DownSlide' durationIn={300} >
+                    {this.label != "" && <Text style={this.stylesModalText.label}>{this.label}</Text>}
+                    <View style={[this.stylesModalText.boxInput, androidStyle]}>
                       <TextInput ref="input"
                                  autoFocus={true}
                                  onLayout={this.handleLayout.bind(this)}
@@ -260,7 +279,7 @@ export class XTextInput extends Component{
                                  editable={this.editable}
                                  onBlur={()=>{this.closeKeyboard()}}
                                  keyboardType={this.props.keyboardType}
-                                 style={styles.input}/>
+                                 style={{flex:1, fontSize:14}}/>
                     </View>
                   </AnimatedBox>
                   <View style={{flex:1}} />
@@ -270,24 +289,6 @@ export class XTextInput extends Component{
   }
 
   render(){
-    const styles = StyleSheet.create({
-      prevStyle: {
-        minHeight:30,
-        paddingBottom:8
-      },
-      textStyle: {
-        flex:1,
-        color: this.editable? '#606060' : '#A6A6A6',
-        fontSize:14,
-      },
-      boxText: {
-        flex:1,
-        borderBottomWidth:1,
-        borderColor:'#909090',
-        padding:5
-      }
-    })
-
     const PStyle = this.props.PStyle
     const TStyle = this.props.TStyle
     let value = this.state.value || this.props.placeholder || ""
@@ -300,10 +301,10 @@ export class XTextInput extends Component{
       }
       value = password
     }
-    return <TouchableOpacity style={[styles.prevStyle, PStyle]} onPress={()=>this.openKeyboard()} >
+    return <TouchableOpacity style={[this.styles.prevStyle, PStyle]} onPress={()=>this.openKeyboard()} >
             {this.state.openKeyboard && this.renderModalText()}  
-            <View style={styles.boxText}>
-              <Text style={[styles.textStyle, TStyle]}>{value}</Text>
+            <View style={this.styles.boxText}>
+              <Text style={[this.styles.textStyle, TStyle]}>{value}</Text>
             </View>
            </TouchableOpacity>
            

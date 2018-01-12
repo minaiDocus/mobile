@@ -18,6 +18,16 @@ import request1 from "../../requests/data_loader"
 let Fetcher = new Cfetcher(request1)
 let GLOB = {images:[], imgToDel:"", idZoom:"", navigation:{}}
 
+const styles = {
+  minicontainer:{
+                  flex:0, 
+                  flexDirection:'row',
+                  backgroundColor:'#E1E2DD',
+                  alignItems:'center',
+                  justifyContent:'center',
+                },
+}
+
 class BoxZoom extends Component{
   constructor(props){
     super(props)
@@ -27,6 +37,8 @@ class BoxZoom extends Component{
     this.currIndex = 0
 
     this.renderSwiper = this.renderSwiper.bind(this)
+
+    this.generateStyles()
   }
 
   componentDidMount(){
@@ -57,23 +69,46 @@ class BoxZoom extends Component{
     setTimeout(()=>{this.props.cropElement(path, this.currIndex)}, 1000)
   }
 
-  renderSwiper(){
-    const swipeStyle = StyleSheet.create({
-      wrapper:{
-            flex:1,
-      },
-      image:{
-        flex:1,
-      },
-      boxImage:{
-        flex:1,
-        backgroundColor:'#fff',
-        borderColor:'#fff',
-        borderLeftWidth:2,
-        borderRightWidth:2,
-        marginHorizontal:0
-      }
+  generateStyles(){
+    this.swiperStyle = StyleSheet.create({
+      boxImage: {
+                  flex:1,
+                  backgroundColor:'#fff',
+                  borderColor:'#fff',
+                  borderLeftWidth:2,
+                  borderRightWidth:2,
+                  marginHorizontal:0
+                }
     })
+
+    this.styles = StyleSheet.create({
+        boxZoom:{
+                  flex:1,
+                  padding:"10%",
+                  backgroundColor:'rgba(0,0,0,0.8)',
+                  flexDirection:'column',
+                },
+        boxSwiper:{
+                    flex:1,
+                    marginBottom:15,
+                    borderColor:'#fff',
+                    borderWidth:2
+                  },
+        loader: {
+                  backgroundColor:'#fff',
+                  position:'absolute',
+                  flex:1,
+                  top:0,
+                  bottom:0,
+                  left:0,
+                  right:0,
+                  alignItems:'center',
+                  justifyContent:'center'
+                }
+    })
+  }
+
+  renderSwiper(){
     var indexStart = 0
 
     var embedContent = this.props.datas.map((img, key)=>
@@ -81,51 +116,33 @@ class BoxZoom extends Component{
       if(base64.encode(img.path).toString() == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
       return <XImage  key={key}
                       type='container'
-                      PStyle={swipeStyle.boxImage}
-                      style={swipeStyle.image}
+                      PStyle={this.swiperStyle.boxImage}
+                      style={{flex:1}}
                       source={{uri: img.path.toString()}} 
                       local={false}
               />
     })
 
-    return <Swiper style={swipeStyle.wrapper} index={indexStart} onIndexChanged={(index)=>{this.onSwipe(index)}} count={this.props.datas.length}>
+    return <Swiper  style={{flex:1}} 
+                    index={indexStart} 
+                    onIndexChanged={(index)=>{this.onSwipe(index)}}
+                    count={this.props.datas.length}>
             {embedContent}
            </Swiper>
   }
 
   render(){
-    const zoomBox = StyleSheet.create({
-      boxZoom:{
-          flex:1,
-          padding:"10%",
-          backgroundColor:'rgba(0,0,0,0.8)',
-          flexDirection:'column',
-      }
-    })
-
-    const loader = {
-      backgroundColor:'#fff',
-      position:'absolute',
-      flex:1,
-      top:0,
-      bottom:0,
-      left:0,
-      right:0,
-      alignItems:'center',
-      justifyContent:'center'
-    }
-
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={true}
                    supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
-              <View style={zoomBox.boxZoom}>
-                <View style={{flex:1, marginBottom:15, borderColor:'#fff', borderWidth:2}}>
+              <View style={this.styles.boxZoom}>
+                <View style={this.styles.boxSwiper}>
                   {this.state.ready && this.renderSwiper()}
                   {
-                    !this.state.ready && <View style={loader}>
+                    !this.state.ready && <View style={this.styles.loader}>
                                           <XImage loader={true} />
                                          </View>
                   }
@@ -142,75 +159,79 @@ class BoxZoom extends Component{
 
 class ImgBox extends Component{
   constructor(props){
-    super (props);
-    this.state = {options: false};
+    super (props)
+    this.state = {options: false}
+
+    this.generateStyles()
   }
 
   toggleOpt(){
-    this.setState({options: !this.state.options});
+    this.setState({options: !this.state.options})
   }
 
   delete(){
-    GLOB.imgToDel = base64.encode(this.props.source.uri).toString();
-    this.props.deleteElement();
-    this.toggleOpt();
+    GLOB.imgToDel = base64.encode(this.props.source.uri).toString()
+    this.props.deleteElement()
+    this.toggleOpt()
   }
 
   zoom(){
-    GLOB.idZoom = base64.encode(this.props.source.uri).toString();
-    this.props.toggleZoom();
-    this.toggleOpt(); 
+    GLOB.idZoom = base64.encode(this.props.source.uri).toString()
+    this.props.toggleZoom()
+    this.toggleOpt()
   }
 
   crop(){
-    this.props.cropElement(this.props.source.uri, this.props.index);
-    this.toggleOpt(); 
+    this.props.cropElement(this.props.source.uri, this.props.index)
+    this.toggleOpt() 
+  }
+
+  generateStyles(){
+    this.styles = StyleSheet.create({
+        styleTouch: {
+                      flex:0,
+                      marginVertical:5,
+                      alignItems:'center',
+                      width:127
+                    },
+        styleImg: {
+                    flex:0,
+                    width:120,
+                    height:113,
+                  },
+        styleContainer:{
+                          backgroundColor:'#fff',
+                          borderRadius:5,
+                          width:126,
+                          height:119,
+                          justifyContent:'center',
+                          alignItems:'center',
+                        },
+        btnText:  {
+                    flex:1,
+                    backgroundColor:'rgba(255,255,255,0.8)',
+                    padding:2,
+                    justifyContent:'center',
+                    alignItems:'center',
+                    borderColor:'#3E2F24'
+                  },
+        options:{
+                  flex:0,
+                  flexDirection:'row',
+                  height:'30%',
+                  width:'100%'
+                }
+      })
   }
 
   render(){
-    const imgBox = StyleSheet.create({
-      styleTouch: {
-          flex:0,
-          marginVertical:5,
-          alignItems:'center',
-          width:127
-        },
-      styleImg: {
-          flex:0,
-          width:120,
-          height:113,
-        },
-      styleContainer:{
-          backgroundColor:'#fff',
-          borderRadius:5,
-          width:126,
-          height:119,
-          justifyContent:'center',
-          alignItems:'center',
-      },
-      btnText: {
-          flex:1,
-          backgroundColor:'rgba(255,255,255,0.8)',
-          padding:2,
-          justifyContent:'center',
-          alignItems:'center',
-          borderColor:'#3E2F24'
-        },
-      options:{
-          flex:0,
-          flexDirection:'row',
-          height:'30%',
-          width:'100%'
-      }
-    });
-
-    return  <TouchableOpacity style={imgBox.styleTouch} onPress={()=>this.toggleOpt()}>
-                <XImage type='container' PStyle={imgBox.styleContainer} source={this.props.source} style={imgBox.styleImg} local={false}>
+    return  <TouchableOpacity style={this.styles.styleTouch} onPress={()=>this.toggleOpt()}>
+                <XImage type='container' PStyle={this.styles.styleContainer} source={this.props.source} style={this.styles.styleImg} local={false}>
                   { this.state.options == true &&
-                    <View style={imgBox.options}>   
-                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[imgBox.btnText]} Istyle={{width:20,height:20}} />
-                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} Pstyle={[{borderLeftWidth:1, borderRightWidth: 1}, imgBox.btnText]} Istyle={{width:20,height:20}} />
-                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} Pstyle={[imgBox.btnText]} Istyle={{width:20,height:20}} />
+                    <View style={this.styles.options}>   
+                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[this.styles.btnText]} Istyle={{width:20,height:20}} />
+                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} Pstyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} Istyle={{width:20,height:20}} />
+                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} Pstyle={[this.styles.btnText]} Istyle={{width:20,height:20}} />
                     </View>
                   }
                 </XImage>
@@ -219,15 +240,11 @@ class ImgBox extends Component{
 }
 
 class Header extends Component{
-  constructor(props){
-    super(props);
-  }
-
   render(){
-  return  <View style={styles.minicontainer}>
-              <BoxButton onPress={this.props.takePhoto} source={{uri:"camera_icon"}} title="Prendre photo" />
-              <BoxButton onPress={this.props.openRoll} source={{uri:"folder"}} title="Galerie photos" />
-          </View>
+    return  <View style={styles.minicontainer}>
+                <BoxButton onPress={this.props.takePhoto} source={{uri:"camera_icon"}} title="Prendre photo" />
+                <BoxButton onPress={this.props.openRoll} source={{uri:"folder"}} title="Galerie photos" />
+            </View>
   }
 }
 
@@ -251,6 +268,8 @@ class SendScreen extends Component {
     {
       Notice.info("Un transfert est en cours, Veuillez patienter avant de lancer un autre!!")
     }
+
+    this.generateStyles()
   }
 
   componentWillMount(){
@@ -373,6 +392,34 @@ class SendScreen extends Component {
     }
   }
 
+  generateStyles(){
+    this.styles = StyleSheet.create({
+      container:  {
+                    flex: 1,
+                    flexDirection: 'column',
+                  },
+      boxPicture:{
+                    flex:1,
+                    borderRadius:10,
+                    
+                    elevation: 7, //Android shadow
+
+                    shadowColor: '#000',                  //===
+                    shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+                    shadowOpacity: 0.8,                   //===
+                    shadowRadius: 2,                      //===
+
+                    backgroundColor:"#E9E9E7",
+                    margin:10,
+                    padding:5
+                  },
+      button: {
+                flex:1,
+                margin:10
+              }
+    })
+  }
+
   render() {
       if(GLOB.images.length > 0)
       {
@@ -385,56 +432,28 @@ class SendScreen extends Component {
       }
       else
       {
-        var embedContent = <View style={styles.boxPicture}>
-                              <Text style={{padding:10}}>Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ...</Text>
+        var embedContent =  <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
+                              <View style={this.styles.boxPicture}>
+                                <Text style={{padding:10}}>Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ...</Text>
+                              </View>
                             </View>
 
       }
       return (
-        <Screen style={styles.container}
+        <Screen style={this.styles.container}
                 navigation={GLOB.navigation}>
           <Header takePhoto={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
-          {this.state.zoomActive && <BoxZoom datas={this.state.dataList} cropElement={(path, index)=>this.openCrop(path, index)} deleteElement={this.deleteElement} hide={this.toggleZoom} />}
+          {this.state.zoomActive && <BoxZoom  datas={this.state.dataList} 
+                                              cropElement={(path, index)=>this.openCrop(path, index)} 
+                                              deleteElement={this.deleteElement} 
+                                              hide={this.toggleZoom} />}
           { embedContent }
           <View style={styles.minicontainer}>
-            <SimpleButton Pstyle={styles.button} onPress={()=>this.sendList()} title="Suivant >>" />
+            <SimpleButton Pstyle={this.styles.button} onPress={()=>this.sendList()} title="Suivant >>" />
           </View>
         </Screen>
       );
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  minicontainer:{
-    flex:0, 
-    flexDirection:'row',
-    backgroundColor:'#E1E2DD',
-    alignItems:'center',
-    justifyContent:'center',
-  },
-  boxPicture:{
-      flex:1,
-      borderRadius:10,
-      
-      elevation: 7, //Android shadow
-
-      shadowColor: '#000',                  //===
-      shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
-      shadowOpacity: 0.8,                   //===
-      shadowRadius: 2,                      //===
-
-      backgroundColor:"#E9E9E7",
-      margin:10,
-      padding:5
-  },
-  button: {
-    flex:1,
-    margin:10
-  }
-});
 
 export default SendScreen;

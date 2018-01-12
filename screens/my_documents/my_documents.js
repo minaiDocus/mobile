@@ -26,6 +26,8 @@ class Header extends Component{
 
     this.renderCustomerSelection = this.renderCustomerSelection.bind(this)
     this.filterLock = this.filterLock.bind(this)
+
+    this.generateStyles()
   }
 
   componentDidMount(){
@@ -72,11 +74,52 @@ class Header extends Component{
     this.props.onFilter(this.state.client, this.state.search)
   }
 
+  generateStyles(){
+    this.selectStyle =  {
+                          label:{
+                            color:'#707070',
+                            fontSize:16,
+                            fontWeight:'bold',
+                            marginTop:5,
+                            paddingHorizontal:10
+                          }
+                        }
+    this.styles = StyleSheet.create({
+      container:{
+                  flex:0,
+                  flexDirection:'row',
+                  backgroundColor:'#E1E2DD',
+                  width:'100%',
+                  height:90,
+                },
+      inputs: {
+                flex: 1,
+                height:40,
+              },
+      left: {
+              flex:1,
+              flexDirection:'row',
+              alignItems:'center',
+              paddingLeft:30,
+              justifyContent:'center'
+            },
+      right:{
+              flex:4,
+              paddingHorizontal:20,
+            },
+      image:{
+              flex:0,
+              width:40,
+              height:40
+            }
+    })
+  }
+
   renderCustomerSelection(){
     let inputSelection = ""
     if(this.clients.length == 2)
     {
-      inputSelection = <Text style={{color:'#707070',fontSize:16,fontWeight:'bold',marginTop:5,paddingHorizontal:10}}>{this.clients[1].label}</Text>
+      inputSelection = <Text style={this.selectStyle.label}>{this.clients[1].label}</Text>
     }
     else
     {
@@ -87,36 +130,6 @@ class Header extends Component{
   }
 
   render(){
-    const headStyle = StyleSheet.create({
-      container:{
-        flex:0,
-        flexDirection:'row',
-        backgroundColor:'#E1E2DD',
-        width:'100%',
-        height:90,
-      },
-      inputs:{
-        flex: 1,
-        height:40,
-      },
-      left:{
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        paddingLeft:30,
-        justifyContent:'center'
-      },
-      right:{
-        flex:4,
-        paddingHorizontal:20,
-      },
-      image:{
-        flex:0,
-        width:40,
-        height:40
-      }
-    })
-
     const imageInput = ()=>{
       if(this.props.loadingFilter || this.state.loading)
       {
@@ -128,14 +141,18 @@ class Header extends Component{
       }
     }
 
-    return  <View style={headStyle.container}>
-                <View style={headStyle.left}>
-                  <XImage source={{uri:"ico_docs"}} style={headStyle.image} />
+    return  <View style={this.styles.container}>
+                <View style={this.styles.left}>
+                  <XImage source={{uri:"ico_docs"}} style={this.styles.image} />
                 </View>
-                <View style={headStyle.right}>
+                <View style={this.styles.right}>
                   {this.state.ready && this.renderCustomerSelection()}
                   <View style={{flex:1, flexDirection:'row'}}>
-                    <XTextInput TStyle={{paddingLeft:6}} PStyle={headStyle.inputs} placeholder="Filtre" autoCorrect={false} onChangeText={(value) => this.handleFilterChange(value)}/>
+                    <XTextInput TStyle={{paddingLeft:6}} 
+                                PStyle={this.styles.inputs} 
+                                placeholder="Filtre" 
+                                autoCorrect={false} 
+                                onChangeText={(value) => this.handleFilterChange(value)}/>
                     {imageInput()}
                   </View>
                 </View>
@@ -144,35 +161,37 @@ class Header extends Component{
 }
 
 class BoxDocs extends Component{
-
   constructor(props){
     super(props)
+    this.generateStyles()
   }
 
   handleClick(){
     GLOB.navigation.goTo('Publish', {pack: this.props.data, text: GLOB.filterText})
   }
 
-  render(){
-    const boxDocs = StyleSheet.create({
-      container: {
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        paddingLeft:'15%',
-        paddingVertical:10,
-      },
-      image:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      }
+  generateStyles(){
+    this.styles = StyleSheet.create({
+        container: {
+                      flex:1,
+                      flexDirection:'row',
+                      alignItems:'center',
+                      paddingLeft:'15%',
+                      paddingVertical:10,
+                    },
+        image:{
+                flex:0,
+                width:15,
+                height:15,
+                marginRight:20
+              }
     })
+  }
 
+  render(){
     return  <TouchableOpacity style={{flex:1}} onPress={()=>this.handleClick()} >
-              <View style={boxDocs.container}>
-                <XImage source={{uri:"arrow_doc"}} style={boxDocs.image} />
+              <View style={this.styles.container}>
+                <XImage source={{uri:"arrow_doc"}} style={this.styles.image} />
                 <Text>{this.props.data.name.toString()}</Text>
               </View>
             </TouchableOpacity>
@@ -258,21 +277,14 @@ class DocumentsScreen extends Component {
 
   render() {
       return (
-        <Screen style={styles.container}
+        <Screen style={{flex: 1, flexDirection: 'column'}}
                 navigation={GLOB.navigation}>
           <Header onFilter={this.dataFilter} loadingFilter={this.state.loadingFilter}/>
           {this.state.ready && this.renderDocuments()}
           {!this.state.ready && <XImage loader={true} style={{alignSelf:'center', marginTop:10}} width={70} height={70} />}
         </Screen>
-      );
+      )
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-});
 
 export default DocumentsScreen;

@@ -14,6 +14,8 @@ export class ProgressUpload extends Component{
     this.dismiss = this.dismiss.bind(this)
     this.uploadProgress = this.uploadProgress.bind(this)
     this.showState = this.showState.bind(this)
+
+    this.generateStyles()
   }
 
   componentWillMount(){
@@ -52,42 +54,43 @@ export class ProgressUpload extends Component{
     }
   }
 
-  render(){
-    const style = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       box:{
-        flex:0,
-        borderRadius:100,
-        alignItems:'center',
-        justifyContent:'center',
-        borderColor:'#422D14',
-        borderWidth:2,
-        marginRight:3,
-        marginTop:3,
-        position:'absolute'
-      },
-      gradient:{
-        flex:0,
-        height:35,
-        width:35,
-        borderRadius:100,
-        alignItems:'center',
-        justifyContent:'center'
-      },
-      text:{
-        color:"#C0D838",
-        fontSize:12,
-        fontWeight:'bold'
-      }
+            flex:0,
+            borderRadius:100,
+            alignItems:'center',
+            justifyContent:'center',
+            borderColor:'#422D14',
+            borderWidth:2,
+            marginRight:3,
+            marginTop:3,
+            position:'absolute'
+          },
+      gradient: {
+                  flex:0,
+                  height:35,
+                  width:35,
+                  borderRadius:100,
+                  alignItems:'center',
+                  justifyContent:'center'
+                },
+      text: {
+              color:"#C0D838",
+              fontSize:12,
+              fontWeight:'bold'
+            }
     })
+  }
 
+  render(){
     const colorGrad = ['#422D14', '#422D14', '#C0D838']
-
     if(this.state.show && this.state.value < 100)
     {
-      return <AnimatedBox ref="progressUpload" type="RightSlide" style={style.box}>
-                <LinearGradient colors={colorGrad} style={style.gradient}>
+      return <AnimatedBox ref="progressUpload" type="RightSlide" style={this.styles.box}>
+                <LinearGradient colors={colorGrad} style={this.styles.gradient}>
                   <TouchableOpacity onPress={this.showState}>
-                      <Text style={style.text}>{this.state.value} %</Text>
+                      <Text style={this.styles.text}>{this.state.value} %</Text>
                   </TouchableOpacity>
                 </LinearGradient>
              </AnimatedBox>

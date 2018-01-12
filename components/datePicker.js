@@ -5,6 +5,8 @@ class DatePicker extends Component {
   constructor(props){
     super(props)
     this.state = {date: this.props.value}
+
+    this.generateStyles()
   }
 
   handleChangeDate(date){
@@ -15,8 +17,8 @@ class DatePicker extends Component {
     }  
   }
 
-  render(){
-    const styles = {
+  generateStyles(){
+    this.styles = {
                       dateIcon: {
                             position: 'absolute',
                             left: 0,
@@ -26,11 +28,12 @@ class DatePicker extends Component {
                       dateInput: {
                             marginLeft: 36
                           }
-                    };
+                  }
+  }
 
+  render(){
     return (
       <DatePic
-        style={{width: 200}}
         date={this.state.date}
         mode="date"
         placeholder="select date"
@@ -39,7 +42,7 @@ class DatePicker extends Component {
         maxDate={new Date()}
         confirmBtnText="Confirm"
         cancelBtnText="Cancel"
-        customStyles={styles}
+        customStyles={this.styles}
         style={this.props.style}
         onDateChange={(date) => this.handleChangeDate(date)}
       />
