@@ -52,7 +52,7 @@ global.format_date = (_date=null, format = "DD-MM-YYYY HH:ii") => {
   if(_date != null && typeof(_date) !== 'undefined')
   {
     let date = new Date(_date)
-
+    
     if(date.getFullYear() <= 2000){ return "-" } //if date is before year 2000
 
     dateFormat = dateFormat.replace("DD", fill_with_zero(date.getDate()))   //Get the day as a number (1-31)

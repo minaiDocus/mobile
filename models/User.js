@@ -1,8 +1,30 @@
-import RealmData from '../components/realmData'
+import ActiveRealm from './activeRecord'
 
-class User extends RealmData{
+const _db_name = "user_00"
+const _schema = {
+                      name: 'User',
+                      primaryKey: 'id',
+                      properties: {
+                        id: 'int',
+                        id_idocus: 'int',
+                        last_name: 'string',
+                        first_name: 'string',
+                        code: 'string',
+                        email: 'string',
+                        is_admin: 'bool',
+                        company: 'string',
+                        is_prescriber: 'bool',
+                        organization_id: 'int',
+                        auth_token: 'string?',
+                        firebase_token: 'string?',
+                        master:'bool'
+                      }
+                    }
+
+class User extends ActiveRealm{
   constructor(){
-    super('User')
+    //REALM FILE && REALM NAME && REALM SCHEMA
+    super(_db_name, _schema, 'User')
   }
 
   fullName_of(usr){
@@ -19,6 +41,7 @@ class User extends RealmData{
 
   create_or_update(index, params, master=false){
     const auth_tk = master? params.authentication_token : ""
+    const firebase_token = master? params.firebase_token : ""
     const data =   {  
                       id: index,
                       id_idocus: params.id, 
@@ -30,7 +53,8 @@ class User extends RealmData{
                       is_prescriber: params.is_prescriber,
                       organization_id: params.organization_id,
                       company: params.company,
-                      auth_token: auth_tk, 
+                      auth_token: auth_tk,
+                      firebase_token: firebase_token, 
                       master: master
                     }
     this.insert([data])

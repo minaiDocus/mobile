@@ -10,6 +10,7 @@ import Menu from '../components/menu'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import User from '../models/User'
 import {ProgressUpload} from '../components/uploader'
+import FCM, {UINotification} from '../components/pushNotifications.js'
 
 import Cfetcher from '../components/dataFetcher'
 import request1 from '../requests/data_loader'
@@ -330,11 +331,12 @@ class TabNav extends Component{
 class HomeScreen extends Component {
   static navigationOptions = {  headerTitle:'Accueil', 
                                 headerLeft: <MenuLoader />,
-                                headerRight: <View style={{flex:1}}>
+                                headerRight: <View style={{flex:1, flexDirection:'row'}}>
                                               <ImageButton  source={{uri:"infos"}} 
-                                              Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
+                                              Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:30}}
                                               Istyle={{width:20, height:20}}
                                               onPress={()=>EventRegister.emit('clickInfosApp', true)} />
+                                              <UINotification />
                                               <ProgressUpload />
                                              </View>
                               }
@@ -355,6 +357,7 @@ class HomeScreen extends Component {
     if(nextProps.navigation.state.params.initScreen)
     {
       this.refreshDatas()
+      EventRegister.emit("refreshNotifications")
     }
   }
 
@@ -394,6 +397,7 @@ class HomeScreen extends Component {
   }
 
   toggleInfos(){
+    //console.error("test notification")
     this.setState({showInfos: !this.state.showInfos})
   }
 
@@ -433,6 +437,7 @@ class HomeScreen extends Component {
     return (
         <Screen style={{flex:1}} 
                 navigation={GLOB.navigation}>
+          <FCM />
           <Header />
           <TabNav ready={this.state.ready} />
           {this.state.showInfos &&

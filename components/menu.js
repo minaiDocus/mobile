@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Config from '../Config'
+import { EventRegister } from 'react-native-event-listeners'
 import {Text,TouchableOpacity,TouchableWithoutFeedback,View,StyleSheet,Modal,Slider,ScrollView,findNodeHandle} from 'react-native'
 import {XImage} from './XComponents'
 import AnimatedBox from './animatedBox'
@@ -86,6 +87,9 @@ class Footer extends Component{
   logOut(){
     //remove data cache (REALM)
     Fetcher.clearAll()
+
+    //refreshFCMtoken
+    EventRegister.emit("revokeFCMtoken")
     
     //go back to Login
     GLOB.navigation.dismissTo('Login', {goodbye: true})

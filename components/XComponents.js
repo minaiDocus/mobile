@@ -36,6 +36,7 @@ function require_images(name){
     request_access:require('../images/request_access.png'),
     infos:require('../images/infos.png'),
     img_crop:require('../images/img_crop.png'),
+    notification:require('../images/notification.png'),
     default: require("../images/loader.gif"),
   }
   const loaded_img = eval('images.'+name) || images.default
