@@ -339,13 +339,19 @@ export class UINotification extends Component{
 
     addNotification(notif){
     	let notification = []
-    	if(typeof(notif.message) != "undefined" && notif.message.source == "from_idocus_web_site") //notif.message.source != "from_idocus_web_site"
+      
+      let message = ""
+      if(typeof(notif.message) !== "undefined" && notif.message != ""){
+        message = JSON.parse(notif.message)
+      }
+
+    	if(typeof(message) != "undefined" && message.to_be_added == true)
     	{
         let sendDate = format_date((notif["google.sent_time"] || new Date()), "YYYY-MM-DDTHH:ii:ss")
     		notification = [{ 
     											"id": notif["google.message_id"] || sendDate,
-    											"title": notif.message.title,
-    											"message": notif.message.body,
+    											"title": message.title,
+    											"message": message.body,
     											"created_at": sendDate,
     											"is_read": false
     										}]
@@ -466,10 +472,18 @@ class FCMinit extends Component{
       {
         if(typeof(notif['google.message_id']) !== "undefined")
         {
-            if(typeof(notif.message) != "undefined" && notif.message.body != "" && notif.message.body != null)
+            let message = ""
+            if(typeof(notif.message) !== "undefined" && notif.message != ""){
+              message = JSON.parse(notif.message)
+            }
+ 
+            if(typeof(message) != "undefined" && message.body != "" && message.body != null)
             {
                 EventRegister.emit('newNotification', notif)
-                Notice.info("Vous avez un nouveau message!!", false, "push_notification_alert")
+                if(!(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray))
+                { 
+                  Notice.info("Vous avez un nouveau message!!", false, "push_notification_alert")
+                }
             }
         }
 
