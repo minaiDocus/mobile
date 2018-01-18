@@ -339,13 +339,13 @@ export class UINotification extends Component{
 
     addNotification(notif){
     	let notification = []
-    	if(typeof(notif.fcm) != "undefined" && notif.fcm.tag == "from_idocus_web_site") //notif.fcm.tag != "from_idocus_web_site"
+    	if(typeof(notif.message) != "undefined" && notif.message.source == "from_idocus_web_site") //notif.message.source != "from_idocus_web_site"
     	{
         let sendDate = format_date((notif["google.sent_time"] || new Date()), "YYYY-MM-DDTHH:ii:ss")
     		notification = [{ 
     											"id": notif["google.message_id"] || sendDate,
-    											"title": notif.fcm.title,
-    											"message": notif.fcm.body,
+    											"title": notif.message.title,
+    											"message": notif.message.body,
     											"created_at": sendDate,
     											"is_read": false
     										}]
@@ -462,23 +462,26 @@ class FCMinit extends Component{
     }
 
     handleMessages(notif){
-      if(typeof(notif['google.message_id']) !== "undefined")
+      if(typeof(notif) !== "undefined" && notif != null)
       {
-          if(typeof(notif.fcm) != "undefined" && notif.fcm.body != "" && notif.fcm.body != null)
-          {
-              EventRegister.emit('newNotification', notif)
-              Notice.info("Vous avez un nouveau message!!", false, "push_notification_alert")
-          }
-      }
+        if(typeof(notif['google.message_id']) !== "undefined")
+        {
+            if(typeof(notif.message) != "undefined" && notif.message.body != "" && notif.message.body != null)
+            {
+                EventRegister.emit('newNotification', notif)
+                Notice.info("Vous avez un nouveau message!!", false, "push_notification_alert")
+            }
+        }
 
-      if(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray)
-      {
-        EventRegister.emit('newNotification', notif)
+        if(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray)
+        {
+          EventRegister.emit('newNotification', notif)
+        }
       }
     }
 
     handleToken(token = ""){
-        if(token != "")
+        if(typeof(token) !== "undefined" && token != null && token != "")
         {
           //send token to server
           let _tmp_master = RealmControl.realmToJson(this.master)

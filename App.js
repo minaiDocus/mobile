@@ -1,6 +1,3 @@
-import React, { Component } from 'react'
-import {View} from 'react-native'
-
 import { StackNavigator } from 'react-navigation'
 
 import LoginScreen from './screens/Login'
