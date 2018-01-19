@@ -402,6 +402,7 @@ export class UINotification extends Component{
     			right:0,
     			width:20,
     			height:20,
+          margin:5,
     			borderRadius:100,
     			backgroundColor:'#F00',
     			justifyContent:'center',
@@ -490,6 +491,7 @@ class FCMinit extends Component{
         if(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray)
         {
           EventRegister.emit('newNotification', notif)
+          FCM.removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
         }
       }
     }

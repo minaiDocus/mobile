@@ -1,5 +1,7 @@
+import Config from './Config'
 import {Notice} from './components/notifications'
 import CronTask from './components/cronTask'
+import errorReport from './requests/error_report'
 
 //Private functions
 function fill_with_zero(date, length_to = 2){
@@ -17,7 +19,7 @@ global.UploadingFiles = false
 global.Notice = Notice
 global.CronTask = CronTask
 
-global.handlingHttpErrors = (request) => {
+global.handlingHttpErrors = (request, source="") => {
   let parsedRequest = ""
   try
   {parsedRequest = JSON.parse(request.responseText)}
@@ -43,6 +45,15 @@ global.handlingHttpErrors = (request) => {
     default:
       errorMessage = "Une erreur inattendue s'est produite !!(Error: "+request.status+")"
   } 
+
+  if(source != "")
+  {
+    const report =  {
+                      source: source,
+                      data: request
+                    }
+    errorReport.sendErrorReport("Error report mobile : http request", errorMessage, report)
+  }
 
   return {error: true, message: errorMessage}
 }

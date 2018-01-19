@@ -73,8 +73,16 @@ export default class Requester {
         }
         else
         {
-          this.responseFetching = JSON.parse(request.responseText)
-          callback(this.responseFetching) 
+          try
+          {
+            this.responseFetching = JSON.parse(request.responseText)
+            callback(this.responseFetching) 
+          }
+          catch(e)
+          {
+            this.responseFetching = handlingHttpErrors(request, "parsing active request")
+            callback(this.responseFetching)
+          }
         } 
       }
     }

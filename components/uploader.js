@@ -132,9 +132,20 @@ class UploderFiles{
             if (xhr.readyState === 4)
             {
               if (xhr.status === 200)
-                success(JSON.parse(xhr.responseText))
+              {
+                try
+                {
+                  success(JSON.parse(xhr.responseText))
+                }
+                catch(e)
+                {
+                  success(handlingHttpErrors(xhr, "uploading file"))
+                }
+              }
               else
+              {
                 success(handlingHttpErrors(xhr))
+              }
             }
           }
 

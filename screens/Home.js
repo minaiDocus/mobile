@@ -397,7 +397,7 @@ class HomeScreen extends Component {
   }
 
   toggleInfos(){
-    //console.error("test notification")
+    console.error("test notification")
     this.setState({showInfos: !this.state.showInfos})
   }
 
