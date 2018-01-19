@@ -46,7 +46,7 @@ let Fetcher = new Cfetcher(request1)
         // fcm token may not be available on first load, catch it here
     });
 << END USAGE */
-
+/*
 class Example extends Component {
     componentDidMount() {
         // iOS: show permission prompt for the first call. later just check permission in user settings
@@ -139,7 +139,7 @@ class Example extends Component {
             });
     }
 }
-
+*/
 class ListNotification extends Component{
     constructor(props){
       super(props)
@@ -292,12 +292,16 @@ export class UINotification extends Component{
         this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
           this.revokeToken()
         })
+        this.openNotificationsListener = EventRegister.on('openNotifications',()=>{
+          this.toggleListNotifications()
+        })
     }
 
     componentWillUnmount(){
         EventRegister.rm(this.newNotificationListener)
         EventRegister.rm(this.refreshNotificationsListener)
         EventRegister.rm(this.revokeTokenListener)
+        EventRegister.rm(this.openNotificationsListener)
     }
 
     componentDidMount(){
@@ -343,6 +347,21 @@ export class UINotification extends Component{
       let message = ""
       if(typeof(notif.message) !== "undefined" && notif.message != ""){
         message = JSON.parse(notif.message)
+      }
+
+      if(!(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray))
+      { 
+        const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
+                            <View style={{flex:1, paddingHorizontal:20}}>
+                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Nouvelle notification</Text>
+                              <Text style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</Text>
+                            </View>
+                            <ImageButton  source={{uri:"notification_green"}} 
+                              Pstyle={{flex:0, flexDirection:'column', alignItems:'center', width:30}}
+                              Istyle={{width:20, height:20}}
+                              onPress={()=>{EventRegister.emit("openNotifications")}} />
+                          </View>
+        Notice.info(mess_obj, false, "push_notification_alert", 10000, true)
       }
 
     	if(typeof(message) != "undefined" && message.to_be_added == true)
@@ -402,9 +421,9 @@ export class UINotification extends Component{
     			right:0,
     			width:20,
     			height:20,
-          margin:5,
+          margin:2,
     			borderRadius:100,
-    			backgroundColor:'#F00',
+    			backgroundColor:'#cc1b41',
     			justifyContent:'center',
     			alignItems:'center'
     		}
@@ -421,7 +440,7 @@ export class UINotification extends Component{
                   {
                   	this.state.newNotifCount > 0 && 
 	                  <View style={this.styles.bellText}>
-	                    <Text style={{backgroundColor:'rgba(0,0,0,0)', textAlign:'center', fontSize:9}}>{this.state.newNotifCount}</Text>
+	                    <Text style={{backgroundColor:'rgba(0,0,0,0)', textAlign:'center', fontSize:9, color:"#FFF"}}>{this.state.newNotifCount}</Text>
 	                  </View>
                 	}
                 </TouchableOpacity>
@@ -443,7 +462,13 @@ class FCMinit extends Component{
         // Android: check permission in user settings
         FCM.requestPermissions()
             .then(()=>{/*NOTIFICATIONS ENABLED*/})
-            .catch(()=>Notice.info('Les notifications sont désactivés!'))
+            .catch(()=>{
+              const notif_block = <View style={{flex:1, paddingHorizontal:20}}>
+                                    <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Notifications désactivés</Text>
+                                    <Text style={{flex:1, color:'#C0D838', fontSize:10}}>Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment</Text>
+                                  </View> 
+              Notice.info(notif_block, false, "notif_block", 10000)
+            })
         
         FCM.getFCMToken().then(token => {
             //getting firebase notifications token
@@ -471,27 +496,14 @@ class FCMinit extends Component{
     handleMessages(notif){
       if(typeof(notif) !== "undefined" && notif != null)
       {
-        if(typeof(notif['google.message_id']) !== "undefined")
-        {
-            let message = ""
-            if(typeof(notif.message) !== "undefined" && notif.message != ""){
-              message = JSON.parse(notif.message)
-            }
- 
-            if(typeof(message) != "undefined" && message.body != "" && message.body != null)
-            {
-                EventRegister.emit('newNotification', notif)
-                if(!(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray))
-                { 
-                  Notice.info("Vous avez un nouveau message!!", false, "push_notification_alert")
-                }
-            }
-        }
-
-        if(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray)
+        if(typeof(notif.message) != "undefined")
         {
           EventRegister.emit('newNotification', notif)
-          FCM.removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
+          if(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray)
+          {
+            setTimeout(()=>{EventRegister.emit("openNotifications")}, 1500)
+            FCM.removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
+          }
         }
       }
     }

@@ -58,7 +58,7 @@ export class BoxList extends Component{
 
   renderItems(item, key){
     const wd = (this.width) / this.elements
-    return <View key={key} style={[this.styles.chindren, this.stylesPlus, {width:wd}]}>{this.props.renderItems(item, key)}</View>
+    return <View key={key} style={[this.styles.children, this.stylesPlus, {width:wd}]}>{this.props.renderItems(item, key)}</View>
   }
 
   render(){

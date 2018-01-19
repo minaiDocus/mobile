@@ -6,21 +6,23 @@ import { EventRegister } from 'react-native-event-listeners'
 export class Notice {
   static _noticeMessages = [];
 
-  static info(message, permanent = false, name=""){
+  static info(message, permanent = false, name="", delay=5000){
     const options = {
                       permanent: permanent,
                       type: 'info',
                       name: name,
+                      delay: delay
                     }
     Notice._addNoticeMessages(message, options)
     EventRegister.emit('addNoticeMessages', null)
   }
 
-  static danger(message, permanent = true, name=""){
+  static danger(message, permanent = true, name="", delay=5000){
     const options = {
                       permanent: permanent,
                       type: 'danger',
-                      name: name
+                      name: name,
+                      delay: delay
                     }
     Notice._addNoticeMessages(message, options)
     EventRegister.emit('addNoticeMessages', null)
@@ -79,7 +81,7 @@ class Message extends React.Component{
   componentDidMount(){
     if(this.options.permanent == false)
     {
-      this._timeout = setTimeout(this.closeMessage, 5000)
+      this._timeout = setTimeout(this.closeMessage, this.options.delay)
     }
   }
 
@@ -128,13 +130,25 @@ class Message extends React.Component{
   }
 
   render(){
-    this.message = this.props.data.message
-    return  <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
-              <Text style={this.styles.text}>{this.message}</Text>
-              <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                <Text style={this.styles.close}>X</Text>
-              </TouchableHighlight>
-            </AnimatedBox>
+    const message = this.props.data.message
+    if(typeof(message) === 'string')
+    {
+      return  <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
+                <Text style={this.styles.text}>{message}</Text>
+                <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
+                  <Text style={this.styles.close}>X</Text>
+                </TouchableHighlight>
+              </AnimatedBox>
+    }
+    else
+    {
+      return <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
+                    <View style={{flex:1}}>{message}</View>
+                    <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
+                      <Text style={this.styles.close}>X</Text>
+                    </TouchableHighlight>
+                  </AnimatedBox>
+    }
   }
 }
 
