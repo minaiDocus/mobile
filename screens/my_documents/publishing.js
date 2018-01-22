@@ -23,6 +23,8 @@ class BoxZoom extends Component{
   constructor(props){
     super(props)
     this.state = {nb_pages: 0, current_page: 1}
+
+    this.generateStyles()
   }
 
   hideModal(){
@@ -45,55 +47,57 @@ class BoxZoom extends Component{
            </View>
   }
 
-  render(){
-    const zoomBox = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       boxZoom:{
-          flex:1,
-          padding:"5%",
-          backgroundColor:'#FFF',
-          flexDirection:'column',
-          justifyContent:'flex-end'
-      },
-      head:{
-        flex:0,
-        flexDirection:'row',
-        borderBottomWidth:2,
-        borderColor:'#DFE0DF',
-        paddingBottom:5,
-        height:25,
-        marginBottom:10
-      },
+                  flex:1,
+                  padding:"5%",
+                  backgroundColor:'#FFF',
+                  flexDirection:'column',
+                  justifyContent:'flex-end'
+              },
+      head: {
+              flex:0,
+              flexDirection:'row',
+              borderBottomWidth:2,
+              borderColor:'#DFE0DF',
+              paddingBottom:5,
+              height:25,
+              marginBottom:10
+            },
       wrapper:{
-        flex:1,
-        alignItems:'center',
-        marginBottom:10,
-        backgroundColor:'#FFF'
-      },
-      text:{
-        flex:0,
-        textAlign:'center',
-        marginBottom:5,
-        color:'#000',
-        fontSize:18
-      },
-      textFoot:{
-        flex:1,
-        padding:5,
-        fontSize:12,
-      },
+                flex:1,
+                alignItems:'center',
+                marginBottom:10,
+                backgroundColor:'#FFF'
+              },
+      text: {
+              flex:0,
+              textAlign:'center',
+              marginBottom:5,
+              color:'#000',
+              fontSize:18
+            },
+      textFoot: {
+                  flex:1,
+                  padding:5,
+                  fontSize:12,
+                },
       control:{
-        flex:1,
-        flexDirection:'row',
-        justifyContent:'flex-end',
-        alignItems:'center'
-      },
-      btnNav:{
-        flex:0,
-        marginHorizontal:10,
-        backgroundColor:'#fff'
-      }
-    });
-    
+                flex:1,
+                flexDirection:'row',
+                justifyContent:'flex-end',
+                alignItems:'center'
+              },
+      btnNav: {
+                flex:0,
+                marginHorizontal:10,
+                backgroundColor:'#fff'
+              }
+    })
+  }
+
+  render(){
     const src = Fetcher.request.render_document_uri(this.props.data.large, this.props.data.force_temp_doc)
 
     return  <Modal transparent={false}
@@ -102,13 +106,13 @@ class BoxZoom extends Component{
                    supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
-              <View style={zoomBox.boxZoom}>
-                <View style={zoomBox.head}>
+              <View style={this.styles.boxZoom}>
+                <View style={this.styles.head}>
                   <SimpleButton Pstyle={{flex:0}} onPress={()=>this.hideModal()} title="Retour" />
-                  <View style={zoomBox.control} >
-                    <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[zoomBox.btnNav, {marginLeft:0}]} onPress={()=>this.prevElement()} title="<" />
-                    <Text style={zoomBox.text}>Pièce N°: {GLOB.idZoom + 1} / {this.props.total}</Text>
-                    <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[zoomBox.btnNav, {marginRight:0}]} onPress={()=>this.nextElement()} title=">" />
+                  <View style={this.styles.control} >
+                    <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[this.styles.btnNav, {marginLeft:0}]} onPress={()=>this.prevElement()} title="<" />
+                    <Text style={this.styles.text}>Pièce N°: {GLOB.idZoom + 1} / {this.props.total}</Text>
+                    <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[this.styles.btnNav, {marginRight:0}]} onPress={()=>this.nextElement()} title=">" />
                   </View>
                 </View>
                 <View style={{flex:1,marginBottom:5, borderColor:'#000', borderWidth:2}}>
@@ -125,8 +129,8 @@ class BoxZoom extends Component{
                     }} />
                 </View>
                 <View style={{flex:0,flexDirection:'row'}}>
-                  <Text style={[zoomBox.text, zoomBox.textFoot, {textAlign:'left'}]}>{this.state.current_page}</Text>
-                  <Text style={[zoomBox.text, zoomBox.textFoot, {textAlign:'right'}]}>{this.state.nb_pages} page(s)</Text>
+                  <Text style={[this.styles.text, this.styles.textFoot, {textAlign:'left'}]}>{this.state.current_page}</Text>
+                  <Text style={[this.styles.text, this.styles.textFoot, {textAlign:'right'}]}>{this.state.nb_pages} page(s)</Text>
                 </View>
               </View>
             </Modal>
@@ -135,60 +139,69 @@ class BoxZoom extends Component{
 
 class Header extends Component{
   constructor(props){
-    super(props);
+    super(props)
+    this.generateStyles()
+  }
+
+  generateStyles(){
+    this.styles = StyleSheet.create({
+       minicontainer:{
+                      flex:0, 
+                      flexDirection:'column',
+                      backgroundColor:'#E1E2DD',
+                      alignItems:'center',
+                      justifyContent:'center',
+                      paddingVertical:10,
+                    },
+        text: {
+                fontSize:18,
+                fontWeight:"bold"
+              },
+        filter: {
+                  fontSize:10,
+                  fontWeight:"bold"
+                }
+      })
   }
 
   render(){
-  const styles = StyleSheet.create({
-   minicontainer:{
-      flex:0, 
-      flexDirection:'column',
-      backgroundColor:'#E1E2DD',
-      alignItems:'center',
-      justifyContent:'center',
-      paddingVertical:10,
-    },
-    text:{
-      fontSize:18,
-      fontWeight:"bold"
-    },
-    filter:{
-      fontSize:10,
-      fontWeight:"bold"
-    }
-  });
-  return (
-            <View style={styles.minicontainer}>
-              <Text style={styles.text}>{GLOB.Pack.name || "test"}</Text>
-              {
-                GLOB.filterText != "" &&
-                <Text style={styles.filter}>(Filtre actif: <Text style={{color:"#F7230C", fontStyle:'italic'}}>{GLOB.filterText}</Text>)</Text>
-              }
-            </View>
-          );
+    return (
+              <View style={this.styles.minicontainer}>
+                <Text style={this.styles.text}>{GLOB.Pack.name || "test"}</Text>
+                {
+                  GLOB.filterText != "" &&
+                  <Text style={this.styles.filter}>(Filtre actif: <Text style={{color:"#F7230C", fontStyle:'italic'}}>{GLOB.filterText}</Text>)</Text>
+                }
+              </View>
+            );
   }
 }
 
 class BoxInfos extends Component{
    constructor(props){
     super(props)
+
+    this.generateStyles()
+  }
+
+  generateStyles(){
+    this.styles = StyleSheet.create({
+      label:{
+              flex:1,
+              fontWeight:'bold',
+              marginLeft:5
+            },
+      value:{
+              flex:1,
+              marginLeft:25
+            }
+    })
   }
 
   renderItems(data){
-    const infoStyle = StyleSheet.create({
-      label:{
-        flex:1,
-        fontWeight:'bold',
-        marginLeft:5
-      },
-      value:{
-        flex:1,
-        marginLeft:25
-      }
-    })
     return  <View style={{flex:1, paddingVertical:10}}>
-              <Text style={infoStyle.label}>{data.label.toString()}</Text>
-              <Text style={infoStyle.value}>{data.value.toString()}</Text>
+              <Text style={this.styles.label}>{data.label.toString()}</Text>
+              <Text style={this.styles.value}>{data.value.toString()}</Text>
             </View>
   }
 
@@ -211,6 +224,7 @@ class BoxInfos extends Component{
 class ImgBox extends Component{
   constructor(props){
     super (props)
+    this.generateStyles()
   }
 
   zoom(){
@@ -218,43 +232,45 @@ class ImgBox extends Component{
     this.props.toggleZoom()
   }
 
-  render(){
-    const imgBox = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       styleTouch: {
-          flex:0,
-          width:75,
-          marginVertical:5,
-          alignItems:'center',
-          justifyContent:'center' 
-        },
+                    flex:0,
+                    width:95,
+                    marginVertical:5,
+                    alignItems:'center',
+                    justifyContent:'center' 
+                  },
       styleImg: {
-          flex:0,
-          height:89,
-          width:70,
-        },
-      styleContainer:{
-          backgroundColor:'#fff',
-          justifyContent:'center',
-          alignItems:'center',
-          height:95,
-          width:77,
-      },
+                  flex:0,
+                  height:109,
+                  width:90,
+                },
+      styleContainer: {
+                        backgroundColor:'#fff',
+                        justifyContent:'center',
+                        alignItems:'center',
+                        height:115,
+                        width:97,
+                      },
       btnText: {
-          flex:1,
-          padding:2,
-          backgroundColor:'rgba(255,255,255,0.7)',
-          justifyContent:'center',
-          alignItems:'center'
-        },
+                flex:1,
+                padding:2,
+                backgroundColor:'rgba(255,255,255,0.7)',
+                justifyContent:'center',
+                alignItems:'center'
+              },
       options:{
-          flex:0,
-          flexDirection:'row',
-          height:'30%',
-          width:'100%',
-          backgroundColor:'#000'
-      }
+                flex:0,
+                flexDirection:'row',
+                height:'30%',
+                width:'100%',
+                backgroundColor:'#000'
+              }
     });
+  }
 
+  render(){
     let src = {uri: "charge"}
     let local = true
     if(this.props.data.thumb)
@@ -263,8 +279,8 @@ class ImgBox extends Component{
       local = false
     }
 
-    return  <TouchableOpacity style={imgBox.styleTouch} onPress={()=>this.zoom()}>
-              <XImage type='container' PStyle={imgBox.styleContainer} style={imgBox.styleImg}  source={src} local={local} />
+    return  <TouchableOpacity style={this.styles.styleTouch} onPress={()=>this.zoom()}>
+              <XImage type='container' PStyle={this.styles.styleContainer} style={this.styles.styleImg}  source={src} local={local} />
             </TouchableOpacity>
   }
 }
@@ -303,15 +319,6 @@ class BoxPublish extends Component{
   }
   
   renderResult(){
-    const style = {
-        flex:1,
-        flexDirection:'row',
-        borderRadius:10,
-        elevation: 7,
-        backgroundColor:"#E9E9E7",
-        margin:10,
-        padding:5
-    }
     return <ScrollView style={{flex:0, padding:3}}>
               {this.state.zoomActive && <BoxZoom  hide={this.toggleZoom} 
                                                   nextElement={this.nextElement} 
@@ -321,7 +328,7 @@ class BoxPublish extends Component{
               }
               <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{this.props.totalCount} {this.props.title}</Text>
               <BoxList datas={this.props.datas}
-                       elementWidth={80}
+                       elementWidth={110}
                        renderItems={(data, index) => <ImgBox data={data} index={index} toggleZoom={()=>this.toggleZoom()}/> } />
               <Pagination onPageChanged={(page)=>this.props.onChangePage(page)} nb_pages={this.props.nb_pages || 1} page={this.props.page || 1} />
           </ScrollView>
@@ -353,6 +360,8 @@ class TabNav extends Component{
     this.refreshDocsPublishing = this.refreshDocsPublishing.bind(this)
 
     this.changePagePublished = this.changePagePublished.bind(this)
+
+    this.generateStyles()
   }
 
   componentDidMount(){
@@ -377,7 +386,7 @@ class TabNav extends Component{
         (responses) => {
           if(responses[0].error)
           {
-            Notice.danger(responses[0].message)
+            Notice.danger(responses[0].message, true, responses[0].message)
           }
           else
           {
@@ -405,7 +414,7 @@ class TabNav extends Component{
           (responses) => {
             if(responses[0].error)
             {
-              Notice.danger(responses[0].message)
+              Notice.danger(responses[0].message, true, responses[0].message)
             }
             else
             {
@@ -425,13 +434,8 @@ class TabNav extends Component{
     this.setState({index: index})
   }
 
-  renderTabBar(){
-    const tabs = [
-      {title: "Infos", icon:"information"},
-      {title: "En cours", icon:"doc_curr"},
-      {title: "Publiés", icon:"doc_trait"},
-    ];
-    const styles = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
         container:{
           flex:0,
           flexDirection:'row',
@@ -467,27 +471,38 @@ class TabNav extends Component{
           flexDirection:'row',
           alignItems:'center',
         }
-    });
+    })
+  }
+
+  renderTabBar(){
+    const tabs = [
+      {title: "Infos", icon:"information"},
+      {title: "En cours", icon:"doc_curr"},
+      {title: "Publiés", icon:"doc_trait"},
+    ]
+
     var indexStyle = "";
     const content = tabs.map((tb, index) => {
           indexStyle = (index == this.state.index)? {backgroundColor:'#E9E9E7',borderColor:'#C0D838'} : {};
           return (
-           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={styles.touchable}>
-            <View style={[styles.box, indexStyle]}>
-              <XImage source={{uri:tb.icon}} style={styles.icons} />
-              <Text style={styles.title}>{tb.title}</Text>
+           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={this.styles.touchable}>
+            <View style={[this.styles.box, indexStyle]}>
+              <XImage source={{uri:tb.icon}} style={this.styles.icons} />
+              <Text style={this.styles.title}>{tb.title}</Text>
             </View>
           </TouchableOpacity>
       )});
 
-    return <View style={styles.container}>
+    return <View style={this.styles.container}>
              {content}
            </View>  
   }
 
   render(){
     return  <ScrollableTabView tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
-              <BoxInfos key={0} nb_published={this.totalPublished} nb_publishing={GLOB.pagesPublishing.length}/>
+              <BoxInfos key={0}
+                        nb_published={this.totalPublished}
+                        nb_publishing={GLOB.pagesPublishing.length}/>
               <BoxPublish key={1} 
                           datas={GLOB.pagesPublishing}
                           totalCount={GLOB.pagesPublishing.length || 0} 
@@ -521,7 +536,7 @@ class PublishScreen extends Component {
 
   render() {
       return (
-        <Screen style={styles.container}
+        <Screen style={{flex: 1, flexDirection: 'column'}}
                 navigation={GLOB.navigation}>
           <Header />
           <TabNav />
@@ -529,16 +544,5 @@ class PublishScreen extends Component {
       );
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  button: {
-    flex:1,
-    margin:10
-  }
-});
 
 export default PublishScreen;

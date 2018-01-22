@@ -266,7 +266,7 @@ class SendScreen extends Component {
 
     if(UploadingFiles)
     {
-      Notice.info("Un transfert est en cours, Veuillez patienter avant de lancer un autre!!")
+      Notice.info({title: "Transfert en cours ...", body: "Un transfert est en cours, Veuillez patienter avant de lancer un autre!!"})
     }
 
     this.generateStyles()
@@ -276,7 +276,7 @@ class SendScreen extends Component {
     Fetcher.wait_for(
       ['refreshCustomers()'],
       (responses)=>{
-        responses.map(r=>{if(r!=true)Notice.info(r)})
+        responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
     })
   }
   
@@ -388,7 +388,7 @@ class SendScreen extends Component {
     }
     else
     {
-      Notice.info("Aucun document à envoyer!!");
+      Notice.info({title: "Attention", body: "Aucun document à envoyer!!"});
     }
   }
 

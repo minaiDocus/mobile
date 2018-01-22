@@ -112,6 +112,12 @@ class Message extends React.Component{
                     borderColor:'#AFAFAF',
                     padding:5
                   },
+      title:{
+              flex:1,
+              color:'#FFF',
+              fontWeight:"bold",
+              paddingHorizontal:20
+            },
       text:{
              flex:1,
              textAlign:'left',
@@ -142,12 +148,25 @@ class Message extends React.Component{
     }
     else
     {
-      return <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
-                    <View style={{flex:1}}>{message}</View>
-                    <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                      <Text style={this.styles.close}>X</Text>
-                    </TouchableHighlight>
-                  </AnimatedBox>
+      let body = <View style={{flex:1}}>{message}</View>
+      if(typeof(message.title) !== "undefined" || typeof(message.body) !== "undefined")
+      {
+        body =  <View style={{flex:1}}>
+                  {
+                    typeof(message.title) !== "undefined" && 
+                    <Text style={this.styles.title}>
+                      {message.title}
+                    </Text>
+                  }
+                  <Text style={[this.styles.text, {fontSize:10}]}>{message.body}</Text>
+                </View>
+      }
+      return  <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
+                {body}
+                <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
+                  <Text style={this.styles.close}>X</Text>
+                </TouchableHighlight>
+              </AnimatedBox>
     }
   }
 }

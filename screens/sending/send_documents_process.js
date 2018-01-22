@@ -18,6 +18,19 @@ import request1 from "../../requests/file_uploader"
 let Fetcher = new Cfetcher(request1)
 let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: []}
 
+const styles = StyleSheet.create({
+  minicontainer:{
+    flex:0, 
+    flexDirection:'row',
+    backgroundColor:'#E1E2DD'
+  },
+  button: {
+    flex:1,
+    margin:10
+  }
+});
+
+
 function loadData(){
   const auth_token = User.getMaster().auth_token
   const file_code = User.find(`id_idocus = ${GLOB.customer}`)[0].code
@@ -40,8 +53,13 @@ function loadData(){
 }
 
 class ImgBox extends Component{
-  render(){
-    const imgBox = StyleSheet.create({
+  constructor(props){
+    super(props)
+    this.generateStyles()
+  }
+
+  generateStyles(){
+    this.styles = StyleSheet.create({
       styleImg: {
           flex:0,
           width:80,
@@ -58,30 +76,28 @@ class ImgBox extends Component{
           alignItems:'center',
       },
     });
+  }
+
+  render(){
     return  <View style={{flex:0}}>
-              <XImage type='container' PStyle={imgBox.styleContainer} style={imgBox.styleImg} local={false} source={this.props.source} />
+              <XImage type='container' PStyle={this.styles.styleContainer} style={this.styles.styleImg} local={false} source={this.props.source} />
             </View>
   }
 }
 
 class Header extends Component{
   constructor(props){
-    super(props);
-    this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.state = { dataList: this.ds.cloneWithRows(GLOB.dataList), };
+    super(props)
+    this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+    this.state = { dataList: this.ds.cloneWithRows(GLOB.dataList), }
   }
 
   render(){
-    const boxPicture = {
-      flex:0,
-      flexDirection:'row',
-    };
-
     const dataList = this.state.dataList;
     return  <View style={styles.minicontainer}>
               <ScrollView style={{flex:1}}>
                 <ListView horizontal={true}
-                          contentContainerStyle={boxPicture}
+                          contentContainerStyle={{flex:0,flexDirection:'row'}}
                           dataSource={dataList}
                           renderRow={(img) => <ImgBox source={ {uri: img.path.toString()} } /> } />
               </ScrollView>
@@ -102,6 +118,8 @@ class Body extends Component{
     this.renderForm = this.renderForm.bind(this)
     this.renderLoading = this.renderLoading.bind(this)
     this.refreshWarning = this.refreshWarning.bind(this)
+
+    this.generateStyles()
   }
 
   componentDidMount(){
@@ -110,7 +128,7 @@ class Body extends Component{
       (responses) => {
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -161,8 +179,31 @@ class Body extends Component{
     GLOB.period = value.toString()
   }
 
-  renderForm(){
-  const bodyStyle = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
+        container:{
+          flex:1,
+          flexDirection:'column',
+          borderRadius:10,
+         
+          elevation: 7, //Android shadow
+
+          shadowColor: '#000',                  //===
+          shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+          shadowOpacity: 0.8,                   //===
+          shadowRadius: 2,                      //===
+          
+          backgroundColor:"#E9E9E7",
+          margin:10,
+          paddingHorizontal:20,
+          paddingVertical:10
+        },
+        textBody:{
+          flex:0,
+          textAlign:'center',
+          fontSize:16,
+          fontWeight:'bold'
+        },
         inputs:{
           flex: 1,
           marginVertical:5,
@@ -191,17 +232,20 @@ class Body extends Component{
           borderColor:'#fff',
           marginBottom:5
         }
-  })
+    })
+  }
+
+  renderForm(){
   const valueProgress = this.props.progress
   const colorBar = (valueProgress < 1)? "blue" : "#C0D838"
 
   return  <View style={{flex:1}}>
-            {this.clients && <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>}
-            <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
-            <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} Pstyle={bodyStyle.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
+            {this.clients && <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>}
+            <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
+            <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
             {this.state.period_start != "" && 
-              <View style={bodyStyle.warning}>
-                <Text style={bodyStyle.warntitle} >
+              <View style={this.styles.warning}>
+                <Text style={this.styles.warntitle} >
                   Attention :
                 </Text>
                 <Text>
@@ -213,7 +257,7 @@ class Body extends Component{
             }
 
             {valueProgress > 0 &&
-              <View style={bodyStyle.progressBar}>
+              <View style={this.styles.progressBar}>
                 <Progress.Bar progress={valueProgress} width={null} height={10} color={colorBar} unfilledColor={"#fff"} borderColor={"#909090"} borderWidth={2} />
                 <Text style={{flex:1, textAlign:'center', color:colorBar}}>{(valueProgress < 1)? "Téléversement en cours ..." : "Téléversement terminé"}</Text>
               </View>
@@ -222,38 +266,13 @@ class Body extends Component{
   }
 
   renderLoading(){
-    const style = {
-      flex:1,
-      width:60,
-      height:60,
-      alignSelf:'center'
-    }
-    return <XImage loader={true} style={style} />
+    return <XImage loader={true} style={{flex:1, width:60, height:60, alignSelf:'center'}} />
   }
 
   render(){
-    const bodyStyle = StyleSheet.create({
-       container:{
-          flex:1,
-          flexDirection:'column',
-          borderRadius:10,
-         
-          elevation: 7, //Android shadow
-
-          shadowColor: '#000',                  //===
-          shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
-          shadowOpacity: 0.8,                   //===
-          shadowRadius: 2,                      //===
-          
-          backgroundColor:"#E9E9E7",
-          margin:10,
-          paddingHorizontal:20,
-          paddingVertical:10
-        },
-    });
     return  <View style={{flex:1, padding:3}}>
-              <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.dataList.length} : Document(s)</Text>
-              <View style={bodyStyle.container}>
+              <Text style={this.styles.textBody}>{GLOB.dataList.length} : Document(s)</Text>
+              <View style={this.styles.container}>
                 {this.state.ready && this.renderForm()}
                 {!this.state.ready && this.renderLoading()}
               </View>
@@ -277,7 +296,7 @@ class Footer extends Component{
                         }
                         else
                         {
-                          Notice.alert("Attention", "Veuillez renseigner correctement les champs avant l'envoi")
+                          Notice.danger({title: "Erreur formulaire", body: "Veuillez renseigner correctement les champs avant l'envoi"}, true, "form_error")
                         }
                       }
     actionLocker(call)
@@ -360,7 +379,7 @@ class SendScreen extends Component {
   }
 
   render() {
-      return  <Screen style={styles.container}
+      return  <Screen style={{flex: 1, flexDirection: 'column'}}
                       navigation={GLOB.navigation}>
                 <Header />
                 <ScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}}>
@@ -370,22 +389,5 @@ class SendScreen extends Component {
               </Screen>
     }
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  minicontainer:{
-    flex:0, 
-    flexDirection:'row',
-    backgroundColor:'#E1E2DD'
-  },
-  button: {
-    flex:1,
-    margin:10
-  }
-});
 
 export default SendScreen;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {Image, View, Text, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, Modal, StyleSheet} from 'react-native'
 import AnimatedBox from './animatedBox'
+import {SimpleButton} from './buttons'
 
 //Function for declaring image to React
 function require_images(name){
@@ -135,6 +136,9 @@ export class XTextInput extends Component{
       this.editable = false
     }
 
+    this.previous_action = this.props.previous || null
+    this.next_action = this.props.next || null
+
     this.closing = false             
 
     this.liveChange = this.props.liveChange || false
@@ -142,6 +146,7 @@ export class XTextInput extends Component{
 
     this.renderModalText = this.renderModalText.bind(this)
     this.closeKeyboard = this.closeKeyboard.bind(this)
+    this.handleLayout = this.handleLayout.bind(this)
 
     this.generateStyles()
   }
@@ -153,7 +158,7 @@ export class XTextInput extends Component{
     }
   }
 
-  closeKeyboard(){
+  closeKeyboard(callback_action=null){
     if(this.closing == false)
     {
       this.closing = true
@@ -170,6 +175,11 @@ export class XTextInput extends Component{
                           catch(e){}
                           this.closing = false
                           this.initValue = this.state.value
+
+                          if(callback_action != null)
+                          {
+                            callback_action()
+                          }
                         }
       this.refs.animatedInput.leave(exit)
     }
@@ -187,7 +197,7 @@ export class XTextInput extends Component{
 
   handleLayout(){
     if(this.editable){
-      setTimeout(()=>{this.refs.input.focus()}, 300)
+      setTimeout(()=>{this.refs.input.focus()}, 400)
     }
   }
 
@@ -222,7 +232,20 @@ export class XTextInput extends Component{
                   paddingVertical:7,
                   paddingHorizontal:8,
                   backgroundColor:'#FFF',
-                }
+                },
+      miniContent: {
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        borderWidth:1
+      },
+      buttonStyle: {
+        flex:1,
+        maxWidth:100,
+        maxHeight:35,   // =======
+        minHeight:35,   // ======= instead of height: value
+        marginHorizontal: 3
+      }
     })
 
     this.styles = StyleSheet.create({
@@ -269,20 +292,42 @@ export class XTextInput extends Component{
               <TouchableWithoutFeedback onPress={()=>this.closeKeyboard()}>
                 <View style={[this.stylesModalText.content, iosStyle]}>
                   <AnimatedBox ref="animatedInput" style={this.stylesModalText.box} type='DownSlide' durationIn={300} >
-                    {this.label != "" && <Text style={this.stylesModalText.label}>{this.label}</Text>}
-                    <View style={[this.stylesModalText.boxInput, androidStyle]}>
-                      <TextInput ref="input"
-                                 autoFocus={true}
-                                 onLayout={this.handleLayout.bind(this)}
-                                 autoCorrect={this.props.autoCorrect || true}
-                                 secureTextEntry={this.props.secureTextEntry || false}
-                                 defaultValue={this.state.value}
-                                 onChangeText={(value)=>this.changeText(value)}
-                                 editable={this.editable}
-                                 onBlur={()=>{this.closeKeyboard()}}
-                                 keyboardType={this.props.keyboardType}
-                                 style={{flex:1, fontSize:14}}/>
-                    </View>
+                    <View style={{flex:1, flexDirection:'row'}}>
+                      <View style={{flex:1, alignItems:'flex-end', justifyContent:'center'}}>
+                      {
+                        this.previous_action != null && 
+                        <SimpleButton onPress={()=>{this.closeKeyboard(this.previous_action.action)}} 
+                                      Pstyle={this.stylesModalText.buttonStyle} 
+                                      Tstyle={{fontSize:12}} 
+                                      title={this.previous_action.title || "<< Prev."} />
+                      }
+                      </View>
+                      <View style={{flex:0, justifyContent:'center', alignItems:'center'}}>
+                        {this.label != "" && <Text style={this.stylesModalText.label}>{this.label}</Text>}
+                        <View style={[this.stylesModalText.boxInput, androidStyle]}>
+                          <TextInput ref="input"
+                                     autoFocus={true}
+                                     onLayout={()=>this.handleLayout()}
+                                     autoCorrect={this.props.autoCorrect || true}
+                                     secureTextEntry={this.props.secureTextEntry || false}
+                                     defaultValue={this.state.value}
+                                     onChangeText={(value)=>this.changeText(value)}
+                                     editable={this.editable}
+                                     onBlur={()=>{this.closeKeyboard()}}
+                                     keyboardType={this.props.keyboardType}
+                                     style={{flex:1, fontSize:14}}/>
+                        </View>
+                      </View>
+                      <View style={{flex:1, alignItems:'flex-start', justifyContent:'center'}}>
+                      {
+                        this.next_action != null && 
+                        <SimpleButton onPress={()=>{this.closeKeyboard(this.next_action.action)}} 
+                                      Pstyle={this.stylesModalText.buttonStyle} 
+                                      Tstyle={{fontSize:12}} 
+                                      title={this.next_action.title || "Suiv. >>"} />
+                      }
+                      </View>
+                  </View>
                   </AnimatedBox>
                   <View style={{flex:1}} />
                 </View>       

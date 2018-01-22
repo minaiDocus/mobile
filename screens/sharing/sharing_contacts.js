@@ -16,7 +16,7 @@ import Cfetcher from '../../components/dataFetcher'
 import request1 from "../../requests/account_sharing"
 
 let Fetcher = new Cfetcher(request1)
-let GLOB = {  navigation:{},
+let GLOB =  { navigation:{},
               datas:[],
               dataFilter: {email:'', company:'', first_name: '', last_name:''},
               dataForm:{}
@@ -27,6 +27,8 @@ class Inputs extends Component{
     super(props)
     this.dataForm = this.props.dataForm || "GLOB.dataFilter"
     this.state = {value: eval(`${this.dataForm}.${this.props.name}`)}
+
+    this.generateStyles()
   }
 
   changeValue(value){
@@ -34,32 +36,34 @@ class Inputs extends Component{
     eval(`${this.dataForm}.${this.props.name} = "${value}"`)
   }
 
+  generateStyles(){
+    this.styles = StyleSheet.create({
+        container: {
+          flex:1,
+          flexDirection:'row',
+          alignItems:'center',
+          marginVertical:7,
+          marginHorizontal:8
+        },
+        input:{
+          flex:1.3
+        },
+        label:{
+          flex:1,
+          fontSize:14,
+          color:'#463119'
+        }
+      });
+  }
+
   render(){
     const stylePlus = this.props.style || {};
     const labelStyle = this.props.labelStyle || {};
     const inputStyle = this.props.inputStyle || {}; 
-
-    const input = StyleSheet.create({
-      container: {
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        marginVertical:7,
-        marginHorizontal:8
-      },
-      input:{
-        flex:1.3
-      },
-      label:{
-        flex:1,
-        fontSize:14,
-        color:'#463119'
-      }
-    });
     const type = this.props.type || 'input';
-    return  <View style={[input.container, stylePlus]}>
-              <Text style={[input.label, labelStyle]}>{this.props.label}</Text>
-              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[input.input, inputStyle]} />}
+    return  <View style={[this.styles.container, stylePlus]}>
+              <Text style={[this.styles.label, labelStyle]}>{this.props.label}</Text>
+              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[this.styles.input, inputStyle]} />}
               {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
             </View>
   }
@@ -70,6 +74,8 @@ class ModalForm extends Component{
     super(props)
 
     this.type = (typeof(this.props.data.id_idocus) !== "undefined" && this.props.data.id_idocus > 0)? 'edit' : 'add'
+
+    this.generateStyles()
   }
 
   validateProcess(){
@@ -105,7 +111,7 @@ class ModalForm extends Component{
                             (responses)=>{
                               if(responses[0].error)
                               {
-                                Notice.danger(responses[0].message)
+                                Notice.danger(responses[0].message, true, responses[0].message)
                               }
                               else
                               {
@@ -143,8 +149,8 @@ class ModalForm extends Component{
            </ScrollView>
   }
 
-  render(){
-    const boxFilter = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
      container:{
         flex:1,
         flexDirection:'row',
@@ -193,20 +199,22 @@ class ModalForm extends Component{
         flex:1,
       }
     });
+  }
 
+  render(){
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={true}
                    supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
-              <View style={boxFilter.container} >
-                <View style={boxFilter.box}>
-                  <View style={boxFilter.head}>
+              <View style={this.styles.container} >
+                <View style={this.styles.box}>
+                  <View style={this.styles.head}>
                     <Text style={{flex:1, textAlign:'center',fontSize:24}}>Création contact</Text>
                   </View>
                   {this.formContact()}
-                  <View style={boxFilter.foot}>
+                  <View style={this.styles.foot}>
                     <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Retour' onPress={()=>this.props.dismiss()} /></View>
                     <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Valider' onPress={()=>this.validateProcess()} /></View>
                   </View>
@@ -218,7 +226,9 @@ class ModalForm extends Component{
 
 class BoxFilter extends Component{
   constructor(props){
-    super(props);
+    super(props)
+
+    this.generateStyles()
   }
 
   dismiss(type){
@@ -233,8 +243,8 @@ class BoxFilter extends Component{
     this.dismiss(true);
   }
 
-  render(){
-    const boxFilter = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
      container:{
         flex:1,
         flexDirection:'row',
@@ -287,24 +297,27 @@ class BoxFilter extends Component{
         flex:1,
       }
     });
+  }
+
+  render(){
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={true}
                    supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
-              <View style={boxFilter.container} >
-                <View style={boxFilter.box}>
-                  <View style={boxFilter.head}>
+              <View style={this.styles.container} >
+                <View style={this.styles.box}>
+                  <View style={this.styles.head}>
                     <Text style={{flex:1, textAlign:'center',fontSize:24}}>Filtres</Text>
                   </View>
-                  <ScrollView style={boxFilter.body}>
+                  <ScrollView style={this.styles.body}>
                     <Inputs label='Email :' name={'email'} />
                     <Inputs label='Société :' name={'company'}/>
                     <Inputs label='Prénom :' name={'first_name'}/>
                     <Inputs label='Nom :' name={'last_name'}/>
                   </ScrollView>
-                  <View style={boxFilter.foot}>
+                  <View style={this.styles.foot}>
                     <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
                     <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
                     <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
@@ -323,6 +336,8 @@ class Header extends Component{
 
     this.closeFilter = this.closeFilter.bind(this)
     this.closeModal = this.closeModal.bind(this)
+
+    this.generateStyles()
   }
   
   componentWillMount(){
@@ -355,8 +370,8 @@ class Header extends Component{
     this.setState({openModal: false})
   }
 
-  render(){
-     const headStyle = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       container:{
         flex:0, 
         flexDirection:'row',
@@ -365,13 +380,15 @@ class Header extends Component{
         justifyContent:'center',
       }
     })
-            
-  return  <View style={headStyle.container}>
-            {this.state.openModal && <ModalForm data={this.state.dataModal} dismiss={this.closeModal} />}
-            {this.state.filter && <BoxFilter dismiss={this.closeFilter} />}
-            <BoxButton title="Ajout" onPress={()=>{this.openModal()}} source={{uri:"add_contact"}} rayon={60}/>
-            <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
-          </View>
+  }
+
+  render(){ 
+    return  <View style={this.styles.container}>
+              {this.state.openModal && <ModalForm data={this.state.dataModal} dismiss={this.closeModal} />}
+              {this.state.filter && <BoxFilter dismiss={this.closeFilter} />}
+              <BoxButton title="Ajout" onPress={()=>{this.openModal()}} source={{uri:"add_contact"}} rayon={60}/>
+              <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+            </View>
   }
 }
 
@@ -383,6 +400,8 @@ class BoxStat extends Component{
 
     this.toggleDetails = this.toggleDetails.bind(this)
     this.handleDelete = this.handleDelete.bind(this)
+
+    this.generateStyles()
   }
 
   toggleDetails(){
@@ -396,7 +415,7 @@ class BoxStat extends Component{
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -420,57 +439,60 @@ class BoxStat extends Component{
     EventRegister.emit('externalOpenModal', this.props.data)
   }
 
+  generateStyles(){
+    this.styles = StyleSheet.create({
+        container: {
+          flex:1,
+          flexDirection:'row',
+          alignItems:'center',
+          paddingHorizontal:8,
+        },
+        image:{
+          flex:0,
+          width:15,
+          height:15
+        },
+        champ:{
+          flex:1,
+          fontSize:14,
+          marginVertical:2
+        },
+        label:{
+          flex:1,
+          fontWeight:"bold",
+        },
+        infos:{
+          flex:1,
+          marginHorizontal:30,
+          marginTop:5,
+          borderTopWidth:1,
+          borderColor:'#A6A6A6'
+        },
+      })
+  }
+
   render(){
-    const boxStyle = StyleSheet.create({
-      container: {
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        paddingHorizontal:8,
-      },
-      image:{
-        flex:0,
-        width:15,
-        height:15
-      },
-      champ:{
-        flex:1,
-        fontSize:14,
-        marginVertical:2
-      },
-      label:{
-        flex:1,
-        fontWeight:"bold",
-      },
-      infos:{
-        flex:1,
-        marginHorizontal:30,
-        marginTop:5,
-        borderTopWidth:1,
-        borderColor:'#A6A6A6'
-      },
-    })
     const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"
 
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
-              <View style={boxStyle.container}>
-                <XImage source={{uri:arrow}} style={[{flex:0, width:20, marginRight:8}, boxStyle.image]} />
+              <View style={this.styles.container}>
+                <XImage source={{uri:arrow}} style={[{flex:0, width:20, marginRight:8}, this.styles.image]} />
                 <View style={{flex:1}}>
                   <Text style={{fontWeight:'bold'}}>{this.props.data.email.toString()}</Text>
                 </View>
                 <View style={{flex:0, width:70, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                  <ImageButton source={{uri:'edition'}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>this.handleEdit()}/>
-                  <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
+                  <ImageButton source={{uri:'edition'}} Pstyle={{padding:8}} Istyle={this.styles.image} onPress={()=>this.handleEdit()}/>
+                  <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
                 </View>
               </View>
               {
                   this.state.showDetails == true && 
-                    <View style={boxStyle.infos}>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Email : </Text>{this.props.data.email}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Société : </Text>{this.props.data.company}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Nom : </Text>{User.fullName_of(this.props.data)}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Nb. de dossiers : </Text>{this.props.data.account_size}</Text>
+                    <View style={this.styles.infos}>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Email : </Text>{this.props.data.email}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Société : </Text>{this.props.data.company}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Nom : </Text>{User.fullName_of(this.props.data)}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Nb. de dossiers : </Text>{this.props.data.account_size}</Text>
                     </View>
               }
             </TouchableOpacity>
@@ -481,6 +503,8 @@ class OrderBox extends Component{
   constructor(props){
     super(props)
     this.state = {show: false}
+
+    this.generateStyles()
   }
 
   componentWillReceiveProps(prevProps){
@@ -500,8 +524,8 @@ class OrderBox extends Component{
     this.props.handleOrder(order_by)
   }
 
-  render(){
-    const styles = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       container: {
         position:'absolute',
         backgroundColor:'#FFF',
@@ -521,15 +545,17 @@ class OrderBox extends Component{
         marginBottom:10
       }
     })
+  }
 
+  render(){
     if(this.state.show)
     {
-      return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={styles.container}>
-                  <Text style={styles.title}>Trier par : </Text>
+      return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={this.styles.container}>
+                  <Text style={this.styles.title}>Trier par : </Text>
                   <View style={{flex:1, marginTop:5}}>
-                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Email','email'])} title='Email' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Société','company'])} title='Société' Pstyle={styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Email','email'])} title='Email' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Société','company'])} title='Société' Pstyle={this.styles.list} />
                   </View>
               </AnimatedBox>
     }
@@ -629,7 +655,7 @@ class SharingScreen extends Component {
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -664,7 +690,7 @@ class SharingScreen extends Component {
 
   render() {
       return (
-          <Screen style={styles.container}
+          <Screen style={{flex: 1, flexDirection: 'column',}}
                   navigation={GLOB.navigation}>
             <Header onFilter={()=>this.refreshDatas(true)}/>
               {this.state.ready && this.renderStats()}
@@ -675,12 +701,5 @@ class SharingScreen extends Component {
       );
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-});
 
 export default SharingScreen;

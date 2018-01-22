@@ -361,7 +361,7 @@ export class UINotification extends Component{
                               Istyle={{width:20, height:20}}
                               onPress={()=>{EventRegister.emit("openNotifications")}} />
                           </View>
-        Notice.info(mess_obj, false, "push_notification_alert", 10000, true)
+        Notice.info(mess_obj, false, "push_notification_alert", 10000)
       }
 
     	if(typeof(message) != "undefined" && message.to_be_added == true)
@@ -388,7 +388,7 @@ export class UINotification extends Component{
       (responses)=>{
           if(responses[0].error)
           {
-            Notice.danger(responses[0].message)
+            Notice.danger(responses[0].message, true, responses[0].message)
           }
           else
           {
@@ -463,11 +463,7 @@ class FCMinit extends Component{
         FCM.requestPermissions()
             .then(()=>{/*NOTIFICATIONS ENABLED*/})
             .catch(()=>{
-              const notif_block = <View style={{flex:1, paddingHorizontal:20}}>
-                                    <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Notifications désactivés</Text>
-                                    <Text style={{flex:1, color:'#C0D838', fontSize:10}}>Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment</Text>
-                                  </View> 
-              Notice.info(notif_block, false, "notif_block", 10000)
+              Notice.info({title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment"}, false, "notif_block", 10000)
             })
         
         FCM.getFCMToken().then(token => {

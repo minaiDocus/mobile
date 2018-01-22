@@ -221,7 +221,7 @@ class DocumentsScreen extends Component {
     Fetcher.wait_for(
       ['refreshCustomers()'],
       (responses)=>{
-        responses.map(r=>{if(r!=true)Notice.info(r)})
+        responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
         this.refreshDatas()
     })
   }
@@ -244,7 +244,7 @@ class DocumentsScreen extends Component {
             responses.map(r=>{
               if(r.error)
               {
-                Notice.danger(r.message, true, "filterDanger")
+                Notice.danger(r.message, true, r.message)
                 this.limit_page = 1
                 this.total = 0
                 this.setState({ready: true, loadingFilter: false})

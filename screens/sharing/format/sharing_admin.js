@@ -23,6 +23,8 @@ class Inputs extends Component{
   constructor(props){
     super(props);
     this.state = {value: eval(`GLOB.dataFilter.${this.props.name}`)}
+
+    this.generateStyles()
   }
 
   changeValue(value){
@@ -30,12 +32,8 @@ class Inputs extends Component{
     eval(`GLOB.dataFilter.${this.props.name} = "${value}"`)
   }
 
-  render(){
-    const stylePlus = this.props.style || {};
-    const labelStyle = this.props.labelStyle || {};
-    const inputStyle = this.props.inputStyle || {}; 
-
-    const input = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       container: {
         flex:1,
         flexDirection:'row',
@@ -51,11 +49,18 @@ class Inputs extends Component{
         fontSize:14,
         color:'#463119'
       }
-    });
+    })
+  }
+
+  render(){
+    const stylePlus = this.props.style || {};
+    const labelStyle = this.props.labelStyle || {};
+    const inputStyle = this.props.inputStyle || {}; 
+
     const type = this.props.type || 'input';
-    return  <View style={[input.container, stylePlus]}>
-              <Text style={[input.label, labelStyle]}>{this.props.label}</Text>
-              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[input.input, inputStyle]} />}
+    return  <View style={[this.styles.container, stylePlus]}>
+              <Text style={[this.styles.label, labelStyle]}>{this.props.label}</Text>
+              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[this.styles.input, inputStyle]} />}
               {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
             </View>
   }
@@ -63,11 +68,13 @@ class Inputs extends Component{
 
 class BoxFilter extends Component{
   constructor(props){
-    super(props);
+    super(props)
+
+    this.generateStyles()
   }
 
   dismiss(type){
-    this.props.dismiss(type);
+    this.props.dismiss(type)
   }
 
   filterProcess(type){
@@ -78,11 +85,11 @@ class BoxFilter extends Component{
                           collaborator:''
                         }
     }
-    this.dismiss(true);
+    this.dismiss(true)
   }
 
-  render(){
-    const boxFilter = StyleSheet.create({
+  generateStyles(){
+   this.styles = StyleSheet.create({
      container:{
         flex:1,
         flexDirection:'row',
@@ -134,23 +141,26 @@ class BoxFilter extends Component{
       buttons:{
         flex:1,
       }
-    });
+    })
+  }
+
+  render(){
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={this.props.visible}
                    supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
-              <View style={boxFilter.container} >
-                <View style={boxFilter.box}>
-                  <View style={boxFilter.head}>
+              <View style={this.styles.container} >
+                <View style={this.styles.box}>
+                  <View style={this.styles.head}>
                     <Text style={{flex:1, textAlign:'center',fontSize:24}}>Filtres</Text>
                   </View>
-                  <ScrollView style={boxFilter.body}>
+                  <ScrollView style={this.styles.body}>
                     <Inputs label='Dossier :' name={'account'} />
                     <Inputs label='Client ou contact :' name={'collaborator'}/>
                   </ScrollView>
-                  <View style={boxFilter.foot}>
+                  <View style={this.styles.foot}>
                     <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
                     <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
                     <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
@@ -177,6 +187,8 @@ class Header extends Component{
     this.closeFilter = this.closeFilter.bind(this)
     this.filterAccount = this.filterAccount.bind(this)
     this.filterCollaborator = this.filterCollaborator.bind(this)
+
+    this.generateStyles()
   }
 
   filterAccount(text=""){
@@ -185,7 +197,7 @@ class Header extends Component{
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.info(r.message)
+          Notice.danger(r.message, true, r.message)
         }
         else
         {
@@ -200,7 +212,7 @@ class Header extends Component{
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.info(r.message)
+          Notice.danger(r.message, true, r.message)
         }
         else
         {
@@ -231,7 +243,7 @@ class Header extends Component{
                             (responses)=>{
                               if(responses[0].error)
                               {
-                                Notice.danger(responses[0].message)
+                                Notice.danger(responses[0].message, true, responses[0].message)
                               }
                               else
                               {
@@ -243,7 +255,7 @@ class Header extends Component{
                         }
                         else
                         {
-                          Notice.info("Veuillez renseigner correctement les champs pour le partage de dossier!!")
+                          Notice.info({title: "Attention", body: "Veuillez renseigner correctement les champs pour le partage de dossier!!"})
                         }
                       }
     actionLocker(call)
@@ -261,90 +273,92 @@ class Header extends Component{
     }
   }
 
+  generateStyles(){
+    this.styles = StyleSheet.create({
+        container:{
+          flex:0,
+          flexDirection:'row',
+          backgroundColor:'#E1E2DD',
+          width:'100%',
+        },
+        left:{
+          flex:2,
+          flexDirection:'row',
+          alignItems:'center',
+          marginLeft:20,
+          justifyContent:'center',
+        },
+        right:{
+          flex:1,
+          flexDirection:'row',
+          paddingHorizontal:20,
+        },
+        image:{
+          flex:0,
+          width:40,
+          height:40,
+          marginRight:15
+        },
+        select:{
+          flex:1,
+          width:'100%'
+        },
+        filterbox:{
+          flex:1,
+          flexDirection:'row',
+          alignItems:'center',
+          justifyContent:'center'
+        },
+        form:{
+          flex:1,
+          backgroundColor:'#FFF',
+          paddingHorizontal:8,
+
+          elevation: 7, //Android Shadow
+          
+          shadowColor: '#000',                  //===
+          shadowOffset: {width: 0, height: 0},  //=== iOs shadow    
+          shadowOpacity: 0.8,                   //===
+          shadowRadius: 2,                      //===
+
+          alignItems:'center'
+        }
+      })
+  }
+
   render(){
-    const headStyle = StyleSheet.create({
-    container:{
-      flex:0,
-      flexDirection:'row',
-      backgroundColor:'#E1E2DD',
-      width:'100%',
-    },
-    left:{
-      flex:2,
-      flexDirection:'row',
-      alignItems:'center',
-      marginLeft:20,
-      justifyContent:'center',
-    },
-    right:{
-      flex:1,
-      flexDirection:'row',
-      paddingHorizontal:20,
-    },
-    image:{
-      flex:0,
-      width:40,
-      height:40,
-      marginRight:15
-    },
-    select:{
-      flex:1,
-      width:'100%'
-    },
-    filterbox:{
-      flex:1,
-      flexDirection:'row',
-      alignItems:'center',
-      justifyContent:'center'
-    },
-    form:{
-      flex:1,
-      backgroundColor:'#FFF',
-      paddingHorizontal:8,
+    let loading_add = null
+    if(this.state.loading_add)
+    {
+      loading_add = {uri:"img_loader"}
+    }  
 
-      elevation: 7, //Android Shadow
-      
-      shadowColor: '#000',                  //===
-      shadowOffset: {width: 0, height: 0},  //=== iOs shadow    
-      shadowOpacity: 0.8,                   //===
-      shadowRadius: 2,                      //===
-
-      alignItems:'center'
-    }
-  })
-
-  let loading_add = null
-  if(this.state.loading_add)
-  {
-    loading_add = {uri:"img_loader"}
-  }  
-
-  return  <View style={headStyle.container}>
-            <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
-            <View style={headStyle.left}>
-              <View style={headStyle.form}>
-                <SelectInput  filterSearch={true}
-                              filterCallback={this.filterCollaborator} 
-                              dataOptions={this.state.optionsCollaborator}
-                              textInfo="Contact ou Client - (Tapez un therme à rechercher)" 
-                              style={{color:'#707070'}} Pstyle={headStyle.select} 
-                              onChange={(value) => this.handleClientChange(value, "collaborator")}
-                />
-                <SelectInput  filterSearch={true}
-                              filterCallback={this.filterAccount} 
-                              dataOptions={this.state.optionsAccount}
-                              textInfo="Dossier client - (Tapez un therme à rechercher)" 
-                              style={{color:'#707070'}} 
-                              Pstyle={headStyle.select} 
-                              onChange={(value) => this.handleClientChange(value, "account")}
-                />
-                <SimpleButton Pstyle={{flex:0, height:30, width:100, margin:10}} RImage={loading_add} onPress={()=>this.addSharedDoc()} title="Partager" />
-            </View>
-            </View>
-            <View style={headStyle.right}> 
-              <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
-            </View>
-          </View> 
+    return  <View style={this.styles.container}>
+              <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
+              <View style={this.styles.left}>
+                <View style={this.styles.form}>
+                  <SelectInput  filterSearch={true}
+                                filterCallback={this.filterCollaborator} 
+                                dataOptions={this.state.optionsCollaborator}
+                                textInfo="Contact ou Client - (Tapez un therme à rechercher)" 
+                                style={{color:'#707070'}} Pstyle={this.styles.select} 
+                                onChange={(value) => this.handleClientChange(value, "collaborator")}
+                  />
+                  <SelectInput  filterSearch={true}
+                                filterCallback={this.filterAccount} 
+                                dataOptions={this.state.optionsAccount}
+                                textInfo="Dossier client - (Tapez un therme à rechercher)" 
+                                style={{color:'#707070'}} 
+                                Pstyle={this.styles.select} 
+                                onChange={(value) => this.handleClientChange(value, "account")}
+                  />
+                  <SimpleButton Pstyle={{flex:0, height:30, width:100, margin:10}} RImage={loading_add} onPress={()=>this.addSharedDoc()} title="Partager" />
+              </View>
+              </View>
+              <View style={this.styles.right}> 
+                <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+              </View>
+            </View> 
   }
 }
 
@@ -357,6 +371,8 @@ class BoxStat extends Component{
     this.toggleDetails = this.toggleDetails.bind(this)
     this.handleDelete = this.handleDelete.bind(this)
     this.handleValidate = this.handleValidate.bind(this)
+
+    this.generateStyles()
   }
 
   toggleDetails(){
@@ -370,7 +386,7 @@ class BoxStat extends Component{
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -388,7 +404,7 @@ class BoxStat extends Component{
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -421,8 +437,8 @@ class BoxStat extends Component{
     }
   }
 
-  render(){
-    const boxStyle = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       container: {
         flex:1,
         flexDirection:'row',
@@ -451,6 +467,9 @@ class BoxStat extends Component{
         borderColor:'#A6A6A6'
       },
     })
+  }
+
+  render(){
     const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"
 
     const styleApproved = {
@@ -460,23 +479,23 @@ class BoxStat extends Component{
     const state = this.props.data.approval? 'Partagé' : 'En attente de validation'
 
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
-              <View style={boxStyle.container}>
-                <XImage source={{uri:arrow}} style={[{flex:0, width:20, marginRight:8}, boxStyle.image]} />
+              <View style={this.styles.container}>
+                <XImage source={{uri:arrow}} style={[{flex:0, width:20, marginRight:8}, this.styles.image]} />
                 <View style={{flex:1}}>
                   <Text style={{fontWeight:'bold'}}>{this.props.data.document.toString()}</Text>
                 </View>
                 <View style={{flex:0, width:70, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                  <ImageButton source={{uri:'validate'}} Pstyle={{padding:8}} Istyle={[boxStyle.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
-                  <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={boxStyle.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
+                  <ImageButton source={{uri:'validate'}} Pstyle={{padding:8}} Istyle={[this.styles.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
+                  <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
                 </View>
               </View>
               {
                   this.state.showDetails == true && 
-                    <View style={boxStyle.infos}>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Dossier : </Text>{this.props.data.document}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Client ou Contact : </Text>{this.props.data.client}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Etat : </Text>{state}</Text>
+                    <View style={this.styles.infos}>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Dossier : </Text>{this.props.data.document}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Client ou Contact : </Text>{this.props.data.client}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Etat : </Text>{state}</Text>
                     </View>
               }
             </TouchableOpacity>
@@ -487,6 +506,8 @@ class OrderBox extends Component{
   constructor(props){
     super(props)
     this.state = {show: false}
+
+    this.generateStyles()
   }
 
   componentWillReceiveProps(prevProps){
@@ -506,39 +527,41 @@ class OrderBox extends Component{
     this.props.handleOrder(order_by)
   }
 
-  render(){
-    const styles = StyleSheet.create({
-      container: {
-        position:'absolute',
-        backgroundColor:'#FFF',
-        borderWidth:2,
-        borderColor:'#D6D6D6',
-        paddingHorizontal:20,
-        paddingVertical:5,
-        right:0,
-      },
-      title:{
-        fontSize:18,
-        fontWeight:'bold',
-        borderBottomWidth:1,
-        borderColor:'#D6D6D6'
-      },
-      list:{
-        marginBottom:10
-      }
-    })
+  generateStyles(){
+    this.styles = StyleSheet.create({
+        container: {
+          position:'absolute',
+          backgroundColor:'#FFF',
+          borderWidth:2,
+          borderColor:'#D6D6D6',
+          paddingHorizontal:20,
+          paddingVertical:5,
+          right:0,
+        },
+        title:{
+          fontSize:18,
+          fontWeight:'bold',
+          borderBottomWidth:1,
+          borderColor:'#D6D6D6'
+        },
+        list:{
+          marginBottom:10
+        }
+      })
+  }
 
+  render(){
     if(this.state.show)
     {
-      return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={styles.container}>
-                  <Text style={styles.title}>Trier par : </Text>
+      return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={this.styles.container}>
+                  <Text style={this.styles.title}>Trier par : </Text>
                   <View style={{flex:1, marginTop:5}}>
-                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={this.styles.list} />
                     {
-                    // <LinkButton onPress={()=>this.handleOrder(['Dossier','document'])} title='Dossier' Pstyle={styles.list} />
-                    // <LinkButton onPress={()=>this.handleOrder(['Client','client'])} title='Client' Pstyle={styles.list} />
+                    // <LinkButton onPress={()=>this.handleOrder(['Dossier','document'])} title='Dossier' Pstyle={this.styles.list} />
+                    // <LinkButton onPress={()=>this.handleOrder(['Client','client'])} title='Client' Pstyle={this.styles.list} />
                     }
-                    <LinkButton onPress={()=>this.handleOrder(['Etat','approval'])} title='Etat' Pstyle={styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Etat','approval'])} title='Etat' Pstyle={this.styles.list} />
                   </View>
               </AnimatedBox>
     }
@@ -629,7 +652,7 @@ class SharingScreen extends Component {
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -663,7 +686,7 @@ class SharingScreen extends Component {
 
   render() {
       return (
-          <Screen style={styles.container}
+          <Screen style={{flex: 1, flexDirection: 'column',}}
                   navigation={GLOB.navigation}>
             <Header onFilter={()=>this.refreshDatas(true)}/>
               {this.state.ready && this.renderStats()}
@@ -674,12 +697,5 @@ class SharingScreen extends Component {
       );
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-});
 
 export default SharingScreen;

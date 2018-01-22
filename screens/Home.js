@@ -386,7 +386,7 @@ class HomeScreen extends Component {
     (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {

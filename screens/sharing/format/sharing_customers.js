@@ -23,6 +23,8 @@ class Inputs extends Component{
   constructor(props){
     super(props);
     this.state = {value: eval(`GLOB.dataForm.${this.props.name}`)}
+
+    this.generateStyles()
   }
 
   changeValue(value){
@@ -30,32 +32,35 @@ class Inputs extends Component{
     eval(`GLOB.dataForm.${this.props.name} = "${value}"`)
   }
 
+  generateStyles(){
+    this.styles = StyleSheet.create({
+        container: {
+          flex:1,
+          flexDirection:'row',
+          alignItems:'center',
+          marginVertical:7,
+          marginHorizontal:8
+        },
+        input:{
+          flex:1.3
+        },
+        label:{
+          flex:1,
+          fontSize:14,
+          color:'#463119'
+        }
+      });
+  }
+
   render(){
     const stylePlus = this.props.style || {};
     const labelStyle = this.props.labelStyle || {};
     const inputStyle = this.props.inputStyle || {}; 
 
-    const input = StyleSheet.create({
-      container: {
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        marginVertical:7,
-        marginHorizontal:8
-      },
-      input:{
-        flex:1.3
-      },
-      label:{
-        flex:1,
-        fontSize:14,
-        color:'#463119'
-      }
-    });
     const type = this.props.type || 'input';
-    return  <View style={[input.container, stylePlus]}>
-              <Text style={[input.label, labelStyle]}>{this.props.label}</Text>
-              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[input.input, inputStyle]} />}
+    return  <View style={[this.styles.container, stylePlus]}>
+              <Text style={[this.styles.label, labelStyle]}>{this.props.label}</Text>
+              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[this.styles.input, inputStyle]} />}
               {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
             </View>
   }
@@ -65,6 +70,8 @@ class ModalSharing extends Component{
   constructor(props){
     super(props)
     this.type = this.props.type
+
+    this.generateStyles()
   }
 
   validateProcess(){
@@ -104,7 +111,7 @@ class ModalSharing extends Component{
                             (responses)=>{
                               if(responses[0].error)
                               {
-                                Notice.danger(responses[0].message)
+                                Notice.danger(responses[0].message, true, responses[0].message)
                               }
                               else
                               {
@@ -136,8 +143,8 @@ class ModalSharing extends Component{
            </ScrollView>
   }
 
-  render(){
-    const boxFilter = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
      container:{
         flex:1,
         flexDirection:'row',
@@ -185,8 +192,10 @@ class ModalSharing extends Component{
       buttons:{
         flex:1,
       }
-    });
+    })
+  }
 
+  render(){
     const boxTitle = this.type == "sharing"? "Partage avec un compte" : "Demande accès dossier"
     const form = ()=>{ 
         if(this.type == "sharing"){return this.formSharing()}
@@ -199,13 +208,13 @@ class ModalSharing extends Component{
                    supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
-              <View style={boxFilter.container} >
-                <View style={boxFilter.box}>
-                  <View style={boxFilter.head}>
+              <View style={this.styles.container} >
+                <View style={this.styles.box}>
+                  <View style={this.styles.head}>
                     <Text style={{flex:1, textAlign:'center',fontSize:24}}>{boxTitle}</Text>
                   </View>
                   {form()}
-                  <View style={boxFilter.foot}>
+                  <View style={this.styles.foot}>
                     <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Retour' onPress={()=>this.props.dismiss()} /></View>
                     <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Valider' onPress={()=>this.validateProcess()} /></View>
                   </View>
@@ -220,15 +229,18 @@ class ViewState extends Component{
     super(props)
 
     this.handleDelete = this.handleDelete.bind(this)
+
+    this.generateStyles()
   }
 
   deleteSharedDoc(id_doc, type='admin'){
+    Notice.info("Suppression en cours ...")
     Fetcher.wait_for(
       [`deleteSharedDoc(${id_doc}, "${type}")`],
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -286,8 +298,8 @@ class ViewState extends Component{
             </View>
   }
 
-  render(){
-    const boxState = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       container: {
         flex:1,
         flexDirection:'column',
@@ -303,13 +315,11 @@ class ViewState extends Component{
         margin:10,
         padding:10,
         backgroundColor:"#E9E9E7"
-      },
-      icons:{
-        flex:0,
-        width:40,
-        height:40
-      },
+      }
     });
+  }
+
+  render(){
     const icon = this.props.icon;
     const title = this.props.title;
     const counts = this.props.datas.length;
@@ -317,7 +327,7 @@ class ViewState extends Component{
     const details = this.props.datas.map((dt, index) => {return this.renderDetails(dt, index)});
 
     return  <ScrollView>
-              <View style={boxState.container}>
+              <View style={this.styles.container}>
                 <View style={{flex:1, flexDirection:'row'}}>
                   <View style={{flex:4}}>
                     <Text style={{fontSize:16,color:'#463119'}}>{title} <Text style={{color:'#EC5656',fontWeight:'bold'}}>({counts})</Text></Text>
@@ -342,6 +352,8 @@ class Header extends Component{
 
     this.openModalSharing = this.openModalSharing.bind(this)
     this.closeModalSharing = this.closeModalSharing.bind(this)
+
+    this.generateStyles()
   }
 
   openModalSharing(type){
@@ -352,8 +364,8 @@ class Header extends Component{
     this.setState({openModal: false})
   }
 
-  render(){
-    const headStyle = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       container:{
         flex:0, 
         flexDirection:'row',
@@ -362,8 +374,10 @@ class Header extends Component{
         justifyContent:'center',
       }
     })
+  }
 
-    return  <View style={headStyle.container}>
+  render(){
+    return  <View style={this.styles.container}>
               {this.state.openModal && <ModalSharing type={this.state.typeModal} dismiss={this.closeModalSharing} />}
               <BoxButton title="Partage avec un compte" onPress={()=>{this.openModalSharing('sharing')}} source={{uri:"sharing_account"}} rayon={60}/>
               <BoxButton title="Demande accès dossier" onPress={()=>{this.openModalSharing('access')}} source={{uri:"request_access"}} rayon={60}/>
@@ -375,19 +389,16 @@ class TabNav extends Component{
   constructor(props){
     super(props);
     this.state = {index: 0}
+
+    this.generateStyles()
   }
 
   handleIndexChange(index){
     this.setState({index: index})
   }
 
-  renderTabBar(){
-    const tabs = [
-      {title: "Partages"},
-      {title: "Contacts"},
-      {title: "Demandes"},
-    ];
-    const styles = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
         container:{
           flex:0,
           flexDirection:'row',
@@ -420,19 +431,27 @@ class TabNav extends Component{
           flexDirection:'row',
           alignItems:'center',
         },
-    });
+    })
+  }
+
+  renderTabBar(){
+    const tabs = [
+      {title: "Partages"},
+      {title: "Contacts"},
+      {title: "Demandes"},
+    ]
     var indexStyle = "";
     const content = tabs.map((tb, index) => {
           indexStyle = (index == this.state.index)? {backgroundColor:'#E9E9E7',borderColor:'#C0D838'} : {};
           return (
-           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={styles.touchable}>
-            <View style={[styles.box, indexStyle]}>
-              <Text style={styles.title}>{tb.title}</Text>
+           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={this.styles.touchable}>
+            <View style={[this.styles.box, indexStyle]}>
+              <Text style={this.styles.title}>{tb.title}</Text>
             </View>
           </TouchableOpacity>
       )});
 
-    return <View style={styles.container}>
+    return <View style={this.styles.container}>
              {content}
            </View>  
   }
@@ -481,7 +500,7 @@ class SharingScreen extends Component {
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -496,7 +515,7 @@ class SharingScreen extends Component {
 
   render() {
       return (
-          <Screen style={styles.container}
+          <Screen style={{flex: 1, flexDirection: 'column',}}
                   navigation={GLOB.navigation}>
             <Header />
             {this.state.ready && <TabNav datas_shared={this.datas_shared} contacts={this.contacts} access={this.access}/>}
@@ -505,12 +524,5 @@ class SharingScreen extends Component {
       )
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-});
 
 export default SharingScreen;

@@ -19,7 +19,7 @@ function goToHome(){
   Fetcher.setRequest(request2).wait_for(
     ['refreshCustomers()'],
     (responses)=>{
-      responses.map(r=>{if(r!=true)Notice.info(r)})
+      responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
       SplashScreen.hide()
       GLOB.navigation.dismissTo('Home', {welcome: true})
   })
@@ -83,6 +83,8 @@ class LoginScreen extends Component {
     GLOB.login = GLOB.password = ""
     this.state = {loading: false, focusInput: false, ready: false, orientation: 'portrait'}
 
+    this.actionLogin = this.actionLogin.bind(this)
+    this.actionPassword = this.actionPassword.bind(this)
     this.dismissLoader = this.dismissLoader.bind(this)
     this.focusInput = this.focusInput.bind(this)
     this.leaveFocusInput = this.leaveFocusInput.bind(this)
@@ -103,7 +105,7 @@ class LoginScreen extends Component {
         this.setState({ready: true})
         if(responses[0].code != 200)
         {
-          Notice.danger(responses[0].message, true, "ping_info")
+          Notice.danger({title: "Alèrte système", body: responses[0].message}, true, responses[0].message)
           if(responses[0].code == 500)
           { //automatic logout
             //remove data cache (REALM)
@@ -166,7 +168,7 @@ class LoginScreen extends Component {
     }
     else
     {
-      Notice.danger("Erreur système, Veuillez mettre à jour votre application. Merci")
+      Notice.danger({title: "Erreur système", body: "Veuillez mettre à jour votre application. Merci"})
     }
   }
 
@@ -236,6 +238,14 @@ class LoginScreen extends Component {
     // [VIEW] : <View style={[this.styles.container, this.ORstyle[this.state.orientation].background]}>
   }
 
+  actionLogin(){
+    this.refs.inputLogin.openKeyboard()
+  }
+
+  actionPassword(){
+    this.refs.inputPassword.openKeyboard()
+  }
+
   render() {
     return (
       <Screen style={{flex:1}}
@@ -257,11 +267,26 @@ class LoginScreen extends Component {
               <View style={this.styles.form}>
                 <View style={this.styles.boxInput}>
                   <XImage style={this.styles.icons} source={{uri:"userpic"}} />
-                  <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} PStyle={this.styles.inputs} placeholder="Identifiant(E-mail)" onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
+                  <XTextInput ref="inputLogin"
+                              onFocus={this.focusInput} 
+                              onBlur={this.leaveFocusInput}
+                              PStyle={this.styles.inputs} 
+                              placeholder="Identifiant(E-mail)"
+                              next={{action: this.actionPassword}} 
+                              onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
                 </View>
                 <View style={this.styles.boxInput}>
                   <XImage style={this.styles.icons} source={{uri:"cadenas"}} />
-                  <XTextInput onFocus={this.focusInput} onBlur={this.leaveFocusInput} autoCorrect={false} secureTextEntry={true} PStyle={this.styles.inputs} placeholder="Mot de passe" onChangeText={(text) => this.handlePass(text)}/>
+                  <XTextInput ref="inputPassword"
+                              onFocus={this.focusInput} 
+                              onBlur={this.leaveFocusInput} 
+                              autoCorrect={false} 
+                              secureTextEntry={true} 
+                              PStyle={this.styles.inputs} 
+                              placeholder="Mot de passe"
+                              next={{title: "Connexion", action: this.submitForm}}
+                              previous={{action: this.actionLogin}} 
+                              onChangeText={(text) => this.handlePass(text)}/>
                 </View>
                 <SimpleButton onPress={() => this.submitForm()} Pstyle={this.styles.submit} Tstyle={{fontSize:18}} title="Connexion" />
               </View>

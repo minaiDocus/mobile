@@ -39,6 +39,8 @@ class Inputs extends Component{
   constructor(props){
     super(props);
     this.state = {value: eval(`GLOB.dataFilter.${this.props.name}`)}
+
+    this.generateStyles()
   }
 
   changeValue(value){
@@ -46,12 +48,8 @@ class Inputs extends Component{
     eval(`GLOB.dataFilter.${this.props.name} = "${value}"`)
   }
 
-  render(){
-    const stylePlus = this.props.style || {};
-    const labelStyle = this.props.labelStyle || {};
-    const inputStyle = this.props.inputStyle || {}; 
-
-    const input = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       container: {
         flex:1,
         flexDirection:'row',
@@ -68,10 +66,17 @@ class Inputs extends Component{
         color:'#463119'
       }
     });
+  }
+
+  render(){
+    const stylePlus = this.props.style || {};
+    const labelStyle = this.props.labelStyle || {};
+    const inputStyle = this.props.inputStyle || {}; 
+
     const type = this.props.type || 'input';
-    return  <View style={[input.container, stylePlus]}>
-              <Text style={[input.label, labelStyle]}>{this.props.label}</Text>
-              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[input.input, inputStyle]} />}
+    return  <View style={[this.styles.container, stylePlus]}>
+              <Text style={[this.styles.label, labelStyle]}>{this.props.label}</Text>
+              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[this.styles.input, inputStyle]} />}
               {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
               {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1.3}} />}
             </View>
@@ -81,6 +86,7 @@ class Inputs extends Component{
 class BoxFilter extends Component{
   constructor(props){
     super(props)
+    this.generateStyles()
   }
 
   dismiss(type){
@@ -102,8 +108,8 @@ class BoxFilter extends Component{
     this.dismiss(true);
   }
 
-  render(){
-    const boxFilter = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
      container:{
         flex:1,
         flexDirection:'row',
@@ -156,18 +162,21 @@ class BoxFilter extends Component{
         flex:1,
       }
     });
+  }
+
+  render(){
     return  <Modal transparent={true}
                    animationType="slide" 
                    visible={this.props.visible}
                    supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{}}
             >
-              <View style={boxFilter.container} >
-                <View style={boxFilter.box}>
-                  <View style={boxFilter.head}>
+              <View style={this.styles.container} >
+                <View style={this.styles.box}>
+                  <View style={this.styles.head}>
                     <Text style={{flex:1, textAlign:'center',fontSize:24}}>Filtres</Text>
                   </View>
-                  <ScrollView style={boxFilter.body}>
+                  <ScrollView style={this.styles.body}>
                     <Inputs label='Date de début :' name={'created_at_start'} type='date'/>
                     <Inputs label='Date de fin :' name={'created_at_end'} type='date' />
                     <Inputs label='Type :' name={'type'} type='select' dataOptions={GLOB.types}  />
@@ -176,7 +185,7 @@ class BoxFilter extends Component{
                     <Inputs label='N° de suivi :' name={'tracking_number'} keyboardType='numeric' />
                     <Inputs label='Nom du lot :' name={'pack_name'}/>
                   </ScrollView>
-                  <View style={boxFilter.foot}>
+                  <View style={this.styles.foot}>
                     <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
                     <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
                     <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
@@ -193,6 +202,8 @@ class Header extends Component{
     this.state = {filter: false}
 
     this.closeFilter = this.closeFilter.bind(this)
+
+    this.generateStyles()
   }
 
   openFilter(){
@@ -207,61 +218,69 @@ class Header extends Component{
     }
   }
 
+  generateStyles(){
+    this.styles = StyleSheet.create({
+      container:{
+        flex:0,
+        flexDirection:'row',
+        backgroundColor:'#E1E2DD',
+        width:'100%',
+      },
+      left:{
+        flex:2,
+        flexDirection:'row',
+        alignItems:'center',
+        paddingLeft:20,
+        justifyContent:'center',
+      },
+      right:{
+        flex:1,
+        flexDirection:'row',
+        paddingHorizontal:20,
+      },
+      image:{
+        flex:0,
+        width:40,
+        height:40,
+        marginRight:15
+      },
+      filterbox:{
+        flex:1,
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'center'
+      }
+    });
+  }
+
   render(){
-  const headStyle = StyleSheet.create({
-    container:{
-      flex:0,
-      flexDirection:'row',
-      backgroundColor:'#E1E2DD',
-      width:'100%',
-    },
-    left:{
-      flex:2,
-      flexDirection:'row',
-      alignItems:'center',
-      paddingLeft:20,
-      justifyContent:'center',
-    },
-    right:{
-      flex:1,
-      flexDirection:'row',
-      paddingHorizontal:20,
-    },
-    image:{
-      flex:0,
-      width:40,
-      height:40,
-      marginRight:15
-    },
-    filterbox:{
-      flex:1,
-      flexDirection:'row',
-      alignItems:'center',
-      justifyContent:'center'
-    }
-  });
-  return  <View style={headStyle.container}>
-            <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
-            <View style={headStyle.left}>
-              <XImage source={{uri:"ico_suiv"}} style={headStyle.image} />
-              <Text style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</Text>
+    return  <View style={this.styles.container}>
+              <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
+              <View style={this.styles.left}>
+                <XImage source={{uri:"ico_suiv"}} style={this.styles.image} />
+                <Text style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</Text>
+              </View>
+              <View style={this.styles.right}> 
+                <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+              </View>
             </View>
-            <View style={headStyle.right}> 
-              <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
-            </View>
-          </View>
   }
 }
 
 class BoxStat extends Component{
-  state = {showDetails: false}
+  constructor(props){
+    super(props)
+    this.state = {showDetails: false}
+
+    this.generateStyles()
+  }
 
  toggleDetails(){
     this.setState({showDetails: !this.state.showDetails})
   }
 
-  render(){
-    const boxStyle = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       container: {
         flex:1,
         flexDirection:'row',
@@ -291,11 +310,14 @@ class BoxStat extends Component{
         borderColor:'#A6A6A6'
       },
     })
+  }
+
+  render(){
     const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"
 
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
-              <View style={boxStyle.container}>
-                <XImage source={{uri:arrow}} style={boxStyle.image} />
+              <View style={this.styles.container}>
+                <XImage source={{uri:arrow}} style={this.styles.image} />
                 <Text style={{fontSize:12, fontWeight:'bold', flex:1}}>{this.props.data.company}
                   {' ('} 
                     <Text style={{fontSize:9}}>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii") 
@@ -306,13 +328,13 @@ class BoxStat extends Component{
               </View>
               {
                   this.state.showDetails == true && 
-                    <View style={boxStyle.infos}>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Type : </Text>{getType(this.props.data.type)}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Code client : </Text>{this.props.data.code}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Société : </Text>{this.props.data.company}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>N°de suivi: </Text>{this.props.data.number}</Text>
-                      <Text style={boxStyle.champ}><Text style={boxStyle.label}>Nom du lot: </Text>{this.props.data.packname}</Text>
+                    <View style={this.styles.infos}>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Type : </Text>{getType(this.props.data.type)}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Code client : </Text>{this.props.data.code}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Société : </Text>{this.props.data.company}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>N°de suivi: </Text>{this.props.data.number}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Nom du lot: </Text>{this.props.data.packname}</Text>
                     </View>
               }
             </TouchableOpacity>
@@ -323,6 +345,8 @@ class OrderBox extends Component{
   constructor(props){
     super(props)
     this.state = {show: false}
+
+    this.generateStyles()
   }
 
   componentWillReceiveProps(prevProps){
@@ -342,8 +366,8 @@ class OrderBox extends Component{
     this.props.handleOrder(order_by)
   }
 
-  render(){
-    const styles = StyleSheet.create({
+  generateStyles(){
+    this.styles = StyleSheet.create({
       container: {
         position:'absolute',
         backgroundColor:'#FFF',
@@ -363,17 +387,19 @@ class OrderBox extends Component{
         marginBottom:10
       }
     })
+  }
 
+  render(){
     if(this.state.show)
     {
-      return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={styles.container}>
-                  <Text style={styles.title}>Trier par : </Text>
+      return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={this.styles.container}>
+                  <Text style={this.styles.title}>Trier par : </Text>
                   <View style={{flex:1, marginTop:5}}>
-                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Type','type'])} title='Type' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Code client','code'])} title='Code client' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['N°de suivi','number'])} title='N°de suivi' Pstyle={styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Nom de lot','packname'])} title='Nom du lot' Pstyle={styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Type','type'])} title='Type' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Code client','code'])} title='Code client' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['N°de suivi','number'])} title='N°de suivi' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Nom de lot','packname'])} title='Nom du lot' Pstyle={this.styles.list} />
                   </View>
               </AnimatedBox>
     }
@@ -469,7 +495,7 @@ class StatsScreen extends Component {
         if(responses[0].error)
         {
           // GLOB.datas = []
-          Notice.danger(responses[0].message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -504,7 +530,7 @@ class StatsScreen extends Component {
 
   render() {
       return (
-          <Screen style={styles.container}
+          <Screen style={{flex: 1, flexDirection: 'column',}}
                   navigation={GLOB.navigation}>
             <Header dataCount={this.total} onFilter={()=>this.refreshDatas()}/>
               {this.state.ready && this.renderStats()}
@@ -514,12 +540,5 @@ class StatsScreen extends Component {
       );
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-});
 
 export default StatsScreen;
