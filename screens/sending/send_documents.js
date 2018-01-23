@@ -11,6 +11,7 @@ import {SimpleButton, BoxButton, ImageButton} from '../../components/buttons'
 import Swiper from '../../components/swiper'
 import {BoxList} from '../../components/lists'
 import {ProgressUpload} from '../../components/uploader'
+//import RealmControl from '../../components/realmControl'
 
 import Cfetcher from '../../components/dataFetcher'
 import request1 from "../../requests/data_loader"
@@ -47,7 +48,7 @@ class BoxZoom extends Component{
 
   onSwipe(index){
     this.currIndex = index
-    GLOB.idZoom = base64.encode(this.props.datas[index].path).toString();
+    GLOB.idZoom = base64.encode(this.props.datas[index].filename).toString();
   }
 
   hideModal(){
@@ -64,7 +65,7 @@ class BoxZoom extends Component{
   }
 
   cropElement(){
-    const path = base64.decode(GLOB.idZoom).toString()
+    const path = this.props.datas[this.currIndex].path.toString();
     this.hideModal()
     setTimeout(()=>{this.props.cropElement(path, this.currIndex)}, 1000)
   }
@@ -113,7 +114,7 @@ class BoxZoom extends Component{
 
     var embedContent = this.props.datas.map((img, key)=>
     {
-      if(base64.encode(img.path).toString() == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
+      if(base64.encode(img.filename).toString() == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
       return <XImage  key={key}
                       type='container'
                       PStyle={this.swiperStyle.boxImage}
@@ -344,7 +345,7 @@ class SendScreen extends Component {
         toAdd = true;
         GLOB.images.map((i)=>
         {
-          if(base64.encode(i.path).toString() == base64.encode(j.path).toString())
+          if(base64.encode(i.filename).toString() == base64.encode(j.filename).toString())
           {
             toAdd = false;
           }
@@ -362,7 +363,7 @@ class SendScreen extends Component {
     var imgSave = []; 
     GLOB.images.map((i)=>
     {
-      if(base64.encode(i.path).toString() != GLOB.imgToDel.toString())
+      if(base64.encode(i.filename).toString() != GLOB.imgToDel.toString())
       {
         imgSave = imgSave.concat(i);
       }

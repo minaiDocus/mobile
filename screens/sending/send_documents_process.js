@@ -11,6 +11,7 @@ import SelectInput from '../../components/select'
 import User from '../../models/User'
 import { EventRegister } from 'react-native-event-listeners'
 import UploderFiles from '../../components/uploader'
+import RealmControl from '../../components/realmControl'
 
 import Cfetcher from '../../components/dataFetcher'
 import request1 from "../../requests/file_uploader"
@@ -30,26 +31,69 @@ const styles = StyleSheet.create({
   }
 });
 
-
 function loadData(){
-  const auth_token = User.getMaster().auth_token
-  const file_code = User.find(`id_idocus = ${GLOB.customer}`)[0].code
+  if(typeof(GLOB.dataList) !== "undefined" && GLOB.dataList.length > 0)
+  {
+    const auth_token = User.getMaster().auth_token
+    const file_code = User.find(`id_idocus = ${GLOB.customer}`)[0].code
+    let nothingToSend = true
 
-  const data = new FormData()
-  data.append('auth_token', auth_token)
-  data.append('file_code', file_code)
-  data.append('file_account_book_type', GLOB.journal)
-  data.append('file_prev_period_offset', GLOB.period)
-  GLOB.dataList.forEach((doc) => {
-      const path = doc.path.toString()
-      const name = path.split("/").slice(-1)[0]
-      data.append('files[]', {
-      uri: path,
-      type: doc.mime.toString(), // or photo.type
-      name: name
-    });  
-  });
-  return data
+    const imagesSent = RealmControl.get_temp_realm("imagesSent")
+    let alreadySent = false
+    
+    const data = new FormData()
+    
+    data.append('auth_token', auth_token)
+    data.append('file_code', file_code)
+    data.append('file_account_book_type', GLOB.journal)
+    data.append('file_prev_period_offset', GLOB.period)
+    GLOB.dataList.forEach((doc) => {
+        const path = doc.path.toString()
+        const name = path.split("/").slice(-1)[0]
+        const _id = doc.filename.toString()
+        
+        let dataSave = []
+        let img_sent = null
+        try{
+          img_sent = imagesSent.filtered("id = '" + _id + "'")[0] || null
+        }catch(e){}
+
+        if(typeof(img_sent) !== "undefined" && img_sent != null && img_sent != "" && img_sent.is_sent == true)
+        {
+          alreadySent = true
+        }
+        else
+        {
+          data.append('files[]', {
+            uri: path,
+            type: doc.mime.toString(), // or photo.type
+            name: name
+          });
+          nothingToSend = false
+
+          dataSave.push({
+            id: _id,
+            path: path,
+            send_at: new Date(),
+            is_sent: false, 
+          })            
+        }
+    });
+    GLOB.dataList = []
+    saveListImages(dataSave)
+    
+    if(alreadySent)
+      Notice.info({title: "Envoi", body: "Certains fichiers ont déjà été envoyés précédement!!"})
+
+    if(nothingToSend)
+      return null
+    else
+      return data
+  }
+  else
+  {
+    return null
+  }
 }
 
 class ImgBox extends Component{
@@ -309,7 +353,7 @@ class Footer extends Component{
   render(){
     return  <View style={styles.minicontainer}>
               <SimpleButton Pstyle={styles.button} onPress={()=>{this.leaveScreen()}} title="<< Precedent" />
-              {this.props.sending == false && <SimpleButton Pstyle={styles.button} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
+              {this.state.sending == false && this.props.sending == false && <SimpleButton Pstyle={styles.button} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
             </View>
   }
 }
@@ -324,6 +368,7 @@ class SendScreen extends Component {
     GLOB.customer = ''
     GLOB.period = ''
     GLOB.journal = ''
+    ListImages = []
     GLOB.file_upload_params = []
     
     this.state = {progress: 0, sending: false}
@@ -364,7 +409,7 @@ class SendScreen extends Component {
       //handle complete
       if(result.error)
       {//handle error from Complete
-        Notice.alert("Envoi", result.message)
+        this.uploadError(result)
       }
       this.refs._baseScroll.scrollToEnd({animated: true})
     }
@@ -385,7 +430,7 @@ class SendScreen extends Component {
                 <ScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}}>
                   <Body progress={this.state.progress} />
                 </ScrollView>
-                <Footer sending={this.state.sending}/>
+                <Footer sending={this.state.sending} />
               </Screen>
     }
 }

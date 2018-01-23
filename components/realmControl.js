@@ -1,7 +1,30 @@
 import Config from '../Config'
 
 class RealmControl {
-  extract_structure_json(data={}){
+
+  static registerTempSchema(newSchema){
+    let _tmp = []
+    let toAdd = true
+
+    TempSchemasLists.forEach((schema)=>{
+      if(schema.name == newSchema.name)
+      {
+        _tmp.push(newSchema)
+        toAdd = false
+      }
+      else
+      {
+        _tmp.push(schema)
+      }
+    })
+
+    if(toAdd)
+      _tmp.push(newSchema)
+
+    TempSchemasLists = _tmp
+  } 
+
+  static extract_structure_json(data={}){
     try{
       var temp = JSON.stringify(data).toString()
       temp = temp.replace(/[{}"]/ig, "")
@@ -34,7 +57,7 @@ class RealmControl {
       let properties = schema
       if(properties==null)
       {
-        properties = RealmObject.extract_structure_json(datas[0])
+        properties = RealmControl.extract_structure_json(datas[0])
       }
 
       if(properties != null)
@@ -45,6 +68,9 @@ class RealmControl {
                              }
 
         const Realm_module = require("realm")
+
+        RealmControl.registerTempSchema({name: realm_name, schema: temp_schema}) 
+
         const realm = new Realm_module({path: realm_name+'.realm', schema: [temp_schema], inMemory: true})
         realm.write(()=>{
             datas.map((value, key)=>{
@@ -78,6 +104,26 @@ class RealmControl {
       {
         return []
       }
+    }
+    else
+    {
+      return []
+    }
+  }
+
+  get_temp_realm(realm_name, name="temp"){
+    let _schema = null
+    TempSchemasLists.forEach((schema)=>{
+      if(schema.name == realm_name)
+      {
+        _schema = schema.schema;
+        return true
+      }
+    })
+    if(_schema != null){
+      const Realm_module = require("realm")
+      const realm = new Realm_module({path: realm_name+'.realm', schema: [_schema], inMemory: true})
+      return realm.objects(name)
     }
     else
     {

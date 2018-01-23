@@ -108,11 +108,14 @@ class UploderFiles{
     // this.test = this.test.bind(this)
   }
 
-  launchUpload(data){
-    this.upload({body: data}, this.onProgress)
+  launchUpload(data=null){
+    if(data !== null && typeof(data) !== "undefined")
+    {
+      this.upload({body: data}, this.onProgress)
           .then((res) => this.onComplete(res), (err) => this.onError(err))
 
-    UploadingFiles = true
+      UploadingFiles = true
+    }
   }
 
   upload(opts={}, onProgress){
@@ -126,7 +129,7 @@ class UploderFiles{
           {xhr.setRequestHeader("Authorization", "Basic " + base64.encode(Config.user + ":" + Config.pass))}
 
           for (var k in opts.headers||{})
-              xhr.setRequestHeader(k, opts.headers[k])
+            xhr.setRequestHeader(k, opts.headers[k])
 
           xhr.onload = (e) => {
             if (xhr.readyState === 4)
@@ -150,7 +153,7 @@ class UploderFiles{
           }
 
           xhr.onerror = (e) => {
-              error(handlingHttpErrors(xhr))
+            error(handlingHttpErrors(xhr))
           }
 
           if (xhr.upload && onProgress)
@@ -171,6 +174,9 @@ class UploderFiles{
     EventRegister.emit('completeUploadFile', result)
     Notice.info("Transfert de documents terminé", true, "progressUploadFile")
     UploadingFiles = false
+
+    if(typeof(result.success) !== "undefined" && result.success == true)
+      saveListImages(ListImages, true)
   }
 
   onError(result){

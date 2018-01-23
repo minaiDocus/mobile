@@ -1,5 +1,6 @@
 import Config from './Config'
 import {Notice} from './components/notifications'
+import RealmControl from './components/realmControl'
 import CronTask from './components/cronTask'
 import errorReport from './requests/error_report'
 
@@ -18,6 +19,7 @@ function fill_with_zero(date, length_to = 2){
 global.UploadingFiles = false
 global.Notice = Notice
 global.CronTask = CronTask
+global.TempSchemasLists = []
 
 global.handlingHttpErrors = (request, source="") => {
   let parsedRequest = ""
@@ -110,5 +112,37 @@ global.actionLocker = (callback) => {
     actionLock = true
     callback()
     setTimeout(()=>{actionLock = false}, 1000)
+  }
+}
+
+global.ListImages = []
+global.saveListImages = (lists=[], sent=false) => {
+  if(lists.length > 0)
+  {
+    let temp = []
+    const images_schema =  {
+                              id: 'string',
+                              path: 'string?',
+                              send_at: 'date?',
+                              is_sent: 'bool',
+                           }
+    if(sent==false)
+    {
+      ListImages = temp = lists
+    }
+    else
+    {
+      ListImages = []
+      lists.forEach((l)=>{
+        temp.push({
+          id: l._id,
+          path: l.path,
+          send_at: new Date(),
+          is_sent: true,
+        })
+      })
+    }
+    const result = RealmControl.create_temp_realm(temp, "imagesSent", images_schema)
+    return result
   }
 }

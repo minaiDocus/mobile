@@ -197,7 +197,7 @@ class Header extends Component{
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(r.message, true, r.message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
@@ -212,7 +212,7 @@ class Header extends Component{
       (responses)=>{
         if(responses[0].error)
         {
-          Notice.danger(r.message, true, r.message)
+          Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
