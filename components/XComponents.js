@@ -197,7 +197,7 @@ export class XTextInput extends Component{
 
   handleLayout(){
     if(this.editable){
-      setTimeout(()=>{this.refs.input.focus()}, 400)
+      setTimeout(()=>{this.refs.input.focus()}, 500)
     }
   }
 
