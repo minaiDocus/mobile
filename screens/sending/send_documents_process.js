@@ -17,7 +17,7 @@ import Cfetcher from '../../components/dataFetcher'
 import request1 from "../../requests/file_uploader"
 
 let Fetcher = new Cfetcher(request1)
-let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: []}
+let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: [], imagesSent: []}
 
 const styles = StyleSheet.create({
   minicontainer:{
@@ -36,62 +36,70 @@ function loadData(){
   {
     const auth_token = User.getMaster().auth_token
     const file_code = User.find(`id_idocus = ${GLOB.customer}`)[0].code
+
     let nothingToSend = true
-
-    const imagesSent = RealmControl.get_temp_realm("imagesSent")
     let alreadySent = false
+    let dataSave = []
+    let img_sent = null
     
-    const data = new FormData()
+    const form = new FormData()
     
-    data.append('auth_token', auth_token)
-    data.append('file_code', file_code)
-    data.append('file_account_book_type', GLOB.journal)
-    data.append('file_prev_period_offset', GLOB.period)
-    GLOB.dataList.forEach((doc) => {
-        const path = doc.path.toString()
-        const name = path.split("/").slice(-1)[0]
-        const _id = doc.filename.toString()
-        
-        let dataSave = []
-        let img_sent = null
-        try{
-          img_sent = imagesSent.filtered("id = '" + _id + "'")[0] || null
-        }catch(e){}
+    form.append('auth_token', auth_token)
+    form.append('file_code', file_code)
+    form.append('file_account_book_type', GLOB.journal)
+    form.append('file_prev_period_offset', GLOB.period)
 
-        if(typeof(img_sent) !== "undefined" && img_sent != null && img_sent != "" && img_sent.is_sent == true)
+    GLOB.dataList.forEach((doc) => {
+      const path = doc.path.toString()
+      const name = path.split("/").slice(-1)[0]
+      const filename = doc.filename.toString()
+
+      if(!inListImages(filename))
+      {
+        try{
+          img_sent = GLOB.imagesSent.filtered(`id = "${filename}"`)[0] || null
+        }catch(e){img_sent = null}
+
+        if(typeof(img_sent) !== "undefined" && img_sent != null && img_sent != "")
         {
           alreadySent = true
         }
         else
         {
-          data.append('files[]', {
+          nothingToSend = false
+
+          form.append('files[]', {
             uri: path,
             type: doc.mime.toString(), // or photo.type
             name: name
           });
-          nothingToSend = false
+          
 
-          dataSave.push({
-            id: _id,
+          dataSave = [{
+            id: filename,
             path: path,
             send_at: new Date(),
-            is_sent: false, 
-          })            
+            is_sent: true, 
+          }]
+
+          setListImages(dataSave, true)           
         }
+      }
     });
+
     GLOB.dataList = []
-    saveListImages(dataSave)
     
     if(alreadySent)
-      Notice.info({title: "Envoi", body: "Certains fichiers ont déjà été envoyés précédement!!"})
+      Notice.info({title: "Envoi", body: "Certains fichiers ont déjà été envoyés!!"})
 
     if(nothingToSend)
       return null
     else
-      return data
+      return form
   }
   else
   {
+    Notice.info({title: "Erreur", body: "Aucun document à envoyer!!"})
     return null
   }
 }
@@ -368,9 +376,11 @@ class SendScreen extends Component {
     GLOB.customer = ''
     GLOB.period = ''
     GLOB.journal = ''
-    ListImages = []
     GLOB.file_upload_params = []
-    
+    GLOB.imagesSent = RealmControl.get_temp_realm("imagesSent")
+
+    setListImages([]) //Initialize list images beeing send
+
     this.state = {progress: 0, sending: false}
 
     this.uploadProgress = this.uploadProgress.bind(this)

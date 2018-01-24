@@ -71,10 +71,12 @@ class RealmControl {
 
         RealmControl.registerTempSchema({name: realm_name, schema: temp_schema}) 
 
-        const realm = new Realm_module({path: realm_name+'.realm', schema: [temp_schema], inMemory: true})
+        const realm = new Realm_module({path: realm_name+'.realm', schema: [temp_schema], inMemory: false})
         realm.write(()=>{
             datas.map((value, key)=>{
               let _id = 0
+              let tmp = {}
+
               if(temp_schema.properties.id == "int")
               {
                 try
@@ -87,13 +89,14 @@ class RealmControl {
                 }
                 catch(e)
                 {_id = 5000 + key}
+                
+                value.id = _id
               }
               else
               {
-                _id = value.id.toString()
+                value.id = value.id.toString()
               }
-              
-              Object.assign(value, {id: _id}, value)
+
               realm.create(name, value, true)
             })
           });
@@ -117,12 +120,11 @@ class RealmControl {
       if(schema.name == realm_name)
       {
         _schema = schema.schema;
-        return true
       }
     })
     if(_schema != null){
       const Realm_module = require("realm")
-      const realm = new Realm_module({path: realm_name+'.realm', schema: [_schema], inMemory: true})
+      const realm = new Realm_module({path: realm_name+'.realm', schema: [_schema], inMemory: false})
       return realm.objects(name)
     }
     else

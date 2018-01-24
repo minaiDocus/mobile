@@ -3,7 +3,7 @@ import Config from '../../Config'
 import base64 from 'base-64'
 import Screen from '../../components/screen'
 import Navigator from '../../components/navigator'
-import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
+import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity, Platform} from 'react-native'
 import {XImage} from '../../components/XComponents'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
@@ -48,7 +48,7 @@ class BoxZoom extends Component{
 
   onSwipe(index){
     this.currIndex = index
-    GLOB.idZoom = base64.encode(this.props.datas[index].filename).toString();
+    GLOB.idZoom = this.props.datas[index].filename.toString();
   }
 
   hideModal(){
@@ -113,16 +113,16 @@ class BoxZoom extends Component{
     var indexStart = 0
 
     var embedContent = this.props.datas.map((img, key)=>
-    {
-      if(base64.encode(img.filename).toString() == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
-      return <XImage  key={key}
-                      type='container'
-                      PStyle={this.swiperStyle.boxImage}
-                      style={{flex:1}}
-                      source={{uri: img.path.toString()}} 
-                      local={false}
-              />
-    })
+      {
+        if(img.filename == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
+        return <XImage  key={key}
+                        type='container'
+                        PStyle={this.swiperStyle.boxImage}
+                        style={{flex:1}}
+                        source={{uri: img.path.toString()}} 
+                        local={false}
+                />
+      })
 
     return <Swiper  style={{flex:1}} 
                     index={indexStart} 
@@ -289,7 +289,7 @@ class SendScreen extends Component {
                           cropping: true
                         })
                         .then(image => {
-                          this.renderImg(image);
+                          this.renderImg([image]);
                         })
                         .catch(error => {
                           this.renderError(error);
@@ -320,7 +320,7 @@ class SendScreen extends Component {
                           width: 300,
                           height: 400
                         }).then(image => {
-                          this.renderImg(image, index)
+                          this.renderImg([image], index)
                         }).catch(error => {
                           this.renderError(error)
                         });
@@ -328,24 +328,38 @@ class SendScreen extends Component {
     actionLocker(call)
   }
 
-  async renderImg(img, index=null){
+  async renderImg(_img, index=null){
+    let img = []
+    if(Platform.OS == "android")
+    {
+      _img.forEach((i)=>{
+          Object.assign(i, {filename: base64.encode(i.path).toString()}, i)
+          img.push(i)
+        })
+    }
+    else
+    {
+      _img.filename = base64.encode(_img.filename).toString()
+      img = _img
+    }
+
     if(index != null)
     {
-      GLOB.images[index] = img
+      GLOB.images[index] = img[0]
       await this.setState({dataList: GLOB.images});
     }
     else
     {
-      var imgToAdd = [].concat(img);
-      var toAdd = true;
-      var listAdd = [];
+      let imgToAdd = [].concat(img);
+      let toAdd = true;
+      let listAdd = [];
 
       imgToAdd.map((j)=>
       {
         toAdd = true;
         GLOB.images.map((i)=>
         {
-          if(base64.encode(i.filename).toString() == base64.encode(j.filename).toString())
+          if(i.filename == j.filename)
           {
             toAdd = false;
           }
@@ -363,7 +377,7 @@ class SendScreen extends Component {
     var imgSave = []; 
     GLOB.images.map((i)=>
     {
-      if(base64.encode(i.filename).toString() != GLOB.imgToDel.toString())
+      if(i.filename != GLOB.imgToDel.toString())
       {
         imgSave = imgSave.concat(i);
       }

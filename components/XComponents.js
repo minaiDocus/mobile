@@ -242,9 +242,9 @@ export class XTextInput extends Component{
       buttonStyle: {
         flex:1,
         maxWidth:100,
-        maxHeight:35,   // =======
-        minHeight:35,   // ======= instead of height: value
-        marginHorizontal: 3
+        maxHeight:28,   // =======
+        minHeight:28,   // ======= instead of height: value
+        marginHorizontal: '10%'
       }
     })
 

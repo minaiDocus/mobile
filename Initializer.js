@@ -116,33 +116,44 @@ global.actionLocker = (callback) => {
 }
 
 global.ListImages = []
-global.saveListImages = (lists=[], sent=false) => {
-  if(lists.length > 0)
+
+global.inListImages = (filename)=>{
+  let _in = false
+  if(ListImages.length > 0)
   {
-    let temp = []
+    ListImages.forEach((img)=>{
+      if(filename == img.id)
+      {
+        _in = true
+        return true
+      }
+    })
+  }
+  return _in
+}
+
+global.setListImages = (lists, append=false)=>{
+  if(append)
+    ListImages = ListImages.concat(lists)
+  else
+    ListImages = lists
+}
+
+global.saveListImages = () => {
+  if(ListImages.length > 0)
+  {
     const images_schema =  {
                               id: 'string',
                               path: 'string?',
                               send_at: 'date?',
                               is_sent: 'bool',
                            }
-    if(sent==false)
+    const result = RealmControl.create_temp_realm(ListImages, "imagesSent", images_schema)
+    if(result.length > 0)
     {
-      ListImages = temp = lists
+      setListImages([])
     }
-    else
-    {
-      ListImages = []
-      lists.forEach((l)=>{
-        temp.push({
-          id: l._id,
-          path: l.path,
-          send_at: new Date(),
-          is_sent: true,
-        })
-      })
-    }
-    const result = RealmControl.create_temp_realm(temp, "imagesSent", images_schema)
+
     return result
   }
 }

@@ -176,7 +176,7 @@ class UploderFiles{
     UploadingFiles = false
 
     if(typeof(result.success) !== "undefined" && result.success == true)
-      saveListImages(ListImages, true)
+      saveListImages()
   }
 
   onError(result){

@@ -1,4 +1,4 @@
-import ActiveRealm from './activeRecord'
+import ActiveRecord from './activeRecord'
 
 const _db_name = "user_00"
 const _schema = {
@@ -21,7 +21,7 @@ const _schema = {
                       }
                     }
 
-class User extends ActiveRealm{
+class User extends ActiveRecord{
   constructor(){
     //REALM FILE && REALM NAME && REALM SCHEMA
     super(_db_name, _schema, 'User')
