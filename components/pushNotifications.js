@@ -399,19 +399,23 @@ export class UINotification extends Component{
     }
 
     addNotifToRealm(datas){
-      //schema of notifications (Realm)
-      const notif_schema =  {
-                              id: 'string',
-                              title: 'string?',
-                              message: 'string?',
-                              created_at: 'string?',
-                              is_read: 'bool',
-                            }
+      if(datas.length > 0)
+      {
+        //schema of notifications (Realm)
+        const notif_schema =  {
+                                id: 'string',
+                                title: 'string?',
+                                message: 'string?',
+                                created_at: 'string?',
+                                is_read: 'bool',
+                              }
 
-      const result = RealmControl.create_temp_realm(datas, "notifications", notif_schema)
-      let nb_new = 0
-      result.map((r)=>{if(r.is_read == false) nb_new++})
-      this.setState({datas: result, newNotifCount: nb_new})
+        const result = RealmControl.create_temp_realm(datas, "notifications", notif_schema)
+        let nb_new = 0
+        result.map((r)=>{if(r.is_read == false) nb_new++})
+
+        this.setState({datas: result, newNotifCount: nb_new})
+      }
     }
 
     generateStyles(){
