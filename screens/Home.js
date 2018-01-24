@@ -454,7 +454,7 @@ class HomeScreen extends Component {
                       </View>
                       <Text>www.idocus.com</Text>
                       <Text>version : {Config.version.toString()}</Text>
-                      <Text>IDOCUS © Copyright 2017</Text>
+                      <Text>IDOCUS © Copyright 2018</Text>
                     </View>
                 </View>
               </TouchableWithoutFeedback>
