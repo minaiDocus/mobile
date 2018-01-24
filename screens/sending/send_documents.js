@@ -339,9 +339,20 @@ class SendScreen extends Component {
   
     _img.forEach((i)=>{
         if(Platform.OS == "android")
+        {
           Object.assign(i, {filename: base64.encode(i.path).toString()}, i)
+        }
         else
-          i.filename = base64.encode(i.filename).toString()
+        {
+          if(typeof(i.filename) !== "undefined" && i.filename != null)
+          {
+            i.filename = base64.encode(i.filename).toString()
+          }
+          else
+          {
+            i.filename = base64.encode(i.path).toString()
+          }
+        }
 
         img.push(i)
       })

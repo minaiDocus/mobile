@@ -86,7 +86,7 @@ export class ProgressUpload extends Component{
 
   render(){
     const colorGrad = ['#422D14', '#422D14', '#C0D838']
-    if(this.state.show && this.state.value < 100)
+    if(this.state.show && this.state.value < 99)
     {
       return <AnimatedBox ref="progressUpload" type="RightSlide" style={this.styles.box}>
                 <LinearGradient colors={colorGrad} style={this.styles.gradient}>
