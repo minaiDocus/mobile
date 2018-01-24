@@ -244,7 +244,7 @@ export class XTextInput extends Component{
         maxWidth:100,
         maxHeight:28,   // =======
         minHeight:28,   // ======= instead of height: value
-        marginHorizontal: '10%'
+        marginHorizontal: '8%'
       }
     })
 

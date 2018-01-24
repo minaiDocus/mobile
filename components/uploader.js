@@ -9,7 +9,7 @@ import LinearGradient from 'react-native-linear-gradient'
 export class ProgressUpload extends Component{
   constructor(props){
     super(props)
-    this.state = {show: false, value: 100}
+    this.state = {show: false, value: 0}
 
     this.dismiss = this.dismiss.bind(this)
     this.uploadProgress = this.uploadProgress.bind(this)
@@ -31,7 +31,8 @@ export class ProgressUpload extends Component{
   uploadProgress(progressEvent){
     if(!Notice.exist("progressUploadFile"))
     {
-      const progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100)
+      let progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100)
+      if(progress >= 100){progress = 99}
       this.setState({value: progress, show: true})
     }
     else
@@ -165,7 +166,10 @@ class UploderFiles{
 
   onProgress(progressEvent){
     EventRegister.emit('progressUploadFile', progressEvent)
-    const progress = progressEvent.loaded / progressEvent.total
+
+    let progress = progressEvent.loaded / progressEvent.total
+    if(progress >= 1){progress = 0.99}
+
     if(Notice.exist("progressUploadFile") || progress <= 0.05 || progress >= 0.95)
       Notice.info(`Transfert de documents ${Math.floor(progress * 100)} %`, true, "progressUploadFile")
   }

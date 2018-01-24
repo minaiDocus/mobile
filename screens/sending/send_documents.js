@@ -330,18 +330,15 @@ class SendScreen extends Component {
 
   async renderImg(_img, index=null){
     let img = []
-    if(Platform.OS == "android")
-    {
-      _img.forEach((i)=>{
+  
+    _img.forEach((i)=>{
+        if(Platform.OS == "android")
           Object.assign(i, {filename: base64.encode(i.path).toString()}, i)
-          img.push(i)
-        })
-    }
-    else
-    {
-      _img.filename = base64.encode(_img.filename).toString()
-      img = _img
-    }
+        else
+          i.filename = base64.encode(i.filename).toString()
+
+        img.push(i)
+      })
 
     if(index != null)
     {

@@ -407,7 +407,9 @@ class SendScreen extends Component {
   uploadProgress(progressEvent){
     if(this.refs._baseScroll)
     {
-      const progress = progressEvent.loaded / progressEvent.total
+      let progress = progressEvent.loaded / progressEvent.total
+      if(progress >= 1){progress = 0.99}
+
       this.refs._baseScroll.scrollToEnd({animated: true})
       this.setState({progress: progress, sending: true})
     }
@@ -422,14 +424,15 @@ class SendScreen extends Component {
         this.uploadError(result)
       }
       this.refs._baseScroll.scrollToEnd({animated: true})
+      this.setState({progress: 1})
     }
   }
 
   uploadError(result){
     try{
-      Notice.alert("Envoi", result.message)
+      Notice.danger({title:"Erreur envoi", body: result.message}, true, result.message)
     }catch(e){
-      Notice.alert("Envoi", "Une erreur s'est produite lors de l'envoi de document!!!")
+      Notice.danger({title:"Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!!!"}, true, "erreur_upload")
     }
   }
 
