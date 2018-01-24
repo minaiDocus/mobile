@@ -32,7 +32,7 @@ export class ProgressUpload extends Component{
     if(!Notice.exist("progressUploadFile"))
     {
       let progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100)
-      if(progress >= 100){progress = 99}
+      if(progress >= 99){progress = 99}
       this.setState({value: progress, show: true})
     }
     else
@@ -166,10 +166,8 @@ class UploderFiles{
 
   onProgress(progressEvent){
     EventRegister.emit('progressUploadFile', progressEvent)
-
     let progress = progressEvent.loaded / progressEvent.total
-    if(progress >= 1){progress = 0.99}
-
+    if(progress >= 0.99){progress = 0.99}
     if(Notice.exist("progressUploadFile") || progress <= 0.05 || progress >= 0.95)
       Notice.info(`Transfert de documents ${Math.floor(progress * 100)} %`, true, "progressUploadFile")
   }

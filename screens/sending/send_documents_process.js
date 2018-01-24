@@ -408,7 +408,7 @@ class SendScreen extends Component {
     if(this.refs._baseScroll)
     {
       let progress = progressEvent.loaded / progressEvent.total
-      if(progress >= 1){progress = 0.99}
+      if(progress >= 0.99){progress = 0.99}
 
       this.refs._baseScroll.scrollToEnd({animated: true})
       this.setState({progress: progress, sending: true})

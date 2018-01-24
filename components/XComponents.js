@@ -244,7 +244,6 @@ export class XTextInput extends Component{
         maxWidth:100,
         maxHeight:28,   // =======
         minHeight:28,   // ======= instead of height: value
-        marginHorizontal: '8%'
       }
     })
 
@@ -297,7 +296,7 @@ export class XTextInput extends Component{
                       {
                         this.previous_action != null && 
                         <SimpleButton onPress={()=>{this.closeKeyboard(this.previous_action.action)}} 
-                                      Pstyle={this.stylesModalText.buttonStyle} 
+                                      Pstyle={[this.stylesModalText.buttonStyle, {marginRight: '10%'}]} 
                                       Tstyle={{fontSize:12}} 
                                       title={this.previous_action.title || "<< Prev."} />
                       }
@@ -322,7 +321,7 @@ export class XTextInput extends Component{
                       {
                         this.next_action != null && 
                         <SimpleButton onPress={()=>{this.closeKeyboard(this.next_action.action)}} 
-                                      Pstyle={this.stylesModalText.buttonStyle} 
+                                      Pstyle={[this.stylesModalText.buttonStyle, {marginLeft: '10%'}]} 
                                       Tstyle={{fontSize:12}} 
                                       title={this.next_action.title || "Suiv. >>"} />
                       }

@@ -48,7 +48,7 @@ class BoxZoom extends Component{
 
   onSwipe(index){
     this.currIndex = index
-    GLOB.idZoom = this.props.datas[index].filename.toString();
+    GLOB.idZoom = this.props.datas[index].filename
   }
 
   hideModal(){
@@ -163,7 +163,13 @@ class ImgBox extends Component{
     super (props)
     this.state = {options: false}
 
+    this.element = this.props.element
+
     this.generateStyles()
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.element = nextProps.element
   }
 
   toggleOpt(){
@@ -171,19 +177,19 @@ class ImgBox extends Component{
   }
 
   delete(){
-    GLOB.imgToDel = base64.encode(this.props.source.uri).toString()
+    GLOB.imgToDel = this.element.filename
     this.props.deleteElement()
     this.toggleOpt()
   }
 
   zoom(){
-    GLOB.idZoom = base64.encode(this.props.source.uri).toString()
+    GLOB.idZoom = this.element.filename
     this.props.toggleZoom()
     this.toggleOpt()
   }
 
   crop(){
-    this.props.cropElement(this.props.source.uri, this.props.index)
+    this.props.cropElement(this.element.path.toString(), this.props.index)
     this.toggleOpt() 
   }
 
@@ -227,7 +233,7 @@ class ImgBox extends Component{
 
   render(){
     return  <TouchableOpacity style={this.styles.styleTouch} onPress={()=>this.toggleOpt()}>
-                <XImage type='container' PStyle={this.styles.styleContainer} source={this.props.source} style={this.styles.styleImg} local={false}>
+                <XImage type='container' PStyle={this.styles.styleContainer} source={{uri:this.element.path.toString()}} style={this.styles.styleImg} local={false}>
                   { this.state.options == true &&
                     <View style={this.styles.options}>   
                       <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[this.styles.btnText]} Istyle={{width:20,height:20}} />
@@ -372,6 +378,7 @@ class SendScreen extends Component {
 
   async deleteElement(){
     var imgSave = []; 
+
     GLOB.images.map((i)=>
     {
       if(i.filename != GLOB.imgToDel.toString())
@@ -439,7 +446,7 @@ class SendScreen extends Component {
                                 <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.images.length} : Document(s)</Text>
                                 <BoxList datas={this.state.dataList}
                                          elementWidth={130} 
-                                         renderItems={(img, index) => <ImgBox index={index} source={{uri: img.path.toString()}} cropElement={(path, index)=>this.openCrop(path, index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
+                                         renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(path, index)=>this.openCrop(path, index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
                             </ScrollView>
       }
       else
