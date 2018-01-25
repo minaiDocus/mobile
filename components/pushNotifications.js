@@ -7,8 +7,8 @@ import RealmControl from './realmControl'
 import User from '../models/User'
 
 import Cfetcher from './dataFetcher'
-import request1 from '../requests/firebase_notification'
-let Fetcher = new Cfetcher(request1)
+import FireBaseNotification from '../requests/firebase_notification'
+let Fetcher = new Cfetcher(FireBaseNotification)
 
 /* SIMPLE USAGE >>
     // this shall be called regardless of app state: running, background or not running. Won't be called when app is killed by user in iOS

@@ -270,6 +270,7 @@ class LoginScreen extends Component {
                   <XTextInput ref="inputLogin"
                               onFocus={this.focusInput} 
                               onBlur={this.leaveFocusInput}
+                              autoCorrect={false}
                               PStyle={this.styles.inputs} 
                               placeholder="Identifiant(E-mail)"
                               next={{action: this.actionPassword}} 

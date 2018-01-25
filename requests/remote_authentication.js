@@ -3,23 +3,24 @@ import User from '../models/User'
 
 export default class remote_auhtentication extends Requester{
   async ping_server(version, platform, callback=()=>{}){
-    this.synchronious_response = ""
+    let response = ""
     this.requestURI("api/mobile/remote_authentication/ping", {method: 'POST', params:{version, platform}}, (r) => {
       if(r.error){ 
         //handling errors
-        this.synchronious_response = r
+        response = r
         callback(r)
       }
       else
       {
-        this.synchronious_response = r
+        response = r
         callback(r)
       }
     })
-    while(this.synchronious_response == "")
+    while(response == "")
     {
       await this.sleep(300)
     }
+    return response
   }
 
   remoteAUTH(options, callback=()=>{}){

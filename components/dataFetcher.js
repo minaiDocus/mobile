@@ -1,6 +1,4 @@
 import Config from '../Config'
-import base64 from 'base-64'
-import Realm from 'realm'
 import User from '../models/User'
 
 class Fetcher{
@@ -21,10 +19,12 @@ class Fetcher{
 
   async wait_for(func=[], callback){
     let responses = []
+    let tmp_rep = ""
+    
     for(var i=0; i<func.length;i++)
     {
-      await eval('this.request.'+func[i])
-      responses = responses.concat(this.request.synchronious_response)
+      tmp_rep = await eval('this.request.'+func[i])
+      responses = responses.concat(tmp_rep)
     }
 
     callback(responses)
