@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, Modal, ScrollView, TouchableOpacity, Platform} from 'react-native'
-import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
+import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
 import { EventRegister } from 'react-native-event-listeners'
+
 import {ImageButton} from './buttons'
 import RealmControl from './realmControl'
+
 import User from '../models/User'
 
-import Cfetcher from './dataFetcher'
 import FireBaseNotification from '../requests/firebase_notification'
-let Fetcher = new Cfetcher(FireBaseNotification)
 
 /* SIMPLE USAGE >>
     // this shall be called regardless of app state: running, background or not running. Won't be called when app is killed by user in iOS
@@ -286,7 +286,7 @@ export class UINotification extends Component{
         })
         this.refreshNotificationsListener = EventRegister.on('refreshNotifications', ()=>{
           //resend token to server
-          Fetcher.wait_for([`registerFirebaseToken('${this.master.firebase_token}', '${Platform.OS}')`], (responses)=>{})
+          FireBaseNotification.registerFirebaseToken(this.master.firebase_token, Platform.OS)
           this.refreshData()
         })
         this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
@@ -338,7 +338,7 @@ export class UINotification extends Component{
 
       this.addNotifToRealm(_allNotif)
 
-      Fetcher.wait_for(['releaseNewNotifications()'], (responses)=>{})
+      FireBaseNotification.releaseNewNotifications()
     }
 
     addNotification(notif){
@@ -383,7 +383,7 @@ export class UINotification extends Component{
     }
 
     refreshData(){
-      Fetcher.wait_for(
+      FireBaseNotification.wait_for(
       ['getNotifications()'],
       (responses)=>{
           if(responses[0].error)
@@ -518,7 +518,7 @@ class FCMinit extends Component{
           _tmp_master.firebase_token = token
           User.create_or_update(master_id, _tmp_master, true)
 
-          Fetcher.wait_for([`registerFirebaseToken('${token}', '${Platform.OS}')`], (responses)=>{})
+          FireBaseNotification.registerFirebaseToken(token, Platform.OS)
         }
     }
 

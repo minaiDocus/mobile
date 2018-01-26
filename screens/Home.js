@@ -1,21 +1,21 @@
+import Config from '../Config'
+
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import Config from '../Config'
-import Screen from '../components/screen'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native'
+import ScrollableTabView from 'react-native-scrollable-tab-view'
+
+import Screen from '../components/screen'
 import {XImage} from '../components/XComponents'
 import Navigator from '../components/navigator'
 import {BoxButton, ImageButton, LinkButton} from '../components/buttons'
 import Menu from '../components/menu'
-import ScrollableTabView from 'react-native-scrollable-tab-view'
-import User from '../models/User'
 import {ProgressUpload} from '../components/uploader'
 import FCM, {UINotification} from '../components/pushNotifications.js'
 
-import Cfetcher from '../components/dataFetcher'
-import request1 from '../requests/data_loader'
+import User from '../models/User'
 
-let Fetcher = new Cfetcher(request1)
+import DocumentsFetcher from '../requests/documents_fetcher'
 
 let GLOB = { navigation:{}, datas: []}
 
@@ -381,7 +381,7 @@ class HomeScreen extends Component {
 
   refreshDatas(){
     this.setState({ready: false})
-    Fetcher.wait_for(
+    DocumentsFetcher.wait_for(
     ['refreshPacks()'],
     (responses)=>{
         if(responses[0].error)
@@ -397,6 +397,7 @@ class HomeScreen extends Component {
   }
 
   toggleInfos(){
+    console.error("test")
     this.setState({showInfos: !this.state.showInfos})
   }
 

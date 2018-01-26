@@ -1,6 +1,6 @@
 import Requester from './activeRequest'
 
-export default class account_sharing extends Requester{
+class account_sharing extends Requester{
   async getSharedDocsCustomers(){
     let response = ""
 
@@ -280,3 +280,5 @@ export default class account_sharing extends Requester{
     return response
   }
 }
+
+export default new account_sharing()

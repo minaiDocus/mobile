@@ -1,10 +1,10 @@
+import Config from "../Config"
 import React, { Component } from 'react'
 import base64 from 'base-64'
-import Config from "../Config"
 import {StyleSheet,Text,View,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
-import AnimatedBox from './animatedBox'
 import LinearGradient from 'react-native-linear-gradient'
+import AnimatedBox from './animatedBox'
 
 export class ProgressUpload extends Component{
   constructor(props){
@@ -120,9 +120,9 @@ class UploderFiles{
   }
 
   upload(opts={}, onProgress){
-  url = Config.http_host + "api/mobile/file_uploader"
+    url = Config.http_host + "api/mobile/file_uploader"
 
-  return new Promise( (success, error)=>{
+    return new Promise( (success, error)=>{
           let xhr = new XMLHttpRequest()
           xhr.open('post', url)
           

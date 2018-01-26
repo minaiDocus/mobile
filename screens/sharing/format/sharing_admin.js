@@ -1,19 +1,19 @@
-import React, { Component } from 'react'
 import Config from '../../../Config'
-import Screen from '../../../components/screen'
-import { EventRegister } from 'react-native-event-listeners'
-import AnimatedBox from '../../../components/animatedBox'
+
+import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import { EventRegister } from 'react-native-event-listeners'
+
+import Screen from '../../../components/screen'
+import AnimatedBox from '../../../components/animatedBox'
 import {XImage, XTextInput} from '../../../components/XComponents'
 import {LineList} from '../../../components/lists'
-import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../../components/buttons'
 import Pagination from '../../../components/pagination'
 import SelectInput from '../../../components/select'
+import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../../components/buttons'
 
-import Cfetcher from '../../../components/dataFetcher'
-import request1 from "../../../requests/account_sharing"
+import AccountSharing from "../../../requests/account_sharing"
 
-let Fetcher = new Cfetcher(request1)
 let GLOB = {  navigation:{},
               datas:[],
               dataFilter: {account:'', collaborator:''},
@@ -192,7 +192,7 @@ class Header extends Component{
   }
 
   filterAccount(text=""){
-    Fetcher.setRequest(request1).wait_for(
+    AccountSharing.wait_for(
       [`getListCustomers("${text}")`],
       (responses)=>{
         if(responses[0].error)
@@ -207,7 +207,7 @@ class Header extends Component{
   }
 
   filterCollaborator(text=""){
-    Fetcher.setRequest(request1).wait_for(
+    AccountSharing.wait_for(
       [`getListCollaborators("${text}")`],
       (responses)=>{
         if(responses[0].error)
@@ -238,7 +238,7 @@ class Header extends Component{
                         {
                           Notice.info("Partage en cours ...")
                           this.setState({loading_add: true})
-                          Fetcher.wait_for(
+                          AccountSharing.wait_for(
                             [`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`],
                             (responses)=>{
                               if(responses[0].error)
@@ -381,7 +381,7 @@ class BoxStat extends Component{
 
   deleteSharedDoc(id_doc){
     Notice.info("Suppression de partage en cours ...")
-    Fetcher.wait_for(
+    AccountSharing.wait_for(
       [`deleteSharedDoc(${id_doc})`],
       (responses)=>{
         if(responses[0].error)
@@ -399,7 +399,7 @@ class BoxStat extends Component{
 
   acceptSharedDoc(id_doc){
     Notice.info("Partage en cours ...")
-    Fetcher.wait_for(
+    AccountSharing.wait_for(
       [`acceptSharedDoc(${id_doc})`],
       (responses)=>{
         if(responses[0].error)
@@ -647,7 +647,7 @@ class SharingScreen extends Component {
     }
 
     this.setState({ready: false, dataList: []})
-    Fetcher.wait_for(
+    AccountSharing.wait_for(
       [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
       (responses)=>{
         if(responses[0].error)
@@ -656,7 +656,6 @@ class SharingScreen extends Component {
         }
         else
         {
-          // const dataFetched = Fetcher.create_temp_realm(responses[0].data_shared, "temp_sharing", nextPage)
           GLOB.datas = responses[0].data_shared || []
         }
         this.limit_page = responses[0].nb_pages || 1

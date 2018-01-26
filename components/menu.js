@@ -1,16 +1,18 @@
-import React, { Component } from 'react'
 import Config from '../Config'
+
+import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
 import {Text,TouchableOpacity,TouchableWithoutFeedback,View,StyleSheet,Modal,Slider,ScrollView,findNodeHandle} from 'react-native'
-import {XImage} from './XComponents'
-import AnimatedBox from './animatedBox'
 import LinearGradient from 'react-native-linear-gradient'
 import { NavigationActions } from 'react-navigation'
-import {SimpleButton, LinkButton, ImageButton} from './buttons'
-import User from '../models/User'
-import Cfetcher from './dataFetcher'
 
-let Fetcher = new Cfetcher()
+import {XImage} from './XComponents'
+import AnimatedBox from './animatedBox'
+import {SimpleButton, LinkButton, ImageButton} from './buttons'
+
+import User from '../models/User'
+import RemoteAuthentication from '../requests/remote_authentication'
+
 let GLOB = {navigation: {}}
 
 const styles = StyleSheet.create({
@@ -86,7 +88,7 @@ class Footer extends Component{
 
   logOut(){
     //remove data cache (REALM)
-    Fetcher.clearAll()
+    RemoteAuthentication.logOut()
 
     //refreshFCMtoken
     EventRegister.emit("revokeFCMtoken")

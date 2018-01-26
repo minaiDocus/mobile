@@ -1,23 +1,21 @@
-import React, { Component } from 'react'
 import Config from '../../Config'
+
+import React, { Component } from 'react'
+import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
+import { NavigationActions } from 'react-navigation'
+import ScrollableTabView from 'react-native-scrollable-tab-view'
+
 import Screen from '../../components/screen'
 import Navigator from '../../components/navigator'
-import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
 import {XImage} from '../../components/XComponents'
-import { NavigationActions } from 'react-navigation'
 import PDFView from '../../components/pdfView'
 import {SimpleButton, ImageButton} from '../../components/buttons'
 import {BoxList, LineList} from '../../components/lists'
 import Pagination from '../../components/pagination'
-import User from '../../models/User'
-import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import Cfetcher from '../../components/dataFetcher'
-import request1 from "../../requests/data_loader"
+import DocumentsFetcher from "../../requests/documents_fetcher"
 
-let Fetcher = new Cfetcher(request1)
 let GLOB = {Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", navigation:{}, filterText: ""}
-
 
 class BoxZoom extends Component{
   constructor(props){
@@ -98,7 +96,7 @@ class BoxZoom extends Component{
   }
 
   render(){
-    const src = Fetcher.request.render_document_uri(this.props.data.large, this.props.data.force_temp_doc)
+    const src = DocumentsFetcher.render_document_uri(this.props.data.large, this.props.data.force_temp_doc)
 
     return  <Modal transparent={false}
                    animationType="slide" 
@@ -275,7 +273,7 @@ class ImgBox extends Component{
     let local = true
     if(this.props.data.thumb)
     {
-      src = Fetcher.request.render_document_uri(this.props.data.thumb)
+      src = DocumentsFetcher.render_document_uri(this.props.data.thumb)
       local = false
     }
 
@@ -381,7 +379,7 @@ class TabNav extends Component{
 
     this.setState({published_ready: false})
     const pack_id = GLOB.Pack.pack_id || GLOB.Pack.id
-    Fetcher.wait_for(
+    DocumentsFetcher.wait_for(
         [`getDocumentsProcessed(${pack_id}, ${this.pagePublished}, "${GLOB.filterText}")`],
         (responses) => {
           if(responses[0].error)
@@ -409,7 +407,7 @@ class TabNav extends Component{
     {
       this.setState({publishing_ready: false})
       const pack_id = GLOB.Pack.pack_id || GLOB.Pack.id
-      Fetcher.wait_for(
+      DocumentsFetcher.wait_for(
           [`getDocumentsProcessing(${pack_id})`],
           (responses) => {
             if(responses[0].error)

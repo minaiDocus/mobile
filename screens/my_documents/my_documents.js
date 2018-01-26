@@ -1,18 +1,20 @@
-import React, { Component } from 'react'
 import Config from '../../Config'
-import Screen from '../../components/screen'
+
+import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity} from 'react-native'
+
+import Screen from '../../components/screen'
 import {XImage, XTextInput} from '../../components/XComponents'
 import Navigator from '../../components/navigator'
 import SelectInput from '../../components/select'
 import Pagination from '../../components/pagination'
-import User from '../../models/User'
 import {LineList} from '../../components/lists'
 
-import Cfetcher from '../../components/dataFetcher'
-import request1 from "../../requests/data_loader"
+import User from '../../models/User'
 
-let Fetcher = new Cfetcher(request1)
+import UsersFetcher from "../../requests/users_fetcher"
+import DocumentsFetcher from "../../requests/documents_fetcher"
+
 let GLOB = { navigation:{}, filterText: "", clientId: 0 }
 
 class Header extends Component{
@@ -218,7 +220,7 @@ class DocumentsScreen extends Component {
 
   //For refreshing Account list
   componentDidMount(){
-    Fetcher.wait_for(
+    UsersFetcher.wait_for(
       ['refreshCustomers()'],
       (responses)=>{
         responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
@@ -238,7 +240,7 @@ class DocumentsScreen extends Component {
 
     this.setState({ready: false, loadingFilter: true})
 
-    Fetcher.wait_for(
+    DocumentsFetcher.wait_for(
           [`getPacks(${this.page}, "${GLOB.filterText}", "${GLOB.clientId}")`],
           (responses)=>{
             responses.map(r=>{

@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import {Picker, View, Platform, Modal, Text, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
+import React, { Component } from 'react'
+import {Picker, View, Platform, Modal, Text, TouchableOpacity, StyleSheet, ScrollView} from 'react-native'
 import {XImage, XTextInput} from './XComponents'
 import {ImageButton} from './buttons'
 import AnimatedBox from './animatedBox'

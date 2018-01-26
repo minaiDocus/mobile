@@ -1,7 +1,7 @@
 import Config from '../Config'
+import {Platform} from 'react-native'
 import base64 from 'base-64'
 import User from '../models/User'
-import {Platform} from 'react-native'
 
 class error_report {
   sendErrorReport(title="", error="", report={}){

@@ -1,22 +1,21 @@
-import React, { Component } from 'react'
 import Config from '../../Config'
-import Screen from '../../components/screen'
-import { EventRegister } from 'react-native-event-listeners'
-import AnimatedBox from '../../components/animatedBox'
+
+import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import { EventRegister } from 'react-native-event-listeners'
+
+import Screen from '../../components/screen'
+import AnimatedBox from '../../components/animatedBox'
 import {XImage, XTextInput} from '../../components/XComponents'
 import Navigator from '../../components/navigator'
 import {LineList} from '../../components/lists'
-import {SimpleButton, BoxButton, LinkButton, ImageButton} from '../../components/buttons'
 import Pagination from '../../components/pagination'
 import SelectInput from '../../components/select'
 import DatePicker from '../../components/datePicker'
+import {SimpleButton, BoxButton, LinkButton, ImageButton} from '../../components/buttons'
 
+import PaperProcess from "../../requests/paper_process"
 
-import Cfetcher from '../../components/dataFetcher'
-import request1 from "../../requests/data_loader"
-
-let Fetcher = new Cfetcher(request1)
 let GLOB = {  navigation:{},
               datas:[],
               dataFilter: { created_at_start:'', 
@@ -489,17 +488,15 @@ class StatsScreen extends Component {
 
     this.setState({ready: false, dataList: []})
 
-    Fetcher.wait_for(
+    PaperProcess.wait_for(
       [`getStats(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
       (responses)=>{
         if(responses[0].error)
         {
-          // GLOB.datas = []
           Notice.danger(responses[0].message, true, responses[0].message)
         }
         else
         {
-          // const dataFetched = Fetcher.create_temp_realm(responses[0].data_stats, "temp_states", nextPage)
           GLOB.datas = responses[0].data_stats || []
         }
 

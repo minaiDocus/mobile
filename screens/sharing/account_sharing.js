@@ -1,16 +1,14 @@
 import React, { Component } from 'react'
-import Navigator from '../../components/navigator'
 import { EventRegister } from 'react-native-event-listeners'
+
+import Navigator from '../../components/navigator'
 import {ImageButton} from '../../components/buttons'
+
 import User from '../../models/User'
 
 import SharingAdmin from './format/sharing_admin'
 import SharingCustomers from './format/sharing_customers'
 
-import Cfetcher from '../../components/dataFetcher'
-import request1 from "../../requests/data_loader"
-
-let Fetcher = new Cfetcher()
 let GLOB = { navigation:{} }
 
 class HeaderOptions extends Component{

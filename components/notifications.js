@@ -1,7 +1,7 @@
 import React from 'react'
 import {StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableHighlight, Alert} from 'react-native'
-import AnimatedBox from './animatedBox'
 import { EventRegister } from 'react-native-event-listeners'
+import AnimatedBox from './animatedBox'
 
 export class Notice {
   static _noticeMessages = [];

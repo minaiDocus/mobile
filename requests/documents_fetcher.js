@@ -3,7 +3,7 @@ import Config from '../Config'
 import base64 from 'base-64'
 import User from '../models/User'
 
-export default class data_loader extends Requester{
+class documents_fetcher extends Requester{
 
   render_document_uri(data, forcing_temp = false){
     let forcing=""  
@@ -109,29 +109,6 @@ export default class data_loader extends Requester{
     return response 
   }
 
-  async refreshCustomers(){
-    let response = ""
-    this.requestURI("api/mobile/data_loader/load_customers", {method: 'POST'}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r.message
-      }
-      else
-      {
-        User.deleteCustomers()
-        r.customers.map((usr, index)=>{
-          User.create_or_update((index +  2), usr)
-        })
-        response = true
-      }
-    })
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-    return response 
-  }
-
   async getPacks(page=1, text="", owner_id=0){
     if(owner_id <= 0)
     {
@@ -149,3 +126,5 @@ export default class data_loader extends Requester{
     return response 
   }
 }
+
+export default new documents_fetcher()

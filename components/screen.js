@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import Config from '../Config'
+import React, { Component } from 'react'
 import {View} from 'react-native'
+import PropTypes from 'prop-types'
 import NoticeBox from './notifications'
 
 class Screen extends Component{

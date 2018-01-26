@@ -1,8 +1,7 @@
 import Requester from './activeRequest'
 import Config from '../Config'
 
-export default class firebase_notification extends Requester{
-
+class firebase_notification extends Requester{
   async getNotifications(){
     let response = ""
 
@@ -68,3 +67,5 @@ export default class firebase_notification extends Requester{
     return response
   }
 }
+
+export default new firebase_notification()

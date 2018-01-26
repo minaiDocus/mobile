@@ -1,21 +1,22 @@
-import React, { Component } from 'react'
 import Config from '../../Config'
-import Screen from '../../components/screen'
+
+import React, { Component } from 'react'
+import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
+
+import Screen from '../../components/screen'
 import AnimatedBox from '../../components/animatedBox'
 import Navigator from '../../components/navigator'
-import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import {XImage, XTextInput} from '../../components/XComponents'
 import {LineList} from '../../components/lists'
-import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
 import Pagination from '../../components/pagination'
 import SelectInput from '../../components/select'
+import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
+
 import User from '../../models/User'
 
-import Cfetcher from '../../components/dataFetcher'
-import request1 from "../../requests/account_sharing"
+import AccountSharing from "../../requests/account_sharing"
 
-let Fetcher = new Cfetcher(request1)
 let GLOB =  { navigation:{},
               datas:[],
               dataFilter: {email:'', company:'', first_name: '', last_name:''},
@@ -106,7 +107,7 @@ class ModalForm extends Component{
     {
       const call = ()=>{
                           Notice.info(flash)
-                          Fetcher.wait_for(
+                          AccountSharing.wait_for(
                             [url],
                             (responses)=>{
                               if(responses[0].error)
@@ -410,7 +411,7 @@ class BoxStat extends Component{
 
   deleteSharedContact(_id){
     Notice.info("Suppression de contact en cours ...")
-    Fetcher.wait_for(
+    AccountSharing.wait_for(
       [`deleteSharedContact(${_id})`],
       (responses)=>{
         if(responses[0].error)
@@ -650,7 +651,7 @@ class SharingScreen extends Component {
     }
 
     this.setState({ready: false, dataList: []})
-    Fetcher.wait_for(
+    AccountSharing.wait_for(
       [`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
       (responses)=>{
         if(responses[0].error)
@@ -659,7 +660,6 @@ class SharingScreen extends Component {
         }
         else
         {
-          // const dataFetched = Fetcher.create_temp_realm(responses[0].contacts, "temp_sharing_contacts", nextPage)
           GLOB.datas = responses[0].contacts || []
         }
 

@@ -1,19 +1,19 @@
-import React, { Component } from 'react'
 import Config from '../../../Config'
-import Screen from '../../../components/screen'
-import { EventRegister } from 'react-native-event-listeners'
-import AnimatedBox from '../../../components/animatedBox'
+
+import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import { EventRegister } from 'react-native-event-listeners'
+import ScrollableTabView from 'react-native-scrollable-tab-view'
+
+import Screen from '../../../components/screen'
+import AnimatedBox from '../../../components/animatedBox'
 import {XImage, XTextInput} from '../../../components/XComponents'
 import {LineList} from '../../../components/lists'
 import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../../components/buttons'
 import SelectInput from '../../../components/select'
-import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import Cfetcher from '../../../components/dataFetcher'
-import request1 from "../../../requests/account_sharing"
+import AccountSharing from "../../../requests/account_sharing"
 
-let Fetcher = new Cfetcher(request1)
 let GLOB = {
               navigation:{},
               dataForm: {email:'', company: '', first_name: '', last_name: ''}
@@ -106,7 +106,7 @@ class ModalSharing extends Component{
     {
       const call = ()=>{
                           Notice.info(message)
-                          Fetcher.wait_for(
+                          AccountSharing.wait_for(
                             [url],
                             (responses)=>{
                               if(responses[0].error)
@@ -235,7 +235,7 @@ class ViewState extends Component{
 
   deleteSharedDoc(id_doc, type='admin'){
     Notice.info("Suppression en cours ...")
-    Fetcher.wait_for(
+    AccountSharing.wait_for(
       [`deleteSharedDoc(${id_doc}, "${type}")`],
       (responses)=>{
         if(responses[0].error)
@@ -495,7 +495,7 @@ class SharingScreen extends Component {
 
   refreshDatas(){
     this.setState({ready: false})
-    Fetcher.wait_for(
+    AccountSharing.wait_for(
       [`getSharedDocsCustomers()`],
       (responses)=>{
         if(responses[0].error)

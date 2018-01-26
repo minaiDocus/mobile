@@ -1,6 +1,6 @@
 import Requester from './activeRequest'
 
-export default class file_uploader extends Requester{
+class file_uploader extends Requester{
   async refreshFormParams(){
     let response = ""
     this.requestURI("api/mobile/file_uploader/load_file_upload_params", {method: 'POST'}, (r) => {
@@ -21,3 +21,5 @@ export default class file_uploader extends Requester{
     return response
   }
 }
+
+export default new file_uploader()

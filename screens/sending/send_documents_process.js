@@ -1,22 +1,23 @@
-import React, { Component } from 'react'
 import Config from '../../Config'
-import Screen from '../../components/screen'
-import Navigator from '../../components/navigator';
+
+import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,ListView,TouchableOpacity,Picker} from 'react-native'
-import {XImage} from '../../components/XComponents'
+import { EventRegister } from 'react-native-event-listeners'
 import { NavigationActions } from 'react-navigation'
 import * as Progress from 'react-native-progress';
+
+import Screen from '../../components/screen'
+import Navigator from '../../components/navigator';
+import {XImage} from '../../components/XComponents'
 import {SimpleButton} from '../../components/buttons'
 import SelectInput from '../../components/select'
-import User from '../../models/User'
-import { EventRegister } from 'react-native-event-listeners'
 import UploderFiles from '../../components/uploader'
 import RealmControl from '../../components/realmControl'
 
-import Cfetcher from '../../components/dataFetcher'
-import request1 from "../../requests/file_uploader"
+import User from '../../models/User'
 
-let Fetcher = new Cfetcher(request1)
+import FileUploader from "../../requests/file_uploader"
+
 let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: [], imagesSent: []}
 
 const styles = StyleSheet.create({
@@ -175,7 +176,7 @@ class Body extends Component{
   }
 
   componentDidMount(){
-    Fetcher.wait_for(
+    FileUploader.wait_for(
       ["refreshFormParams()"],
       (responses) => {
         if(responses[0].error)

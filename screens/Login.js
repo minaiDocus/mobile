@@ -1,22 +1,23 @@
-import React, { Component } from 'react'
 import Config from '../Config'
-import Screen from '../components/screen'
+
+import React, { Component } from 'react'
+import SplashScreen from 'react-native-splash-screen'
 import { StyleSheet, Text, TextInput, View, ScrollView, Modal} from 'react-native'
+
+import Screen from '../components/screen'
 import {XImage, XTextInput} from '../components/XComponents'
 import Navigator from '../components/navigator'
 import {SimpleButton} from '../components/buttons'
-import SplashScreen from 'react-native-splash-screen'
+
 import User from '../models/User'
 
-import Cfetcher from '../components/dataFetcher'
-import request1 from '../requests/remote_authentication'
-import request2 from '../requests/data_loader'
+import RemoteAuthentication from '../requests/remote_authentication'
+import UsersFetcher from '../requests/users_fetcher'
 
-let Fetcher = new Cfetcher()
 let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
 
 function goToHome(){
-  Fetcher.setRequest(request2).wait_for(
+  UsersFetcher.wait_for(
     ['refreshCustomers()'],
     (responses)=>{
       responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
@@ -37,7 +38,7 @@ class ModalLoader extends Component{
     if(GLOB.password != "" && GLOB.login != "")
     {
       const params = { user_login: {login: GLOB.login, password: GLOB.password} }
-      Fetcher.setRequest(request1).request.remoteAUTH(params, (type, message) => {
+      RemoteAuthentication.logIn(params, (type, message) => {
         if(type=='error'){this.props.dismiss(message)}
         if(type=='success'){goToHome()}
       })
@@ -99,7 +100,7 @@ class LoginScreen extends Component {
       setTimeout(()=>Notice.info(`A bientot !!`), 1000)
     }
 
-    Fetcher.setRequest(request1).wait_for(
+    RemoteAuthentication.wait_for(
       [`ping_server("${Config.version}", "${Config.platform}")`],
       (responses)=>{
         this.setState({ready: true})
@@ -108,8 +109,7 @@ class LoginScreen extends Component {
           Notice.danger({title: "Alèrte système", body: responses[0].message}, true, responses[0].message)
           if(responses[0].code == 500)
           { //automatic logout
-            //remove data cache (REALM)
-            Fetcher.clearAll()
+            RemoteAuthentication.logOut()
             GLOB.system_reject = true
           }
         }

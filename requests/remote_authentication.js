@@ -1,7 +1,7 @@
 import Requester from './activeRequest'
 import User from '../models/User'
 
-export default class remote_auhtentication extends Requester{
+class remote_auhtentication extends Requester{
   async ping_server(version, platform, callback=()=>{}){
     let response = ""
     this.requestURI("api/mobile/remote_authentication/ping", {method: 'POST', params:{version, platform}}, (r) => {
@@ -23,7 +23,7 @@ export default class remote_auhtentication extends Requester{
     return response
   }
 
-  remoteAUTH(options, callback=()=>{}){
+  logIn(options, callback=()=>{}){
     this.requestURI("api/mobile/remote_authentication/request_connexion",  {method: 'POST', params: options}, (r) => {
       if(r.error)
       {
@@ -37,4 +37,10 @@ export default class remote_auhtentication extends Requester{
       }
     })
   }
+
+  logOut(){
+    User.deleteAll()
+  }
 }
+
+export default new remote_auhtentication()

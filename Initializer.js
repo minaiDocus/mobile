@@ -1,7 +1,9 @@
 import Config from './Config'
+
 import {Notice} from './components/notifications'
 import RealmControl from './components/realmControl'
 import CronTask from './components/cronTask'
+
 import errorReport from './requests/error_report'
 
 //Private functions
@@ -21,6 +23,7 @@ global.Notice = Notice
 global.CronTask = CronTask
 global.TempSchemasLists = []
 
+//Function for handleling http errors
 global.handlingHttpErrors = (request, source="") => {
   let parsedRequest = ""
   try
@@ -60,6 +63,7 @@ global.handlingHttpErrors = (request, source="") => {
   return {error: true, message: errorMessage}
 }
 
+//Function for date format
 global.format_date = (_date=null, format = "DD-MM-YYYY HH:ii") => {
   let dateFormat = format
   if(_date != null && typeof(_date) !== 'undefined')
@@ -94,6 +98,7 @@ global.format_date = (_date=null, format = "DD-MM-YYYY HH:ii") => {
   }
 }
 
+//Function for compacting array (deleting null values from an array)
 global.arrayCompact = (arr) => {
   let arrReturn = []
   arr.forEach((elem)=>{
@@ -105,6 +110,7 @@ global.arrayCompact = (arr) => {
   return arrReturn
 }
 
+//Protect speed double press for launching an action
 global.actionLock = false
 global.actionLocker = (callback) => {
   if(actionLock==false)
@@ -115,6 +121,8 @@ global.actionLocker = (callback) => {
   }
 }
 
+
+//Functions for saving images been send
 global.ListImages = []
 
 global.inListImages = (filename)=>{

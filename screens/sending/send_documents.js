@@ -1,22 +1,21 @@
-import React, { Component } from 'react'
 import Config from '../../Config'
-import base64 from 'base-64'
-import Screen from '../../components/screen'
-import Navigator from '../../components/navigator'
+
+import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity, Platform} from 'react-native'
-import {XImage} from '../../components/XComponents'
+import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
+
+import Screen from '../../components/screen'
+import Navigator from '../../components/navigator'
+import {XImage} from '../../components/XComponents'
 import {SimpleButton, BoxButton, ImageButton} from '../../components/buttons'
 import Swiper from '../../components/swiper'
 import {BoxList} from '../../components/lists'
 import {ProgressUpload} from '../../components/uploader'
-//import RealmControl from '../../components/realmControl'
 
-import Cfetcher from '../../components/dataFetcher'
-import request1 from "../../requests/data_loader"
+import UsersFetcher from "../../requests/users_fetcher"
 
-let Fetcher = new Cfetcher(request1)
 let GLOB = {images:[], imgToDel:"", idZoom:"", navigation:{}}
 
 const styles = {
@@ -280,7 +279,7 @@ class SendScreen extends Component {
   }
 
   componentWillMount(){
-    Fetcher.wait_for(
+    UsersFetcher.wait_for(
       ['refreshCustomers()'],
       (responses)=>{
         responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
