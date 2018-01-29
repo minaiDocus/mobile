@@ -4,7 +4,9 @@ import base64 from 'base-64'
 import {StyleSheet,Text,View,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import LinearGradient from 'react-native-linear-gradient'
+
 import AnimatedBox from './animatedBox'
+import XFetcher from './XFetcher'
 
 export class ProgressUpload extends Component{
   constructor(props){
@@ -106,62 +108,26 @@ export class ProgressUpload extends Component{
 class UploderFiles{
   constructor(){
     this.launchUpload = this.launchUpload.bind(this)
-    // this.test = this.test.bind(this)
   }
 
   launchUpload(data=null){
     if(data !== null && typeof(data) !== "undefined")
     {
-      this.upload({body: data}, this.onProgress)
-          .then((res) => this.onComplete(res), (err) => this.onError(err))
-
+      const Fetcher = new XFetcher()
+      Fetcher.fetch("api/mobile/file_uploader", {method: 'POST', contentType:'multipart/form-data', form_body: data}, false, (result)=>{this.onLoad(result)}, (progressEvent)=>{this.onProgress(progressEvent)})
       UploadingFiles = true
     }
   }
 
-  upload(opts={}, onProgress){
-    url = Config.http_host + "api/mobile/file_uploader"
-
-    return new Promise( (success, error)=>{
-          let xhr = new XMLHttpRequest()
-          xhr.open('post', url)
-          
-          if(Config.server == "staging") //if accessing staging server
-          {xhr.setRequestHeader("Authorization", "Basic " + base64.encode(Config.user + ":" + Config.pass))}
-
-          for (var k in opts.headers||{})
-            xhr.setRequestHeader(k, opts.headers[k])
-
-          xhr.onload = (e) => {
-            if (xhr.readyState === 4)
-            {
-              if (xhr.status === 200)
-              {
-                try
-                {
-                  success(JSON.parse(xhr.responseText))
-                }
-                catch(e)
-                {
-                  success(handlingHttpErrors(xhr, "uploading file"))
-                }
-              }
-              else
-              {
-                success(handlingHttpErrors(xhr))
-              }
-            }
-          }
-
-          xhr.onerror = (e) => {
-            error(handlingHttpErrors(xhr))
-          }
-
-          if (xhr.upload && onProgress)
-              xhr.upload.onprogress = onProgress; // event.loaded / event.total * 100 ; //event.lengthComputable
-
-          xhr.send(opts.body);
-      });
+  onLoad(result){
+    if(typeof(result.error) !== "undefined" && result.error == true)
+    { 
+      this.onError(result)
+    }
+    else
+    {
+      this.onComplete(result)
+    }
   }
 
   onProgress(progressEvent){

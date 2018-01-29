@@ -102,10 +102,12 @@ class documents_fetcher extends Requester{
         response = r
       }
     })
+
     while(response == "")
     {
       await this.sleep(300)
     } 
+
     return response 
   }
 
