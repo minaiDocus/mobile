@@ -15,13 +15,13 @@ class XFetcher {
   initRequest(url, options){
     this.request = new XMLHttpRequest()
 
-    this.request.open(options.method, url)
-    this.request.setRequestHeader("Content-Type", options.contentType || "application/json")
+    this.request.open(this.options.method, this.url)
+    this.request.setRequestHeader("Content-Type", this.options.contentType || "application/json")
 
     if(Config.server == "staging") //if accessing staging server
       this.request.setRequestHeader("Authorization", "Basic " + base64.encode(Config.user + ":" + Config.pass))
 
-    for(var k in options.headers||{})
+    for(var k in this.options.headers||{})
       this.request.setRequestHeader(k, options.headers[k])
   }
 
@@ -39,10 +39,9 @@ class XFetcher {
   }
 
   fetch(uri, options={}, with_retry = true, callback = null, progress_callback = null){
-    const url = Config.http_host + uri
-    const method = options.method || 'GET'
-
-    this.initRequest(url, options)
+    this.url = Config.http_host + uri
+    this.options = options
+    const method = this.options.method || 'GET'
 
     if(callback == null)
       this.callback = (e) => {}
@@ -81,6 +80,7 @@ class XFetcher {
 
   send(){
     this.prepare_aborting()
+    this.initRequest()
 
     if(this.body==null)
       this.request.send()
@@ -122,11 +122,12 @@ class XFetcher {
 
   onError(e){
     this.clear_aborting()
+    this.request.abort()
 
     if(this.retry < this.request_retry)
     {
       this.retry = this.retry + 1
-      setTimeout(this.send, 2000) //resend after 2 sec
+      setTimeout(()=>{this.send()}, 2000) //resend after 2 sec
     }
     else
     {

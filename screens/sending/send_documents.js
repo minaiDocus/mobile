@@ -279,6 +279,11 @@ class SendScreen extends Component {
   }
 
   componentWillMount(){
+    //clearing cache picture
+    ImagePicker.clean().then(() => {
+      //console.log('removed all tmp images from tmp directory');
+    }).catch(e => {})
+
     UsersFetcher.wait_for(
       ['refreshCustomers()'],
       (responses)=>{
@@ -289,9 +294,7 @@ class SendScreen extends Component {
   openCamera(){
     const call = ()=>{
                         ImagePicker.openCamera({
-                          width: 300,
-                          height: 400,
-                          cropping: true
+                          cropping: false
                         })
                         .then(image => {
                           this.renderImg([image]);
@@ -322,8 +325,8 @@ class SendScreen extends Component {
     const call = ()=>{
                         ImagePicker.openCropper({
                           path: img,
-                          width: 300,
-                          height: 400
+                          width:2000,
+                          height:2000,
                         }).then(image => {
                           this.renderImg([image], index)
                         }).catch(error => {
@@ -381,13 +384,13 @@ class SendScreen extends Component {
         if(toAdd==true){ listAdd = listAdd.concat(j); }
       });
 
-      GLOB.images = GLOB.images.concat(listAdd);
-      await this.setState({dataList: GLOB.images});
+      GLOB.images = GLOB.images.concat(listAdd)
+      await this.setState({dataList: GLOB.images})
     }
   }
 
   async deleteElement(){
-    var imgSave = []; 
+    let imgSave = [] 
 
     GLOB.images.map((i)=>
     {
@@ -395,9 +398,9 @@ class SendScreen extends Component {
       {
         imgSave = imgSave.concat(i);
       }
-    });
+    })
 
-    GLOB.images = imgSave;
+    GLOB.images = imgSave
     await this.setState({dataList: GLOB.images})
   }
 
@@ -413,11 +416,11 @@ class SendScreen extends Component {
   sendList(){
     if(GLOB.images.length > 0)
     {
-      GLOB.navigation.goTo('Sending', {images: GLOB.images});
+      GLOB.navigation.goTo('Sending', {images: GLOB.images})
     }
     else
     {
-      Notice.info({title: "Attention", body: "Aucun document à envoyer!!"});
+      Notice.info({title: "Attention", body: "Aucun document à envoyer!!"})
     }
   }
 
