@@ -1,0 +1,64 @@
+PODS:
+  - Firebase/Core (4.0.0):
+    - FirebaseAnalytics (= 4.0.0)
+    - FirebaseCore (= 4.0.0)
+  - Firebase/Messaging (4.0.0):
+    - Firebase/Core
+    - FirebaseMessaging (= 2.0.0)
+  - FirebaseAnalytics (4.0.0):
+    - FirebaseCore (~> 4.0)
+    - FirebaseInstanceID (~> 2.0)
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseCore (4.0.0):
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseInstanceID (2.0.8):
+    - FirebaseCore (~> 4.0)
+  - FirebaseMessaging (2.0.0):
+    - FirebaseAnalytics (~> 4.0)
+    - FirebaseCore (~> 4.0)
+    - FirebaseInstanceID (~> 2.0)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - Protobuf (~> 3.1)
+  - GoogleToolboxForMac/Defines (2.1.3)
+  - GoogleToolboxForMac/Logger (2.1.3):
+    - GoogleToolboxForMac/Defines (= 2.1.3)
+  - GoogleToolboxForMac/NSData+zlib (2.1.3):
+    - GoogleToolboxForMac/Defines (= 2.1.3)
+  - Protobuf (3.5.0)
+  - QBImagePickerController (3.4.0)
+  - react-native-fetch-blob (0.10.6):
+    - React/Core
+  - react-native-pdf (2.0.7)
+  - React/Core (0.11.0)
+  - RSKImageCropper (2.0.0)
+
+DEPENDENCIES:
+  - Firebase/Messaging (= 4.0.0)
+  - QBImagePickerController
+  - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
+  - react-native-pdf (from `../node_modules/react-native-pdf`)
+  - RSKImageCropper
+
+EXTERNAL SOURCES:
+  react-native-fetch-blob:
+    :path: ../node_modules/react-native-fetch-blob
+  react-native-pdf:
+    :path: ../node_modules/react-native-pdf
+
+SPEC CHECKSUMS:
+  Firebase: 284eea779b73fdff309791817da7c68bff8dd572
+  FirebaseAnalytics: 6f08e746f7d66f5452931bc2e822b5df9c66b64a
+  FirebaseCore: 85ad466044c2f013cdb167f85d426d15b128114a
+  FirebaseInstanceID: 81df5805a08001e69138664bdd02c6719a9ac80f
+  FirebaseMessaging: 227406c05b0dc9290702d2e9f18ab5528f0c2cf2
+  GoogleToolboxForMac: 2501e2ad72a52eb3dfe7bd9aee7dad11b858bd20
+  Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
+  React: ab1a2e21deb34965c38328d5ec40cc7d12c6050a
+  react-native-fetch-blob: 2bef9be702de8726f4d7bf58d2345579aaaee60d
+  react-native-pdf: 9cb06261303701d35177139bab5bb7ff58f4ae2f
+  RSKImageCropper: d9a1acbc0600bf8decc8f0d21895872c99a9e4cf
+
+PODFILE CHECKSUM: 2d0c9506862f6a3caaf5807b274e1d0dc4ce169a
+
+COCOAPODS: 1.3.1
