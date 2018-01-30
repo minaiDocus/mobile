@@ -332,12 +332,12 @@ class HomeScreen extends Component {
   static navigationOptions = {  headerTitle:'Accueil', 
                                 headerLeft: <MenuLoader />,
                                 headerRight: <View style={{flex:1, flexDirection:'row'}}>
-                                              <ImageButton  source={{uri:"infos"}} 
-                                              Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:30}}
-                                              Istyle={{width:20, height:20}}
-                                              onPress={()=>EventRegister.emit('clickInfosApp', true)} />
-                                              <UINotification />
-                                              <ProgressUpload />
+                                                <UINotification />
+                                                <ImageButton  source={{uri:"infos"}} 
+                                                Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:30}}
+                                                Istyle={{width:20, height:20}}
+                                                onPress={()=>EventRegister.emit('clickInfosApp', true)} />
+                                                <ProgressUpload />
                                              </View>
                               }
 
@@ -397,7 +397,6 @@ class HomeScreen extends Component {
   }
 
   toggleInfos(){
-    console.error("test")
     this.setState({showInfos: !this.state.showInfos})
   }
 

@@ -64,9 +64,8 @@ class BoxZoom extends Component{
   }
 
   cropElement(){
-    const path = this.props.datas[this.currIndex].path.toString();
     this.hideModal()
-    setTimeout(()=>{this.props.cropElement(path, this.currIndex)}, 1000)
+    setTimeout(()=>{this.props.cropElement(this.currIndex)}, 1000)
   }
 
   generateStyles(){
@@ -188,7 +187,7 @@ class ImgBox extends Component{
   }
 
   crop(){
-    this.props.cropElement(this.element.path.toString(), this.props.index)
+    this.props.cropElement(this.props.index)
     this.toggleOpt() 
   }
 
@@ -321,12 +320,13 @@ class SendScreen extends Component {
     actionLocker(call)
   }
 
-  openCrop(img, index){
+  openCrop(index){
     const call = ()=>{
+                        let _img = GLOB.images[index] 
                         ImagePicker.openCropper({
-                          path: img,
-                          width:2000,
-                          height:2000,
+                          path: _img.path.toString(),
+                          width: 2000,
+                          height: 2000,
                         }).then(image => {
                           this.renderImg([image], index)
                         }).catch(error => {
@@ -459,7 +459,7 @@ class SendScreen extends Component {
                                 <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.images.length} : Document(s)</Text>
                                 <BoxList datas={this.state.dataList}
                                          elementWidth={130} 
-                                         renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(path, index)=>this.openCrop(path, index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
+                                         renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
                             </ScrollView>
       }
       else
@@ -476,7 +476,7 @@ class SendScreen extends Component {
                 navigation={GLOB.navigation}>
           <Header takePhoto={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
           {this.state.zoomActive && <BoxZoom  datas={this.state.dataList} 
-                                              cropElement={(path, index)=>this.openCrop(path, index)} 
+                                              cropElement={(index)=>this.openCrop(index)} 
                                               deleteElement={this.deleteElement} 
                                               hide={this.toggleZoom} />}
           { embedContent }
