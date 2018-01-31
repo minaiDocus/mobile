@@ -7,10 +7,10 @@ import ScrollableTabView from 'react-native-scrollable-tab-view'
 
 import Screen from '../../../components/screen'
 import AnimatedBox from '../../../components/animatedBox'
-import {XImage, XTextInput} from '../../../components/XComponents'
+import {XImage} from '../../../components/XComponents'
 import {LineList} from '../../../components/lists'
 import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../../components/buttons'
-import SelectInput from '../../../components/select'
+import ModalForm from '../../../components/modalForm'
 
 import AccountSharing from "../../../requests/account_sharing"
 
@@ -19,59 +19,10 @@ let GLOB = {
               dataForm: {email:'', company: '', first_name: '', last_name: ''}
             }
 
-class Inputs extends Component{
-  constructor(props){
-    super(props);
-    this.state = {value: eval(`GLOB.dataForm.${this.props.name}`)}
-
-    this.generateStyles()
-  }
-
-  changeValue(value){
-    this.setState({value: value});
-    eval(`GLOB.dataForm.${this.props.name} = "${value}"`)
-  }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-        container: {
-          flex:1,
-          flexDirection:'row',
-          alignItems:'center',
-          marginVertical:7,
-          marginHorizontal:8
-        },
-        input:{
-          flex:1.3
-        },
-        label:{
-          flex:1,
-          fontSize:14,
-          color:'#463119'
-        }
-      });
-  }
-
-  render(){
-    const stylePlus = this.props.style || {};
-    const labelStyle = this.props.labelStyle || {};
-    const inputStyle = this.props.inputStyle || {}; 
-
-    const type = this.props.type || 'input';
-    return  <View style={[this.styles.container, stylePlus]}>
-              <Text style={[this.styles.label, labelStyle]}>{this.props.label}</Text>
-              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[this.styles.input, inputStyle]} />}
-              {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
-            </View>
-  }
-}
-
 class ModalSharing extends Component{
   constructor(props){
     super(props)
     this.type = this.props.type
-
-    this.generateStyles()
   }
 
   validateProcess(){
@@ -128,99 +79,33 @@ class ModalSharing extends Component{
 
   formAccess(){
     GLOB.dataForm = {code_or_email: ''}
-    return <ScrollView style={{flex:1, backgroundColor:'#fff'}}>
-              <Inputs label='* Code ou email du dossier :' name={'code_or_email'}/>
-           </ScrollView>
+    return [
+              {label: "* Code ou email du dossier :", name: "GLOB.dataForm.code_or_email"}
+           ]
   }
 
   formSharing(){
     GLOB.dataForm = {email:'', company: '', first_name: '', last_name: ''}
-    return <ScrollView style={{flex:1, backgroundColor:'#fff'}}>
-              <Inputs label='* Couriel :' name={'email'} />
-              <Inputs label='* Nom de la société :' name={'company'}/>
-              <Inputs label='Prénom :' name={'first_name'}/>
-              <Inputs label='Nom :' name={'last_name'}/>
-           </ScrollView>
-  }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-     container:{
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'rgba(0,0,0,0.7)',
-        paddingVertical:20
-      },
-      box:{
-        flex:0,
-        backgroundColor:'#EBEBEB',
-        width:'90%',
-        borderRadius:10,
-        paddingVertical:8
-      },
-      labels:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      inputs:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      head:{
-        flex:0,
-        height:35,
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderBottomWidth:1,
-      },
-      foot:{
-        flex:0,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderTopWidth:1,
-        paddingVertical:7
-      },
-      buttons:{
-        flex:1,
-      }
-    })
+    return [
+              {label: "* Couriel :", name: "GLOB.dataForm.email", keyboardType: "email-address"},
+              {label: "* Nom de la société :", name: "GLOB.dataForm.company"},
+              {label: "Prénom :", name: "GLOB.dataForm.first_name"},
+              {label: "Nom :", name: "GLOB.dataForm.last_name"}
+           ]
   }
 
   render(){
     const boxTitle = this.type == "sharing"? "Partage avec un compte" : "Demande accès dossier"
-    const form = ()=>{ 
-        if(this.type == "sharing"){return this.formSharing()}
-        else{return this.formAccess() }
-    }
 
-    return  <Modal transparent={true}
-                   animationType="slide" 
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{}}
-            >
-              <View style={this.styles.container} >
-                <View style={this.styles.box}>
-                  <View style={this.styles.head}>
-                    <Text style={{flex:1, textAlign:'center',fontSize:24}}>{boxTitle}</Text>
-                  </View>
-                  {form()}
-                  <View style={this.styles.foot}>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Retour' onPress={()=>this.props.dismiss()} /></View>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Valider' onPress={()=>this.validateProcess()} /></View>
-                  </View>
-                </View>
-              </View>
-          </Modal>
+    return  <ModalForm  title={boxTitle}
+                        getValue={(name)=>{return eval(`${name}`)}}
+                        setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                        inputs={(this.type == "sharing")? this.formSharing() : this.formAccess()}
+                        buttons={[
+                          {title: "Retour", action: ()=>this.props.dismiss()},
+                          {title: "Valider", action: ()=>this.validateProcess()},
+                        ]}
+            />
   }
 }
 

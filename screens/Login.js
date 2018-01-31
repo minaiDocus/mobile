@@ -273,6 +273,7 @@ class LoginScreen extends Component {
                               autoCorrect={false}
                               PStyle={this.styles.inputs} 
                               placeholder="Identifiant(E-mail)"
+                              keyboardType="email-address"
                               next={{action: this.actionPassword}} 
                               onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
                 </View>

@@ -7,10 +7,10 @@ import { EventRegister } from 'react-native-event-listeners'
 import Screen from '../../components/screen'
 import AnimatedBox from '../../components/animatedBox'
 import Navigator from '../../components/navigator'
-import {XImage, XTextInput} from '../../components/XComponents'
+import {XImage} from '../../components/XComponents'
 import {LineList} from '../../components/lists'
 import Pagination from '../../components/pagination'
-import SelectInput from '../../components/select'
+import ModalForm from '../../components/modalForm'
 import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
 
 import User from '../../models/User'
@@ -23,60 +23,27 @@ let GLOB =  { navigation:{},
               dataForm:{}
             }
 
-class Inputs extends Component{
-  constructor(props){
-    super(props)
-    this.dataForm = this.props.dataForm || "GLOB.dataFilter"
-    this.state = {value: eval(`${this.dataForm}.${this.props.name}`)}
-
-    this.generateStyles()
-  }
-
-  changeValue(value){
-    this.setState({value: value});
-    eval(`${this.dataForm}.${this.props.name} = "${value}"`)
-  }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-        container: {
-          flex:1,
-          flexDirection:'row',
-          alignItems:'center',
-          marginVertical:7,
-          marginHorizontal:8
-        },
-        input:{
-          flex:1.3
-        },
-        label:{
-          flex:1,
-          fontSize:14,
-          color:'#463119'
-        }
-      });
-  }
-
-  render(){
-    const stylePlus = this.props.style || {};
-    const labelStyle = this.props.labelStyle || {};
-    const inputStyle = this.props.inputStyle || {}; 
-    const type = this.props.type || 'input';
-    return  <View style={[this.styles.container, stylePlus]}>
-              <Text style={[this.styles.label, labelStyle]}>{this.props.label}</Text>
-              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[this.styles.input, inputStyle]} />}
-              {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
-            </View>
-  }
-}
-
-class ModalForm extends Component{
+class ContactForm extends Component{
   constructor(props){
     super(props)
 
     this.type = (typeof(this.props.data.id_idocus) !== "undefined" && this.props.data.id_idocus > 0)? 'edit' : 'add'
+    this.input_edit = true
 
-    this.generateStyles()
+    let datas = {email:'', company: '', first_name: '', last_name: ''}
+    if(this.type == "edit")
+    {
+      this.input_edit = false
+      datas = {
+                id_idocus: this.props.data.id_idocus,
+                email:this.props.data.email, 
+                company: this.props.data.company, 
+                first_name: this.props.data.first_name, 
+                last_name: this.props.data.last_name
+              }
+    }
+
+    GLOB.dataForm = datas
   }
 
   validateProcess(){
@@ -126,206 +93,21 @@ class ModalForm extends Component{
     }
   }
 
-  formContact(){
-    let edit = true
-    let datas = {email:'', company: '', first_name: '', last_name: ''}
-    if(typeof(this.props.data.id_idocus) !== "undefined" && this.props.data.id_idocus > 0)
-    {
-      edit = false
-      datas = {
-                id_idocus: this.props.data.id_idocus,
-                email:this.props.data.email, 
-                company: this.props.data.company, 
-                first_name: this.props.data.first_name, 
-                last_name: this.props.data.last_name
-              }
-    }
-
-    GLOB.dataForm = datas
-    return <ScrollView style={{flex:1, backgroundColor:'#fff'}}>
-              <Inputs label='* Couriel :' name={'email'} dataForm="GLOB.dataForm" editable={edit}/>
-              <Inputs label='* Nom de la société :' name={'company'} dataForm="GLOB.dataForm"/>
-              <Inputs label='Prénom :' name={'first_name'} dataForm="GLOB.dataForm"/>
-              <Inputs label='Nom :' name={'last_name'} dataForm="GLOB.dataForm"/>
-           </ScrollView>
-  }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-     container:{
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'rgba(0,0,0,0.7)',
-        paddingVertical:20
-      },
-      box:{
-        flex:0,
-        backgroundColor:'#EBEBEB',
-        width:'90%',
-        borderRadius:10,
-        paddingVertical:8
-      },
-      labels:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      inputs:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      head:{
-        flex:0,
-        height:35,
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderBottomWidth:1,
-      },
-      foot:{
-        flex:0,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderTopWidth:1,
-        paddingVertical:7
-      },
-      buttons:{
-        flex:1,
-      }
-    });
-  }
-
   render(){
-    return  <Modal transparent={true}
-                   animationType="slide" 
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{}}
-            >
-              <View style={this.styles.container} >
-                <View style={this.styles.box}>
-                  <View style={this.styles.head}>
-                    <Text style={{flex:1, textAlign:'center',fontSize:24}}>Création contact</Text>
-                  </View>
-                  {this.formContact()}
-                  <View style={this.styles.foot}>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Retour' onPress={()=>this.props.dismiss()} /></View>
-                    <View style={{flex:1, paddingHorizontal:10}}><SimpleButton title='Valider' onPress={()=>this.validateProcess()} /></View>
-                  </View>
-                </View>
-              </View>
-          </Modal>
-  }
-}
-
-class BoxFilter extends Component{
-  constructor(props){
-    super(props)
-
-    this.generateStyles()
-  }
-
-  dismiss(type){
-    this.props.dismiss(type);
-  }
-
-  filterProcess(type){
-    if(type=="reInit")
-    {
-      GLOB.dataFilter = {email:'', company:'', first_name: '', last_name:''}
-    }
-    this.dismiss(true);
-  }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-     container:{
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'rgba(0,0,0,0.7)',
-        paddingVertical:20
-      },
-      box:{
-        flex:0,
-        backgroundColor:'#EBEBEB',
-        width:'90%',
-        borderRadius:10,
-        paddingVertical:8
-      },
-      labels:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      inputs:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      head:{
-        flex:0,
-        height:35,
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderBottomWidth:1,
-      },
-      body:{
-        flex:1,
-        backgroundColor:'#fff',
-      },
-      foot:{
-        flex:0,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderTopWidth:1,
-        paddingVertical:7
-      },
-      buttons:{
-        flex:1,
-      }
-    });
-  }
-
-  render(){
-    return  <Modal transparent={true}
-                   animationType="slide" 
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{}}
-            >
-              <View style={this.styles.container} >
-                <View style={this.styles.box}>
-                  <View style={this.styles.head}>
-                    <Text style={{flex:1, textAlign:'center',fontSize:24}}>Filtres</Text>
-                  </View>
-                  <ScrollView style={this.styles.body}>
-                    <Inputs label='Email :' name={'email'} />
-                    <Inputs label='Société :' name={'company'}/>
-                    <Inputs label='Prénom :' name={'first_name'}/>
-                    <Inputs label='Nom :' name={'last_name'}/>
-                  </ScrollView>
-                  <View style={this.styles.foot}>
-                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
-                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
-                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
-                  </View>
-                </View>
-              </View>
-          </Modal>
+    return  <ModalForm  title="Ajout contact"
+                        getValue={(name)=>{return eval(`${name}`)}}
+                        setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                        inputs={[
+                          {label:'* Couriel :', name: 'GLOB.dataForm.email', keyboardType: 'email-address', editable: this.input_edit},
+                          {label:'* Nom de la société :', name: 'GLOB.dataForm.company'},
+                          {label:'Prénom :', name: 'GLOB.dataForm.first_name'},
+                          {label:'Nom :', name: 'GLOB.dataForm.last_name'}
+                        ]}
+                        buttons={[
+                          {title: "Retour", action: ()=>this.props.dismiss()},
+                          {title: "Valider", action: ()=>this.validateProcess()},
+                        ]}
+            />
   }
 }
 
@@ -333,17 +115,17 @@ class Header extends Component{
   constructor(props){
     super(props)
 
-    this.state =  {filter: false, dataModal: {}}
+    this.state =  {openFilter: false, openForm: false, dataForm: {}}
 
     this.closeFilter = this.closeFilter.bind(this)
-    this.closeModal = this.closeModal.bind(this)
+    this.closeForm = this.closeForm.bind(this)
 
     this.generateStyles()
   }
   
   componentWillMount(){
     this.externalOpenModal = EventRegister.on('externalOpenModal', (data) => {
-        this.openModal(data)
+        this.openForm(data)
     })
   }
 
@@ -352,23 +134,29 @@ class Header extends Component{
   }
 
   openFilter(){
-    this.setState({filter: true})
+    this.setState({openFilter: true})
   }
 
-  closeFilter(withFilter){
-    this.setState({filter: false});
-    if(withFilter == true)
+  closeFilter(withFilter = "none"){
+    if(withFilter == "reInit")
+    {
+      GLOB.dataFilter = {email:'', company:'', first_name: '', last_name:''}
+    }
+
+    if(withFilter != "none")
     {
       this.props.onFilter()
     }
+
+    this.setState({openFilter: false})
   }
 
-  openModal(data={}){
-    this.setState({openModal: true, dataModal: data})
+  openForm(data={}){
+    this.setState({openForm: true, dataForm: data})
   }
 
-  closeModal(){
-    this.setState({openModal: false})
+  closeForm(){
+    this.setState({openForm: false})
   }
 
   generateStyles(){
@@ -385,9 +173,25 @@ class Header extends Component{
 
   render(){ 
     return  <View style={this.styles.container}>
-              {this.state.openModal && <ModalForm data={this.state.dataModal} dismiss={this.closeModal} />}
-              {this.state.filter && <BoxFilter dismiss={this.closeFilter} />}
-              <BoxButton title="Ajout" onPress={()=>{this.openModal()}} source={{uri:"add_contact"}} rayon={60}/>
+              { this.state.openForm && <ContactForm data={this.state.dataForm} dismiss={this.closeForm} />}
+              { this.state.openFilter && 
+                  <ModalForm  title="Filtre"
+                              getValue={(name)=>{return eval(`${name}`)}}
+                              setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                              inputs={[
+                                {label:'Email :', name: 'GLOB.dataFilter.email'},
+                                {label:'Société :', name: 'GLOB.dataFilter.company'},
+                                {label:'Prénom :', name: 'GLOB.dataFilter.first_name'},
+                                {label:'Nom :', name: 'GLOB.dataFilter.last_name'}
+                              ]}
+                              buttons={[
+                                {title: "Retour", action: ()=>this.closeFilter("none")},
+                                {title: "Filtrer", action: ()=>this.closeFilter("filter")},
+                                {title: "Annuler filtre", action: ()=>this.closeFilter("reInit")}, 
+                              ]}
+                  />
+              }
+              <BoxButton title="Ajout" onPress={()=>{this.openForm()}} source={{uri:"add_contact"}} rayon={60}/>
               <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
             </View>
   }

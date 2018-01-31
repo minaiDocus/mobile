@@ -6,13 +6,12 @@ import { EventRegister } from 'react-native-event-listeners'
 
 import Screen from '../../components/screen'
 import AnimatedBox from '../../components/animatedBox'
-import {XImage, XTextInput} from '../../components/XComponents'
+import {XImage} from '../../components/XComponents'
 import Navigator from '../../components/navigator'
 import {LineList} from '../../components/lists'
 import Pagination from '../../components/pagination'
-import SelectInput from '../../components/select'
-import DatePicker from '../../components/datePicker'
-import {SimpleButton, BoxButton, LinkButton, ImageButton} from '../../components/buttons'
+import ModalForm from '../../components/modalForm'
+import {BoxButton, LinkButton, ImageButton} from '../../components/buttons'
 
 import PaperProcess from "../../requests/paper_process"
 
@@ -34,167 +33,6 @@ function getType(value=""){
   return response
 }
 
-class Inputs extends Component{
-  constructor(props){
-    super(props);
-    this.state = {value: eval(`GLOB.dataFilter.${this.props.name}`)}
-
-    this.generateStyles()
-  }
-
-  changeValue(value){
-    this.setState({value: value});
-    eval(`GLOB.dataFilter.${this.props.name} = "${value}"`)
-  }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-      container: {
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        marginVertical:7,
-        marginHorizontal:8
-      },
-      input:{
-        flex:1.3
-      },
-      label:{
-        flex:1,
-        fontSize:14,
-        color:'#463119'
-      }
-    });
-  }
-
-  render(){
-    const stylePlus = this.props.style || {};
-    const labelStyle = this.props.labelStyle || {};
-    const inputStyle = this.props.inputStyle || {}; 
-
-    const type = this.props.type || 'input';
-    return  <View style={[this.styles.container, stylePlus]}>
-              <Text style={[this.styles.label, labelStyle]}>{this.props.label}</Text>
-              {type == 'input' && <XTextInput {...this.props} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[this.styles.input, inputStyle]} />}
-              {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
-              {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1.3}} />}
-            </View>
-  }
-}
-
-class BoxFilter extends Component{
-  constructor(props){
-    super(props)
-    this.generateStyles()
-  }
-
-  dismiss(type){
-    this.props.dismiss(type)
-  }
-
-  filterProcess(type){
-    if(type=="reInit")
-    {
-      GLOB.dataFilter = { created_at_start:'', 
-                          created_at_end:'', 
-                          type:'',
-                          customer_code:'',
-                          customer_company:'',
-                          tracking_number:'',
-                          pack_name:''
-                        }
-    }
-    this.dismiss(true);
-  }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-     container:{
-        flex:1,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'rgba(0,0,0,0.7)',
-        paddingVertical:20
-      },
-      box:{
-        flex:0,
-        backgroundColor:'#EBEBEB',
-        width:'90%',
-        borderRadius:10,
-        paddingVertical:8
-      },
-      labels:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      inputs:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      head:{
-        flex:0,
-        height:35,
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderBottomWidth:1,
-      },
-      body:{
-        flex:1,
-        backgroundColor:'#fff',
-      },
-      foot:{
-        flex:0,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderTopWidth:1,
-        paddingVertical:7
-      },
-      buttons:{
-        flex:1,
-      }
-    });
-  }
-
-  render(){
-    return  <Modal transparent={true}
-                   animationType="slide" 
-                   visible={this.props.visible}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{}}
-            >
-              <View style={this.styles.container} >
-                <View style={this.styles.box}>
-                  <View style={this.styles.head}>
-                    <Text style={{flex:1, textAlign:'center',fontSize:24}}>Filtres</Text>
-                  </View>
-                  <ScrollView style={this.styles.body}>
-                    <Inputs label='Date de début :' name={'created_at_start'} type='date'/>
-                    <Inputs label='Date de fin :' name={'created_at_end'} type='date' />
-                    <Inputs label='Type :' name={'type'} type='select' dataOptions={GLOB.types}  />
-                    <Inputs label='Code client :' name={'customer_code'}/>
-                    <Inputs label='Nom de la société :' name={'customer_company'}/>
-                    <Inputs label='N° de suivi :' name={'tracking_number'} keyboardType='numeric' />
-                    <Inputs label='Nom du lot :' name={'pack_name'}/>
-                  </ScrollView>
-                  <View style={this.styles.foot}>
-                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Retour' onPress={()=>this.dismiss(false)} /></View>
-                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Filtrer' onPress={()=>this.filterProcess("filter")} /></View>
-                    <View style={{flex:1, paddingHorizontal:5}}><SimpleButton title='Annuler filtre' onPress={()=>this.filterProcess("reInit")} /></View>
-                  </View>
-                </View>
-              </View>
-          </Modal>
-  }
-}
-
 class Header extends Component{
   constructor(props){
     super(props)
@@ -209,12 +47,25 @@ class Header extends Component{
     this.setState({filter: true})
   }
 
-  closeFilter(withFilter){
-    this.setState({filter: false});
-    if(withFilter == true)
+  closeFilter(withFilter="none"){
+    if(withFilter == "reInit")
+    {
+      GLOB.dataFilter = { created_at_start:'', 
+                          created_at_end:'', 
+                          type:'',
+                          customer_code:'',
+                          customer_company:'',
+                          tracking_number:'',
+                          pack_name:''
+                        }
+    }
+
+    if(withFilter != "none")
     {
       this.props.onFilter()
     }
+
+    this.setState({filter: false})
   }
 
   generateStyles(){
@@ -254,7 +105,26 @@ class Header extends Component{
 
   render(){
     return  <View style={this.styles.container}>
-              <BoxFilter visible={this.state.filter} dismiss={this.closeFilter}/>
+              { this.state.filter && 
+                <ModalForm  title="Filtre"
+                            getValue={(name)=>{return eval(`${name}`)}}
+                            setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                            inputs={[
+                              {label:'Date de début :', name: 'GLOB.dataFilter.created_at_start', type:'date'},
+                              {label:'Date de fin :', name: 'GLOB.dataFilter.created_at_end', type:'date'},
+                              {label:'Type :', name: 'GLOB.dataFilter.type', type:'select', dataOptions: GLOB.types},
+                              {label:'Code client :', name: 'GLOB.dataFilter.customer_code'},
+                              {label:'Nom de la société :', name: 'GLOB.dataFilter.customer_company'},
+                              {label:'N° de suivi :', name: 'GLOB.dataFilter.tracking_number', keyboardType:'numeric'},
+                              {label:'Nom du lot :', name: 'GLOB.dataFilter.pack_name'},
+                            ]}
+                            buttons={[
+                              {title: "Retour", action: ()=>this.closeFilter("none")},
+                              {title: "Filtrer", action: ()=>this.closeFilter("filter")},
+                              {title: "Annuler filtre", action: ()=>this.closeFilter("reInit")}, 
+                            ]}
+                />
+              }
               <View style={this.styles.left}>
                 <XImage source={{uri:"ico_suiv"}} style={this.styles.image} />
                 <Text style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</Text>
