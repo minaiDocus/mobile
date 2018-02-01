@@ -1,7 +1,7 @@
 const Config = {
   keydb: ###db key###,
-  version: "1.11",
-  platform: "android",
+  version: "##APP VERSION",
+  platform: "##APP PLATFORM##",
 
   #### SERVER ACCESS #####
   http_host: "http://localhost:3000/",  
