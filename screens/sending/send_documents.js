@@ -6,6 +6,7 @@ import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
 
+import {Cropper, CropperView} from '../../components/cropper'
 import Screen from '../../components/screen'
 import Navigator from '../../components/navigator'
 import {XImage} from '../../components/XComponents'
@@ -323,15 +324,12 @@ class SendScreen extends Component {
   openCrop(index){
     const call = ()=>{
                         let _img = GLOB.images[index]
-                        ImagePicker.openCropper({
-                          path: _img.path.toString(),
-                          width: 2000,
-                          height: 2000,
-                        }).then(image => {
-                          this.renderImg([image], index)
-                        }).catch(error => {
-                          this.renderError(error)
-                        });
+                        Cropper.openCrop(
+                          {img: _img}, 
+                          (image)=>{
+                            this.renderImg([image], index)
+                          }
+                        ) 
                       }
     actionLocker(call)
   }
@@ -485,6 +483,7 @@ class SendScreen extends Component {
           <View style={styles.minicontainer}>
             <SimpleButton Pstyle={this.styles.button} onPress={()=>this.sendList()} title="Suivant >>" />
           </View>
+          <CropperView />
         </Screen>
       );
     }

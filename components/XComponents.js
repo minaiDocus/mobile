@@ -39,6 +39,8 @@ function require_images(name){
     img_crop:require('../images/img_crop.png'),
     notification:require('../images/notification.png'),
     notification_green:require('../images/notification_green.png'),
+    back:require('../images/back.png'),
+    remake:require('../images/remake.png'),
     default: require("../images/loader.gif"),
   }
   const loaded_img = eval('images.'+name) || images.default
