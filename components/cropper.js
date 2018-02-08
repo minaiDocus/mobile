@@ -208,7 +208,7 @@ export class CropperView extends Component{
   }
 
   calculateWorkingImage(){
-    if(this.original_image.width >= this.original_image.height)
+    if(Platform.OS == "ios" || this.original_image.width >= this.original_image.height)
     { 
       this.working_image.width = this.contentSize.width
       this.working_image.height = (this.original_image.height / this.original_image.width) * this.working_image.width
@@ -477,7 +477,7 @@ export class CropperView extends Component{
     let cropWidth = (this.state.widthCrop * this.original_image.width) / this.working_image.width 
     let cropHeight = (this.state.heightCrop * this.original_image.height) / this.working_image.height 
 
-    if(this.original_image.width < this.original_image.height)
+    if(this.original_image.width < this.original_image.height && Platform.OS != 'ios')
     {
       let {x, y, w, h} = this.rotatePlane(cropX, cropY, cropWidth, cropHeight)
       cropX = x
@@ -505,7 +505,6 @@ export class CropperView extends Component{
   }
 
   validateCropping(){
-    if(Platform.OS == "ios") ImageStore.removeImageForTag(this.state.url_output) //deleting unused image
     EventRegister.emit("validateCrop", this.final_image)
     this.closeCropper()
   }
