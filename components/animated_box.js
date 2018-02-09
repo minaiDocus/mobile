@@ -2,7 +2,7 @@ import Config from '../Config'
 import React, { Component } from 'react'
 import {View, Animated} from 'react-native'
 
-class AnimatedBox extends Component{
+export class AnimatedBox extends Component{
   constructor(props){
     super(props)
 
@@ -123,5 +123,3 @@ class AnimatedBox extends Component{
             </Animated.View>
   }
 }
-
-export default AnimatedBox

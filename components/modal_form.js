@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import {View, Text, Modal, StyleSheet, ScrollView} from 'react-native'
-import {SimpleButton} from './buttons'
-import {XTextInput} from './XComponents'
-import SelectInput from './select'
-import DatePicker from './datePicker'
+
+import {SimpleButton, XTextInput, SelectInput, DatePicker} from './index'
 
 class Inputs extends Component{
   constructor(props){
@@ -60,7 +58,7 @@ class Inputs extends Component{
   }
 }
 
-class ModalForm extends Component{
+export class ModalForm extends Component{
   constructor(props){
     super(props)
     this.generateStyles()
@@ -177,5 +175,3 @@ class ModalForm extends Component{
           </Modal>
   }
 }
-
-export default ModalForm

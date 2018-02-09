@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DatePic from 'react-native-datepicker'
 
-class DatePicker extends Component {
+export class DatePicker extends Component {
   constructor(props){
     super(props)
     this.state = {date: this.props.value}
@@ -49,5 +49,3 @@ class DatePicker extends Component {
     )
   }
 }
-
-export default DatePicker

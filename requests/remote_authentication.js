@@ -1,5 +1,5 @@
-import Requester from './activeRequest'
-import User from '../models/User'
+import {Requester} from './index'
+import {User} from '../models'
 
 class remote_auhtentication extends Requester{
   async ping_server(version, platform, callback=()=>{}){
@@ -43,4 +43,4 @@ class remote_auhtentication extends Requester{
   }
 }
 
-export default new remote_auhtentication()
+export const RemoteAuthentication = new remote_auhtentication()

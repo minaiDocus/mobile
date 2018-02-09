@@ -1,6 +1,6 @@
 import { NavigationActions} from 'react-navigation'
 
-class Navigator {
+export class Navigator {
 
   constructor(navigation){
     this.navigation = navigation
@@ -76,5 +76,3 @@ class Navigator {
     }
   }
 }
-
-export default Navigator;

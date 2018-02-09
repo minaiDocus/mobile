@@ -1,4 +1,4 @@
-import Requester from './activeRequest'
+import {Requester} from './index'
 
 class file_uploader extends Requester{
   async refreshFormParams(){
@@ -22,4 +22,4 @@ class file_uploader extends Requester{
   }
 }
 
-export default new file_uploader()
+export const FileUploader = new file_uploader()

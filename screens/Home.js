@@ -5,17 +5,11 @@ import { EventRegister } from 'react-native-event-listeners'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import Screen from '../components/screen'
-import {XImage} from '../components/XComponents'
-import Navigator from '../components/navigator'
-import {BoxButton, ImageButton, LinkButton} from '../components/buttons'
-import Menu from '../components/menu'
-import {ProgressUpload} from '../components/uploader'
-import FCM, {UINotification} from '../components/pushNotifications.js'
+import {Screen,Menu,XImage,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM} from '../components'
 
-import User from '../models/User'
+import {User} from '../models'
 
-import DocumentsFetcher from '../requests/documents_fetcher'
+import {DocumentsFetcher} from '../requests'
 
 let GLOB = { navigation:{}, datas: []}
 
@@ -343,6 +337,7 @@ class HomeScreen extends Component {
 
   constructor(props){
     super(props)
+
     this.master = User.getMaster()
     GLOB.navigation = new Navigator(this.props.navigation)
     GLOB.datas = []

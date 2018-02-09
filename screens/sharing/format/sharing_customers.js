@@ -5,14 +5,9 @@ import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-nati
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import Screen from '../../../components/screen'
-import AnimatedBox from '../../../components/animatedBox'
-import {XImage} from '../../../components/XComponents'
-import {LineList} from '../../../components/lists'
-import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../../components/buttons'
-import ModalForm from '../../../components/modalForm'
+import {Screen,AnimatedBox,XImage,LineList,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm} from '../../../components'
 
-import AccountSharing from "../../../requests/account_sharing"
+import {AccountSharing} from "../../../requests"
 
 let GLOB = {
               navigation:{},

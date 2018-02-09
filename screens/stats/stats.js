@@ -4,16 +4,9 @@ import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import Screen from '../../components/screen'
-import AnimatedBox from '../../components/animatedBox'
-import {XImage} from '../../components/XComponents'
-import Navigator from '../../components/navigator'
-import {LineList} from '../../components/lists'
-import Pagination from '../../components/pagination'
-import ModalForm from '../../components/modalForm'
-import {BoxButton, LinkButton, ImageButton} from '../../components/buttons'
+import {Screen,AnimatedBox,XImage,Navigator,LineList,Pagination,ModalForm,BoxButton,LinkButton,ImageButton} from '../../components'
 
-import PaperProcess from "../../requests/paper_process"
+import {PaperProcess} from "../../requests"
 
 let GLOB = {  navigation:{},
               datas:[],

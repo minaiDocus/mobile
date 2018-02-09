@@ -1,6 +1,6 @@
 import Config from '../Config'
 
-class RealmControl {
+class realm_control {
 
   static registerTempSchema(newSchema){
     let _tmp = []
@@ -57,7 +57,7 @@ class RealmControl {
       let properties = schema
       if(properties==null)
       {
-        properties = RealmControl.extract_structure_json(datas[0])
+        properties = realm_control.extract_structure_json(datas[0])
       }
 
       if(properties != null)
@@ -69,7 +69,7 @@ class RealmControl {
 
         const Realm_module = require("realm")
 
-        RealmControl.registerTempSchema({name: realm_name, schema: temp_schema}) 
+        realm_control.registerTempSchema({name: realm_name, schema: temp_schema}) 
 
         const realm = new Realm_module({path: realm_name+'.realm', schema: [temp_schema], inMemory: false})
         realm.write(()=>{
@@ -141,4 +141,4 @@ class RealmControl {
   }
 }
 
-export default new RealmControl()
+export const RealmControl = new realm_control()

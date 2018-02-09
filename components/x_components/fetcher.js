@@ -1,8 +1,8 @@
-import Config from '../Config'
+import Config from '../../Config'
 import base64 from 'base-64'
-import User from '../models/User'
+import {User} from '../../models'
 
-class XFetcher {
+export class XFetcher {
   request_retry = 2
   retry = 0
   responseFetching = ""
@@ -136,5 +136,3 @@ class XFetcher {
     }
   }
 }
-
-export default XFetcher

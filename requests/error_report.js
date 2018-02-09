@@ -1,9 +1,9 @@
 import Config from '../Config'
 import {Platform} from 'react-native'
 
-import XFetcher from '../components/XFetcher'
+import {XFetcher} from '../components'
 
-import User from '../models/User'
+import {User} from '../models'
 
 class error_report {
   sendErrorReport(title="", error="", report={}){
@@ -21,4 +21,4 @@ class error_report {
   }
 }
 
-export default new error_report()
+export const ErrorReport = new error_report()

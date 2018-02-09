@@ -1,4 +1,4 @@
-import Requester from './activeRequest'
+import {Requester} from './index'
 import Config from '../Config'
 
 class firebase_notification extends Requester{
@@ -68,4 +68,4 @@ class firebase_notification extends Requester{
   }
 }
 
-export default new firebase_notification()
+export const FireBaseNotification = new firebase_notification()

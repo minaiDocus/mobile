@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native'
-import {SimpleButton} from './buttons'
+import {SimpleButton} from './index'
 
-class Pagination extends Component{
+export class Pagination extends Component{
 
   constructor(props){
     super(props)
@@ -99,5 +99,3 @@ class Pagination extends Component{
   }
 
 }
-
-export default Pagination

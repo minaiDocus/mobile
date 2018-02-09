@@ -1,7 +1,7 @@
 import React from 'react'
 import {StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableHighlight, Alert} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
-import AnimatedBox from './animatedBox'
+import {AnimatedBox} from './index'
 
 export class Notice {
   static _noticeMessages = [];
@@ -171,7 +171,7 @@ class Message extends React.Component{
   }
 }
 
-class NoticeBox extends React.Component{
+export class NoticeBox extends React.Component{
   constructor(props){
     super(props)
 
@@ -241,6 +241,3 @@ class NoticeBox extends React.Component{
            </View> 
   }
 }
-
-
-export default NoticeBox

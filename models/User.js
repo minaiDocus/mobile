@@ -1,4 +1,4 @@
-import ActiveRecord from './activeRecord'
+import {ActiveRecord} from './index'
 
 const _db_name = "user_00"
 const _schema = {
@@ -21,7 +21,7 @@ const _schema = {
                       }
                     }
 
-class User extends ActiveRecord{
+class user extends ActiveRecord{
   constructor(){
     //REALM FILE && REALM NAME && REALM SCHEMA
     super(_db_name, _schema, 'User')
@@ -81,4 +81,4 @@ class User extends ActiveRecord{
   }
 }
 
-export default new User();
+export const User = new user()

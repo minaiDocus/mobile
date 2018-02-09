@@ -1,7 +1,7 @@
 import Config from '../Config'
-import XFetcher from '../components/XFetcher'
+import {XFetcher} from '../components'
 
-export default class Requester {
+export class Requester {
   // responseFetching = ""
   // request_retry = 2
 
@@ -17,7 +17,7 @@ export default class Requester {
   async wait_for(func=[], callback){
     let responses = []
     let tmp_rep = ""
-    
+
     for(var i=0; i<func.length; i++)
     {
       tmp_rep = await eval('this.'+func[i])

@@ -3,17 +3,11 @@ import Config from '../../Config'
 import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity} from 'react-native'
 
-import Screen from '../../components/screen'
-import {XImage, XTextInput} from '../../components/XComponents'
-import Navigator from '../../components/navigator'
-import SelectInput from '../../components/select'
-import Pagination from '../../components/pagination'
-import {LineList} from '../../components/lists'
+import {Screen,XImage,XTextInput,Navigator,SelectInput,Pagination,LineList} from '../../components'
 
-import User from '../../models/User'
+import {User} from '../../models'
 
-import UsersFetcher from "../../requests/users_fetcher"
-import DocumentsFetcher from "../../requests/documents_fetcher"
+import {UsersFetcher, DocumentsFetcher} from "../../requests"
 
 let GLOB = { navigation:{}, filterText: "", clientId: 0 }
 

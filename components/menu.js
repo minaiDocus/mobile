@@ -4,14 +4,13 @@ import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
 import {Text,TouchableOpacity,TouchableWithoutFeedback,View,StyleSheet,Modal,Slider,ScrollView,findNodeHandle} from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import { NavigationActions } from 'react-navigation'
+import {NavigationActions} from 'react-navigation'
 
-import {XImage} from './XComponents'
-import AnimatedBox from './animatedBox'
-import {SimpleButton, LinkButton, ImageButton} from './buttons'
+import {XImage, AnimatedBox, SimpleButton, LinkButton, ImageButton} from './index'
 
-import User from '../models/User'
-import RemoteAuthentication from '../requests/remote_authentication'
+import {User} from '../models'
+
+import {RemoteAuthentication} from '../requests'
 
 let GLOB = {navigation: {}}
 
@@ -204,7 +203,7 @@ class ModalMenu extends Component{
   }
 }
 
-class Menu extends Component{
+export class Menu extends Component{
   constructor(props){
     super(props);
     GLOB.navigation = this.props.navigation
@@ -244,5 +243,3 @@ class Menu extends Component{
             </View>             
   }
 }
-
-export default Menu

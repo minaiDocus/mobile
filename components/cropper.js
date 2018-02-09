@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {View, PanResponder, Animated, Image, StyleSheet, Platform, Modal, ImageEditor, ImageStore} from 'react-native'
-import {SimpleButton, ImageButton} from './buttons'
+
+import {SimpleButton, ImageButton} from './index'
 
 import { EventRegister } from 'react-native-event-listeners'
 

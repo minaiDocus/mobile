@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-class Swiper extends Component{
+export class Swiper extends Component{
   constructor(props){
     super(props)
     this.state = {index: this.props.index || 0}
@@ -76,5 +76,3 @@ class Swiper extends Component{
             </View>
   }
 }
-
-export default Swiper

@@ -1,7 +1,7 @@
 import Config from '../Config'
 import Realm from 'realm'
 
-class ActiveRecord {
+export class ActiveRecord {
   constructor(realmName, schema, objectName){
     this.objectName = objectName
     this._realm = new Realm({path: realmName + '.realm', schema:[schema], encryptionKey: Config.keydb})
@@ -50,5 +50,3 @@ class ActiveRecord {
     return null
   }
 }
-
-export default ActiveRecord;

@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
 import Pdf from 'react-native-pdf'
-import {XImage} from './XComponents'
+import {XImage} from './index'
 
-class PDFView extends Component{
+export class PDFView extends Component{
 
   constructor(props){
     super(props)
@@ -81,5 +81,3 @@ class PDFView extends Component{
             </View>
   }
 }
-
-export default PDFView;

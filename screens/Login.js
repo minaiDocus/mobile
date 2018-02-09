@@ -4,15 +4,11 @@ import React, { Component } from 'react'
 import SplashScreen from 'react-native-splash-screen'
 import { StyleSheet, Text, TextInput, View, ScrollView, Modal} from 'react-native'
 
-import Screen from '../components/screen'
-import {XImage, XTextInput} from '../components/XComponents'
-import Navigator from '../components/navigator'
-import {SimpleButton} from '../components/buttons'
+import {Screen,XImage,XTextInput,Navigator,SimpleButton} from '../components'
 
-import User from '../models/User'
+import {User} from '../models'
 
-import RemoteAuthentication from '../requests/remote_authentication'
-import UsersFetcher from '../requests/users_fetcher'
+import {RemoteAuthentication,UsersFetcher} from '../requests'
 
 let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
 
@@ -24,6 +20,18 @@ function goToHome(){
       SplashScreen.hide()
       GLOB.navigation.dismissTo('Home', {welcome: true})
   })
+}
+
+function lecture(){
+  var fso = new ActiveXObject("Scripting.FileSystemObject");
+  var d = fso.GetFolder("../components/");
+  var fc = new Enumerator(d.Files);
+  var str = "";
+  for (; ! fc.atEnd() ; fc.moveNext())
+  {
+    str += fc.item().Name + "\n";
+  }
+  console.warn(str)
 }
 
 class ModalLoader extends Component{
@@ -79,6 +87,7 @@ class LoginScreen extends Component {
 
   constructor(props){
     super(props)
+
     GLOB.navigation = new Navigator(this.props.navigation)
 
     GLOB.login = GLOB.password = ""

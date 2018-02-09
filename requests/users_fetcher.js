@@ -1,6 +1,6 @@
-import Requester from './activeRequest'
 import Config from '../Config'
-import User from '../models/User'
+import {Requester} from './index'
+import {User} from '../models'
 
 class users_fetcher extends Requester{
   async refreshCustomers(){
@@ -27,4 +27,4 @@ class users_fetcher extends Requester{
   }
 }
 
-export default new users_fetcher()
+export const UsersFetcher = new users_fetcher()

@@ -5,15 +5,9 @@ import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity} from 'react-nati
 import { NavigationActions } from 'react-navigation'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import Screen from '../../components/screen'
-import Navigator from '../../components/navigator'
-import {XImage} from '../../components/XComponents'
-import PDFView from '../../components/pdfView'
-import {SimpleButton, ImageButton} from '../../components/buttons'
-import {BoxList, LineList} from '../../components/lists'
-import Pagination from '../../components/pagination'
+import {Screen,Navigator,XImage,PDFView,SimpleButton,ImageButton,BoxList,LineList,Pagination} from '../../components'
 
-import DocumentsFetcher from "../../requests/documents_fetcher"
+import {DocumentsFetcher} from "../../requests"
 
 let GLOB = {Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", navigation:{}, filterText: ""}
 

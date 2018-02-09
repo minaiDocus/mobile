@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import {Picker, View, Platform, Modal, Text, TouchableOpacity, StyleSheet, ScrollView} from 'react-native'
-import {XImage, XTextInput} from './XComponents'
-import {ImageButton} from './buttons'
-import AnimatedBox from './animatedBox'
+import {ImageButton, AnimatedBox, XImage, XTextInput} from '../index'
 
 class ModalSelect extends Component{
 
@@ -227,7 +225,7 @@ class ModalSelect extends Component{
   }
 }
 
-class SelectInput extends Component{
+export class SelectInput extends Component{
   constructor(props){
     super(props);
 
@@ -410,5 +408,3 @@ class SelectInput extends Component{
             </View>
   }
 }
-
-export default SelectInput;

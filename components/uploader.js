@@ -5,8 +5,7 @@ import {StyleSheet,Text,View,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import LinearGradient from 'react-native-linear-gradient'
 
-import AnimatedBox from './animatedBox'
-import XFetcher from './XFetcher'
+import {AnimatedBox, XFetcher} from './index'
 
 export class ProgressUpload extends Component{
   constructor(props){
@@ -105,7 +104,7 @@ export class ProgressUpload extends Component{
   }
 }
 
-class UploderFiles{
+export class UploderFiles{
   constructor(){
     this.launchUpload = this.launchUpload.bind(this)
   }
@@ -153,5 +152,3 @@ class UploderFiles{
     UploadingFiles = false
   }
 }
-
-export default UploderFiles

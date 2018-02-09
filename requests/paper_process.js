@@ -1,5 +1,5 @@
-import Requester from './activeRequest'
 import Config from '../Config'
+import {Requester} from './index'
 
 class paper_process extends Requester{
   async getStats(dataFilters={}, page=1, order={}){
@@ -22,4 +22,4 @@ class paper_process extends Requester{
   }
 }
 
-export default new paper_process()
+export const PaperProcess = new paper_process()

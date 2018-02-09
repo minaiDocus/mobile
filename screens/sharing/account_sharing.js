@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
 
-import Navigator from '../../components/navigator'
-import {ImageButton} from '../../components/buttons'
+import {Navigator,ImageButton} from '../../components'
 
-import User from '../../models/User'
+import {User} from '../../models/User'
 
 import SharingAdmin from './format/sharing_admin'
 import SharingCustomers from './format/sharing_customers'

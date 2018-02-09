@@ -3,12 +3,11 @@ import { StyleSheet, Text, View, Modal, ScrollView, TouchableOpacity, Platform} 
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {ImageButton} from './buttons'
-import RealmControl from './realmControl'
+import {ImageButton, RealmControl} from './index'
 
-import User from '../models/User'
+import {User} from '../models'
 
-import FireBaseNotification from '../requests/firebase_notification'
+import {FireBaseNotification} from '../requests'
 
 /* SIMPLE USAGE >>
     // this shall be called regardless of app state: running, background or not running. Won't be called when app is killed by user in iOS
@@ -451,7 +450,7 @@ export class UINotification extends Component{
     }
 }
 
-class FCMinit extends Component{
+export class FCMinit extends Component{
     constructor(props){
         super(props)
 
@@ -532,5 +531,3 @@ class FCMinit extends Component{
         return null
     }
 }
-
-export default FCMinit

@@ -6,17 +6,11 @@ import { EventRegister } from 'react-native-event-listeners'
 import { NavigationActions } from 'react-navigation'
 import * as Progress from 'react-native-progress';
 
-import Screen from '../../components/screen'
-import Navigator from '../../components/navigator';
-import {XImage} from '../../components/XComponents'
-import {SimpleButton} from '../../components/buttons'
-import SelectInput from '../../components/select'
-import UploderFiles from '../../components/uploader'
-import RealmControl from '../../components/realmControl'
+import {Screen,Navigator,XImage,SimpleButton,SelectInput,UploderFiles,RealmControl} from '../../components'
 
-import User from '../../models/User'
+import {User} from '../../models'
 
-import FileUploader from "../../requests/file_uploader"
+import {FileUploader} from "../../requests"
 
 let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: [], imagesSent: []}
 

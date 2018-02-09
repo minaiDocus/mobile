@@ -1,10 +1,8 @@
 import Config from './Config'
 
-import {Notice} from './components/notifications'
-import RealmControl from './components/realmControl'
-import CronTask from './components/cronTask'
+import {Notice,RealmControl,CronTask} from './components'
 
-import errorReport from './requests/error_report'
+import {ErrorReport} from './requests'
 
 //Private functions
 function fill_with_zero(date, length_to = 2){
@@ -57,7 +55,7 @@ global.handlingHttpErrors = (request, source="") => {
                       source: source,
                       data: request
                     }
-    errorReport.sendErrorReport("Error report mobile : http request", errorMessage, report)
+    ErrorReport.sendErrorReport("Error report mobile : http request", errorMessage, report)
   }
 
   return {error: true, message: errorMessage}

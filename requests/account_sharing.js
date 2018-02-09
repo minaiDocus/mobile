@@ -1,4 +1,4 @@
-import Requester from './activeRequest'
+import {Requester} from './index'
 
 class account_sharing extends Requester{
   async getSharedDocsCustomers(){
@@ -281,4 +281,4 @@ class account_sharing extends Requester{
   }
 }
 
-export default new account_sharing()
+export const AccountSharing = new account_sharing()

@@ -2,9 +2,9 @@ import Config from '../Config'
 import React, { Component } from 'react'
 import {View} from 'react-native'
 import PropTypes from 'prop-types'
-import NoticeBox from './notifications'
+import {NoticeBox} from './index'
 
-class Screen extends Component{
+export class Screen extends Component{
   static propTypes = {
       navigation: PropTypes.object.isRequired,
   }
@@ -47,5 +47,3 @@ class Screen extends Component{
            </View>
   }
 }
-
-export default Screen

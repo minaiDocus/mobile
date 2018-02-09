@@ -6,16 +6,9 @@ import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
 
-import {Cropper, CropperView} from '../../components/cropper'
-import Screen from '../../components/screen'
-import Navigator from '../../components/navigator'
-import {XImage} from '../../components/XComponents'
-import {SimpleButton, BoxButton, ImageButton} from '../../components/buttons'
-import Swiper from '../../components/swiper'
-import {BoxList} from '../../components/lists'
-import {ProgressUpload} from '../../components/uploader'
+import {Screen,Cropper,CropperView,Navigator,XImage,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload} from '../../components'
 
-import UsersFetcher from "../../requests/users_fetcher"
+import {UsersFetcher} from "../../requests"
 
 let GLOB = {images:[], imgToDel:"", idZoom:"", navigation:{}}
 

@@ -4,18 +4,11 @@ import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import Screen from '../../components/screen'
-import AnimatedBox from '../../components/animatedBox'
-import Navigator from '../../components/navigator'
-import {XImage} from '../../components/XComponents'
-import {LineList} from '../../components/lists'
-import Pagination from '../../components/pagination'
-import ModalForm from '../../components/modalForm'
-import {SimpleButton, BoxButton, ImageButton, LinkButton} from '../../components/buttons'
+import {Screen,AnimatedBox,Navigator,XImage,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton} from '../../components'
 
-import User from '../../models/User'
+import {User} from '../../models'
 
-import AccountSharing from "../../requests/account_sharing"
+import {AccountSharing} from "../../requests"
 
 let GLOB =  { navigation:{},
               datas:[],

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {StyleSheet,Text,View} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 
 export class BoxList extends Component{
   static propTypes = {
@@ -132,5 +132,3 @@ export class LineList extends Component{
            </View>
   }
 }
-
-export default BoxList

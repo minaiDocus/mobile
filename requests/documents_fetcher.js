@@ -1,7 +1,7 @@
-import Requester from './activeRequest'
+import {Requester} from './index'
 import Config from '../Config'
 import base64 from 'base-64'
-import User from '../models/User'
+import {User} from '../models'
 
 class documents_fetcher extends Requester{
 
@@ -129,4 +129,4 @@ class documents_fetcher extends Requester{
   }
 }
 
-export default new documents_fetcher()
+export const DocumentsFetcher = new documents_fetcher()
