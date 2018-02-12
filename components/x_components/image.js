@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import {Image, View, Text, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, Modal, StyleSheet} from 'react-native'
-import {SimpleButton, AnimatedBox} from '../index'
+import {Image, View, StyleSheet} from 'react-native'
 
 //Function for declaring image to React
 function require_images(name){

@@ -284,7 +284,7 @@ class LoginScreen extends Component {
                               placeholder="Identifiant(E-mail)"
                               keyboardType="email-address"
                               next={{action: this.actionPassword}} 
-                              onChangeText={(text) => this.handleLogin(text)} autoCorrect={false}/>
+                              onChangeText={(text) => this.handleLogin(text)}/>
                 </View>
                 <View style={this.styles.boxInput}>
                   <XImage style={this.styles.icons} source={{uri:"cadenas"}} />

@@ -1,90 +1,55 @@
 import React, { Component } from 'react'
-import {Image, View, Text, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, Modal, StyleSheet} from 'react-native'
+import {View, Text, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, Modal, StyleSheet, Keyboard} from 'react-native'
 import {SimpleButton, AnimatedBox} from '../index'
 
-export class XTextInput extends Component{
+class ModalInput extends Component{
   constructor(props){
     super(props)
 
-    this.initValue = this.props.value || this.props.defaultValue || ""
-    this.state = {
-                   openKeyboard: false,
-                   value: this.initValue,
-                 }
+    this.closing = false
 
-    this.editable = true
-    if(this.props.editable == false)
-    {
-      this.editable = false
-    }
+    this.keyboardShow = false
 
-    this.previous_action = this.props.previous || null
-    this.next_action = this.props.next || null
-
-    this.closing = false             
-
-    this.liveChange = this.props.liveChange || false
-    this.label = this.props.placeholder || this.props.label || ""
-
-    this.renderModalText = this.renderModalText.bind(this)
     this.closeKeyboard = this.closeKeyboard.bind(this)
-    this.handleLayout = this.handleLayout.bind(this)
+    this._keyboardDidShow = this._keyboardDidShow.bind(this)
+    this._keyboardDidHide = this._keyboardDidHide.bind(this)
 
     this.generateStyles()
   }
 
-  openKeyboard(){
-    if(this.editable){
-      if(this.props.onFocus){this.props.onFocus()}
-      this.setState({openKeyboard: true})
+  componentDidMount(){
+    let timerTest = null
+    const keyboardTest = ()=>{
+      if(!this.keyboardShow)
+      {
+        this.refs.input.focus()
+      }
+      clearTimeout(timerTest)
     }
+
+    timerTest = setTimeout(keyboardTest, 1000)
   }
 
-  closeKeyboard(callback_action=null){
-    if(this.closing == false)
-    {
-      this.closing = true
-      this.refs.input.blur()
-      const exit = ()=>{
-                          this.setState({openKeyboard: false})
-                          if(this.state.value != this.initValue && this.liveChange == false)
-                          {
-                            try
-                            {this.props.onChangeText(this.state.value)}
-                            catch(e){}
-                          }
-                          try{this.props.onBlur()}
-                          catch(e){}
-                          this.closing = false
-                          this.initValue = this.state.value
-
-                          if(callback_action != null)
-                          {
-                            callback_action()
-                          }
-                        }
-      this.refs.animatedInput.leave(exit)
-    }
+  componentWillMount(){
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
   }
 
-  async changeText(value=""){
-    await this.setState({value: value})
-    if(this.liveChange)
-    {
-      try
-      {this.props.onChangeText(this.state.value)}
-      catch(e){}
-    }
+  componentWillUnmount(){
+    this.keyboardDidShowListener.remove()
+    this.keyboardDidHideListener.remove()
   }
 
-  handleLayout(){
-    if(this.editable){
-      setTimeout(()=>{this.refs.input.focus()}, 500)
-    }
+  _keyboardDidShow(e) {
+    this.keyboardShow = true
+  }
+
+  _keyboardDidHide(e) {
+    this.keyboardShow = false
   }
 
   generateStyles(){
-    this.stylesModalText = StyleSheet.create({
+    this.styles = StyleSheet.create({
       content:{
                 flex:1,
                 flexDirection:'column',
@@ -123,32 +88,24 @@ export class XTextInput extends Component{
       },
       buttonStyle: {
         flex:1,
+        backgroundColor:'#A6A6A6',
         maxWidth:100,
         maxHeight:28,   // =======
         minHeight:28,   // ======= instead of height: value
       }
     })
-
-    this.styles = StyleSheet.create({
-      prevStyle:  {
-                    minHeight:30,
-                    paddingBottom:8
-                  },
-      textStyle:  {
-                    flex:1,
-                    color: this.editable? '#606060' : '#A6A6A6',
-                    fontSize:14,
-                  },
-      boxText:  {
-                  flex:1,
-                  borderBottomWidth:1,
-                  borderColor:'#909090',
-                  padding:5
-                }
-    })
   }
 
-  renderModalText(){
+  closeKeyboard(callback=null){
+    if(this.closing == false)
+    {
+      this.closing = true
+      this.refs.input.blur()
+      this.refs.animatedInput.leave(()=>{this.props.closeKeyboard(callback)})
+    }
+  }
+
+  render(){
     let iosStyle = androidStyle = {}
     if(Platform.OS == 'ios')
     {
@@ -171,29 +128,28 @@ export class XTextInput extends Component{
                    onRequestClose={()=>{this.closeKeyboard()}}
             >
               <TouchableWithoutFeedback onPress={()=>this.closeKeyboard()}>
-                <View style={[this.stylesModalText.content, iosStyle]}>
-                  <AnimatedBox ref="animatedInput" style={this.stylesModalText.box} type='DownSlide' durationIn={300} >
+                <View style={[this.styles.content, iosStyle]}>
+                  <AnimatedBox ref="animatedInput" style={this.styles.box} type='DownSlide' durationIn={300} durationOut={150}>
                     <View style={{flex:1, flexDirection:'row'}}>
                       <View style={{flex:1, alignItems:'flex-end', justifyContent:'center'}}>
                       {
-                        this.previous_action != null && 
-                        <SimpleButton onPress={()=>{this.closeKeyboard(this.previous_action.action)}} 
-                                      Pstyle={[this.stylesModalText.buttonStyle, {marginRight: '10%'}]} 
+                        this.props.previous_action != null && 
+                        <SimpleButton onPress={()=>{this.closeKeyboard(this.props.previous_action.action)}} 
+                                      Pstyle={[this.styles.buttonStyle, {marginRight: '10%'}]} 
                                       Tstyle={{fontSize:12}} 
-                                      title={this.previous_action.title || "<< Prev."} />
+                                      title={this.props.previous_action.title || "<< Prev."} />
                       }
                       </View>
                       <View style={{flex:0, justifyContent:'center', alignItems:'center'}}>
-                        {this.label != "" && <Text style={this.stylesModalText.label}>{this.label}</Text>}
-                        <View style={[this.stylesModalText.boxInput, androidStyle]}>
+                        {this.label != "" && <Text style={this.styles.label}>{this.label}</Text>}
+                        <View style={[this.styles.boxInput, androidStyle]}>
                           <TextInput ref="input"
                                      autoFocus={true}
-                                     onLayout={()=>this.handleLayout()}
-                                     autoCorrect={this.props.autoCorrect || true}
+                                     autoCorrect={(this.props.autoCorrect == false)? false : true}
                                      secureTextEntry={this.props.secureTextEntry || false}
-                                     defaultValue={this.state.value}
-                                     onChangeText={(value)=>this.changeText(value)}
-                                     editable={this.editable}
+                                     defaultValue={this.props.currValue}
+                                     onChangeText={(value)=>this.props.changeText(value)}
+                                     editable={this.props.editable}
                                      onBlur={()=>{this.closeKeyboard()}}
                                      keyboardType={this.props.keyboardType}
                                      style={{flex:1, fontSize:14}}/>
@@ -201,11 +157,11 @@ export class XTextInput extends Component{
                       </View>
                       <View style={{flex:1, alignItems:'flex-start', justifyContent:'center'}}>
                       {
-                        this.next_action != null && 
-                        <SimpleButton onPress={()=>{this.closeKeyboard(this.next_action.action)}} 
-                                      Pstyle={[this.stylesModalText.buttonStyle, {marginLeft: '10%'}]} 
+                        this.props.next_action != null && 
+                        <SimpleButton onPress={()=>{this.closeKeyboard(this.props.next_action.action)}} 
+                                      Pstyle={[this.styles.buttonStyle, {marginLeft: '10%'}]} 
                                       Tstyle={{fontSize:12}} 
-                                      title={this.next_action.title || "Suiv. >>"} />
+                                      title={this.props.next_action.title || "Suiv. >>"} />
                       }
                       </View>
                   </View>
@@ -214,6 +170,93 @@ export class XTextInput extends Component{
                 </View>       
               </TouchableWithoutFeedback>
             </Modal>
+  }
+}
+
+export class XTextInput extends Component{
+  constructor(props){
+    super(props)
+
+    this.initValue = this.props.value || this.props.defaultValue || ""
+    this.state = {
+                   openKeyboard: false,
+                   value: this.initValue,
+                 }
+
+    this.editable = true
+    if(this.props.editable == false)
+    {
+      this.editable = false
+    }
+
+    this.previous_action = this.props.previous || null
+    this.next_action = this.props.next || null      
+
+    this.liveChange = this.props.liveChange || false
+    this.label = this.props.placeholder || this.props.label || ""
+
+    this.openKeyboard = this.openKeyboard.bind(this)
+    this.closeKeyboard = this.closeKeyboard.bind(this)
+    this.changeText = this.changeText.bind(this)
+
+    this.generateStyles()
+  }
+
+  openKeyboard(){
+    if(this.editable){
+      if(this.props.onFocus){this.props.onFocus()}
+      this.setState({openKeyboard: true})
+    }
+  }
+
+  closeKeyboard(callback_action=null){
+    this.setState({openKeyboard: false})
+    if(this.state.value != this.initValue && this.liveChange == false)
+    {
+      try
+      {this.props.onChangeText(this.state.value)}
+      catch(e){}
+    }
+    
+    try{this.props.onBlur()}
+    catch(e){}
+
+    this.initValue = this.state.value
+
+    if(callback_action != null)
+    {
+      callback_action()
+    }
+  }
+
+  async changeText(value=""){
+    await this.setState({value: value})
+    if(this.liveChange)
+    {
+      try
+      {this.props.onChangeText(this.state.value)}
+      catch(e){}
+    }
+  }
+
+  generateStyles(){
+    this.styles = StyleSheet.create({
+      prevStyle:  {
+                    minHeight:30,
+                    paddingBottom:8
+                  },
+      textStyle:  {
+                    flex:1,
+                    color: this.editable? '#606060' : '#A6A6A6',
+                    fontSize:14,
+                  },
+      boxText:  {
+                  flex:1,
+                  borderBottomWidth:1,
+                  borderColor:'#909090',
+                  padding:5
+                }
+    })
   }
 
   render(){
@@ -230,7 +273,17 @@ export class XTextInput extends Component{
       value = password
     }
     return <TouchableOpacity style={[this.styles.prevStyle, PStyle]} onPress={()=>this.openKeyboard()} >
-            {this.state.openKeyboard && this.renderModalText()}  
+            {this.state.openKeyboard && 
+              <ModalInput 
+                {...this.props}
+                currValue={this.state.value}
+                closeKeyboard={this.closeKeyboard}
+                changeText={this.changeText}
+                previous_action={this.previous_action}
+                next_action={this.next_action}
+                editable={this.editable}
+              />
+            }  
             <View style={this.styles.boxText}>
               <Text style={[this.styles.textStyle, TStyle]}>{value}</Text>
             </View>
