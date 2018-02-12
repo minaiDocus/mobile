@@ -44,12 +44,12 @@ class firebase_notification extends Requester{
     return response
   }
 
-  async registerFirebaseToken(token = "", platform=''){
+  async registerFirebaseToken(token = "", platform='', version=''){
     let response = ""
 
     if(token != "" && token != null && typeof(token) !== "undefined")
     {
-      this.requestURI("api/mobile/firebase_notification/register_firebase_token", {method: 'POST', params:{firebase_token: token, platform: platform}}, (r) => {
+      this.requestURI("api/mobile/firebase_notification/register_firebase_token", {method: 'POST', params:{firebase_token: token, platform: platform, version: version}}, (r) => {
         if(r.error){ 
           //handling errors
           response = r

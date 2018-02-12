@@ -1,3 +1,4 @@
+import Config from '../Config'
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, Modal, ScrollView, TouchableOpacity, Platform} from 'react-native'
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
@@ -512,12 +513,11 @@ export class FCMinit extends Component{
         {
           //send token to server
           let _tmp_master = RealmControl.realmToJson(this.master)
-          const master_id = _tmp_master.id
           _tmp_master.authentication_token = this.master.auth_token
           _tmp_master.firebase_token = token
-          User.create_or_update(master_id, _tmp_master, true)
+          User.create_or_update(_tmp_master.id, _tmp_master, true)
 
-          FireBaseNotification.registerFirebaseToken(token, Platform.OS)
+          FireBaseNotification.registerFirebaseToken(token, Platform.OS, Config.version)
         }
     }
 
