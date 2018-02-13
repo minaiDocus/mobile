@@ -3,7 +3,6 @@ package com.idocus;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.horcrux.svg.SvgPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.evollu.react.fcm.FIRMessagingPackage;
 import io.realm.react.RealmReactPackage;
@@ -31,7 +30,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new SvgPackage(),
             new PickerPackage(),
             new FIRMessagingPackage(),
             new RealmReactPackage(),

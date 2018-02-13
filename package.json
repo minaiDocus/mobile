@@ -16,10 +16,8 @@
     "react-native-image-crop-picker": "^0.19.1",
     "react-native-linear-gradient": "^2.3.0",
     "react-native-pdf": "^2.0.7",
-    "react-native-progress": "^3.4.0",
     "react-native-scrollable-tab-view": "^0.8.0",
     "react-native-splash-screen": "^3.0.1",
-    "react-native-svg": "^6.0.1-rc.1",
     "react-navigation": "^1.0.0-beta.21",
     "realm": "^2.0.12"
   },

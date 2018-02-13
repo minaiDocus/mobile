@@ -147,7 +147,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-svg')
     compile project(':react-native-image-crop-picker')
     //Firebase dependencies
     compile project(':react-native-fcm')

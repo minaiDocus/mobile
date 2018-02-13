@@ -4,9 +4,8 @@ import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,ListView,TouchableOpacity,Picker} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import { NavigationActions } from 'react-navigation'
-import * as Progress from 'react-native-progress';
 
-import {Screen,Navigator,XImage,SimpleButton,SelectInput,UploderFiles,RealmControl} from '../../components'
+import {Screen,Navigator,XImage,SimpleButton,SelectInput,UploderFiles,RealmControl,ProgressBar} from '../../components'
 
 import {User} from '../../models'
 
@@ -305,7 +304,7 @@ class Body extends Component{
 
             {valueProgress > 0 &&
               <View style={this.styles.progressBar}>
-                <Progress.Bar progress={valueProgress} width={null} height={10} color={colorBar} unfilledColor={"#fff"} borderColor={"#909090"} borderWidth={2} />
+                <ProgressBar progress={valueProgress} />
                 <Text style={{flex:1, textAlign:'center', color:colorBar}}>{(valueProgress < 1)? "Téléversement en cours ..." : "Téléversement terminé"}</Text>
               </View>
             }
@@ -401,13 +400,11 @@ class SendScreen extends Component {
 
   uploadProgress(progressEvent){
     if(this.refs._baseScroll)
-    {
-      let progress = progressEvent.loaded / progressEvent.total
-      if(progress >= 0.99){progress = 0.99}
-
       this.refs._baseScroll.scrollToEnd({animated: true})
-      this.setState({progress: progress, sending: true})
-    }
+
+    let progress = progressEvent.loaded / progressEvent.total
+    if(progress >= 0.99){progress = 0.99}
+    this.setState({progress: progress, sending: true})
   }
 
   uploadComplete(result){
