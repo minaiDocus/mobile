@@ -172,7 +172,7 @@ class Header extends Component{
                               getValue={(name)=>{return eval(`${name}`)}}
                               setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
                               inputs={[
-                                {label:'Email :', name: 'GLOB.dataFilter.email'},
+                                {label:'Email :', name: 'GLOB.dataFilter.email', keyboardType: 'email-address'},
                                 {label:'Société :', name: 'GLOB.dataFilter.company'},
                                 {label:'Prénom :', name: 'GLOB.dataFilter.first_name'},
                                 {label:'Nom :', name: 'GLOB.dataFilter.last_name'}

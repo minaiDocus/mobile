@@ -22,7 +22,8 @@ class ModalInput extends Component{
     const keyboardTest = ()=>{
       if(!this.keyboardShow)
       {
-        this.refs.input.focus()
+        try{this.refs.input.focus()}
+        catch(e){}
       }
       clearTimeout(timerTest)
     }

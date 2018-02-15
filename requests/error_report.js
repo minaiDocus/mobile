@@ -14,6 +14,7 @@ class error_report {
                       user_id: master.id || "not connected",
                       user_token: master.auth_token || "not connected",
                       platform: Platform.OS,
+                      version: Config.version,
                       report: report
                     }
     const Fetcher = new XFetcher()                

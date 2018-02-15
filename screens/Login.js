@@ -281,7 +281,7 @@ class LoginScreen extends Component {
                               onBlur={this.leaveFocusInput}
                               autoCorrect={false}
                               PStyle={this.styles.inputs} 
-                              placeholder="Identifiant(E-mail)"
+                              placeholder="Identifiant (Email)"
                               keyboardType="email-address"
                               next={{action: this.actionPassword}} 
                               onChangeText={(text) => this.handleLogin(text)}/>
