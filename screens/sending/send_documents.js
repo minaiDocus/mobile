@@ -248,7 +248,11 @@ class Header extends Component{
 }
 
 class SendScreen extends Component {
-  static navigationOptions = {headerTitle: 'Envoi documents', headerRight: <ProgressUpload />}
+    static navigationOptions =  {   headerTitle:'Envoi documents', 
+                                    headerRight: <View style={{flex:1, minWidth:80, flexDirection:'row'}}>
+                                                    <ProgressUpload />
+                                                 </View>
+                                }
 
   constructor(props){
     super(props)

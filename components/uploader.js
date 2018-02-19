@@ -48,7 +48,7 @@ export class ProgressUpload extends Component{
   }
 
   dismiss(){
-    if(this.refs.progressUpload)
+    if(this.refs.progressUpload && this.state.show)
     {
       this.refs.progressUpload.leave(()=>{
           this.setState({show: false})
