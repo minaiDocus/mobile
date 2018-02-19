@@ -11,6 +11,7 @@ export class XFetcher {
   body = null
   callback = null
   progress_callback = null
+  abort_time = 60 //60 seconds by default
 
   initRequest(url, options){
     this.request = new XMLHttpRequest()
@@ -31,15 +32,16 @@ export class XFetcher {
       this.request.abort()
       this.responseFetching = {error: true, message: "Impossible de se connecter au serveur!!!"}
       this.callback(this.responseFetching)
-    }, 60000) //abort after 60 second (if request too long)
+    }, (this.abort_time * 1000)) //abort after 60 seconds [default] (if request too long)
   }
 
   clear_aborting(){
     clearTimeout(this.timer_abort)
   }
 
-  fetch(uri, options={}, with_retry = true, callback = null, progress_callback = null){
+  fetch(uri, options={}, with_retry = true, callback = null, progress_callback = null, abort_time = 60){
     this.url = Config.http_host + uri
+    this.abort_time = abort_time
     this.options = options
     const method = this.options.method || 'GET'
 

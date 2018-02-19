@@ -87,7 +87,7 @@ export class ProgressUpload extends Component{
 
   render(){
     const colorGrad = ['#422D14', '#422D14', '#C0D838']
-    if(this.state.show && this.state.value < 99)
+    if(this.state.show && this.state.value < 99 && UploadingFiles)
     {
       return <AnimatedBox ref="progressUpload" type="RightSlide" style={this.styles.box}>
                 <LinearGradient colors={colorGrad} style={this.styles.gradient}>
@@ -113,7 +113,7 @@ export class UploderFiles{
     if(data !== null && typeof(data) !== "undefined")
     {
       const Fetcher = new XFetcher()
-      Fetcher.fetch("api/mobile/file_uploader", {method: 'POST', contentType:'multipart/form-data', form_body: data}, false, (result)=>{this.onLoad(result)}, (progressEvent)=>{this.onProgress(progressEvent)})
+      Fetcher.fetch("api/mobile/file_uploader", {method: 'POST', contentType:'multipart/form-data', form_body: data}, false, (result)=>{this.onLoad(result)}, (progressEvent)=>{this.onProgress(progressEvent)}, 180)
       UploadingFiles = true
     }
   }
