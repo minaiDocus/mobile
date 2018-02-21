@@ -231,7 +231,7 @@ class ImgBox extends Component{
                     width:95,
                     marginVertical:5,
                     alignItems:'center',
-                    justifyContent:'center' 
+                    justifyContent:'center'
                   },
       styleImg: {
                   flex:0,

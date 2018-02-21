@@ -5,13 +5,13 @@ import {StyleSheet,Text,View,ScrollView,ListView,TouchableOpacity,Picker} from '
 import { EventRegister } from 'react-native-event-listeners'
 import { NavigationActions } from 'react-navigation'
 
-import {Screen,Navigator,XImage,SimpleButton,SelectInput,UploderFiles,RealmControl,ProgressBar} from '../../components'
+import {Screen,Navigator,XImage,LinkButton,SimpleButton,SelectInput,UploderFiles,RealmControl,ProgressBar} from '../../components'
 
 import {User} from '../../models'
 
 import {FileUploader} from "../../requests"
 
-let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: [], imagesSent: []}
+let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: [], imagesSent: [], uploadErrors: []}
 
 const styles = StyleSheet.create({
   minicontainer:{
@@ -160,6 +160,7 @@ class Body extends Component{
 
     this.master = User.getMaster()
     GLOB.journal = GLOB.periods = GLOB.customer = ""
+    GLOB.uploadErrors = []
 
     this.renderForm = this.renderForm.bind(this)
     this.renderLoading = this.renderLoading.bind(this)
@@ -422,7 +423,25 @@ class SendScreen extends Component {
 
   uploadError(result){
     try{
-      Notice.danger({title:"Erreur envoi", body: result.message}, true, result.message)
+      if(Array.isArray(result.message))
+      {
+        GLOB.uploadErrors = result.message
+        const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
+                            <View style={{flex:1, paddingHorizontal:20}}>
+                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Erreur envoi</Text>
+                              <Text style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</Text>
+                            </View>
+                            <LinkButton onPress={()=>{this.OpenModalErrors()}} 
+                                        title='Voir détails ...' 
+                                        Tstyle={{color:'#fff'}} 
+                                        Pstyle={{flex:0, flexDirection:'column', alignItems:'center', width:50}} />
+                          </View>
+        Notice.danger(mess_obj, true, "uploadErrors")
+      }
+      else
+      {
+        Notice.danger({title:"Erreur envoi", body: result.message}, true, result.message)
+      }
     }catch(e){
       Notice.danger({title:"Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!!!"}, true, "erreur_upload")
     }

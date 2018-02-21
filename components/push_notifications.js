@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Modal, ScrollView, TouchableOpacity, Platform} 
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {ImageButton, RealmControl} from './index'
+import {ImageButton, RealmControl, BoxInfos} from './index'
 
 import {User} from '../models'
 
@@ -140,134 +140,13 @@ class Example extends Component {
     }
 }
 */
-class ListNotification extends Component{
-    constructor(props){
-      super(props)
-      this.generateStyles() //style generation
-    }
-
-
-    generateStyles(){
-			this.styles = StyleSheet.create({
-	       	container:{
-						          flex:1,
-						          flexDirection:'row',
-						          alignItems:'center',
-						          justifyContent:'center',
-						          backgroundColor:'rgba(0,0,0,0.7)',
-						          paddingVertical:20
-						        },
-	        box:{
-			          flex:0,
-			          backgroundColor:'#EBEBEB',
-			          width:'90%',
-			          borderRadius:10,
-			          paddingVertical:8
-			        },
-	        labels:{
-					          flex:0,
-					          width:15,
-					          height:15,
-					          marginRight:20
-					        },
-	        inputs:{
-					          flex:0,
-					          width:15,
-					          height:15,
-					          marginRight:20
-					        },
-	        head:{
-				          flex:0,
-				          height:35,
-				          paddingHorizontal:10,
-				          flexDirection:'row',
-				          backgroundColor:'#EBEBEB',
-				          borderColor:'#000',
-				          borderBottomWidth:1,
-				        },
-	        body:{
-				          flex:1,
-				          backgroundColor:'#fff',
-				          padding:10
-				        },
-	        foot:{
-				          flex:0,
-				          flexDirection:'row',
-				          alignItems:'center',
-				          justifyContent:'center',
-				          backgroundColor:'#EBEBEB',
-				          borderColor:'#000',
-				          borderTopWidth:1,
-				          paddingVertical:7
-				        },
-	        boxNotif:{
-					          	flex:1,
-					          	borderColor:'#DDDDDD',
-					          	borderBottomWidth:2,
-					          	marginBottom:10,
-					          	backgroundColor:'#FFF'
-					        	},
-
-	      })
-    }
-
-    renderDetails(){
-      //order datas
-      if(this.props.datas.length > 0)
-      {
-        const datas = this.props.datas.sorted("created_at", true).slice(0,50)
-	    	const details = datas.map((data, index)=>{
-	    		return  <View key={index} style={this.styles.boxNotif}>
-	    							 <Text style={{color:'#0064B1', fontWeight:'bold', marginBottom:4}}>
-	    							 	{data.title || "-"}
-	    							 	{
-	    							 		data.is_read == false && 
-	    							 		<Text style={{fontSize: 9, color:'#62AF05', fontStyle:'italic'}}> (Nouveau)</Text>
-	    							 	}
-	    							 </Text>
-	    							 <Text style={{color:'#3F4545'}}>{data.message || "-"}</Text>
-	    							 <Text style={{color:'#97938B', fontSize:9, marginTop:7}}>{format_date(data.created_at)}</Text>
-	    						</View>
-	    	})
-	    	return details
-    	}
-    	else
-    	{
-				return 	<View style={this.styles.boxNotif}>
-						  		<Text>Vous n'avez aucun message pour l'instant</Text>
-								</View>
-    	}
-    }
-
-    render(){
-      return  <Modal transparent={true}
-                     animationType="slide" 
-                     visible={true}
-                     supportedOrientations={['portrait', 'landscape']}
-                     onRequestClose={()=>{}}
-              >
-                <View style={this.styles.container} >
-                  <View style={this.styles.box}>
-                    <View style={this.styles.head}>
-                       <Text style={{flex:1, textAlign:'center',fontSize:24, paddingLeft:25}}>Notifications</Text>
-                       <ImageButton  source={{uri:"delete"}} 
-			                  Pstyle={{flex:0, flexDirection:'column', alignItems:'center',width:25}}
-			                  Istyle={{width:10, height:10}}
-			                  onPress={()=>{this.props.dismiss()}} />
-                    </View>
-                    <ScrollView style={this.styles.body}>
-                      {this.renderDetails()}
-                    </ScrollView>
-                  </View>
-                </View>
-            </Modal>
-  }
-}
 
 export class UINotification extends Component{
     constructor(props){
         super(props)
-        this.state = {newNotifCount: 0, openListNotifications: false, datas: []}
+        this.state = {newNotifCount: 0, datas: []}
+
+        this.showListNotifications = false
 
         this.master = User.getMaster()
 
@@ -292,16 +171,12 @@ export class UINotification extends Component{
         this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
           this.revokeToken()
         })
-        this.openNotificationsListener = EventRegister.on('openNotifications',()=>{
-          this.toggleListNotifications()
-        })
     }
 
     componentWillUnmount(){
         EventRegister.rm(this.newNotificationListener)
         EventRegister.rm(this.refreshNotificationsListener)
         EventRegister.rm(this.revokeTokenListener)
-        EventRegister.rm(this.openNotificationsListener)
     }
 
     componentDidMount(){
@@ -320,11 +195,20 @@ export class UINotification extends Component{
     }
 
     toggleListNotifications(){
-        if(this.state.openListNotifications)
-        {
-          this.releaseNewNotif()
-        }
-        this.setState({openListNotifications: !this.state.openListNotifications})
+      if(this.showListNotifications)
+      {
+        this.showListNotifications = false
+        ClearGlobalView()
+      }
+      else
+      {
+        this.showListNotifications = true
+        const ListNotifs =  <BoxInfos title={"Notifications"} dismiss={this.toggleListNotifications}>
+                              {this.renderDetails()}
+                            </BoxInfos>
+        AddToGlobalView(ListNotifs, "slide")
+        this.releaseNewNotif()
+      }
     }
 
     releaseNewNotif(){
@@ -359,7 +243,7 @@ export class UINotification extends Component{
                             <ImageButton  source={{uri:"notification_green"}} 
                               Pstyle={{flex:0, flexDirection:'column', alignItems:'center', width:30}}
                               Istyle={{width:20, height:20}}
-                              onPress={()=>{EventRegister.emit("openNotifications")}} />
+                              onPress={()=>{this.toggleListNotifications()}} />
                           </View>
         Notice.info(mess_obj, false, "push_notification_alert", 10000)
       }
@@ -421,22 +305,55 @@ export class UINotification extends Component{
     generateStyles(){
     	this.styles = StyleSheet.create({
     		bellText: {
-    			position:'absolute',
-    			right:0,
-    			width:20,
-    			height:20,
-          margin:2,
-    			borderRadius:100,
-    			backgroundColor:'#cc1b41',
-    			justifyContent:'center',
-    			alignItems:'center'
-    		}
+              			position:'absolute',
+              			right:0,
+              			width:20,
+              			height:20,
+                    margin:2,
+              			borderRadius:100,
+              			backgroundColor:'#cc1b41',
+              			justifyContent:'center',
+              			alignItems:'center'
+              		},
+        boxNotif: {
+                    flex:1,
+                    borderColor:'#DDDDDD',
+                    borderBottomWidth:2,
+                    marginBottom:10,
+                    backgroundColor:'#FFF'
+                  },
     	})
     }
 
+    renderDetails(){
+      if(this.state.datas.length > 0)
+      {
+        const datas = this.state.datas.sorted("created_at", true).slice(0,50)
+        const details = datas.map((data, index)=>{
+          return  <View key={index} style={this.styles.boxNotif}>
+                     <Text style={{color:'#0064B1', fontWeight:'bold', marginBottom:4}}>
+                      {data.title || "-"}
+                      {
+                        data.is_read == false && 
+                        <Text style={{fontSize: 9, color:'#62AF05', fontStyle:'italic'}}> (Nouveau)</Text>
+                      }
+                     </Text>
+                     <Text style={{color:'#3F4545'}}>{data.message || "-"}</Text>
+                     <Text style={{color:'#97938B', fontSize:9, marginTop:7}}>{format_date(data.created_at)}</Text>
+                  </View>
+        })
+        return details
+      }
+      else
+      {
+        return  <View style={this.styles.boxNotif}>
+                  <Text>Vous n'avez aucun message pour l'instant</Text>
+                </View>
+      }
+    }
+
     render(){
-        return <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>{this.toggleListNotifications()}}>
-                {this.state.openListNotifications && <ListNotification datas={this.state.datas} dismiss={this.toggleListNotifications} />}
+        return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>{this.toggleListNotifications()}}>
                   <ImageButton  source={{uri:"notification"}} 
                   Pstyle={{flex:1, flexDirection:'column', alignItems:'center',minWidth:30}}
                   Istyle={{width:20, height:20}}

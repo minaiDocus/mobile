@@ -1,5 +1,7 @@
 import Config from './Config'
 
+import { EventRegister } from 'react-native-event-listeners'
+
 import {Notice,RealmControl,CronTask} from './components'
 
 import {ErrorReport} from './requests'
@@ -20,6 +22,19 @@ global.UploadingFiles = false
 global.Notice = Notice
 global.CronTask = CronTask
 global.TempSchemasLists = []
+
+//Function for adding Components to Global View Modal
+global.AddToGlobalView = (children, animation="fade") => {
+  params = {children: children, animation: animation}
+  EventRegister.emit("openGlobalView", params)
+}
+
+//Function for removing Components from Global View Modal
+global.ClearGlobalView = () => {
+  EventRegister.emit("closeGlobalView")
+}
+
+
 
 //Function for handleling http errors
 global.handlingHttpErrors = (request, source="") => {

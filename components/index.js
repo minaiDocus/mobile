@@ -7,6 +7,7 @@ export * from './x_components/swiper'
 export * from './x_components/text_input'
 
 export * from './animated_box'
+export * from './box_infos'
 export * from './cron_task'
 export * from './cropper'
 export * from './date_picker'

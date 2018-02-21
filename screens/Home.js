@@ -322,77 +322,12 @@ class TabNav extends Component{
   }
 }
 
-class HomeScreen extends Component {
-  static navigationOptions = {  headerTitle:'Accueil', 
-                                headerLeft: <MenuLoader />,
-                                headerRight: <View style={{flex:1, flexDirection:'row'}}>
-                                                <UINotification />
-                                                <ImageButton  source={{uri:"infos"}} 
-                                                Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:30}}
-                                                Istyle={{width:20, height:20}}
-                                                onPress={()=>EventRegister.emit('clickInfosApp', true)} />
-                                                <ProgressUpload />
-                                             </View>
-                              }
-
+class AppInfos extends Component{
   constructor(props){
     super(props)
+    this.show = false
 
-    this.master = User.getMaster()
-    GLOB.navigation = new Navigator(this.props.navigation)
-    GLOB.datas = []
-    this.state = {showInfos: false, ready: false}
-
-    this.toggleInfos = this.toggleInfos.bind(this)
-    this.refreshDatas = this.refreshDatas.bind(this)
-    this.generateStyles() //style generation
-  }
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.navigation.state.params.initScreen)
-    {
-      this.refreshDatas()
-      EventRegister.emit("refreshNotifications")
-    }
-  }
-
-  componentWillMount(){
-    this.clickInfosApp = EventRegister.on('clickInfosApp', (data) => {
-        this.toggleInfos()
-    })
-  }
-
-  componentWillUnmount(){
-    EventRegister.rm(this.clickInfosApp)
-  }
-
-  componentDidMount(){
-    this.refreshDatas()
-    if(GLOB.navigation.getParams("welcome"))
-    {
-      setTimeout(()=>Notice.info(`Bienvenue ${User.fullName_of(this.master)}`), 1000)
-    }
-  }
-
-  refreshDatas(){
-    this.setState({ready: false})
-    DocumentsFetcher.wait_for(
-    ['refreshPacks()'],
-    (responses)=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          GLOB.datas = responses[0].packs || []
-          this.setState({ready: true})
-        }
-    })
-  }
-
-  toggleInfos(){
-    this.setState({showInfos: !this.state.showInfos})
+    this.generateStyles()
   }
 
   generateStyles(){
@@ -426,6 +361,134 @@ class HomeScreen extends Component {
             },
     })
   }
+
+  toggleInfos(){
+    if(this.show)
+    {
+      this.show = false
+      ClearGlobalView()
+    }
+    else
+    {
+      this.show = true
+      const AppInfos = <TouchableWithoutFeedback onPress={()=>this.toggleInfos()}>
+                          <View style={this.styles.content}>
+                              <View style={this.styles.box}>
+                                <View style={this.styles.boxTitle}>
+                                  <Text style={this.styles.title}>iDocus</Text>
+                                </View>
+                                <Text>www.idocus.com</Text>
+                                <Text>version : {Config.version.toString()}</Text>
+                                <Text>IDOCUS © Copyright 2018</Text>
+                              </View>
+                          </View>
+                        </TouchableWithoutFeedback>
+      AddToGlobalView(AppInfos)
+    }
+  }
+
+  render(){
+    return <ImageButton   source={{uri:"infos"}} 
+                          Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:30}}
+                          Istyle={{width:20, height:20}}
+                          onPress={()=>this.toggleInfos()} />
+  }
+}
+
+//A View that render a modal from any pages
+class GlobalView extends Component{
+  constructor(props){
+    super(props)
+    this.state = {children: null, animation: "fade"}
+  }
+
+  componentWillMount(){
+    this.GlobalViewShowListener = EventRegister.on("openGlobalView", (params)=>{
+      this.setState({children: params.children, animation: params.animation})
+    })
+
+    this.GlobalViewHideListener = EventRegister.on("closeGlobalView", ()=>{
+      this.setState({children: null, animation: "fade"})
+    })
+  }
+
+  componentWillUnmount(){
+    EventRegister.rm(this.GlobalViewShowListener)
+    EventRegister.rm(this.GlobalViewHideListener)
+  }
+
+  render(){
+    if(this.state.children != null)
+    {
+      return  <Modal  transparent={true}
+                      animationType={this.state.animation} 
+                      visible={true}
+                      supportedOrientations={['portrait', 'landscape']}
+                      onRequestClose={()=>{}}
+              >
+                {this.state.children}
+              </Modal>
+    }
+    else
+    {
+      return null
+    }
+  }
+}
+
+class HomeScreen extends Component {
+  static navigationOptions = {  headerTitle:'Accueil', 
+                                headerLeft: <MenuLoader />,
+                                headerRight: <View style={{flex:1, flexDirection:'row'}}>
+                                                <UINotification />
+                                                <AppInfos />
+                                                <ProgressUpload />
+                                             </View>
+                              }
+
+  constructor(props){
+    super(props)
+
+    this.master = User.getMaster()
+    GLOB.navigation = new Navigator(this.props.navigation)
+    GLOB.datas = []
+    this.state = {showInfos: false, ready: false}
+
+    this.refreshDatas = this.refreshDatas.bind(this)
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(nextProps.navigation.state.params.initScreen)
+    {
+      this.refreshDatas()
+      EventRegister.emit("refreshNotifications")
+    }
+  }
+
+  componentDidMount(){
+    this.refreshDatas()
+    if(GLOB.navigation.getParams("welcome"))
+    {
+      setTimeout(()=>Notice.info(`Bienvenue ${User.fullName_of(this.master)}`), 1000)
+    }
+  }
+
+  refreshDatas(){
+    this.setState({ready: false})
+    DocumentsFetcher.wait_for(
+    ['refreshPacks()'],
+    (responses)=>{
+        if(responses[0].error)
+        {
+          Notice.danger(responses[0].message, true, responses[0].message)
+        }
+        else
+        {
+          GLOB.datas = responses[0].packs || []
+          this.setState({ready: true})
+        }
+    })
+  }
   
   render() {
     return (
@@ -434,27 +497,7 @@ class HomeScreen extends Component {
           <FCM />
           <Header />
           <TabNav ready={this.state.ready} />
-          {this.state.showInfos &&
-             <Modal  transparent={true}
-                     animationType="fade" 
-                     visible={true}
-                     supportedOrientations={['portrait', 'landscape']}
-                     onRequestClose={()=>{}}
-            >
-              <TouchableWithoutFeedback onPress={this.toggleInfos}>
-                <View style={this.styles.content}>
-                    <View style={this.styles.box}>
-                      <View style={this.styles.boxTitle}>
-                      	<Text style={this.styles.title}>iDocus</Text>
-                      </View>
-                      <Text>www.idocus.com</Text>
-                      <Text>version : {Config.version.toString()}</Text>
-                      <Text>IDOCUS © Copyright 2018</Text>
-                    </View>
-                </View>
-              </TouchableWithoutFeedback>
-            </Modal> 
-          }
+          <GlobalView />
         </Screen>
     );
   }

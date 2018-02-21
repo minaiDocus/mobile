@@ -139,7 +139,7 @@ export class UploderFiles{
 
   onComplete(result){
     EventRegister.emit('completeUploadFile', result)
-    Notice.info("Transfert de documents terminé", true, "progressUploadFile")
+    Notice.info({title:"Envoi avec succès", body: "Transfert de documents terminée"}, true, "progressUploadFile")
     UploadingFiles = false
 
     if(typeof(result.success) !== "undefined" && result.success == true)
@@ -148,7 +148,7 @@ export class UploderFiles{
 
   onError(result){
     EventRegister.emit('errorUploadFile', result)
-    Notice.danger("Transfert de fichier avec erreur", true, "progressUploadFile")
+    Notice.danger({title:"Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!!!"}, true, "progressUploadFile")
     UploadingFiles = false
   }
 }
