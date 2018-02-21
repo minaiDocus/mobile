@@ -384,19 +384,17 @@ class SendScreen extends Component {
   }
 
   componentWillMount(){
-    //add Listener for Uploading Files
     EventRegister.on('progressUploadFile', this.uploadProgress)
     EventRegister.on('completeUploadFile', this.uploadComplete)
-    EventRegister.on('errorUploadFile', this.uploadError)
+    // EventRegister.on('errorUploadFile', this.uploadError)
   }
 
   componentWillUnmount(){
     GLOB.navigation.screenClose()
 
-    //remove Listener for Uploading Files
     EventRegister.rm('progressUploadFile')
     EventRegister.rm('completeUploadFile')
-    EventRegister.rm('errorUploadFile')
+    // EventRegister.rm('errorUploadFile')
   }
 
   uploadProgress(progressEvent){
@@ -411,7 +409,6 @@ class SendScreen extends Component {
   uploadComplete(result){
     if(this.refs._baseScroll)
     {
-      //handle complete
       if(result.error)
       {//handle error from Complete
         this.uploadError(result)
@@ -422,29 +419,7 @@ class SendScreen extends Component {
   }
 
   uploadError(result){
-    try{
-      if(Array.isArray(result.message))
-      {
-        GLOB.uploadErrors = result.message
-        const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
-                            <View style={{flex:1, paddingHorizontal:20}}>
-                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Erreur envoi</Text>
-                              <Text style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</Text>
-                            </View>
-                            <LinkButton onPress={()=>{this.OpenModalErrors()}} 
-                                        title='Voir détails ...' 
-                                        Tstyle={{color:'#fff'}} 
-                                        Pstyle={{flex:0, flexDirection:'column', alignItems:'center', width:50}} />
-                          </View>
-        Notice.danger(mess_obj, true, "uploadErrors")
-      }
-      else
-      {
-        Notice.danger({title:"Erreur envoi", body: result.message}, true, result.message)
-      }
-    }catch(e){
-      Notice.danger({title:"Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!!!"}, true, "erreur_upload")
-    }
+    //Upload Errors is handled by uploader component
   }
 
   render() {

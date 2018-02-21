@@ -5,7 +5,7 @@ import {StyleSheet,Text,View,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import LinearGradient from 'react-native-linear-gradient'
 
-import {AnimatedBox, XFetcher} from './index'
+import {AnimatedBox, XFetcher, LinkButton, BoxInfos} from './index'
 
 export class ProgressUpload extends Component{
   constructor(props){
@@ -106,7 +106,10 @@ export class ProgressUpload extends Component{
 
 export class UploderFiles{
   constructor(){
+    this.uploadErrors = []
+
     this.launchUpload = this.launchUpload.bind(this)
+    this.showErrors = this.showErrors.bind(this)
   }
 
   launchUpload(data=null){
@@ -147,8 +150,48 @@ export class UploderFiles{
   }
 
   onError(result){
-    EventRegister.emit('errorUploadFile', result)
-    Notice.danger({title:"Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!!!"}, true, "progressUploadFile")
+    try{
+      if(Array.isArray(result.message))
+      {
+        this.uploadErrors = result.message
+        const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
+                            <View style={{flex:1, paddingHorizontal:20}}>
+                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Erreur envoi</Text>
+                              <Text style={{flex:1, color:'#EC5656', fontSize:10}}>Des erreurs ont été détectées lors de l'envoi</Text>
+                            </View>
+                            <LinkButton onPress={()=>{this.showErrors()}} 
+                                        title='Voir détails ...' 
+                                        Tstyle={{color:'#fff'}} 
+                                        Pstyle={{flex:0, flexDirection:'column', alignItems:'center', width:80}} />
+                          </View>
+        Notice.danger(mess_obj, true, "uploadErrors")
+      }
+      else
+      {
+        Notice.danger({title:"Erreur envoi", body: result.message}, true, result.message)
+      }
+    }catch(e){
+      Notice.danger({title:"Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!"}, true, "erreur_upload")
+    }
+
+    //EventRegister.emit('errorUploadFile', result)
     UploadingFiles = false
+  }
+
+  showErrors(){
+    const call = ()=>{
+                        const boxError = <BoxInfos title="Erreurs envoi" dismiss={()=>{ClearGlobalView()}}>
+                                            { 
+                                              this.uploadErrors.map((err, index)=>{
+                                                return  <View key={index} style={{flex:1, padding:10, borderBottomWidth:1, borderColor:'#A6A6A6'}}>
+                                                          <Text style={{fontSize:14}}>- N°{index+1}</Text>
+                                                          <Text style={{fontSize:12, color:"#EC5656", paddingHorizontal:10}}>{err}</Text>
+                                                        </View>
+                                              })
+                                            }
+                                         </BoxInfos>
+                        AddToGlobalView(boxError, "slide")
+                      }
+    actionLocker(call)
   }
 }

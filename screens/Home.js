@@ -325,8 +325,7 @@ class TabNav extends Component{
 class AppInfos extends Component{
   constructor(props){
     super(props)
-    this.show = false
-
+    
     this.generateStyles()
   }
 
@@ -363,28 +362,19 @@ class AppInfos extends Component{
   }
 
   toggleInfos(){
-    if(this.show)
-    {
-      this.show = false
-      ClearGlobalView()
-    }
-    else
-    {
-      this.show = true
-      const AppInfos = <TouchableWithoutFeedback onPress={()=>this.toggleInfos()}>
-                          <View style={this.styles.content}>
-                              <View style={this.styles.box}>
-                                <View style={this.styles.boxTitle}>
-                                  <Text style={this.styles.title}>iDocus</Text>
-                                </View>
-                                <Text>www.idocus.com</Text>
-                                <Text>version : {Config.version.toString()}</Text>
-                                <Text>IDOCUS © Copyright 2018</Text>
+    const AppInfos = <TouchableWithoutFeedback onPress={()=>ClearGlobalView()}>
+                        <View style={this.styles.content}>
+                            <View style={this.styles.box}>
+                              <View style={this.styles.boxTitle}>
+                                <Text style={this.styles.title}>iDocus</Text>
                               </View>
-                          </View>
-                        </TouchableWithoutFeedback>
-      AddToGlobalView(AppInfos)
-    }
+                              <Text>www.idocus.com</Text>
+                              <Text>version : {Config.version.toString()}</Text>
+                              <Text>IDOCUS © Copyright 2018</Text>
+                            </View>
+                        </View>
+                      </TouchableWithoutFeedback>
+    AddToGlobalView(AppInfos)
   }
 
   render(){
