@@ -18,22 +18,22 @@ function fill_with_zero(date, length_to = 2){
 
 
 //Globals functions && declarations
+global.Config = Config
 global.UploadingFiles = false
 global.Notice = Notice
 global.CronTask = CronTask
 global.TempSchemasLists = []
 
-//Function for adding Components to Global View Modal
-global.AddToGlobalView = (children, animation="fade") => {
+//Function for adding Components to the Front View Modal
+global.RenderToFrontView = (children, animation="fade") => {
   params = {children: children, animation: animation}
-  EventRegister.emit("openGlobalView", params)
+  EventRegister.emit("openFrontView", params)
 }
 
-//Function for removing Components from Global View Modal
-global.ClearGlobalView = () => {
-  EventRegister.emit("closeGlobalView")
+//Function for removing Components from Front View Modal (close front view)
+global.ClearFrontView = () => {
+  EventRegister.emit("closeFrontView")
 }
-
 
 
 //Function for handleling http errors
@@ -135,7 +135,7 @@ global.actionLocker = (callback) => {
 }
 
 
-//Functions for saving images been send
+//Functions for saving images been sent
 global.ListImages = []
 
 global.inListImages = (filename)=>{

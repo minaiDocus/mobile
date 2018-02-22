@@ -1,5 +1,4 @@
 import {Requester} from './index'
-import Config from '../Config'
 
 class firebase_notification extends Requester{
   async getNotifications(){
@@ -44,12 +43,12 @@ class firebase_notification extends Requester{
     return response
   }
 
-  async registerFirebaseToken(token = "", platform='', version=''){
+  async registerFirebaseToken(token = ""){
     let response = ""
 
     if(token != "" && token != null && typeof(token) !== "undefined")
     {
-      this.requestURI("api/mobile/firebase_notification/register_firebase_token", {method: 'POST', params:{firebase_token: token, platform: platform, version: version}}, (r) => {
+      this.requestURI("api/mobile/firebase_notification/register_firebase_token", {method: 'POST', params:{firebase_token: token, platform: Config.platform, version: Config.version}}, (r) => {
         if(r.error){ 
           //handling errors
           response = r

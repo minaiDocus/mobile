@@ -1,4 +1,3 @@
-import Config from '../../Config'
 import base64 from 'base-64'
 import {User} from '../../models'
 

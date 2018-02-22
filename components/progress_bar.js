@@ -1,5 +1,3 @@
-import Config from '../Config'
-
 import React, { Component } from 'react'
 import LinearGradient from 'react-native-linear-gradient'
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native'

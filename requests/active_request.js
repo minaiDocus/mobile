@@ -1,4 +1,3 @@
-import Config from '../Config'
 import {XFetcher} from '../components'
 
 export class Requester {

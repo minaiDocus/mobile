@@ -1,5 +1,3 @@
-import Config from '../../Config'
-
 import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
 import { NavigationActions } from 'react-navigation'

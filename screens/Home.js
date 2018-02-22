@@ -1,5 +1,3 @@
-import Config from '../Config'
-
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native'
@@ -361,8 +359,8 @@ class AppInfos extends Component{
     })
   }
 
-  toggleInfos(){
-    const AppInfos = <TouchableWithoutFeedback onPress={()=>ClearGlobalView()}>
+  showInfos(){
+    const AppInfos =  <TouchableWithoutFeedback onPress={()=>ClearFrontView()}>
                         <View style={this.styles.content}>
                             <View style={this.styles.box}>
                               <View style={this.styles.boxTitle}>
@@ -374,37 +372,37 @@ class AppInfos extends Component{
                             </View>
                         </View>
                       </TouchableWithoutFeedback>
-    AddToGlobalView(AppInfos)
+    RenderToFrontView(AppInfos)
   }
 
   render(){
     return <ImageButton   source={{uri:"infos"}} 
                           Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:30}}
                           Istyle={{width:20, height:20}}
-                          onPress={()=>this.toggleInfos()} />
+                          onPress={()=>this.showInfos()} />
   }
 }
 
-//A View that render a modal from any pages
-class GlobalView extends Component{
+//A View that render a modal, visible on any pages but login
+class FrontView extends Component{
   constructor(props){
     super(props)
     this.state = {children: null, animation: "fade"}
   }
 
   componentWillMount(){
-    this.GlobalViewShowListener = EventRegister.on("openGlobalView", (params)=>{
+    this.FrontViewShowListener = EventRegister.on("openFrontView", (params)=>{
       this.setState({children: params.children, animation: params.animation})
     })
 
-    this.GlobalViewHideListener = EventRegister.on("closeGlobalView", ()=>{
+    this.FrontViewHideListener = EventRegister.on("closeFrontView", ()=>{
       this.setState({children: null, animation: "fade"})
     })
   }
 
   componentWillUnmount(){
-    EventRegister.rm(this.GlobalViewShowListener)
-    EventRegister.rm(this.GlobalViewHideListener)
+    EventRegister.rm(this.FrontViewShowListener)
+    EventRegister.rm(this.FrontViewHideListener)
   }
 
   render(){
@@ -487,7 +485,7 @@ class HomeScreen extends Component {
           <FCM />
           <Header />
           <TabNav ready={this.state.ready} />
-          <GlobalView />
+          <FrontView />
         </Screen>
     );
   }

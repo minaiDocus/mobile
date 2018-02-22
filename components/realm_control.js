@@ -1,5 +1,3 @@
-import Config from '../Config'
-
 class realm_control {
 
   static registerTempSchema(newSchema){

@@ -1,6 +1,3 @@
-import Config from '../Config'
-import {Platform} from 'react-native'
-
 import {XFetcher} from '../components'
 
 import {User} from '../models'
@@ -13,7 +10,7 @@ class error_report {
                       error: error, 
                       user_id: master.id || "not connected",
                       user_token: master.auth_token || "not connected",
-                      platform: Platform.OS,
+                      platform: Config.platform,
                       version: Config.version,
                       report: report
                     }

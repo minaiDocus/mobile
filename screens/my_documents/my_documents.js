@@ -1,5 +1,3 @@
-import Config from '../../Config'
-
 import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity} from 'react-native'
 

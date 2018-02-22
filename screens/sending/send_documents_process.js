@@ -1,5 +1,3 @@
-import Config from '../../Config'
-
 import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,ListView,TouchableOpacity,Picker} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'

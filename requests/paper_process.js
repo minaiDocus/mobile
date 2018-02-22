@@ -1,4 +1,3 @@
-import Config from '../Config'
 import {Requester} from './index'
 
 class paper_process extends Requester{

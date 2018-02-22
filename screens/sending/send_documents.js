@@ -1,5 +1,3 @@
-import Config from '../../Config'
-
 import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button} from 'react-native'
 import base64 from 'base-64'

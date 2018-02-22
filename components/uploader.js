@@ -1,4 +1,3 @@
-import Config from "../Config"
 import React, { Component } from 'react'
 import base64 from 'base-64'
 import {StyleSheet,Text,View,TouchableOpacity} from 'react-native'
@@ -150,6 +149,7 @@ export class UploderFiles{
   }
 
   onError(result){
+    Notice.remove("progressUploadFile")
     try{
       if(Array.isArray(result.message))
       {
@@ -180,17 +180,17 @@ export class UploderFiles{
 
   showErrors(){
     const call = ()=>{
-                        const boxError = <BoxInfos title="Erreurs envoi" dismiss={()=>{ClearGlobalView()}}>
+                        const boxError = <BoxInfos title="Erreurs envoi" dismiss={()=>{ClearFrontView()}}>
                                             { 
                                               this.uploadErrors.map((err, index)=>{
                                                 return  <View key={index} style={{flex:1, padding:10, borderBottomWidth:1, borderColor:'#A6A6A6'}}>
-                                                          <Text style={{fontSize:14}}>- N°{index+1}</Text>
-                                                          <Text style={{fontSize:12, color:"#EC5656", paddingHorizontal:10}}>{err}</Text>
+                                                          <Text style={{fontSize:14}}>- {err.filename}</Text>
+                                                          <Text style={{fontSize:12, color:"#EC5656", paddingHorizontal:10}}>{err.errors}</Text>
                                                         </View>
                                               })
                                             }
                                          </BoxInfos>
-                        AddToGlobalView(boxError, "slide")
+                        RenderToFrontView(boxError, "slide")
                       }
     actionLocker(call)
   }

@@ -32,6 +32,18 @@ export class Notice {
     Alert.alert(...args)
   }
 
+  static remove(name=""){
+    if(name != "" && name != null && typeof(name) !== "undefined")
+    {
+      Notice._noticeMessages.map((value, index)=>{
+        if(value != null && value.options.name != "" && value.options.name == name)
+        {
+          Notice._removeNoticeMessages(index)
+        }
+      })
+    }
+  }
+
   static exist(name=""){
     let exist = false
     Notice._noticeMessages.map((value, index)=>{

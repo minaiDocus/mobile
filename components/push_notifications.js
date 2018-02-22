@@ -1,6 +1,5 @@
-import Config from '../Config'
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, Modal, ScrollView, TouchableOpacity, Platform} from 'react-native'
+import { StyleSheet, Text, View, Modal, ScrollView, TouchableOpacity} from 'react-native'
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
 import { EventRegister } from 'react-native-event-listeners'
 
@@ -144,11 +143,11 @@ class Example extends Component {
 export class UINotification extends Component{
     constructor(props){
         super(props)
-        this.state = {newNotifCount: 0, datas: []}
-
-        this.showListNotifications = false
+        this.state = {newNotifCount: 0, datas: [], showList: false}
 
         this.master = User.getMaster()
+
+        this.listNotifView = null
 
         this.toggleListNotifications = this.toggleListNotifications.bind(this)
         this.refreshData = this.refreshData.bind(this)
@@ -165,7 +164,7 @@ export class UINotification extends Component{
         })
         this.refreshNotificationsListener = EventRegister.on('refreshNotifications', ()=>{
           //resend token to server
-          FireBaseNotification.registerFirebaseToken(this.master.firebase_token, Platform.OS)
+          FireBaseNotification.registerFirebaseToken(this.master.firebase_token)
           this.refreshData()
         })
         this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
@@ -177,6 +176,11 @@ export class UINotification extends Component{
         EventRegister.rm(this.newNotificationListener)
         EventRegister.rm(this.refreshNotificationsListener)
         EventRegister.rm(this.revokeTokenListener)
+    }
+
+    componentDidUpdate(){
+      if(this.state.showList)
+        RenderToFrontView(this.listNotifView, "slide")
     }
 
     componentDidMount(){
@@ -192,23 +196,6 @@ export class UINotification extends Component{
         .catch(error => {
           //Error while deleting instance id
         });
-    }
-
-    toggleListNotifications(){
-      if(this.showListNotifications)
-      {
-        this.showListNotifications = false
-        ClearGlobalView()
-      }
-      else
-      {
-        this.showListNotifications = true
-        const ListNotifs =  <BoxInfos title={"Notifications"} dismiss={this.toggleListNotifications}>
-                              {this.renderDetails()}
-                            </BoxInfos>
-        AddToGlobalView(ListNotifs, "slide")
-        this.releaseNewNotif()
-      }
     }
 
     releaseNewNotif(){
@@ -325,6 +312,22 @@ export class UINotification extends Component{
     	})
     }
 
+    toggleListNotifications(){
+      if(this.state.showList)
+      {
+        this.releaseNewNotif()
+        ClearFrontView()
+      }
+      
+      this.setState({showList: !this.state.showList}) 
+    }
+
+    renderListNotifications(){
+      this.listNotifView =  <BoxInfos title={"Notifications"} dismiss={()=>{this.toggleListNotifications()}}>
+                              {this.renderDetails()}
+                            </BoxInfos>
+    }
+
     renderDetails(){
       if(this.state.datas.length > 0)
       {
@@ -353,6 +356,9 @@ export class UINotification extends Component{
     }
 
     render(){
+        if(this.state.showList)
+          this.renderListNotifications()
+
         return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>{this.toggleListNotifications()}}>
                   <ImageButton  source={{uri:"notification"}} 
                   Pstyle={{flex:1, flexDirection:'column', alignItems:'center',minWidth:30}}
@@ -387,7 +393,7 @@ export class FCMinit extends Component{
               Notice.info({title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment"}, false, "notif_block", 10000)
             })
         
-        FCM.getFCMToken().then(token => {
+        FCM.getFCMToken().then((token) => {
             //getting firebase notifications token
             this.handleToken(token)
         });
@@ -434,7 +440,7 @@ export class FCMinit extends Component{
           _tmp_master.firebase_token = token
           User.create_or_update(_tmp_master.id, _tmp_master, true)
 
-          FireBaseNotification.registerFirebaseToken(token, Platform.OS, Config.version)
+          FireBaseNotification.registerFirebaseToken(token)
         }
     }
 
