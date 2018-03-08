@@ -32,7 +32,7 @@ class Header extends Component{
   }
 
   filterAccount(text=""){
-    AccountSharing.wait_for(
+    AccountSharing.waitFor(
       [`getListCustomers("${text}")`],
       (responses)=>{
         if(responses[0].error)
@@ -47,7 +47,7 @@ class Header extends Component{
   }
 
   filterCollaborator(text=""){
-    AccountSharing.wait_for(
+    AccountSharing.waitFor(
       [`getListCollaborators("${text}")`],
       (responses)=>{
         if(responses[0].error)
@@ -78,7 +78,7 @@ class Header extends Component{
                         {
                           Notice.info("Partage en cours ...")
                           this.setState({loading_add: true})
-                          AccountSharing.wait_for(
+                          AccountSharing.waitFor(
                             [`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`],
                             (responses)=>{
                               if(responses[0].error)
@@ -241,7 +241,7 @@ class BoxStat extends Component{
 
   deleteSharedDoc(id_doc){
     Notice.info("Suppression de partage en cours ...")
-    AccountSharing.wait_for(
+    AccountSharing.waitFor(
       [`deleteSharedDoc(${id_doc})`],
       (responses)=>{
         if(responses[0].error)
@@ -259,7 +259,7 @@ class BoxStat extends Component{
 
   acceptSharedDoc(id_doc){
     Notice.info("Partage en cours ...")
-    AccountSharing.wait_for(
+    AccountSharing.waitFor(
       [`acceptSharedDoc(${id_doc})`],
       (responses)=>{
         if(responses[0].error)
@@ -507,7 +507,7 @@ class SharingScreen extends Component {
     }
 
     this.setState({ready: false, dataList: []})
-    AccountSharing.wait_for(
+    AccountSharing.waitFor(
       [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
       (responses)=>{
         if(responses[0].error)

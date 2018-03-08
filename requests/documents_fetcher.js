@@ -4,7 +4,7 @@ import {User} from '../models'
 
 class documents_fetcher extends Requester{
 
-  render_document_uri(data, forcing_temp = false){
+  renderDocumentUri(data, forcing_temp = false){
     let forcing=""  
     if(forcing_temp)
     {

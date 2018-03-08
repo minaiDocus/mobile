@@ -9,6 +9,7 @@ import {AnimatedBox, XFetcher, LinkButton, BoxInfos} from './index'
 export class ProgressUpload extends Component{
   constructor(props){
     super(props)
+
     this.state = {show: false, value: 0}
 
     this.dismiss = this.dismiss.bind(this)
@@ -19,12 +20,10 @@ export class ProgressUpload extends Component{
   }
 
   componentWillMount(){
-    //add Listener for Uploading Files
     EventRegister.on('progressUploadFile', this.uploadProgress)
   }
 
   componentWillUnmount(){
-    //remove Listener for Uploading Files
     EventRegister.rm('progressUploadFile')
   }
 
@@ -115,7 +114,7 @@ export class UploderFiles{
     if(data !== null && typeof(data) !== "undefined")
     {
       const Fetcher = new XFetcher()
-      Fetcher.fetch("api/mobile/file_uploader", {method: 'POST', contentType:'multipart/form-data', form_body: data}, false, (result)=>{this.onLoad(result)}, (progressEvent)=>{this.onProgress(progressEvent)}, 180)
+      Fetcher.fetch("api/mobile/file_uploader", {method: 'POST', contentType:'multipart/form-data', form_body: data}, false, (result)=>{this.onLoad(result)}, (progressEvent)=>{this.onProgress(progressEvent)}, -1)
       UploadingFiles = true
     }
   }
@@ -155,14 +154,16 @@ export class UploderFiles{
       {
         this.uploadErrors = result.message
         const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
-                            <View style={{flex:1, paddingHorizontal:20}}>
+                            <View style={{flex:2, paddingHorizontal:20}}>
                               <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Erreur envoi</Text>
                               <Text style={{flex:1, color:'#EC5656', fontSize:10}}>Des erreurs ont été détectées lors de l'envoi</Text>
                             </View>
-                            <LinkButton onPress={()=>{this.showErrors()}} 
-                                        title='Voir détails ...' 
-                                        Tstyle={{color:'#fff'}} 
-                                        Pstyle={{flex:0, flexDirection:'column', alignItems:'center', width:80}} />
+                            <View style={{flex:1}}>
+                              <LinkButton onPress={()=>{this.showErrors()}} 
+                                          title='Voir détails ...' 
+                                          Tstyle={{color:'#EC5656', fontWeight:'bold', paddingLeft:0, textAlign:'center'}} 
+                                          Pstyle={{flex:1}} />
+                            </View>
                           </View>
         Notice.danger(mess_obj, true, "uploadErrors")
       }
@@ -174,13 +175,12 @@ export class UploderFiles{
       Notice.danger({title:"Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!"}, true, "erreur_upload")
     }
 
-    //EventRegister.emit('errorUploadFile', result)
     UploadingFiles = false
   }
 
   showErrors(){
     const call = ()=>{
-                        const boxError = <BoxInfos title="Erreurs envoi" dismiss={()=>{ClearFrontView()}}>
+                        const boxError = <BoxInfos title="Erreurs envoi" dismiss={()=>{clearFrontView()}}>
                                             { 
                                               this.uploadErrors.map((err, index)=>{
                                                 return  <View key={index} style={{flex:1, padding:10, borderBottomWidth:1, borderColor:'#A6A6A6'}}>
@@ -190,7 +190,7 @@ export class UploderFiles{
                                               })
                                             }
                                          </BoxInfos>
-                        RenderToFrontView(boxError, "slide")
+                        renderToFrontView(boxError, "slide")
                       }
     actionLocker(call)
   }

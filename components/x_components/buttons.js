@@ -148,7 +148,7 @@ export class LinkButton extends Component{
       text:  {
                 flex:3,
                 textAlign:'left',
-                paddingLeft:10,
+                paddingLeft:10
               },
       image:  {
                 flex:1,

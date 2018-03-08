@@ -18,8 +18,8 @@ export class ActiveRecord {
     if(this.objectName.length > 0)
     {
       this._realm.write(()=>{
-        this._realm.delete(this._realm.objects(this.objectName));
-      });
+        this._realm.delete(this._realm.objects(this.objectName))
+      })
     }
   }
   
@@ -27,8 +27,8 @@ export class ActiveRecord {
     if(this.objectName.length > 0)
     {
       this._realm.write(()=>{
-        this._realm.delete(obj);
-      });
+        this._realm.delete(obj)
+      })
     }
   }
 
@@ -37,15 +37,15 @@ export class ActiveRecord {
     {
       this._realm.write(()=>{
         datas.map((value, key)=>{ this._realm.create(this.objectName, value, true); })
-      });
+      })
     }
   }
 
   find(where=""){    
     if(this.objectName.length > 0)
     {
-      if(where.length == 0){  return this._realm.objects(this.objectName) }
-      if(where.length > 0){  return this._realm.objects(this.objectName).filtered(where) }
+      if(where.length == 0) {  return this._realm.objects(this.objectName) }
+      else {  return this._realm.objects(this.objectName).filtered(where) }
     }
     return null
   }

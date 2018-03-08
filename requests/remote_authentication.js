@@ -2,7 +2,7 @@ import {Requester} from './index'
 import {User} from '../models'
 
 class remote_auhtentication extends Requester{
-  async ping_server(version, platform, callback=()=>{}){
+  async pingServer(version, platform, callback=()=>{}){
     let response = ""
     this.requestURI("api/mobile/remote_authentication/ping", {method: 'POST', params:{version, platform}}, (r) => {
       if(r.error){ 
@@ -32,7 +32,7 @@ class remote_auhtentication extends Requester{
       else
       {
         User.deleteAll()
-        User.create_or_update(1, r.user, true)
+        User.createOrUpdate(1, r.user, true)
         callback('success', '')
       }
     })

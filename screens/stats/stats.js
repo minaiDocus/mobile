@@ -349,7 +349,7 @@ class StatsScreen extends Component {
 
     this.setState({ready: false, dataList: []})
 
-    PaperProcess.wait_for(
+    PaperProcess.waitFor(
       [`getStats(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
       (responses)=>{
         if(responses[0].error)

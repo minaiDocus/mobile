@@ -360,7 +360,7 @@ class AppInfos extends Component{
   }
 
   showInfos(){
-    const AppInfos =  <TouchableWithoutFeedback onPress={()=>ClearFrontView()}>
+    const AppInfos =  <TouchableWithoutFeedback onPress={()=>clearFrontView()}>
                         <View style={this.styles.content}>
                             <View style={this.styles.box}>
                               <View style={this.styles.boxTitle}>
@@ -372,7 +372,7 @@ class AppInfos extends Component{
                             </View>
                         </View>
                       </TouchableWithoutFeedback>
-    RenderToFrontView(AppInfos)
+    renderToFrontView(AppInfos)
   }
 
   render(){
@@ -457,13 +457,13 @@ class HomeScreen extends Component {
     this.refreshDatas()
     if(GLOB.navigation.getParams("welcome"))
     {
-      setTimeout(()=>Notice.info(`Bienvenue ${User.fullName_of(this.master)}`), 1000)
+      setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(this.master)}`), 1000)
     }
   }
 
   refreshDatas(){
     this.setState({ready: false})
-    DocumentsFetcher.wait_for(
+    DocumentsFetcher.waitFor(
     ['refreshPacks()'],
     (responses)=>{
         if(responses[0].error)

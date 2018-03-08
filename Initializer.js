@@ -25,13 +25,13 @@ global.CronTask = CronTask
 global.TempSchemasLists = []
 
 //Function for adding Components to the Front View Modal
-global.RenderToFrontView = (children, animation="fade") => {
+global.renderToFrontView = (children, animation="fade") => {
   params = {children: children, animation: animation}
   EventRegister.emit("openFrontView", params)
 }
 
 //Function for removing Components from Front View Modal (close front view)
-global.ClearFrontView = () => {
+global.clearFrontView = () => {
   EventRegister.emit("closeFrontView")
 }
 
@@ -50,6 +50,7 @@ global.handlingHttpErrors = (request, source="") => {
   }
 
   let errorMessage = ""
+
   switch(request.status){
     case 0 :
       errorMessage = "Impossible de se connecter au serveur iDocus!!"
@@ -169,7 +170,7 @@ global.saveListImages = () => {
                               send_at: 'date?',
                               is_sent: 'bool',
                            }
-    const result = RealmControl.create_temp_realm(ListImages, "imagesSent", images_schema)
+    const result = RealmControl.createTempRealm(ListImages, "imagesSent", images_schema)
     if(result.length > 0)
     {
       setListImages([])

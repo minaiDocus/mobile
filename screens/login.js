@@ -11,25 +11,13 @@ import {RemoteAuthentication,UsersFetcher} from '../requests'
 let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
 
 function goToHome(){
-  UsersFetcher.wait_for(
+  UsersFetcher.waitFor(
     ['refreshCustomers()'],
     (responses)=>{
       responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
       SplashScreen.hide()
       GLOB.navigation.dismissTo('Home', {welcome: true})
   })
-}
-
-function lecture(){
-  var fso = new ActiveXObject("Scripting.FileSystemObject");
-  var d = fso.GetFolder("../components/");
-  var fc = new Enumerator(d.Files);
-  var str = "";
-  for (; ! fc.atEnd() ; fc.moveNext())
-  {
-    str += fc.item().Name + "\n";
-  }
-  console.warn(str)
 }
 
 class ModalLoader extends Component{
@@ -107,8 +95,8 @@ class LoginScreen extends Component {
       setTimeout(()=>Notice.info(`A bientot !!`), 1000)
     }
 
-    RemoteAuthentication.wait_for(
-      [`ping_server("${Config.version}", "${Config.platform}")`],
+    RemoteAuthentication.waitFor(
+      [`pingServer("${Config.version}", "${Config.platform}")`],
       (responses)=>{
         this.setState({ready: true})
         if(responses[0].code != 200)

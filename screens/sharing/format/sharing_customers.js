@@ -50,7 +50,7 @@ class ModalSharing extends Component{
     {
       const call = ()=>{
                           Notice.info(message)
-                          AccountSharing.wait_for(
+                          AccountSharing.waitFor(
                             [url],
                             (responses)=>{
                               if(responses[0].error)
@@ -113,7 +113,7 @@ class ViewState extends Component{
 
   deleteSharedDoc(id_doc, type='admin'){
     Notice.info("Suppression en cours ...")
-    AccountSharing.wait_for(
+    AccountSharing.waitFor(
       [`deleteSharedDoc(${id_doc}, "${type}")`],
       (responses)=>{
         if(responses[0].error)
@@ -373,7 +373,7 @@ class SharingScreen extends Component {
 
   refreshDatas(){
     this.setState({ready: false})
-    AccountSharing.wait_for(
+    AccountSharing.waitFor(
       [`getSharedDocsCustomers()`],
       (responses)=>{
         if(responses[0].error)

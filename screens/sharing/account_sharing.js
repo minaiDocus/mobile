@@ -3,7 +3,7 @@ import { EventRegister } from 'react-native-event-listeners'
 
 import {Navigator,ImageButton} from '../../components'
 
-import {User} from '../../models/User'
+import {User} from '../../models'
 
 import SharingAdmin from './format/sharing_admin'
 import SharingCustomers from './format/sharing_customers'

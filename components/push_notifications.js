@@ -180,7 +180,7 @@ export class UINotification extends Component{
 
     componentDidUpdate(){
       if(this.state.showList)
-        RenderToFrontView(this.listNotifView, "slide")
+        renderToFrontView(this.listNotifView, "slide")
     }
 
     componentDidMount(){
@@ -254,7 +254,7 @@ export class UINotification extends Component{
     }
 
     refreshData(){
-      FireBaseNotification.wait_for(
+      FireBaseNotification.waitFor(
       ['getNotifications()'],
       (responses)=>{
           if(responses[0].error)
@@ -281,7 +281,7 @@ export class UINotification extends Component{
                                 is_read: 'bool',
                               }
 
-        const result = RealmControl.create_temp_realm(datas, "notifications", notif_schema)
+        const result = RealmControl.createTempRealm(datas, "notifications", notif_schema)
         let nb_new = 0
         result.map((r)=>{if(r.is_read == false) nb_new++})
 
@@ -316,7 +316,7 @@ export class UINotification extends Component{
       if(this.state.showList)
       {
         this.releaseNewNotif()
-        ClearFrontView()
+        clearFrontView()
       }
       
       this.setState({showList: !this.state.showList}) 
@@ -342,7 +342,7 @@ export class UINotification extends Component{
                       }
                      </Text>
                      <Text style={{color:'#3F4545'}}>{data.message || "-"}</Text>
-                     <Text style={{color:'#97938B', fontSize:9, marginTop:7}}>{format_date(data.created_at)}</Text>
+                     <Text style={{color:'#97938B', fontSize:9, marginTop:7}}>{formatDate(data.created_at)}</Text>
                   </View>
         })
         return details
@@ -438,7 +438,7 @@ export class FCMinit extends Component{
           let _tmp_master = RealmControl.realmToJson(this.master)
           _tmp_master.authentication_token = this.master.auth_token
           _tmp_master.firebase_token = token
-          User.create_or_update(_tmp_master.id, _tmp_master, true)
+          User.createOrUpdate(_tmp_master.id, _tmp_master, true)
 
           FireBaseNotification.registerFirebaseToken(token)
         }

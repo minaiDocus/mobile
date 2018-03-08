@@ -27,7 +27,7 @@ class Header extends Component{
   componentDidMount(){
     const call = ()=>{
       users = User.getCustomers().sorted("code")
-      this.clients = [{value:0, label:"Tous"}].concat(User.create_Selection(users))
+      this.clients = [{value:0, label:"Tous"}].concat(User.createSelection(users))
       this.setState({ready: true})
     }
     setTimeout(call, 1000)
@@ -212,7 +212,7 @@ class DocumentsScreen extends Component {
 
   //For refreshing Account list
   componentDidMount(){
-    UsersFetcher.wait_for(
+    UsersFetcher.waitFor(
       ['refreshCustomers()'],
       (responses)=>{
         responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
@@ -232,7 +232,7 @@ class DocumentsScreen extends Component {
 
     this.setState({ready: false, loadingFilter: true})
 
-    DocumentsFetcher.wait_for(
+    DocumentsFetcher.waitFor(
           [`getPacks(${this.page}, "${GLOB.filterText}", "${GLOB.clientId}")`],
           (responses)=>{
             responses.map(r=>{

@@ -62,7 +62,7 @@ class Header extends Component{
   }
 
   render(){
-    const userName = User.fullName_of(this.master) || ""
+    const userName = User.fullNameOf(this.master) || ""
     return  <View style={this.styles.container} >
               <View style={this.styles.left} >
                 <View style={this.styles.logobox} />

@@ -13,7 +13,7 @@ class users_fetcher extends Requester{
       {
         User.deleteCustomers()
         r.customers.map((usr, index)=>{
-          User.create_or_update((index +  2), usr)
+          User.createOrUpdate((index +  2), usr)
         })
         response = true
       }

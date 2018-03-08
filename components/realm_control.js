@@ -22,7 +22,7 @@ class realm_control {
     TempSchemasLists = _tmp
   } 
 
-  static extract_structure_json(data={}){
+  static extractStructureJson(data={}){
     try{
       var temp = JSON.stringify(data).toString()
       temp = temp.replace(/[{}"]/ig, "")
@@ -48,14 +48,14 @@ class realm_control {
     }
   }
 
-  create_temp_realm(datas, realm_name="_temp", schema=null, name="temp"){
+  createTempRealm(datas, realm_name="_temp", schema=null, name="temp"){
     if(!Array.isArray(datas)){datas = [datas]}
     if(datas.length > 0)
     {
       let properties = schema
       if(properties==null)
       {
-        properties = realm_control.extract_structure_json(datas[0])
+        properties = realm_control.extractStructureJson(datas[0])
       }
 
       if(properties != null)
@@ -112,7 +112,7 @@ class realm_control {
     }
   }
 
-  get_temp_realm(realm_name, name="temp"){
+  getTempRealm(realm_name, name="temp"){
     let _schema = null
     TempSchemasLists.forEach((schema)=>{
       if(schema.name == realm_name)

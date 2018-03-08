@@ -26,16 +26,24 @@ export class XFetcher {
   }
 
   prepare_aborting(){
-    this.timer_abort = setTimeout(()=>{
-      this.clear_aborting()
-      this.request.abort()
-      this.responseFetching = {error: true, message: "Impossible de se connecter au serveur!!!"}
-      this.callback(this.responseFetching)
-    }, (this.abort_time * 1000)) //abort after 60 seconds [default] (if request too long)
+    // No request abort is set if abort_time is not > 0
+    if(this.abort_time > 0)
+    {
+      this.timer_abort = setTimeout(()=>{
+        this.clear_aborting()
+        this.request.abort()
+        this.responseFetching = {error: true, message: "Impossible de se connecter au serveur!!!"}
+        this.callback(this.responseFetching)
+      }, (this.abort_time * 1000)) //abort after 60 seconds [default] (if request too long)
+    }
   }
 
   clear_aborting(){
-    clearTimeout(this.timer_abort)
+    if(this.timer_abort != null)
+    {
+      clearTimeout(this.timer_abort)
+      this.timer_abort = null
+    }
   }
 
   fetch(uri, options={}, with_retry = true, callback = null, progress_callback = null, abort_time = 60){
@@ -101,7 +109,23 @@ export class XFetcher {
     {
       if(this.request.status != 200)
       {
-        this.onError(e)
+        try
+        {
+          this.responseFetching = JSON.parse(this.request.responseText)
+          if(typeof(this.responseFetching.error) !== "undefined" && typeof(this.responseFetching.message) !== "undefined" && this.responseFetching.error == true && this.responseFetching.message != "")
+          { 
+            this.clear_aborting()
+            this.callback(this.responseFetching)
+          }
+          else
+          {
+            this.onError(e)
+          }
+        }
+        catch(err)
+        {
+          this.onError(e)
+        }
       }
       else
       {

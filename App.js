@@ -1,10 +1,10 @@
 import { StackNavigator } from 'react-navigation'
 
-import LoginScreen from './screens/Login'
-import HomeScreen from './screens/Home'
+import LoginScreen from './screens/login'
+import HomeScreen from './screens/home'
 
-import SendScreen from './screens/sending/send_documents'
-import SendingScreen from './screens/sending/send_documents_process'
+import SendDocScreen from './screens/sending/send_documents'
+import SendProcessScreen from './screens/sending/send_documents_process'
 
 import DocumentsScreen from './screens/my_documents/my_documents'
 import PublishScreen from './screens/my_documents/publishing'
@@ -23,10 +23,10 @@ const StackApp = StackNavigator({   Login: {
                                       screen: HomeScreen,
                                     },
                                     Send: {
-                                      screen: SendScreen
+                                      screen: SendDocScreen
                                     }, 
                                     Sending: {
-                                      screen: SendingScreen
+                                      screen: SendProcessScreen
                                     },
                                     Documents: {
                                       screen: DocumentsScreen

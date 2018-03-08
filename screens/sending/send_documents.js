@@ -279,7 +279,7 @@ class SendScreen extends Component {
       //console.log('removed all tmp images from tmp directory');
     }).catch(e => {})
 
-    UsersFetcher.wait_for(
+    UsersFetcher.waitFor(
       ['refreshCustomers()'],
       (responses)=>{
         responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})

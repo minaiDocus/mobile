@@ -168,7 +168,7 @@ class Body extends Component{
   }
 
   componentDidMount(){
-    FileUploader.wait_for(
+    FileUploader.waitFor(
       ["refreshFormParams()"],
       (responses) => {
         if(responses[0].error)
@@ -177,9 +177,9 @@ class Body extends Component{
         }
         else
         {
-          users = User.find_by_list_of("code", responses[0].userList)
+          users = User.findByListOf("code", responses[0].userList)
 
-          this.clients = [{value:"", label:"Choisir un client"}].concat(User.create_Selection(users))
+          this.clients = [{value:"", label:"Choisir un client"}].concat(User.createSelection(users))
           GLOB.file_upload_params = responses[0].data
 
           GLOB.journal = GLOB.period = GLOB.customer = ""
@@ -285,7 +285,7 @@ class Body extends Component{
   const colorBar = (valueProgress < 1)? "blue" : "#C0D838"
 
   return  <View style={{flex:1}}>
-            {this.clients && <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>}
+            <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>
             <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
             <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
             {this.state.period_start != "" && 
@@ -370,7 +370,7 @@ class SendScreen extends Component {
     GLOB.period = ''
     GLOB.journal = ''
     GLOB.file_upload_params = []
-    GLOB.imagesSent = RealmControl.get_temp_realm("imagesSent")
+    GLOB.imagesSent = RealmControl.getTempRealm("imagesSent")
 
     setListImages([]) //Initialize list images beeing send
 
@@ -384,7 +384,6 @@ class SendScreen extends Component {
   componentWillMount(){
     EventRegister.on('progressUploadFile', this.uploadProgress)
     EventRegister.on('completeUploadFile', this.uploadComplete)
-    // EventRegister.on('errorUploadFile', this.uploadError)
   }
 
   componentWillUnmount(){
@@ -392,7 +391,6 @@ class SendScreen extends Component {
 
     EventRegister.rm('progressUploadFile')
     EventRegister.rm('completeUploadFile')
-    // EventRegister.rm('errorUploadFile')
   }
 
   uploadProgress(progressEvent){
@@ -407,10 +405,6 @@ class SendScreen extends Component {
   uploadComplete(result){
     if(this.refs._baseScroll)
     {
-      if(result.error)
-      {//handle error from Complete
-        this.uploadError(result)
-      }
       this.refs._baseScroll.scrollToEnd({animated: true})
       this.setState({progress: 1})
     }

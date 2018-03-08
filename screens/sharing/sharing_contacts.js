@@ -65,7 +65,7 @@ class ContactForm extends Component{
     {
       const call = ()=>{
                           Notice.info(flash)
-                          AccountSharing.wait_for(
+                          AccountSharing.waitFor(
                             [url],
                             (responses)=>{
                               if(responses[0].error)
@@ -206,7 +206,7 @@ class BoxStat extends Component{
 
   deleteSharedContact(_id){
     Notice.info("Suppression de contact en cours ...")
-    AccountSharing.wait_for(
+    AccountSharing.waitFor(
       [`deleteSharedContact(${_id})`],
       (responses)=>{
         if(responses[0].error)
@@ -287,7 +287,7 @@ class BoxStat extends Component{
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Email : </Text>{this.props.data.email}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Société : </Text>{this.props.data.company}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Nom : </Text>{User.fullName_of(this.props.data)}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Nom : </Text>{User.fullNameOf(this.props.data)}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Nb. de dossiers : </Text>{this.props.data.account_size}</Text>
                     </View>
               }
@@ -446,7 +446,7 @@ class SharingScreen extends Component {
     }
 
     this.setState({ready: false, dataList: []})
-    AccountSharing.wait_for(
+    AccountSharing.waitFor(
       [`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
       (responses)=>{
         if(responses[0].error)

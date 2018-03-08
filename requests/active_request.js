@@ -13,7 +13,7 @@ export class Requester {
     Fetcher.fetch(uri, options, true, callback)
   }
 
-  async wait_for(func=[], callback){
+  async waitFor(func=[], callback){
     let responses = []
     let tmp_rep = ""
 

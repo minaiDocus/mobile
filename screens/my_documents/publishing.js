@@ -88,7 +88,7 @@ class BoxZoom extends Component{
   }
 
   render(){
-    const src = DocumentsFetcher.render_document_uri(this.props.data.large, this.props.data.force_temp_doc)
+    const src = DocumentsFetcher.renderDocumentUri(this.props.data.large, this.props.data.force_temp_doc)
 
     return  <Modal transparent={false}
                    animationType="slide" 
@@ -265,7 +265,7 @@ class ImgBox extends Component{
     let local = true
     if(this.props.data.thumb)
     {
-      src = DocumentsFetcher.render_document_uri(this.props.data.thumb)
+      src = DocumentsFetcher.renderDocumentUri(this.props.data.thumb)
       local = false
     }
 
@@ -371,7 +371,7 @@ class TabNav extends Component{
 
     this.setState({published_ready: false})
     const pack_id = GLOB.Pack.pack_id || GLOB.Pack.id
-    DocumentsFetcher.wait_for(
+    DocumentsFetcher.waitFor(
         [`getDocumentsProcessed(${pack_id}, ${this.pagePublished}, "${GLOB.filterText}")`],
         (responses) => {
           if(responses[0].error)
@@ -399,7 +399,7 @@ class TabNav extends Component{
     {
       this.setState({publishing_ready: false})
       const pack_id = GLOB.Pack.pack_id || GLOB.Pack.id
-      DocumentsFetcher.wait_for(
+      DocumentsFetcher.waitFor(
           [`getDocumentsProcessing(${pack_id})`],
           (responses) => {
             if(responses[0].error)
