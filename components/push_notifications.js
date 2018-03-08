@@ -237,7 +237,7 @@ export class UINotification extends Component{
 
     	if(typeof(message) != "undefined" && message.to_be_added == true)
     	{
-        let sendDate = format_date((notif["google.sent_time"] || new Date()), "YYYY-MM-DDTHH:ii:ss")
+        let sendDate = formatDate((notif["google.sent_time"] || new Date()), "YYYY-MM-DDTHH:ii:ss")
     		notification = [{ 
     											"id": notif["google.message_id"] || sendDate,
     											"title": message.title,

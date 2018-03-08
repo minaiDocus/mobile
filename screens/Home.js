@@ -178,7 +178,7 @@ class ViewState extends Component{
       if(info.value == "updated_at")
       {
         try{
-          value = format_date(eval("data."+info.value))
+          value = formatDate(eval("data."+info.value))
         }
         catch(e){}
       }

@@ -352,7 +352,7 @@ class BoxStat extends Component{
               {
                   this.state.showDetails == true && 
                     <View style={this.styles.infos}>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Dossier : </Text>{this.props.data.document}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Client ou Contact : </Text>{this.props.data.client}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Etat : </Text>{state}</Text>

@@ -198,8 +198,8 @@ class BoxInfos extends Component{
   render(){
     const infos = [
                     {label: "Nom du documents :", value: GLOB.Pack.name},
-                    {label: "Date de mise en ligne :", value: format_date(GLOB.Pack.created_at)},
-                    {label: "Date de modification :", value: format_date(GLOB.Pack.updated_at)},
+                    {label: "Date de mise en ligne :", value: formatDate(GLOB.Pack.created_at)},
+                    {label: "Date de modification :", value: formatDate(GLOB.Pack.updated_at)},
                     {label: "Nombre de page :", value: this.props.nb_published || 0},
                     {label: "Nombre de pièce en cours de traitement :", value: this.props.nb_publishing || 0},
                   ]

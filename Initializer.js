@@ -7,7 +7,7 @@ import {Notice,RealmControl,CronTask} from './components'
 import {ErrorReport} from './requests'
 
 //Private functions
-function fill_with_zero(date, length_to = 2){
+function fillWithZero(date, length_to = 2){
   var f_date = date.toString()
   for(var i=1; i <= (length_to - date.toString().length); i++)
   {
@@ -77,7 +77,7 @@ global.handlingHttpErrors = (request, source="") => {
 }
 
 //Function for date format
-global.format_date = (_date=null, format = "DD-MM-YYYY HH:ii") => {
+global.formatDate = (_date=null, format = "DD-MM-YYYY HH:ii") => {
   let dateFormat = format
   if(_date != null && typeof(_date) !== 'undefined')
   {
@@ -85,21 +85,21 @@ global.format_date = (_date=null, format = "DD-MM-YYYY HH:ii") => {
     
     if(date.getFullYear() <= 2000){ return "-" } //if date is before year 2000
 
-    dateFormat = dateFormat.replace("DD", fill_with_zero(date.getDate()))   //Get the day as a number (1-31)
+    dateFormat = dateFormat.replace("DD", fillWithZero(date.getDate()))   //Get the day as a number (1-31)
 
     const dayWeek = date.getDay()  //Get the weekday as a number (0-6)
 
     dateFormat = dateFormat.replace("YYYY", date.getFullYear())   //Get the four digit year (yyyy)
 
-    dateFormat = dateFormat.replace("HH", fill_with_zero(date.getHours()))  //Get the hour (0-23)
+    dateFormat = dateFormat.replace("HH", fillWithZero(date.getHours()))  //Get the hour (0-23)
 
     const millisec = date.getMilliseconds()  //Get the milliseconds (0-999)
 
-    dateFormat = dateFormat.replace("ii", fill_with_zero(date.getMinutes()))  //Get the minutes (0-59)
+    dateFormat = dateFormat.replace("ii", fillWithZero(date.getMinutes()))  //Get the minutes (0-59)
 
-    dateFormat = dateFormat.replace("MM", fill_with_zero(date.getMonth() + 1))  //Get the month (0-11)
+    dateFormat = dateFormat.replace("MM", fillWithZero(date.getMonth() + 1))  //Get the month (0-11)
 
-    dateFormat = dateFormat.replace("ss", fill_with_zero(date.getSeconds()))  //Get the seconds (0-59)
+    dateFormat = dateFormat.replace("ss", fillWithZero(date.getSeconds()))  //Get the seconds (0-59)
 
     const time = date.getTime()  //Get the time (milliseconds since January 1, 1970)
 

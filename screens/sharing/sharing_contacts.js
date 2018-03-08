@@ -284,7 +284,7 @@ class BoxStat extends Component{
               {
                   this.state.showDetails == true && 
                     <View style={this.styles.infos}>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Email : </Text>{this.props.data.email}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Société : </Text>{this.props.data.company}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Nom : </Text>{User.fullName_of(this.props.data)}</Text>

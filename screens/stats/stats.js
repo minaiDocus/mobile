@@ -180,7 +180,7 @@ class BoxStat extends Component{
                 <XImage source={{uri:arrow}} style={this.styles.image} />
                 <Text style={{fontSize:12, fontWeight:'bold', flex:1}}>{this.props.data.company}
                   {' ('} 
-                    <Text style={{fontSize:9}}>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii") 
+                    <Text style={{fontSize:9}}>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii") 
                     + ' | ' + getType(this.props.data.type)}
                     </Text>
                   {')'} 
@@ -189,7 +189,7 @@ class BoxStat extends Component{
               {
                   this.state.showDetails == true && 
                     <View style={this.styles.infos}>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{format_date(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
+                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Type : </Text>{getType(this.props.data.type)}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Code client : </Text>{this.props.data.code}</Text>
                       <Text style={this.styles.champ}><Text style={this.styles.label}>Société : </Text>{this.props.data.company}</Text>
