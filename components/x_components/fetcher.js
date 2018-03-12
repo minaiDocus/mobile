@@ -91,11 +91,9 @@ export class XFetcher {
     this.prepare_aborting()
     this.initRequest()
 
-    if(this.body==null)
-      this.request.send()
-    else
-      this.request.send(this.body)
-
+    if(this.body==null) this.request.send()
+    else this.request.send(this.body)
+      
     this.request.onload = (e) => {this.onComplete(e)}
 
     this.request.onerror = (e) => {this.onError(e)}
@@ -109,23 +107,7 @@ export class XFetcher {
     {
       if(this.request.status != 200)
       {
-        try
-        {
-          this.responseFetching = JSON.parse(this.request.responseText)
-          if(typeof(this.responseFetching.error) !== "undefined" && typeof(this.responseFetching.message) !== "undefined" && this.responseFetching.error == true && this.responseFetching.message != "")
-          { 
-            this.clear_aborting()
-            this.callback(this.responseFetching)
-          }
-          else
-          {
-            this.onError(e)
-          }
-        }
-        catch(err)
-        {
-          this.onError(e)
-        }
+        this.onError(e)
       }
       else
       {
@@ -147,7 +129,6 @@ export class XFetcher {
 
   onError(e){
     this.clear_aborting()
-    this.request.abort()
 
     if(this.retry < this.request_retry)
     {

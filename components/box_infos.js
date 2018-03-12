@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {View, Text, Modal, StyleSheet, ScrollView} from 'react-native'
+import {View, Text, StyleSheet, ScrollView} from 'react-native'
 
 import {ImageButton} from './index'
 

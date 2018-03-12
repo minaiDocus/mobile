@@ -3,9 +3,9 @@ import { StyleSheet, Text, View, Modal, ScrollView, TouchableOpacity} from 'reac
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {ImageButton, RealmControl, BoxInfos} from './index'
+import {ImageButton, BoxInfos} from './index'
 
-import {User} from '../models'
+import {User,Notification} from '../models'
 
 import {FireBaseNotification} from '../requests'
 
@@ -202,7 +202,7 @@ export class UINotification extends Component{
       let _allNotif = []
       let allNotifications = this.state.datas
       allNotifications.map((notif) => {
-        let tmp = RealmControl.realmToJson(notif)
+        let tmp = realmToJson(notif)
         tmp.is_read = true
         _allNotif.push(tmp)
       })
@@ -272,16 +272,7 @@ export class UINotification extends Component{
     addNotifToRealm(datas){
       if(datas.length > 0)
       {
-        //schema of notifications (Realm)
-        const notif_schema =  {
-                                id: 'string',
-                                title: 'string?',
-                                message: 'string?',
-                                created_at: 'string?',
-                                is_read: 'bool',
-                              }
-
-        const result = RealmControl.createTempRealm(datas, "notifications", notif_schema)
+        const result = Notification.add(datas)
         let nb_new = 0
         result.map((r)=>{if(r.is_read == false) nb_new++})
 
@@ -435,7 +426,7 @@ export class FCMinit extends Component{
         if(typeof(token) !== "undefined" && token != null && token != "")
         {
           //send token to server
-          let _tmp_master = RealmControl.realmToJson(this.master)
+          let _tmp_master = realmToJson(this.master)
           _tmp_master.authentication_token = this.master.auth_token
           _tmp_master.firebase_token = token
           User.createOrUpdate(_tmp_master.id, _tmp_master, true)

@@ -39,7 +39,7 @@ class BoxZoom extends Component{
 
   onSwipe(index){
     this.currIndex = index
-    GLOB.idZoom = this.props.datas[index].filename
+    GLOB.idZoom = this.props.datas[index].id_64
   }
 
   hideModal(){
@@ -104,7 +104,7 @@ class BoxZoom extends Component{
 
     var embedContent = this.props.datas.map((img, key)=>
       {
-        if(img.filename == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
+        if(img.id_64 == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
         return <XImage  key={key}
                         type='container'
                         PStyle={this.swiperStyle.boxImage}
@@ -167,13 +167,13 @@ class ImgBox extends Component{
   }
 
   delete(){
-    GLOB.imgToDel = this.element.filename
+    GLOB.imgToDel = this.element.id_64
     this.props.deleteElement()
     this.toggleOpt()
   }
 
   zoom(){
-    GLOB.idZoom = this.element.filename
+    GLOB.idZoom = this.element.id_64
     this.props.toggleZoom()
     this.toggleOpt()
   }
@@ -333,22 +333,12 @@ class SendScreen extends Component {
     let img = []
   
     _img.forEach((i)=>{
-        if(Platform.OS == "android")
-        {
-          Object.assign(i, {filename: base64.encode(i.path).toString()}, i)
-        }
+        if(typeof(i.filename) !== "undefined" && i.filename != null)
+          id_64 = base64.encode(i.filename).toString()
         else
-        {
-          if(typeof(i.filename) !== "undefined" && i.filename != null)
-          {
-            i.filename = base64.encode(i.filename).toString()
-          }
-          else
-          {
-            i.filename = base64.encode(i.path).toString()
-          }
-        }
-
+          id_64 = base64.encode(i.path).toString()
+        
+        Object.assign(i, {id_64: id_64.toString()}, i)
         img.push(i)
       })
 
@@ -368,7 +358,7 @@ class SendScreen extends Component {
         toAdd = true;
         GLOB.images.map((i)=>
         {
-          if(i.filename == j.filename)
+          if(i.id_64 == j.id_64)
           {
             toAdd = false;
           }
@@ -389,7 +379,7 @@ class SendScreen extends Component {
 
     GLOB.images.map((i)=>
     {
-      if(i.filename != GLOB.imgToDel.toString())
+      if(i.id_64 != GLOB.imgToDel.toString())
       {
         imgSave = imgSave.concat(i);
       }

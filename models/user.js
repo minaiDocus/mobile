@@ -21,7 +21,7 @@ const _schema = {
                   }
                 }
 
-class user extends ActiveRecord{
+class user extends ActiveRecord {
   constructor(){
     //REALM FILE && REALM SCHEMA && REALM NAME
     super(_db_name, _schema, 'User')

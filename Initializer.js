@@ -2,9 +2,9 @@ import Config from './Config'
 
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Notice,RealmControl,CronTask} from './components'
+import { Notice, CronTask } from './components'
 
-import {ErrorReport} from './requests'
+import { ErrorReport } from './requests'
 
 //Private functions
 function fillWithZero(date, length_to = 2){
@@ -22,7 +22,6 @@ global.Config = Config
 global.UploadingFiles = false
 global.Notice = Notice
 global.CronTask = CronTask
-global.TempSchemasLists = []
 
 //Function for adding Components to the Front View Modal
 global.renderToFrontView = (children, animation="fade") => {
@@ -40,9 +39,9 @@ global.clearFrontView = () => {
 global.handlingHttpErrors = (request, source="") => {
   let parsedRequest = ""
   try
-  {parsedRequest = JSON.parse(request.responseText)}
+  { parsedRequest = JSON.parse(request.responseText) }
   catch(e)
-  {parsedRequest = request.responseText}
+  { parsedRequest = request.responseText }
 
   if(typeof(parsedRequest.error != "undefined") && parsedRequest.error == true)
   {
@@ -135,47 +134,10 @@ global.actionLocker = (callback) => {
   }
 }
 
-
-//Functions for saving images been sent
-global.ListImages = []
-
-global.inListImages = (filename)=>{
-  let _in = false
-  if(ListImages.length > 0)
-  {
-    ListImages.forEach((img)=>{
-      if(filename == img.id)
-      {
-        _in = true
-        return true
-      }
-    })
-  }
-  return _in
-}
-
-global.setListImages = (lists, append=false)=>{
-  if(append)
-    ListImages = ListImages.concat(lists)
-  else
-    ListImages = lists
-}
-
-global.saveListImages = () => {
-  if(ListImages.length > 0)
-  {
-    const images_schema =  {
-                              id: 'string',
-                              path: 'string?',
-                              send_at: 'date?',
-                              is_sent: 'bool',
-                           }
-    const result = RealmControl.createTempRealm(ListImages, "imagesSent", images_schema)
-    if(result.length > 0)
-    {
-      setListImages([])
-    }
-
-    return result
-  }
+//Function for transforming realm object to JSON
+global.realmToJson = (object)=>{
+  let Json_result = {}
+  Json_result = JSON.stringify(object)
+  Json_result = JSON.parse(Json_result)
+  return Json_result
 }

@@ -4,6 +4,8 @@ import {StyleSheet,Text,View,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import LinearGradient from 'react-native-linear-gradient'
 
+import {ImageSent} from '../models'
+
 import {AnimatedBox, XFetcher, LinkButton, BoxInfos} from './index'
 
 export class ProgressUpload extends Component{
@@ -144,7 +146,7 @@ export class UploderFiles{
     UploadingFiles = false
 
     if(typeof(result.success) !== "undefined" && result.success == true)
-      saveListImages()
+      ImageSent.saveListImages()
   }
 
   onError(result){

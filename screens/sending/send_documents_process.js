@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
-import {StyleSheet,Text,View,ScrollView,ListView,TouchableOpacity,Picker} from 'react-native'
+import { StyleSheet,Text,View,ScrollView,ListView,TouchableOpacity,Picker } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import { NavigationActions } from 'react-navigation'
 
-import {Screen,Navigator,XImage,LinkButton,SimpleButton,SelectInput,UploderFiles,RealmControl,ProgressBar} from '../../components'
+import { Screen,Navigator,XImage,LinkButton,SimpleButton,SelectInput,UploderFiles,ProgressBar } from '../../components'
 
-import {User} from '../../models'
+import { User,ImageSent } from '../../models'
 
-import {FileUploader} from "../../requests"
+import { FileUploader } from "../../requests"
 
-let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: [], imagesSent: [], uploadErrors: []}
+let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: []}
 
 const styles = StyleSheet.create({
   minicontainer:{
@@ -26,14 +26,12 @@ const styles = StyleSheet.create({
 function loadData(){
   if(typeof(GLOB.dataList) !== "undefined" && GLOB.dataList.length > 0)
   {
-    const auth_token = User.getMaster().auth_token
-    const file_code = User.find(`id_idocus = ${GLOB.customer}`)[0].code
-
     let nothingToSend = true
     let alreadySent = false
-    let dataSave = []
     let img_sent = null
     
+    const auth_token = User.getMaster().auth_token
+    const file_code = User.find(`id_idocus = ${GLOB.customer}`)[0].code
     const form = new FormData()
     
     form.append('auth_token', auth_token)
@@ -44,38 +42,30 @@ function loadData(){
     GLOB.dataList.forEach((doc) => {
       const path = doc.path.toString()
       const name = path.split("/").slice(-1)[0]
-      const filename = doc.filename.toString()
+      const id_64 = doc.id_64.toString()
 
-      if(!inListImages(filename))
+      const img_sent = ImageSent.getImage(id_64)
+      if( img_sent != null )
       {
-        try{
-          img_sent = GLOB.imagesSent.filtered(`id = "${filename}"`)[0] || null
-        }catch(e){img_sent = null}
+        alreadySent = true
+      }
+      else
+      {
+        nothingToSend = false
 
-        if(typeof(img_sent) !== "undefined" && img_sent != null && img_sent != "")
-        {
-          alreadySent = true
-        }
-        else
-        {
-          nothingToSend = false
+        form.append('files[]', {
+          uri: path,
+          type: doc.mime.toString(), // or photo.type
+          name: name
+        });
+        
 
-          form.append('files[]', {
-            uri: path,
-            type: doc.mime.toString(), // or photo.type
-            name: name
-          });
-          
-
-          dataSave = [{
-            id: filename,
-            path: path,
-            send_at: new Date(),
-            is_sent: true, 
-          }]
-
-          setListImages(dataSave, true)           
-        }
+        ImageSent.prepareListImages([{
+                                      id: id_64,
+                                      path: path,
+                                      send_at: new Date(),
+                                      is_sent: true, 
+                                    }], true)          
       }
     });
 
@@ -158,7 +148,6 @@ class Body extends Component{
 
     this.master = User.getMaster()
     GLOB.journal = GLOB.periods = GLOB.customer = ""
-    GLOB.uploadErrors = []
 
     this.renderForm = this.renderForm.bind(this)
     this.renderLoading = this.renderLoading.bind(this)
@@ -370,9 +359,6 @@ class SendScreen extends Component {
     GLOB.period = ''
     GLOB.journal = ''
     GLOB.file_upload_params = []
-    GLOB.imagesSent = RealmControl.getTempRealm("imagesSent")
-
-    setListImages([]) //Initialize list images beeing send
 
     this.state = {progress: 0, sending: false}
 
