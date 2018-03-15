@@ -160,7 +160,7 @@ class Header extends Component{
                 <Text style={this.styles.text}>{GLOB.Pack.name || "test"}</Text>
                 {
                   GLOB.filterText != "" &&
-                  <Text style={this.styles.filter}>(Filtre actif: <Text style={{color:"#F7230C", fontStyle:'italic'}}>{GLOB.filterText}</Text>)</Text>
+                  <Text style={this.styles.filter}>(Filtre active: <Text style={{color:"#F7230C", fontStyle:'italic'}}>{GLOB.filterText}</Text>)</Text>
                 }
               </View>
             );

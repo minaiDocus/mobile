@@ -232,12 +232,13 @@ export class SelectInput extends Component{
     this.state = {
                     selectedItem: "", 
                     valueText:"", 
-                    openModal: false,
+                    openModal: this.props.open || false,
                     ready: false,
                     cssAnim: 0,
                     dataOptions: this.props.dataOptions || []
                   }
     this.layoutWidth = 0
+    this.invisible = this.props.invisible || false
 
     this.showModal = this.showModal.bind(this)
     this.hideModal = this.hideModal.bind(this)
@@ -261,6 +262,12 @@ export class SelectInput extends Component{
     if(nextProps.dataOptions != this.props.dataOptions)
     {
       this.initValue(nextProps.dataOptions)
+    }
+
+    if(typeof(nextProps.open) !== "undefined")
+    {
+      if(nextProps.open) this.showModal()
+      else this.hideModal()
     }
   }
 
@@ -344,6 +351,7 @@ export class SelectInput extends Component{
   }
 
   hideModal(){
+    if(this.props.onClose) this.props.onClose()
     this.setState({openModal: false})
   }
 
@@ -386,25 +394,32 @@ export class SelectInput extends Component{
     const stylePlus = this.props.style || {}
     const PStyle = this.props.Pstyle || {}
 
-    return  <View style={[styles].concat(PStyle)}>
-              {this.state.openModal && <ModalSelect datas={this.state.dataOptions || []}
-                                                    filterSearch={this.props.filterSearch || false} 
-                                                    filterCallback={this.props.filterCallback || null}
-                                                    selectedItem={this.state.selectedItem}
-                                                    textInfo={this.props.textInfo || null} 
-                                                    changeItem={this.changeItem}
-                                                    onFilter={this.props.onFilter || null}
-                                                    dismiss={this.hideModal} />}
-              <View style={{flex:1}}>
-                <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center'}} onPress={this.showModal}>
-                  <View style={selectStyle} onLayout={this.getWidthLayout}> 
-                    <View style={{width: 500, left: this.state.cssAnim}} >
-                      <Text style={[{color:'#606060'}, stylePlus]}>{this.state.valueText}</Text>
+    const parentStyle = (this.invisible)? {flex:0,width:0,height:0} : [styles].concat(PStyle)
+
+    return  <View style={parentStyle}>
+              {
+                this.state.openModal && <ModalSelect  datas={this.state.dataOptions || []}
+                                                      filterSearch={this.props.filterSearch || false} 
+                                                      filterCallback={this.props.filterCallback || null}
+                                                      selectedItem={this.state.selectedItem}
+                                                      textInfo={this.props.textInfo || null} 
+                                                      changeItem={this.changeItem}
+                                                      onFilter={this.props.onFilter || null}
+                                                      dismiss={this.hideModal} />
+              }
+              {
+                this.invisible == false && 
+                <View style={{flex:1}}>
+                  <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center'}} onPress={this.showModal}>
+                    <View style={selectStyle} onLayout={this.getWidthLayout}> 
+                      <View style={{width: 500, left: this.state.cssAnim}} >
+                        <Text style={[{color:'#606060'}, stylePlus]}>{this.state.valueText}</Text>
+                      </View>
                     </View>
-                  </View>
-                  <Text style={{flex:0, fontSize:10, fontWeight:'bold'}}>V</Text>
-                </TouchableOpacity>
-              </View>             
+                    <Text style={{flex:0, fontSize:10, fontWeight:'bold'}}>V</Text>
+                  </TouchableOpacity>
+                </View>          
+              }   
             </View>
   }
 }

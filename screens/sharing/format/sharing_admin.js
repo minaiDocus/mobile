@@ -16,7 +16,7 @@ class Header extends Component{
     super(props)
 
     this.state =  {
-                    filter: false, 
+                    filter: false,
                     collaborator: 0, 
                     account: 0,
                     optionsCollaborator: [{value:0, label:"Contact ou client"}],
@@ -29,6 +29,19 @@ class Header extends Component{
     this.filterCollaborator = this.filterCollaborator.bind(this)
 
     this.generateStyles()
+  }
+
+  componentWillMount(){
+    this.refreshOrganization = EventRegister.on('OrganizationSwitched', () => {
+      this.setState({ 
+                      optionsCollaborator: [{value:0, label:"Contact ou client"}],
+                      optionsAccount: [{value:0, label:"Dossier client"}]
+                    })
+    })
+  }
+
+  componentWillUnmount(){
+    EventRegister.rm(this.refreshOrganization)
   }
 
   filterAccount(text=""){
@@ -117,6 +130,11 @@ class Header extends Component{
     }
 
     this.setState({filter: false})
+  }
+
+  checkFilterActive(){
+    if (GLOB.dataFilter.account != "" || GLOB.dataFilter.collaborator != "") return true
+    else return false
   }
 
   generateStyles(){
@@ -216,7 +234,7 @@ class Header extends Component{
               </View>
               </View>
               <View style={this.styles.right}> 
-                <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+                <BoxButton title="Filtre" marker={this.checkFilterActive()? "(Active)" : null} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
               </View>
             </View> 
   }
@@ -458,11 +476,16 @@ class SharingScreen extends Component {
     this.refreshPage = EventRegister.on('refreshPage', (data=false) => {
         this.refreshDatas(data)
     })
+
+    this.refreshOrganization = EventRegister.on('OrganizationSwitched', () => {
+        this.refreshDatas(true)
+    })
   }
 
   componentWillUnmount(){
     EventRegister.rm(this.orderBoxListener)
     EventRegister.rm(this.refreshPage)
+    EventRegister.rm(this.refreshOrganization)
   }
 
   componentDidMount(){

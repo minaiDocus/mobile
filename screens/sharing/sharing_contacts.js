@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Screen,AnimatedBox,Navigator,XImage,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton} from '../../components'
+import {Screen,AnimatedBox,Navigator,XImage,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton,OrganizationSwitcher} from '../../components'
 
 import {User} from '../../models'
 
@@ -150,6 +150,11 @@ class Header extends Component{
     this.setState({openForm: false})
   }
 
+  checkFilterActive(){
+    if (GLOB.dataFilter.email != "" || GLOB.dataFilter.company != "" || GLOB.dataFilter.first_name != "" || GLOB.dataFilter.last_name != "") return true
+    else return false
+  }
+
   generateStyles(){
     this.styles = StyleSheet.create({
       container:{
@@ -183,7 +188,7 @@ class Header extends Component{
                   />
               }
               <BoxButton title="Ajout" onPress={()=>{this.openForm()}} source={{uri:"add_contact"}} rayon={60}/>
-              <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+              <BoxButton title="Filtre" marker={this.checkFilterActive()? "(Active)" : null} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
             </View>
   }
 }
@@ -365,14 +370,17 @@ class OrderBox extends Component{
 class SharingScreen extends Component {
   static navigationOptions = {
        headerTitle: 'Contacts',
-       headerRight: <ImageButton  source={{uri:"options"}} 
+       headerRight: <View style={{flex:1, flexDirection:'row'}}>
+                      <OrganizationSwitcher/>
+                      <ImageButton  source={{uri:"options"}} 
                           Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
                           Istyle={{width:7, height:36}}
                           onPress={()=>EventRegister.emit('clickOrderBox_contacts', true)} />
+                    </View>
   }
 
   constructor(props){
-    super(props);
+    super(props)
     GLOB.navigation = new Navigator(this.props.navigation)
 
     this.dontRefreshForm = false
@@ -397,11 +405,16 @@ class SharingScreen extends Component {
     this.refreshPage = EventRegister.on('refreshPage_contacts', (data=false) => {
         this.refreshDatas(data)
     })
+
+    this.refreshOrganization = EventRegister.on('OrganizationSwitched', () => {
+        this.refreshDatas(true)
+    })
   }
 
   componentWillUnmount(){
     EventRegister.rm(this.orderBoxListener)
     EventRegister.rm(this.refreshPage)
+    EventRegister.rm(this.refreshOrganization)
   }
 
   componentDidMount(){

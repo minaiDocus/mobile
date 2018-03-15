@@ -1,24 +1,20 @@
-import {ActiveRecord} from './index'
+import { ActiveRecord } from './index'
 
 const _db_name = "user_00"
 const _schema = {
-                  name: 'User',
-                  primaryKey: 'id',
-                  properties: {
-                    id: 'int',
-                    id_idocus: 'int',
-                    last_name: 'string',
-                    first_name: 'string',
-                    code: 'string',
-                    email: 'string',
-                    is_admin: 'bool',
-                    company: 'string',
-                    is_prescriber: 'bool',
-                    organization_id: 'int',
-                    auth_token: 'string?',
-                    firebase_token: 'string?',
-                    master:'bool'
-                  }
+                  id: 'int',
+                  id_idocus: 'int',
+                  last_name: 'string',
+                  first_name: 'string',
+                  code: 'string',
+                  email: 'string',
+                  is_admin: 'bool',
+                  company: 'string',
+                  is_prescriber: 'bool',
+                  organization_id: 'int',
+                  auth_token: 'string?',
+                  firebase_token: 'string?',
+                  master:'bool'
                 }
 
 class user extends ActiveRecord {

@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import {Text,TouchableOpacity,View,StyleSheet} from 'react-native'
+
+import BlinkView from 'react-native-blink-view'
 import LinearGradient from 'react-native-linear-gradient'
+
 import {XImage} from '../index'
 
 export class SimpleButton extends Component{
@@ -108,16 +111,31 @@ export class BoxButton extends Component{
               width:"60%",
               height:"60%"
             },
+      boxText:{
+                flex:0,
+                backgroundColor:'#AEAEAE',
+                justifyContent:'center',
+                alignItems: 'center',
+                paddingHorizontal:10,
+                paddingVertical:5,
+                borderRadius:5
+              },
       text:{
             flex:0,
             fontWeight:'bold',
             color:'#fff',
-            backgroundColor:'#AEAEAE',
-            textAlign:'center',
-            paddingHorizontal:10,
-            paddingVertical:5,
-            borderRadius:5
-          }, 
+            textAlign:'center'
+            },
+      boxMarker:{
+                  position:'absolute',
+                },
+      marker:{ 
+                fontSize:12,
+                fontWeight:'bold',
+                color:'#F7230C',
+                fontStyle:'italic',
+                textAlign:'center'
+              }  
     })
   }
 
@@ -125,8 +143,11 @@ export class BoxButton extends Component{
     return  <TouchableOpacity onPress={this.props.onPress} style={this.styles.touchable}>
               <LinearGradient colors={['#D1E949', '#C0D838', '#9DA505']} style={this.styles.boxControl}>
                 <XImage source={this.props.source} style={this.styles.icons} local={this.props.local || true} />
+                {this.props.marker && <View style={this.styles.boxMarker}><BlinkView element={Text} delay={1300} style={this.styles.marker}>{this.props.marker}</BlinkView></View> }
               </LinearGradient>
-              <Text style={this.styles.text}>{this.props.title}</Text>
+              <View style={this.styles.boxText}>
+                <Text style={this.styles.text}>{this.props.title}</Text>
+              </View>
             </TouchableOpacity>
   }
 }

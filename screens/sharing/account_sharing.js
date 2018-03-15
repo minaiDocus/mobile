@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
+import {View} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Navigator,ImageButton} from '../../components'
+import {Navigator,ImageButton,OrganizationSwitcher} from '../../components'
 
 import {User} from '../../models'
 
@@ -35,7 +36,10 @@ class HeaderOptions extends Component{
 class SharingScreen extends Component {
   static navigationOptions = {
        headerTitle: 'Partage dossier',
-       headerRight: <HeaderOptions />
+       headerRight: <View style={{flex:1, flexDirection:'row'}}>
+                      <OrganizationSwitcher />
+                      <HeaderOptions />
+                    </View>
   }
 
   constructor(props){

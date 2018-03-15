@@ -12,7 +12,7 @@ let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
 
 function goToHome(){
   UsersFetcher.waitFor(
-    ['refreshCustomers()'],
+    ['refreshCustomers()', 'refreshOrganizations()'],
     (responses)=>{
       responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
       SplashScreen.hide()

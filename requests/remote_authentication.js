@@ -1,5 +1,5 @@
 import {Requester} from './index'
-import {User} from '../models'
+import { User, Organization } from '../models'
 
 class remote_auhtentication extends Requester{
   async pingServer(version, platform, callback=()=>{}){
@@ -39,6 +39,7 @@ class remote_auhtentication extends Requester{
   }
 
   logOut(){
+    Organization.deleteAll()
     User.deleteAll()
   }
 }

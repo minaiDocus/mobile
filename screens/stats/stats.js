@@ -59,6 +59,19 @@ class Header extends Component{
     this.setState({filter: false})
   }
 
+  checkFilterActive(){
+    if (  GLOB.dataFilter.created_at_start != "" ||
+          GLOB.dataFilter.created_at_end != "" || 
+          GLOB.dataFilter.type != "" || 
+          GLOB.dataFilter.customer_code != "" ||
+          GLOB.dataFilter.customer_company != "" ||
+          GLOB.dataFilter.tracking_number != "" || 
+          GLOB.dataFilter.pack_name != ""
+        ) 
+      return true
+    else return false
+  }
+
   generateStyles(){
     this.styles = StyleSheet.create({
       container:{
@@ -121,7 +134,7 @@ class Header extends Component{
                 <Text style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</Text>
               </View>
               <View style={this.styles.right}> 
-                <BoxButton title="Filtre" onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+                <BoxButton title="Filtre" marker={this.checkFilterActive()? "(Active)" : null} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
               </View>
             </View>
   }

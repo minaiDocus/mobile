@@ -1,4 +1,4 @@
-import {TempRecord} from './index'
+import { TempRecord } from './index'
 
 const _name = "Notifications"
 const _schema =   {
