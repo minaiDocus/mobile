@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import {Text,TouchableOpacity,View,StyleSheet} from 'react-native'
 
-import BlinkView from 'react-native-blink-view'
 import LinearGradient from 'react-native-linear-gradient'
 
-import {XImage} from '../index'
+import { XImage, AnimatedBox } from '../index'
 
 export class SimpleButton extends Component{
   constructor(props){
@@ -143,7 +142,7 @@ export class BoxButton extends Component{
     return  <TouchableOpacity onPress={this.props.onPress} style={this.styles.touchable}>
               <LinearGradient colors={['#D1E949', '#C0D838', '#9DA505']} style={this.styles.boxControl}>
                 <XImage source={this.props.source} style={this.styles.icons} local={this.props.local || true} />
-                {this.props.marker && <View style={this.styles.boxMarker}><BlinkView element={Text} delay={1300} style={this.styles.marker}>{this.props.marker}</BlinkView></View> }
+                {this.props.marker && <View style={this.styles.boxMarker}><AnimatedBox type="blink" durationIn={1500} durationOut={1500}><Text style={this.styles.marker}>{this.props.marker}</Text></AnimatedBox></View> }
               </LinearGradient>
               <View style={this.styles.boxText}>
                 <Text style={this.styles.text}>{this.props.title}</Text>

@@ -233,8 +233,10 @@ export class SelectInput extends Component{
                     selectedItem: "", 
                     valueText:"", 
                     openModal: this.props.open || false,
+                    startTextAnim:0,
+                    endTextAnim:0,
+                    durationAnim:2000,
                     ready: false,
-                    cssAnim: 0,
                     dataOptions: this.props.dataOptions || []
                   }
     this.layoutWidth = 0
@@ -245,17 +247,10 @@ export class SelectInput extends Component{
     this.changeItem = this.changeItem.bind(this)
     this.initValue = this.initValue.bind(this)
     this.getWidthLayout = this.getWidthLayout.bind(this)
-    this.animateText = this.animateText.bind(this)
   }
 
   componentDidMount(){
     this.initValue(this.state.dataOptions, this.props.selectedItem)
-    this.cssAnim = 0
-    this.animateText()
-  }
-
-  componentWillUnmount(){
-    clearTimeout(this.animation)
   }
 
   componentWillReceiveProps(nextProps){
@@ -276,47 +271,26 @@ export class SelectInput extends Component{
     {
       let {width, height} = event.nativeEvent.layout
       this.layoutWidth = width
+      this.getCoordAnimation()
       await this.setState({ready: true})
     }
   }
 
-  async animateText(){
+  getCoordAnimation(){
     const textWidth = (this.state.valueText.length * 8)
     const layout = this.layoutWidth
-    let endAnim = 0
-    if(layout < textWidth && textWidth > 0)
+
+    if(layout > textWidth)
     {
-      endAnim = (textWidth / 3) * -1
-
-      if(this.cssAnim >= 0)
-      { 
-        this.down = true
-      }
-
-      if(this.down)
-      {
-        this.cssAnim = this.cssAnim - 3
-        if(this.cssAnim <= endAnim)
-        {
-          this.down = false
-        }
-      }
-      else
-      {
-        this.cssAnim = this.cssAnim + 3
-        if(this.cssAnim >= 0)
-        {
-          this.down = true
-        }
-      }
-
-      await this.setState({cssAnim: this.cssAnim})
+      this.setState({startTextAnim:0, endTextAnim:0})
     }
     else
     {
-      await this.setState({cssAnim: 0})
+      const start = -1 * (textWidth / 3)
+      const duration = Math.abs(start * 100) / 2
+
+      this.setState({startTextAnim:start, endTextAnim:0, durationAnim: duration})
     }
-    this.animation = setTimeout(this.animateText, 80)
   }
 
   initValue(datas, value=""){
@@ -338,8 +312,9 @@ export class SelectInput extends Component{
     this.setState({selectedItem: initValue, valueText: textValue, dataOptions: options})
   }
 
-  changeItem(itemValue, valueText=""){
-    this.setState({selectedItem: itemValue, valueText: valueText})
+  async changeItem(itemValue, valueText=""){
+    await this.setState({selectedItem: itemValue, valueText: valueText})
+    this.getCoordAnimation()
     if(this.props.onChange)
     {
       this.props.onChange(itemValue);
@@ -412,9 +387,15 @@ export class SelectInput extends Component{
                 <View style={{flex:1}}>
                   <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center'}} onPress={this.showModal}>
                     <View style={selectStyle} onLayout={this.getWidthLayout}> 
-                      <View style={{width: 500, left: this.state.cssAnim}} >
+                      <AnimatedBox  style={{width: 500}} 
+                                    type="HorizontalGliss"
+                                    durationIn={this.state.durationAnim}
+                                    durationOut={this.state.durationAnim}
+                                    startAnim={this.state.startTextAnim}
+                                    endAnim={this.state.endTextAnim}
+                                    >
                         <Text style={[{color:'#606060'}, stylePlus]}>{this.state.valueText}</Text>
-                      </View>
+                      </AnimatedBox>
                     </View>
                     <Text style={{flex:0, fontSize:10, fontWeight:'bold'}}>V</Text>
                   </TouchableOpacity>

@@ -22,6 +22,13 @@ export class AnimatedBox extends Component{
     this.callbackIn = this.props.callbackIn || null
   }
 
+  componentWillReceiveProps(nextProps){
+    if(typeof(nextProps.startAnim) !== "undefined") this.startAnim = nextProps.startAnim
+    if(typeof(nextProps.endAnim) !== "undefined") this.endAnim = nextProps.endAnim
+    if(typeof(nextProps.durationIn) !== "undefined") this.durationIn = nextProps.durationIn
+    if(typeof(nextProps.durationOut) !== "undefined") this.durationOut = nextProps.durationOut
+  }
+
   initAnimation(){
     if(this.type == 'LeftSlide') // animation from left to the right
     {
@@ -47,11 +54,32 @@ export class AnimatedBox extends Component{
       this.endAnim = 0
       this.css = 'top'
     }
-    else if(this.type == 'fade') //animation from top to bottom
+    else if(this.type == 'fade')
     {
       this.startAnim = 0
       this.endAnim = 1
       this.css = 'opacity'
+    }
+    else if(this.type == 'blink')
+    {
+      this.startAnim = 0
+      this.endAnim = 1
+      this.css = 'opacity'
+      this.callbackIn = ()=>{this.animationOut(this.animationIn)}
+    }
+    else if(this.type == 'HorizontalGliss') //loop animation from left to right 
+    {
+      this.startAnim = this.props.startAnim
+      this.endAnim = this.props.endAnim
+      this.css = 'left'
+      this.callbackIn = ()=>{this.animationOut(this.animationIn)}
+    }
+    else if(this.type == 'VerticalGliss') //loop animation from Top to Bottom 
+    {
+      this.startAnim = this.props.startAnim
+      this.endAnim = this.props.endAnim
+      this.css = 'top'
+      this.callbackIn = ()=>{this.animationOut(this.animationIn)}
     }
   }
 
@@ -116,8 +144,9 @@ export class AnimatedBox extends Component{
     }
 
     const opacity = this.state.ready? {opacity:1} : {opacity:0}
+    const final_style = (this.css != 'opacity')? [stylePlus, animationStyle, opacity] : [stylePlus, animationStyle]
 
-    return  <Animated.View style={[stylePlus, animationStyle, opacity]} onLayout={this.onLayoutOnce} >
+    return  <Animated.View style={final_style} onLayout={this.onLayoutOnce} >
               {this.props.children}
             </Animated.View>
   }
