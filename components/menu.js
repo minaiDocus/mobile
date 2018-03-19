@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import {Text,TouchableOpacity,TouchableWithoutFeedback,View,StyleSheet,Modal,Slider,ScrollView,findNodeHandle} from 'react-native'
+import { Text, TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Modal, Slider, ScrollView, findNodeHandle } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import {NavigationActions} from 'react-navigation'
+import { NavigationActions } from 'react-navigation'
 
-import {XImage, AnimatedBox, SimpleButton, LinkButton, ImageButton} from './index'
+import { XImage, AnimatedBox, SimpleButton, LinkButton, ImageButton } from './index'
 
-import {User} from '../models'
+import { User } from '../models'
 
-import {RemoteAuthentication} from '../requests'
+import { RemoteAuthentication } from '../requests'
 
 let GLOB = {navigation: {}}
 
@@ -47,8 +47,8 @@ class Header extends Component{
             },
       logobox:{
                 flex:0,
-                height:80,
-                width:80,
+                height:65,
+                width:65,
                 borderRadius:100,
                 backgroundColor:'#fff',
               },
@@ -71,7 +71,7 @@ class Header extends Component{
               <View style={this.styles.right}>
                 <Text style={styles.generalText}>Bienvenue</Text>
                 {userName != "" && <Text style={{color:"#FFF"}}>{userName}</Text>}
-                <Text style={{color:"#FFF"}}>({this.master.email})</Text>
+                <Text style={{color:"#D4DD80", fontSize:10}}>{this.master.email}</Text>
               </View>
             </View>
   }

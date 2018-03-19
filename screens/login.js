@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import SplashScreen from 'react-native-splash-screen'
 import { StyleSheet, Text, TextInput, View, ScrollView, Modal} from 'react-native'
 
-import {Screen,XImage,XTextInput,Navigator,SimpleButton} from '../components'
+import { Screen, XImage, XTextInput, Navigator, SimpleButton } from '../components'
 
-import {User} from '../models'
+import { User } from '../models'
 
-import {RemoteAuthentication,UsersFetcher} from '../requests'
+import { RemoteAuthentication, UsersFetcher } from '../requests'
 
 let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
 
@@ -108,6 +108,7 @@ class LoginScreen extends Component {
             GLOB.system_reject = true
           }
         }
+        
         const user = User.getMaster()
         if(user.id && responses[0].code != 500)
         {

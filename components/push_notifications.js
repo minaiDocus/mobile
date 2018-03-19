@@ -228,8 +228,8 @@ export class UINotification extends Component{
                               <Text style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</Text>
                             </View>
                             <ImageButton  source={{uri:"notification_green"}} 
-                              Pstyle={{flex:0, flexDirection:'column', alignItems:'center', width:30}}
-                              Istyle={{width:20, height:20}}
+                              Pstyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:30}}
+                              Istyle={{flex:0, width:20, height:20}}
                               onPress={()=>{this.toggleListNotifications()}} />
                           </View>
         Notice.info(mess_obj, false, "push_notification_alert", 10000)
@@ -350,10 +350,10 @@ export class UINotification extends Component{
         if(this.state.showList)
           this.renderListNotifications()
 
-        return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>{this.toggleListNotifications()}}>
+        return  <TouchableOpacity style={{flex:1}} onPress={()=>{this.toggleListNotifications()}}>
                   <ImageButton  source={{uri:"notification"}} 
-                  Pstyle={{flex:1, flexDirection:'column', alignItems:'center',minWidth:30}}
-                  Istyle={{width:20, height:20}}
+                  Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:30}}
+                  Istyle={{flex:0, width:20, height:20}}
                   onPress={()=>{this.toggleListNotifications()}} />
                   {
                   	this.state.newNotifCount > 0 && 

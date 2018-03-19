@@ -377,8 +377,8 @@ class AppInfos extends Component{
 
   render(){
     return <ImageButton   source={{uri:"infos"}} 
-                          Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:30}}
-                          Istyle={{width:20, height:20}}
+                          Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:40}}
+                          Istyle={{flex:0, width:20, height:20}}
                           onPress={()=>this.showInfos()} />
   }
 }
@@ -427,7 +427,7 @@ class FrontView extends Component{
 class HomeScreen extends Component {
   static navigationOptions = {  headerTitle:'Accueil', 
                                 headerLeft: <MenuLoader />,
-                                headerRight: <View style={{flex:1, flexDirection:'row'}}>
+                                headerRight: <View style={{flex:1, flexDirection:'row', minHeight:'100%'}}>
                                                 <UINotification />
                                                 <AppInfos />
                                                 <ProgressUpload />

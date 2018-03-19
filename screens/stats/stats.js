@@ -287,8 +287,8 @@ class StatsScreen extends Component {
   static navigationOptions = {
        headerTitle: 'Suivi',
        headerRight: <ImageButton  source={{uri:"options"}} 
-                                  Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
-                                  Istyle={{width:7, height:36}}
+                                  Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:50}}
+                                  Istyle={{flex:0, width:7, height:36}}
                                   onPress={()=>EventRegister.emit('clickOrderBox', true)} />
   }
 

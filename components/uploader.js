@@ -156,8 +156,8 @@ export class UploderFiles{
 
         const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
                             <View style={{flex:2, paddingHorizontal:20}}>
-                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Erreur envoi</Text>
-                              <Text style={{flex:1, color:'#EC5656', fontSize:10}}>Des erreurs ont été détectées lors de l'envoi</Text>
+                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Erreur téléversement</Text>
+                              <Text style={{flex:1, color:'#EC5656', fontSize:10}}>Des erreurs ont été détectées lors de l'envoi de documents</Text>
                             </View>
                             <View style={{flex:1}}>
                               <LinkButton onPress={()=>{this.showErrors()}} 
@@ -199,7 +199,7 @@ export class UploderFiles{
     })
 
     const call = ()=>{
-                        const boxError = <BoxInfos title="Erreur envoi" dismiss={()=>{clearFrontView()}}>
+                        const boxError = <BoxInfos title="Erreur téléversement" dismiss={()=>{clearFrontView()}}>
                                             { 
                                               this.uploadErrors.map((err, index)=>{
                                                 const img = ImageSent.getImage(`name="${err.filename}"`)
