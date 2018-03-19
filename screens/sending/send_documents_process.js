@@ -44,8 +44,8 @@ function loadData(){
       const name = path.split("/").slice(-1)[0]
       const id_64 = doc.id_64.toString()
 
-      const img_sent = ImageSent.getImage(id_64)
-      if( img_sent != null )
+      const img_sent = ImageSent.getImage(`id="${id_64}"`)
+      if( img_sent != null && img_sent.is_sent )
       {
         alreadySent = true
       }
@@ -59,13 +59,13 @@ function loadData(){
           name: name
         });
         
-
-        ImageSent.prepareListImages([{
-                                      id: id_64,
-                                      path: path,
-                                      send_at: new Date(),
-                                      is_sent: true, 
-                                    }], true)          
+        ImageSent.insert([{
+                            id: id_64,
+                            path: path,
+                            name: name,
+                            send_at: new Date(),
+                            is_sent: true, 
+                        }])          
       }
     });
 

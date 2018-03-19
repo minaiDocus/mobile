@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import base64 from 'base-64'
-import {StyleSheet,Text,View,TouchableOpacity} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import LinearGradient from 'react-native-linear-gradient'
 
-import {ImageSent} from '../models'
+import { ImageSent } from '../models'
 
-import {AnimatedBox, XFetcher, LinkButton, BoxInfos} from './index'
+import { AnimatedBox, XFetcher, LinkButton, BoxInfos, XImage } from './index'
 
 export class ProgressUpload extends Component{
   constructor(props){
@@ -144,9 +144,6 @@ export class UploderFiles{
     EventRegister.emit('completeUploadFile', result)
     Notice.info({title:"Envoi avec succès", body: "Transfert de documents terminée"}, true, "progressUploadFile")
     UploadingFiles = false
-
-    if(typeof(result.success) !== "undefined" && result.success == true)
-      ImageSent.saveListImages()
   }
 
   onError(result){
@@ -155,6 +152,8 @@ export class UploderFiles{
       if(Array.isArray(result.message))
       {
         this.uploadErrors = result.message
+        this.uploadErrors.map( (err)=>{ ImageSent.sendingFailedFor(`name="${err.filename}"`) } )
+
         const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
                             <View style={{flex:2, paddingHorizontal:20}}>
                               <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Erreur envoi</Text>
@@ -181,13 +180,40 @@ export class UploderFiles{
   }
 
   showErrors(){
+    const imgStyles = StyleSheet.create({
+      styleImg: {
+          flex:0,
+          width:54,
+          height:54
+        },
+      styleContainer:{
+          backgroundColor:'#fff',
+          borderRadius:5,
+          marginVertical:10,
+          marginHorizontal:5,
+          width:60,
+          height:60,
+          justifyContent:'center',
+          alignItems:'center',
+      },
+    })
+
     const call = ()=>{
-                        const boxError = <BoxInfos title="Erreurs envoi" dismiss={()=>{clearFrontView()}}>
+                        const boxError = <BoxInfos title="Erreur envoi" dismiss={()=>{clearFrontView()}}>
                                             { 
                                               this.uploadErrors.map((err, index)=>{
+                                                const img = ImageSent.getImage(`name="${err.filename}"`)
+
                                                 return  <View key={index} style={{flex:1, padding:10, borderBottomWidth:1, borderColor:'#A6A6A6'}}>
-                                                          <Text style={{fontSize:14}}>- {err.filename}</Text>
-                                                          <Text style={{fontSize:12, color:"#EC5656", paddingHorizontal:10}}>{err.errors}</Text>
+                                                          <View style={{flexDirection:'row', flex:1, backgroundColor:'#E1E2DD'}}>
+                                                            <View style={{flex:1, justifyContent:'center', alignItems:'center', paddingHorizontal:5}}>
+                                                              <XImage type='container' PStyle={imgStyles.styleContainer} style={imgStyles.styleImg} local={false} source={{uri: img.path.toString()}} />
+                                                            </View>
+                                                            <View style={{flex:3, paddingHorizontal:5}}>
+                                                              <Text style={{fontSize:10}}>- {err.filename}</Text>
+                                                              <Text style={{fontSize:12, color:"#EC5656", paddingHorizontal:7}}>{err.errors}</Text>
+                                                            </View>
+                                                          </View>
                                                         </View>
                                               })
                                             }
