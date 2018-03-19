@@ -2,9 +2,9 @@ import {Requester} from './index'
 import { User, Organization } from '../models'
 
 class remote_auhtentication extends Requester{
-  async pingServer(version, platform, callback=()=>{}){
+  async pingServer(callback=()=>{}){
     let response = ""
-    this.requestURI("api/mobile/remote_authentication/ping", {method: 'POST', params:{version, platform}}, (r) => {
+    this.requestURI("api/mobile/remote_authentication/ping", {method: 'POST', params:{version: Config.version, platform: Config.platform, build_code: Config.build_code}}, (r) => {
       if(r.error){ 
         //handling errors
         response = r

@@ -12,21 +12,29 @@ export class OrganizationSwitcher extends Component{
   constructor(props){
     super(props)
 
-    this.state = {showList: false}
+    this.state = {showList: false, organization_id: 0}
 
     this.openSelection = this.openSelection.bind(this)
   }
 
   componentWillMount(){
+
+    this.changingListener = EventRegister.on("OrganizationSwitched", ()=>{this.setState({showList: false, organization_id: OrganizationSwitcher.organization.id})})
+
     const organizations = Organization.getAll()
     this.organizations = [{value: 1, label: "Test1"}, {value: 2, label: "Test2"}]
     if(organizations.length > 0)
     {
       this.organizations = organizations.map((org)=>{
         if(org.active) OrganizationSwitcher.organization = realmToJson(org)
+        this.setState({organization_id: OrganizationSwitcher.organization.id})
         return {value: org.id, label: org.name}
       })
     }
+  }
+
+  componentWillUnmount(){
+    EventRegister.rm(this.changingListener)
   }
 
   handleChange(value){
@@ -57,10 +65,10 @@ export class OrganizationSwitcher extends Component{
 
                 <SelectInput  open={this.state.showList}
                               invisible={true}
-                              textInfo="Organisations - ( Agir en tant qu'organisation : )" 
+                              textInfo="Organisations - ( Agir sur l'organisation : )" 
                               filterSearch={true} 
                               dataOptions={this.organizations}
-                              selectedItem={OrganizationSwitcher.organization.id}
+                              selectedItem={this.state.organization_id}
                               onChange={(value)=>this.handleChange(value)}
                               onClose={()=>this.handleClose()}/>
               </View>

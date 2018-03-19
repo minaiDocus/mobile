@@ -96,7 +96,7 @@ class LoginScreen extends Component {
     }
 
     RemoteAuthentication.waitFor(
-      [`pingServer("${Config.version}", "${Config.platform}")`],
+      [`pingServer()`],
       (responses)=>{
         this.setState({ready: true})
         if(responses[0].code != 200)

@@ -14,14 +14,7 @@ export class ActiveRecord {
 
     this._realm = new Realm({path: realmName + '.realm', schema:[_schema], encryptionKey: Config.keydb})
   }
-
-  // erase_old_db(db_name){
-  //   let path = Realm.defaultPath
-  //   let object = new ActiveXObject("Scripting.FileSystemObject")
-  //   let f = object.GetFile('');
-  //   f.Delete();
-  // }
-
+  
   deleteAll() {
     if(this.objectName.length > 0)
     {
@@ -74,35 +67,8 @@ export class TempRecord {
                           properties
                         }
 
-    this.realm = new Realm({path: this.realm_name+'.realm', schema: [temp_schema], inMemory: false})
+    this.realm = new Realm({path: this.realm_name+'.realm', schema: [temp_schema], inMemory: true})
   }
-
-  // extractStructureJson(data={}){
-  //   try{
-  //     let temp = JSON.stringify(data).toString()
-  //     temp = temp.replace(/[{}"]/ig, "")
-  //     let tab = temp.split(",")
-      
-  //     let object = ""
-  //     tab.map(item => { 
-  //       let parse = item.split(":")
-  //       let key = parse[0]
-  //       let value = parse[1]
-  //       let type = "string?"
-
-  //       if(value == "true" || value == "false" ){type = "bool?"}
-  //       else if(typeof(value) === true || typeof(value) === false){type = "bool?"}
-  //       else if( /^[0-9]+$/.test(value) && Number.isInteger(parseInt(value)) ){type = "int?"} 
-
-  //       if(key!='id'){object += `"${key}":"${type}", ` }
-  //     })
-
-  //     return JSON.parse(`{${object} "id":"int"}`)
-  //   }
-  //   catch(e){
-  //     return null
-  //   }
-  // }
 
   insert(datas){
     if(!Array.isArray(datas)) datas = [datas]

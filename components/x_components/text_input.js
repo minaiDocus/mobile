@@ -18,17 +18,23 @@ class ModalInput extends Component{
   }
 
   componentDidMount(){
-    let timerTest = null
+    this.timerTest = null
     const keyboardTest = ()=>{
       if(!this.keyboardShow)
       {
-        try{this.refs.input.focus()}
+        try{
+          this.refs.input.focus()
+          clearInterval(this.timerTest)
+        }
         catch(e){}
       }
-      clearTimeout(timerTest)
+      else
+      {
+        clearInterval(this.timerTest)
+      }
     }
 
-    timerTest = setTimeout(keyboardTest, 1000)
+    this.timerTest = setInterval(keyboardTest, 200)
   }
 
   componentWillMount(){
@@ -39,6 +45,7 @@ class ModalInput extends Component{
   componentWillUnmount(){
     this.keyboardDidShowListener.remove()
     this.keyboardDidHideListener.remove()
+    clearInterval(this.timerTest)
   }
 
   _keyboardDidShow(e) {
@@ -145,7 +152,7 @@ class ModalInput extends Component{
                         {this.label != "" && <Text style={this.styles.label}>{this.label}</Text>}
                         <View style={[this.styles.boxInput, androidStyle]}>
                           <TextInput ref="input"
-                                     autoFocus={true}
+                                     autoFocus={false}
                                      autoCorrect={(this.props.autoCorrect == false)? false : true}
                                      secureTextEntry={this.props.secureTextEntry || false}
                                      defaultValue={this.props.currValue}

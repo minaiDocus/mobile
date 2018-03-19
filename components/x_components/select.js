@@ -122,9 +122,11 @@ class ModalSelect extends Component{
         }
       })
       const renderItems = this.state.datas.map((dt, index)=>{
-        const colorItem = (this.state.selectedItem == dt.value)? '#A91101' : '#707070'
+        let styleItem = { color:'#707070' }
+        if(this.state.selectedItem == dt.value) styleItem = { paddingLeft:5, backgroundColor: '#707070', color:'#fff', fontWeight:'bold' }
+
         return <TouchableOpacity key={index} style={boxstyle.touchable} onPress={()=>this.changeItem(dt.value)}>
-                  <Text style={{color: colorItem}}>{dt.label}</Text>
+                  <Text style={styleItem}>{dt.label}</Text>
                </TouchableOpacity>
       })
       return <ScrollView style={boxstyle.container}>
@@ -254,9 +256,12 @@ export class SelectInput extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.dataOptions != this.props.dataOptions)
+    if(nextProps.dataOptions != this.props.dataOptions || typeof(nextProps.selectedItem) !== "undefined" && nextProps.selectedItem != this.state.selectedItem)
     {
-      this.initValue(nextProps.dataOptions)
+      let initVal = ""
+      if(typeof(nextProps.selectedItem) !== "undefined") initVal = nextProps.selectedItem
+
+      this.initValue(nextProps.dataOptions, initVal)
     }
 
     if(typeof(nextProps.open) !== "undefined")
@@ -277,23 +282,26 @@ export class SelectInput extends Component{
   }
 
   getCoordAnimation(){
-    const textWidth = (this.state.valueText.length * 8)
-    const layout = this.layoutWidth
-
-    if(layout > textWidth)
+    if(this.layoutWidth > 0)
     {
-      this.setState({startTextAnim:0, endTextAnim:0})
-    }
-    else
-    {
-      const start = -1 * (textWidth / 3)
-      const duration = Math.abs(start * 100) / 2
+      const textWidth = (this.state.valueText.length * 8)
+      const layout = this.layoutWidth
 
-      this.setState({startTextAnim:start, endTextAnim:0, durationAnim: duration})
+      if(layout > textWidth)
+      {
+        this.setState({startTextAnim:0, endTextAnim:0})
+      }
+      else
+      {
+        const start = -1 * (textWidth / 3)
+        const duration = Math.abs(start * 100) / 2
+
+        this.setState({startTextAnim:start, endTextAnim:0, durationAnim: duration})
+      }
     }
   }
 
-  initValue(datas, value=""){
+  async initValue(datas, value=""){
     let options = this.clearOptions(datas)
     let initValue = value || ""
     let textValue = ''
@@ -309,7 +317,8 @@ export class SelectInput extends Component{
       })
     }
     
-    this.setState({selectedItem: initValue, valueText: textValue, dataOptions: options})
+    await this.setState({selectedItem: initValue, valueText: textValue, dataOptions: options})
+    this.getCoordAnimation()
   }
 
   async changeItem(itemValue, valueText=""){
