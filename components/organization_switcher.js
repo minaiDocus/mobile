@@ -59,8 +59,8 @@ export class OrganizationSwitcher extends Component{
     {
       return  <View style={{flex:1}}>
                 <ImageButton  source={{uri:"organization"}} 
-                              Pstyle={{flex:1, paddingVertical:10, flexDirection:'column', alignItems:'center',minWidth:50}}
-                              Istyle={{width:30}}
+                              Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:50}}
+                              Istyle={{flex:0, width:30, height: 30}}
                               onPress={()=>{ this.openSelection() }} /> 
 
                 <SelectInput  open={this.state.showList}

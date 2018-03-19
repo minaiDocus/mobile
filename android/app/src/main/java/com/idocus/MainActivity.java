@@ -12,11 +12,11 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        if(ShowSplash == "on")
-        {
-            ShowSplash = "off";
-            SplashScreen.show(this);  // here
-        }
+        // if(ShowSplash == "on")
+        // {
+        //     ShowSplash = "off";
+        //     SplashScreen.show(this);  // here
+        // }
         return "iDocus";
     }
 }

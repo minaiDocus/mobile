@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import {Text,TouchableOpacity,TouchableWithoutFeedback,View,StyleSheet,Modal,Slider,ScrollView,findNodeHandle} from 'react-native'
+import { Text, TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Modal, Slider, ScrollView, findNodeHandle } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import {NavigationActions} from 'react-navigation'
+import { NavigationActions } from 'react-navigation'
 
-import {XImage, AnimatedBox, SimpleButton, LinkButton, ImageButton} from './index'
+import { XImage, AnimatedBox, SimpleButton, LinkButton, ImageButton } from './index'
 
-import {User} from '../models'
+import { User } from '../models'
 
-import {RemoteAuthentication} from '../requests'
+import { RemoteAuthentication } from '../requests'
 
 let GLOB = {navigation: {}}
 
