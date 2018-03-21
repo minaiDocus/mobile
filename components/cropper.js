@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {View, PanResponder, Animated, Image, StyleSheet, Platform, Modal, ImageEditor, ImageStore} from 'react-native'
+import { View, PanResponder, Animated, Image, StyleSheet, Platform, Modal, ImageEditor, ImageStore } from 'react-native'
 
-import {SimpleButton, ImageButton} from './index'
+import { SimpleButton, ImageButton, XImage } from './index'
 
 import { EventRegister } from 'react-native-event-listeners'
 
@@ -90,7 +90,7 @@ export class CropperView extends Component{
     this.minWidthCrop = 150
     this.minHeightCrop = 150
 
-    this.state = {open: false, widthCrop: this.minWidthCrop, heightCrop: this.minHeightCrop, url_output: null, remake: false}
+    this.state = {open: false, ready: false, widthCrop: this.minWidthCrop, heightCrop: this.minHeightCrop, url_output: null, remake: false}
 
     this.createPanResponder = this.createPanResponder.bind(this)
     this.restartResponder = this.restartResponder.bind(this)
@@ -169,11 +169,13 @@ export class CropperView extends Component{
 
     this.initializePAN()
     
+    this.setState({open: true})
+
     Image.getSize(this.source,
       (width, height)=>{
         this.original_image.width = width
         this.original_image.height = height
-        this.setState({open: true, url_output: null, remake: false})
+        this.setState({ready: true, url_output: null, remake: false})
       },
       (_faillure)=>{
         Notice.alert("Erreur", "Erreur lors du chargement de l'image veuillez réessayer!!")
@@ -206,7 +208,13 @@ export class CropperView extends Component{
   }
 
   calculateWorkingImage(){
-    if(Platform.OS == "ios" || ((this.contentSize.width <= this.contentSize.height) && (this.original_image.width >= this.original_image.height)) || ((this.contentSize.width > this.contentSize.height) && (this.original_image.width > this.original_image.height)) )
+    let testWorkingImage = ""
+    if(Platform.OS == "ios")
+      testWorkingImage = (Orientation == "portrait")? true : false
+    else
+      testWorkingImage = ((this.contentSize.width <= this.contentSize.height) && (this.original_image.width >= this.original_image.height)) || ((this.contentSize.width > this.contentSize.height) && (this.original_image.width > this.original_image.height))
+
+    if(testWorkingImage)
     { 
       this.working_image.width = this.contentSize.width
       this.working_image.height = (this.original_image.height / this.original_image.width) * this.working_image.width
@@ -583,8 +591,14 @@ export class CropperView extends Component{
                       supportedOrientations={['portrait', 'landscape']}
                       onRequestClose={()=>{}}
               >
-                {this.state.url_output == null && this.renderCropper()}
-                {this.state.url_output != null && this.renderResult()}
+                {
+                  !this.state.ready && 
+                  <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
+                    <XImage loader={true} width={90} height={90} />
+                  </View>
+                }
+                {this.state.ready && this.state.url_output == null && this.renderCropper()}
+                {this.state.ready && this.state.url_output != null && this.renderResult()}
               </Modal> 
     else
       return null

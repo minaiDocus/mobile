@@ -22,6 +22,7 @@ global.Config = Config
 global.UploadingFiles = false
 global.Notice = Notice
 global.CronTask = CronTask
+global.Orientation = "portrait"
 
 //Function for adding Components to the Front View Modal
 global.renderToFrontView = (children, animation="fade") => {

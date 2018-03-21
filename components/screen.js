@@ -22,9 +22,11 @@ export class Screen extends Component{
     if(this.width != this.last_width || this.height != this.last_height)
     {
       this.orientation = "portrait"
+      Orientation = "portrait"
       if(this.width > this.height)
       {
         this.orientation = "landscape"
+        Orientation = "landscape"
       }
       try{
         this.props.onChangeOrientation(this.orientation)
