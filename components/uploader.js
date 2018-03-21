@@ -107,6 +107,7 @@ export class ProgressUpload extends Component{
 export class UploderFiles{
   constructor(){
     this.uploadErrors = []
+    this.listLastSent = []
 
     this.launchUpload = this.launchUpload.bind(this)
     this.showErrors = this.showErrors.bind(this)
@@ -156,6 +157,8 @@ export class UploderFiles{
 
   onError(result){
     Notice.remove("progressUploadFile")
+
+    this.listLastSent = ImageSent.lastSent()
     ImageSent.stateOfPending(false)
 
     try{
@@ -165,7 +168,7 @@ export class UploderFiles{
 
         const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
                             <View style={{flex:2, paddingHorizontal:20}}>
-                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Erreur téléversement</Text>
+                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Rapport téléversement</Text>
                               <Text style={{flex:1, color:'#EC5656', fontSize:10}}>Des erreurs ont été détectées lors de l'envoi de documents</Text>
                             </View>
                             <View style={{flex:1}}>
@@ -208,10 +211,19 @@ export class UploderFiles{
     })
 
     const call = ()=>{
-                        const boxError = <BoxInfos title="Erreur téléversement" dismiss={()=>{clearFrontView()}}>
+                        const boxError = <BoxInfos title="Rapport téléversement" dismiss={()=>{clearFrontView()}}>
                                             { 
-                                              this.uploadErrors.map((err, index)=>{
-                                                const img = ImageSent.getImage(`name="${err.filename}"`)
+                                              this.listLastSent.map((img, index)=>{
+                                                let message = "Envoi ok"
+                                                let color_message = "#228B22"
+
+                                                this.uploadErrors.forEach((err)=>{
+                                                  if(err.filename == img.name)
+                                                  {
+                                                    message = err.errors
+                                                    color_message = "#EC5656"
+                                                  }
+                                                })
 
                                                 return  <View key={index} style={{flex:1, padding:10, borderBottomWidth:1, borderColor:'#A6A6A6'}}>
                                                           <View style={{flexDirection:'row', flex:1, backgroundColor:'#E1E2DD'}}>
@@ -219,8 +231,8 @@ export class UploderFiles{
                                                               <XImage type='container' PStyle={imgStyles.styleContainer} style={imgStyles.styleImg} local={false} source={{uri: img.path.toString()}} />
                                                             </View>
                                                             <View style={{flex:3, paddingHorizontal:5}}>
-                                                              <Text style={{fontSize:10}}>- {err.filename}</Text>
-                                                              <Text style={{fontSize:12, color:"#EC5656", paddingHorizontal:7}}>{err.errors}</Text>
+                                                              <Text style={{fontSize:10}}>- {img.name}</Text>
+                                                              <Text style={{fontSize:12, color: color_message, paddingHorizontal:7}}>{message}</Text>
                                                             </View>
                                                           </View>
                                                         </View>
