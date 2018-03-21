@@ -19,13 +19,15 @@ class image_sent extends TempRecord {
   }
 
   stateOfPending(state=false){
-    this.find("pending = true").map( (img)=>{ 
-      const obj = realmToJson(img)
-      obj.send_at = new Date()
-      obj.is_sent = state
-      obj.pending = false
-      this.insert([obj])
+    const to_update = this.find("pending = true").map((img)=>{
+        const obj = realmToJson(img)
+        obj.send_at = new Date()
+        obj.is_sent = state
+        obj.pending = false
+        return obj
     })
+    
+    if(to_update.length > 0) this.insert(to_update)
   }
 
   getImage(where){

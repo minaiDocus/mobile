@@ -518,7 +518,8 @@ export class CropperView extends Component{
   }
 
   createFinaleImage(_url, width, height){
-    const filename = _url.split("/").slice(-1)[0]
+    const filename = `cr_${this.original_image.path.split("/").slice(-1)[0]}`
+
     this.final_image = {width: width, height: height, path: _url, filename: filename, mime: this.original_image.mime, cropWithRotation: this.cropWithRotation}
     this.setState({url_output: _url})
   }

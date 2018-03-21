@@ -116,7 +116,14 @@ export class UploderFiles{
     if(data !== null && typeof(data) !== "undefined")
     {
       const Fetcher = new XFetcher()
-      Fetcher.fetch("api/mobile/file_uploader", {method: 'POST', contentType:'multipart/form-data', form_body: data}, false, (result)=>{this.onLoad(result)}, (progressEvent)=>{this.onProgress(progressEvent)}, -1)
+      Fetcher.fetch(
+                      "api/mobile/file_uploader", 
+                      {method: 'POST', contentType:'multipart/form-data', form_body: data}, 
+                      false, 
+                      (result)=>{this.onLoad(result)}, 
+                      (progressEvent)=>{this.onProgress(progressEvent)},
+                       -1
+                    )
       UploadingFiles = true
     }
   }

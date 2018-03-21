@@ -39,10 +39,10 @@ function loadData(){
     form.append('file_account_book_type', GLOB.journal)
     form.append('file_prev_period_offset', GLOB.period)
 
-    GLOB.dataList.forEach((doc) => {
-      const path = doc.path.toString()
-      const name = path.split("/").slice(-1)[0]
-      const id_64 = doc.id_64.toString()
+    GLOB.dataList.forEach((img) => {
+      const path = img.path.toString()
+      const name = img.filename || path.split("/").slice(-1)[0]
+      const id_64 = img.id_64.toString()
 
       const img_sent = ImageSent.getImage(`id="${id_64}"`)
       if( img_sent != null && img_sent.is_sent )
@@ -55,7 +55,7 @@ function loadData(){
 
         form.append('files[]', {
           uri: path,
-          type: doc.mime.toString(), // or photo.type
+          type: img.mime.toString(),
           name: name
         });
         
