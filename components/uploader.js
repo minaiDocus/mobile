@@ -143,16 +143,18 @@ export class UploderFiles{
   onComplete(result){
     EventRegister.emit('completeUploadFile', result)
     Notice.info({title:"Envoi avec succès", body: "Transfert de documents terminée"}, true, "progressUploadFile")
+    ImageSent.stateOfPending(true)
     UploadingFiles = false
   }
 
   onError(result){
     Notice.remove("progressUploadFile")
+    ImageSent.stateOfPending(false)
+
     try{
       if(Array.isArray(result.message))
       {
         this.uploadErrors = result.message
-        this.uploadErrors.map( (err)=>{ ImageSent.sendingFailedFor(`name="${err.filename}"`) } )
 
         const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
                             <View style={{flex:2, paddingHorizontal:20}}>

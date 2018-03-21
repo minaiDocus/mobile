@@ -64,6 +64,7 @@ function loadData(){
                             path: path,
                             name: name,
                             send_at: new Date(),
+                            pending: true,
                             is_sent: true, 
                         }])          
       }

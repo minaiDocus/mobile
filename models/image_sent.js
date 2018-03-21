@@ -6,6 +6,7 @@ const _schema = {
                   name: 'string',
                   path: 'string?',
                   send_at: 'date?',
+                  pending: 'bool',
                   is_sent: 'bool',
                 }
 
@@ -17,11 +18,12 @@ class image_sent extends TempRecord {
     image_sent.ListImages = []
   }
 
-  sendingFailedFor(where){
-    this.find(where).map( (img)=>{ 
+  stateOfPending(state=false){
+    this.find("pending = true").map( (img)=>{ 
       const obj = realmToJson(img)
       obj.send_at = new Date()
-      obj.is_sent = false
+      obj.is_sent = state
+      obj.pending = false
       this.insert([obj])
     })
   }
