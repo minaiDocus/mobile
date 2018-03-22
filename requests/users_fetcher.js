@@ -34,8 +34,16 @@ class users_fetcher extends Requester{
       }
       else
       {
+        let id_to_activate = 0
+        const active = Organization.getActive()
+        if(active != null)
+          id_to_activate = active.id
+
         Organization.deleteAll()
         Organization.add(r.organizations)
+
+        if(Organization.find(`id=${id_to_activate}`)[0]) Organization.activate(id_to_activate)
+
         response = true
       }
     })

@@ -32,17 +32,20 @@ class _organization extends TempRecord {
   }
 
   getActive(){
-    return this.find("active=true")[0]
+    return this.find("active=true")[0] || null
   }
 
   activate(organization_id){
-    const new_all_org = this.find().map((org)=>{
-      const data = realmToJson(org)
-      data.active = (data.id == organization_id)? true : false
-      return data
-    })
-    
-    this.insert(new_all_org)
+    if(organization_id  > 0)
+    {
+      const new_all_org = this.find().map((org)=>{
+        const data = realmToJson(org)
+        data.active = (data.id == organization_id)? true : false
+        return data
+      })
+      
+      this.insert(new_all_org)
+    }
   }
 }
 

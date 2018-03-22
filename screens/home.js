@@ -461,22 +461,28 @@ class HomeScreen extends Component {
     this.refreshDatas()
     if(GLOB.navigation.getParams("welcome"))
     {
-      renderToFrontView(  <View style={{flex:1, backgroundColor:'rgba(255,255,255,0.7)', alignItems:'center', justifyContent:'center'}}>
-                            <XImage loader={true} width={90} height={90} />
-                          </View>)
+      const renderLoading = () => {
+        if(!appReady)
+        {
+          renderToFrontView(  <View style={{flex:1, backgroundColor:'rgba(255,255,255,0.7)', alignItems:'center', justifyContent:'center'}}>
+                                <XImage loader={true} width={90} height={90} />
+                              </View>)
+        }
+      }
 
       const testReady = ()=>{
         if(this.state.ready)
         {
+          appReady = true
           clearFrontView()
           setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(this.master)}`), 1000)
           clearInterval(this.readyTimer)
           this.readyTimer = null
-          appReady = true
         }
       }
 
-      this.readyTimer = setInterval(testReady, 1000)
+      setTimeout(renderLoading, 1000)
+      this.readyTimer = setInterval(testReady, 500)
     }
   }
 
