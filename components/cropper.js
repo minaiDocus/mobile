@@ -90,7 +90,7 @@ export class CropperView extends Component{
     this.minWidthCrop = 150
     this.minHeightCrop = 150
 
-    this.state = {open: false, ready: false, widthCrop: this.minWidthCrop, heightCrop: this.minHeightCrop, url_output: null, remake: false}
+    this.state = {open: false, ready: false, widthCrop: this.minWidthCrop, heightCrop: this.minHeightCrop, url_output: null}
 
     this.createPanResponder = this.createPanResponder.bind(this)
     this.restartResponder = this.restartResponder.bind(this)
@@ -118,7 +118,7 @@ export class CropperView extends Component{
   }
 
   handleLayoutContent(event){
-    if(!this.state.remake)
+    if(!this.remake)
     {
       let {x, y, width, height} = event.nativeEvent.layout
       this.contentSize = {x: x, y: y, width: width, height: height}
@@ -126,10 +126,14 @@ export class CropperView extends Component{
       this.calculateWorkingImage()
       this.initPositionCropper()
     }
+    else
+    {
+      this.remake = false
+    }
   }
 
   closeCropper(){
-    this.setState({open: false})
+    this.setState({open: false, ready: false})
   }
 
   restartResponder(){
@@ -146,6 +150,7 @@ export class CropperView extends Component{
     this.moveType = null
     this.padding = 15
     this.borderGrill = 0.5
+    this.remake = false
 
     this.original_image = options.img
     
@@ -169,7 +174,7 @@ export class CropperView extends Component{
 
     this.initializePAN()
     
-    this.setState({open: true})
+    this.setState({open: true, ready: false})
 
     Image.getSize(this.source,
       (width, height)=>{
@@ -486,7 +491,8 @@ export class CropperView extends Component{
 
   remakeCrop(){
     if(Platform.OS == "ios") ImageStore.removeImageForTag(this.state.url_output) //deleting unused image
-    this.setState({url_output: null, remake: true})
+    this.remake = true
+    this.setState({url_output: null})
   }
 
   processCropping(){

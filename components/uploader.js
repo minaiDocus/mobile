@@ -230,7 +230,7 @@ export class UploderFiles{
                                                             <View style={{flex:1, justifyContent:'center', alignItems:'center', paddingHorizontal:5}}>
                                                               <XImage type='container' PStyle={imgStyles.styleContainer} style={imgStyles.styleImg} local={false} source={{uri: img.path.toString()}} />
                                                             </View>
-                                                            <View style={{flex:3, paddingHorizontal:5}}>
+                                                            <View style={{flex:3, padding:10}}>
                                                               <Text style={{fontSize:10}}>- {img.name}</Text>
                                                               <Text style={{fontSize:12, color: color_message, paddingHorizontal:7}}>{message}</Text>
                                                             </View>

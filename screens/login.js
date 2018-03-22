@@ -92,6 +92,7 @@ class LoginScreen extends Component {
   componentDidMount(){
     if(GLOB.navigation.getParams("goodbye"))
     {
+      clearFrontView()
       setTimeout(()=>Notice.info(`A bientot !!`), 1000)
     }
 
@@ -267,6 +268,7 @@ class LoginScreen extends Component {
                               onFocus={this.focusInput} 
                               onBlur={this.leaveFocusInput}
                               autoCorrect={false}
+                              selectTextOnFocus={true}
                               PStyle={this.styles.inputs} 
                               placeholder="Identifiant (Email)"
                               keyboardType="email-address"
@@ -279,6 +281,7 @@ class LoginScreen extends Component {
                               onFocus={this.focusInput} 
                               onBlur={this.leaveFocusInput} 
                               autoCorrect={false} 
+                              selectTextOnFocus={true}
                               secureTextEntry={true} 
                               PStyle={this.styles.inputs} 
                               placeholder="Mot de passe"

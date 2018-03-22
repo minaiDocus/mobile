@@ -1,9 +1,7 @@
 import {XFetcher} from '../components'
 
 export class Requester {
-  // responseFetching = ""
-  // request_retry = 2
-
+  
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }

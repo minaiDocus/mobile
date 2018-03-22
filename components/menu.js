@@ -84,6 +84,10 @@ class Footer extends Component{
   }
 
   logOut(){
+    renderToFrontView(  <View style={{flex:1, backgroundColor:'rgba(255,255,255,0.7)', alignItems:'center', justifyContent:'center'}}>
+                          <XImage loader={true} width={90} height={90} />
+                        </View>)
+    
     //remove data cache (REALM)
     RemoteAuthentication.logOut()
 

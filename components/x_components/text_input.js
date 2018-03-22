@@ -154,6 +154,8 @@ class ModalInput extends Component{
                           <TextInput ref="input"
                                      autoFocus={false}
                                      autoCorrect={(this.props.autoCorrect == false)? false : true}
+                                     autoCapitalize="none"
+                                     selectTextOnFocus={this.props.selectTextOnFocus || false}
                                      secureTextEntry={this.props.secureTextEntry || false}
                                      defaultValue={this.props.currValue}
                                      onChangeText={(value)=>this.props.changeText(value)}
