@@ -170,12 +170,16 @@ export class UINotification extends Component{
         this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
           this.revokeToken()
         })
+        this.openNotifsListener = EventRegister.on('openNotifications', ()=>{
+          this.toggleListNotifications()
+        })
     }
 
     componentWillUnmount(){
         EventRegister.rm(this.newNotificationListener)
         EventRegister.rm(this.refreshNotificationsListener)
         EventRegister.rm(this.revokeTokenListener)
+        EventRegister.rm(this.openNotifsListener)
     }
 
     componentDidUpdate(){
@@ -371,6 +375,8 @@ export class FCMinit extends Component{
 
         this.master = User.getMaster()
 
+        this.notifTimer = null
+
         this.handleMessages = this.handleMessages.bind(this)
         this.handleToken = this.handleToken.bind(this)
     }
@@ -413,9 +419,19 @@ export class FCMinit extends Component{
         if(typeof(notif.message) != "undefined")
         {
           EventRegister.emit('newNotification', notif)
+
           if(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray)
           {
-            setTimeout(()=>{EventRegister.emit("openNotifications")}, 1500)
+            const openNotif = ()=>{
+              if(appReady)
+              {
+                EventRegister.emit("openNotifications")
+                clearInterval(this.notifTimer)
+                this.notifTimer = null
+              }
+            }
+
+            this.notifTimer = setInterval(openNotif, 1500)
             FCM.removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
           }
         }

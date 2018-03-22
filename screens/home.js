@@ -442,6 +442,8 @@ class HomeScreen extends Component {
     GLOB.datas = []
     this.state = {showInfos: false, ready: false}
 
+    appReady = false
+
     this.readyTimer = null
 
     this.refreshDatas = this.refreshDatas.bind(this)
@@ -469,6 +471,8 @@ class HomeScreen extends Component {
           clearFrontView()
           setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(this.master)}`), 1000)
           clearInterval(this.readyTimer)
+          this.readyTimer = null
+          appReady = true
         }
       }
 

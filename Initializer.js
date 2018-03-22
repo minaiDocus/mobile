@@ -18,6 +18,7 @@ function fillWithZero(date, length_to = 2){
 
 
 //Globals functions && declarations
+global.appReady = false
 global.Config = Config
 global.UploadingFiles = false
 global.Notice = Notice
