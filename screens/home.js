@@ -7,7 +7,7 @@ import {Screen,Menu,XImage,Navigator,BoxButton,ImageButton,LinkButton,ProgressUp
 
 import {User} from '../models'
 
-import {DocumentsFetcher} from '../requests'
+import {DocumentsFetcher, UsersFetcher} from '../requests'
 
 let GLOB = { navigation:{}, datas: []}
 
@@ -442,6 +442,8 @@ class HomeScreen extends Component {
     GLOB.datas = []
     this.state = {showInfos: false, ready: false}
 
+    this.readyTimer = null
+
     this.refreshDatas = this.refreshDatas.bind(this)
   }
 
@@ -457,12 +459,29 @@ class HomeScreen extends Component {
     this.refreshDatas()
     if(GLOB.navigation.getParams("welcome"))
     {
-      setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(this.master)}`), 1000)
+      renderToFrontView(  <View style={{flex:1, backgroundColor:'rgba(255,255,255,0.7)', alignItems:'center', justifyContent:'center'}}>
+                            <XImage loader={true} width={90} height={90} />
+                          </View>)
+
+      const testReady = ()=>{
+        if(this.state.ready)
+        {
+          clearFrontView()
+          setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(this.master)}`), 1000)
+          clearInterval(this.readyTimer)
+        }
+      }
+
+      this.readyTimer = setInterval(testReady, 1000)
     }
   }
 
   refreshDatas(){
     this.setState({ready: false})
+
+    UsersFetcher.refreshOrganizations()
+    UsersFetcher.refreshCustomers()
+
     DocumentsFetcher.waitFor(
     ['refreshPacks()'],
     (responses)=>{
@@ -473,8 +492,8 @@ class HomeScreen extends Component {
         else
         {
           GLOB.datas = responses[0].packs || []
-          this.setState({ready: true})
         }
+        this.setState({ready: true})
     })
   }
   

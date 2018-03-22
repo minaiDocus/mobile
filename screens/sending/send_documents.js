@@ -279,11 +279,11 @@ class SendScreen extends Component {
       //console.log('removed all tmp images from tmp directory');
     }).catch(e => {})
 
-    UsersFetcher.waitFor(
-      ['refreshCustomers()'],
-      (responses)=>{
-        responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
-    })
+    // UsersFetcher.waitFor(
+    //   ['refreshCustomers()'],
+    //   (responses)=>{
+    //     responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
+    // })
   }
   
   openCamera(){

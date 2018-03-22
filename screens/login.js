@@ -10,20 +10,12 @@ import { RemoteAuthentication, UsersFetcher } from '../requests'
 
 let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
 
-function goToHome(){
-  UsersFetcher.waitFor(
-    ['refreshCustomers()', 'refreshOrganizations()'],
-    (responses)=>{
-      responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
-      SplashScreen.hide()
-      GLOB.navigation.dismissTo('Home', {welcome: true})
-  })
-}
-
 class ModalLoader extends Component{
   constructor(props){
     super(props)
     this.message = ""
+
+    this.goToHome = this.goToHome.bind(this)
 
     this.generateStyles() //style generation
   }
@@ -34,13 +26,18 @@ class ModalLoader extends Component{
       const params = { user_login: {login: GLOB.login, password: GLOB.password} }
       RemoteAuthentication.logIn(params, (type, message) => {
         if(type=='error'){this.props.dismiss(message)}
-        if(type=='success'){goToHome()}
+        if(type=='success'){this.goToHome()}
       })
     }
     else
     {
-      goToHome()
+      this.goToHome()
     }
+  }
+
+  goToHome(){
+    SplashScreen.hide()
+    GLOB.navigation.dismissTo('Home', {welcome: true})
   }
 
   generateStyles(){

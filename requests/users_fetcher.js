@@ -34,6 +34,7 @@ class users_fetcher extends Requester{
       }
       else
       {
+        Organization.deleteAll()
         Organization.add(r.organizations)
         response = true
       }

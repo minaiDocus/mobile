@@ -212,12 +212,13 @@ class DocumentsScreen extends Component {
 
   //For refreshing Account list
   componentDidMount(){
-    UsersFetcher.waitFor(
-      ['refreshCustomers()'],
-      (responses)=>{
-        responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
-        this.refreshDatas()
-    })
+    // UsersFetcher.waitFor(
+    //   ['refreshCustomers()'],
+    //   (responses)=>{
+    //     responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
+    //     this.refreshDatas()
+    // })
+    this.refreshDatas()
   }
 
   changePage(page=1){
