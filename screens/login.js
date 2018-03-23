@@ -10,61 +10,6 @@ import { RemoteAuthentication, UsersFetcher } from '../requests'
 
 let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
 
-class ModalLoader extends Component{
-  constructor(props){
-    super(props)
-    this.message = ""
-
-    this.goToHome = this.goToHome.bind(this)
-
-    this.generateStyles() //style generation
-  }
-
-  componentDidMount(){
-    if(GLOB.password != "" && GLOB.login != "")
-    {
-      const params = { user_login: {login: GLOB.login, password: GLOB.password} }
-      RemoteAuthentication.logIn(params, (type, message) => {
-        if(type=='error'){this.props.dismiss(message)}
-        if(type=='success'){this.goToHome()}
-      })
-    }
-    else
-    {
-      this.goToHome()
-    }
-  }
-
-  goToHome(){
-    SplashScreen.hide()
-    GLOB.navigation.dismissTo('Home', {welcome: true})
-  }
-
-  generateStyles(){
-    this.styles = {container: {
-                                flex:1,
-                                backgroundColor:"rgba(255,255,255,0.7)",
-                                flexDirection:'row',
-                                alignItems:'center',
-                                justifyContent:'center'
-                               }
-                  }
-  }
-
-  render(){
-    return <Modal transparent={true}
-             animationType="fade" 
-             visible={true}
-             supportedOrientations={['portrait', 'landscape']}
-             onRequestClose={()=>{}}
-          >
-            <View style={this.styles.container}>
-              <XImage loader={true} width={90} height={90} />
-            </View>
-          </Modal>
-  }
-}
-
 class LoginScreen extends Component {
   static navigationOptions = {header: null}
 
@@ -76,12 +21,14 @@ class LoginScreen extends Component {
     GLOB.login = GLOB.password = ""
     this.state = {loading: false, focusInput: false, ready: false, orientation: 'portrait'}
 
+    this.goToHome = this.goToHome.bind(this)
     this.actionLogin = this.actionLogin.bind(this)
     this.actionPassword = this.actionPassword.bind(this)
     this.dismissLoader = this.dismissLoader.bind(this)
     this.focusInput = this.focusInput.bind(this)
     this.leaveFocusInput = this.leaveFocusInput.bind(this)
     this.submitForm = this.submitForm.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
     
     this.generateStyles() //style generation
   }
@@ -110,7 +57,7 @@ class LoginScreen extends Component {
         const user = User.getMaster()
         if(user.id && responses[0].code != 500)
         {
-          this.setState({loading: true})
+          this.goToHome()
         }
         else
         {
@@ -124,12 +71,17 @@ class LoginScreen extends Component {
   }
 
   dismissLoader(message){
-    setTimeout(()=>{Notice.alert("Erreur connexion", message)}, 1000)
+    Notice.alert("Erreur connexion", message)
     this.setState({loading: false})
   }
 
   handleOrientation(orientation){
     this.setState({orientation: orientation}) // exemple use of Orientation changing
+  }
+
+  goToHome(){
+    SplashScreen.hide()
+    GLOB.navigation.dismissTo('Home', {welcome: true})
   }
 
   handleLogin(text){
@@ -148,6 +100,22 @@ class LoginScreen extends Component {
     this.setState({focusInput: false})
   }
 
+  handleSubmit(){
+    this.setState({loading: true})
+    if(GLOB.password != "" && GLOB.login != "")
+    {
+      const params = { user_login: {login: GLOB.login, password: GLOB.password} }
+      RemoteAuthentication.logIn(params, (type, message) => {
+        if(type=='error'){this.dismissLoader(message)}
+        if(type=='success'){this.goToHome()}
+      })
+    }
+    else
+    {
+      this.goToHome()
+    }
+  }
+
   submitForm(){
     if(!GLOB.system_reject)
     {
@@ -157,7 +125,7 @@ class LoginScreen extends Component {
       }
       else
       {
-        this.setState({loading: true})
+        this.handleSubmit()
       }
     }
     else
@@ -248,7 +216,6 @@ class LoginScreen extends Component {
               >
         <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
           <View style={this.styles.container}>   
-            { this.state.loading && <ModalLoader dismiss={this.dismissLoader}/> }
             { this.state.focusInput == false && 
               <View style={{flex:1,flexDirection:'row',alignItems:'center'}}>
                 <XImage style={{flex:1, height:100}} source={{uri:"charge"}} />
@@ -262,6 +229,7 @@ class LoginScreen extends Component {
                 <View style={this.styles.boxInput}>
                   <XImage style={this.styles.icons} source={{uri:"userpic"}} />
                   <XTextInput ref="inputLogin"
+                              editable={!this.state.loading}
                               onFocus={this.focusInput} 
                               onBlur={this.leaveFocusInput}
                               autoCorrect={false}
@@ -275,6 +243,7 @@ class LoginScreen extends Component {
                 <View style={this.styles.boxInput}>
                   <XImage style={this.styles.icons} source={{uri:"cadenas"}} />
                   <XTextInput ref="inputPassword"
+                              editable={!this.state.loading}
                               onFocus={this.focusInput} 
                               onBlur={this.leaveFocusInput} 
                               autoCorrect={false} 
@@ -286,7 +255,8 @@ class LoginScreen extends Component {
                               previous={{action: this.actionLogin}} 
                               onChangeText={(text) => this.handlePass(text)}/>
                 </View>
-                <SimpleButton onPress={() => this.submitForm()} Pstyle={this.styles.submit} Tstyle={{fontSize:18}} title="Connexion" />
+                {!this.state.loading && <SimpleButton onPress={() => this.submitForm()} Pstyle={this.styles.submit} Tstyle={{fontSize:18}} title="Connexion" />}
+                {this.state.loading && <View style={{flex:0, marginTop:15, alignSelf:"center"}}><XImage loader={true} width={40} height={40} /></View>}
               </View>
             }
           </View>

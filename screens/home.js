@@ -481,8 +481,8 @@ class HomeScreen extends Component {
         }
       }
 
-      setTimeout(renderLoading, 1000)
-      this.readyTimer = setInterval(testReady, 500)
+      setTimeout(renderLoading, 200)
+      this.readyTimer = setInterval(testReady, 1000)
     }
   }
 

@@ -193,11 +193,7 @@ export class XTextInput extends Component{
                    value: this.initValue,
                  }
 
-    this.editable = true
-    if(this.props.editable == false)
-    {
-      this.editable = false
-    }
+    this.editable = (this.props.editable == false)? false : true
 
     this.previous_action = this.props.previous || null
     this.next_action = this.props.next || null      
@@ -210,6 +206,13 @@ export class XTextInput extends Component{
     this.changeText = this.changeText.bind(this)
 
     this.generateStyles()
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(typeof(nextProps.editable) !== "undefined")
+    {
+      this.editable = (nextProps.editable == false)? false : true
+    }
   }
 
   openKeyboard(){
