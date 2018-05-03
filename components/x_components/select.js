@@ -73,13 +73,14 @@ class ModalSelect extends Component{
     }
   }
 
-  changeItem(itemValue){
+  changeItem(itemValue, dismiss = false){
     this.setState({selectedItem: itemValue})
     let valueText = ''
     this.state.datas.map((val, key)=>{
       if(val.value == itemValue){valueText=val.label}
     })
     this.props.changeItem(itemValue, valueText)
+    if(dismiss) this.dismiss()
   }
 
   renderSearch(){
@@ -125,7 +126,7 @@ class ModalSelect extends Component{
         let styleItem = { color:'#707070' }
         if(this.state.selectedItem == dt.value) styleItem = { paddingLeft:5, backgroundColor: '#707070', color:'#fff', fontWeight:'bold' }
 
-        return <TouchableOpacity key={index} style={boxstyle.touchable} onPress={()=>this.changeItem(dt.value)}>
+        return <TouchableOpacity key={index} style={boxstyle.touchable} onPress={()=>this.changeItem(dt.value, true)}>
                   <Text style={styleItem}>{dt.label}</Text>
                </TouchableOpacity>
       })

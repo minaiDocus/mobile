@@ -4,6 +4,7 @@ export class Navigator {
 
   constructor(navigation){
     this.navigation = navigation
+    this.last_params = null
 
     if(this.navigation.state)
       this.params = this.navigation.state.params
@@ -61,16 +62,22 @@ export class Navigator {
     actionLocker(call)
   }
 
-  goBack(){
+  goBack(params=null){
+    this.last_params = params
     actionLocker(this.navigation.goBack)
   }
 
   screenClose(){
     if(this.prevScreen != "")
     {
+      const parameters = {}
+      const p_default = {
+                  initScreen: true
+                }
+      Object.assign(parameters, p_default, this.last_params)
       const recallAction = NavigationActions.setParams({
           key: this.prevScreen,
-          params: {initScreen: true}
+          params: parameters
         });
       this.navigation.dispatch(recallAction)
     }

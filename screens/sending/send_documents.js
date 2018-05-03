@@ -254,11 +254,8 @@ class SendScreen extends Component {
 
   constructor(props){
     super(props)
-    GLOB.images = []
-    GLOB.imgToDel = ""
-    GLOB.idZoom = ""
     GLOB.navigation = new Navigator(this.props.navigation)
-    this.state = { dataList: [], zoomActive: false, showCrop: false}
+    this.state = { dataList: [], zoomActive: false, showCrop: false }
 
     this.renderImg = this.renderImg.bind(this)
     this.renderError = this.renderError.bind(this)
@@ -270,7 +267,13 @@ class SendScreen extends Component {
       Notice.info({title: "Transfert en cours ...", body: "Un transfert est en cours, Veuillez patienter avant de lancer un autre!!"})
     }
 
+    this.resetScreen()
     this.generateStyles()
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(nextProps.navigation.state.params.resetSendScreen)
+      this.resetScreen()
   }
 
   componentWillMount(){
@@ -286,13 +289,20 @@ class SendScreen extends Component {
     // })
   }
   
+  resetScreen(){
+    GLOB.images = []
+    GLOB.imgToDel = ""
+    GLOB.idZoom = ""
+    this.setState({ dataList: [], zoomActive: false, showCrop: false })
+  }
+
   openCamera(){
     const call = ()=>{
                         ImagePicker.openCamera({
                           cropping: false
                         })
                         .then(image => {
-                          this.renderImg([image]);
+                          this.renderImg([image], null, true);
                         })
                         .catch(error => {
                           this.renderError(error);
@@ -329,7 +339,7 @@ class SendScreen extends Component {
     actionLocker(call)
   }
 
-  async renderImg(_img, index=null){
+  async renderImg(_img, index=null, launch_crop=false){
     let img = []
   
     _img.forEach((i)=>{
@@ -369,9 +379,13 @@ class SendScreen extends Component {
 
       GLOB.images = GLOB.images.concat(listAdd)
       await this.setState({dataList: GLOB.images})
+      index = GLOB.images.length - 1
     }
 
     await this.setState({showCrop: true})
+
+    if(launch_crop)
+      setTimeout(()=>this.openCrop(index), 200)
   }
 
   async deleteElement(){

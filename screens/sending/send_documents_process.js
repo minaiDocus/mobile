@@ -9,7 +9,7 @@ import { User,ImageSent } from '../../models'
 
 import { FileUploader } from "../../requests"
 
-let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: []}
+let GLOB = {navigation:{}, dataList:[], customer: '', period: '', journal: '', file_upload_params: [], sending_finished: false}
 
 const styles = StyleSheet.create({
   minicontainer:{
@@ -338,7 +338,7 @@ class Footer extends Component{
   }
 
   leaveScreen(){
-    GLOB.navigation.goBack();
+    GLOB.navigation.goBack({ resetSendScreen: GLOB.sending_finished })
   }
 
   render(){
@@ -360,6 +360,7 @@ class SendScreen extends Component {
     GLOB.period = ''
     GLOB.journal = ''
     GLOB.file_upload_params = []
+    GLOB.sending_finished = false
 
     this.state = {progress: 0, sending: false}
 
@@ -394,6 +395,7 @@ class SendScreen extends Component {
     {
       this.refs._baseScroll.scrollToEnd({animated: true})
       this.setState({progress: 1})
+      GLOB.sending_finished = true
     }
   }
 
