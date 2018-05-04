@@ -24,7 +24,7 @@ export class BoxList extends Component{
 
   onLayout(event){
     let {width, height} = event.nativeEvent.layout
-    this.width = width - 10
+    this.width = width - 12
     this.elements = Math.floor(this.width / (this.props.elementWidth+2))
     this.setState({dimensionReady: true})
   }
