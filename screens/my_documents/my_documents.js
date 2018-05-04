@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {StyleSheet,Text,View,ScrollView,TouchableOpacity} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
 
-import {Screen,XImage,XTextInput,Navigator,SelectInput,Pagination,LineList} from '../../components'
+import {Screen,XImage,XText,XTextInput,Navigator,SelectInput,Pagination,LineList} from '../../components'
 
 import {User} from '../../models'
 
@@ -113,7 +113,7 @@ class Header extends Component{
     let inputSelection = ""
     if(this.clients.length == 2)
     {
-      inputSelection = <Text style={this.selectStyle.label}>{this.clients[1].label}</Text>
+      inputSelection = <XText style={this.selectStyle.label}>{this.clients[1].label}</XText>
     }
     else
     {
@@ -186,14 +186,14 @@ class BoxDocs extends Component{
     return  <TouchableOpacity style={{flex:1}} onPress={()=>this.handleClick()} >
               <View style={this.styles.container}>
                 <XImage source={{uri:"arrow_doc"}} style={this.styles.image} />
-                <Text>{this.props.data.name.toString()}</Text>
+                <XText>{this.props.data.name.toString()}</XText>
               </View>
             </TouchableOpacity>
   }
 }
 
 class DocumentsScreen extends Component {
-  static navigationOptions = {headerTitle: 'Mes documents',}
+  static navigationOptions = {headerTitle: <XText class='title_screen'>Mes documents</XText>}
 
   constructor(props){
     super(props)

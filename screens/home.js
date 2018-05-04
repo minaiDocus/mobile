@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native'
+import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import {Screen,Menu,XImage,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM} from '../components'
+import {Screen,Menu,XImage,XText,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM} from '../components'
 
 import {User} from '../models'
 
@@ -189,13 +189,13 @@ class ViewState extends Component{
         }
         catch(e){}
       }
-      return <Text key={index} style={{fontSize:14}}><Text style={{fontWeight:"bold"}}>{info.label} : </Text>{value}</Text>
+      return <XText key={index} style={{fontSize:14}}><XText style={{fontWeight:"bold"}}>{info.label} : </XText>{value}</XText>
     })
 
     return    <TouchableOpacity key={index} style={{flex:1}} onPress={()=>this.handleClickDocument(index)}>
                 <View style={[this.stylesDetails.details, {backgroundColor:colorStriped}]}>
                   <XImage source={{uri: arrow}} style={this.stylesDetails.image} />
-                  <Text>{data.name}</Text>
+                  <XText>{data.name}</XText>
                 </View>
                 {
                   this.state.infos == index && 
@@ -221,7 +221,7 @@ class ViewState extends Component{
                     <XImage source={{uri:icon}} style={this.styles.icons} />
                   </View>
                   <View style={{flex:4}}>
-                    <Text style={{fontSize:16,color:'#463119'}}>{title} <Text style={{color:'#EC5656',fontWeight:'bold'}}>({counts})</Text></Text>
+                    <XText style={{fontSize:16,color:'#463119'}}>{title} <XText style={{color:'#EC5656',fontWeight:'bold'}}>({counts})</XText></XText>
                   </View>
                 </View>
                 <View style={{flex:1, marginTop:10}}>
@@ -301,7 +301,7 @@ class TabNav extends Component{
            <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
             <View style={[this.stylesTabBar.box, indexStyle]}>
               <XImage source={{uri:tb.icon}} style={this.stylesTabBar.icons} />
-              <Text style={this.stylesTabBar.title}>{tb.title}</Text>
+              <XText style={this.stylesTabBar.title}>{tb.title}</XText>
             </View>
           </TouchableOpacity>
       )})
@@ -364,11 +364,11 @@ class AppInfos extends Component{
                         <View style={this.styles.content}>
                             <View style={this.styles.box}>
                               <View style={this.styles.boxTitle}>
-                                <Text style={this.styles.title}>iDocus</Text>
+                                <XText style={this.styles.title}>iDocus</XText>
                               </View>
-                              <Text>www.idocus.com</Text>
-                              <Text>version : {Config.version.toString()}</Text>
-                              <Text>IDOCUS © Copyright 2018</Text>
+                              <XText>www.idocus.com</XText>
+                              <XText>version : {Config.version.toString()}</XText>
+                              <XText>IDOCUS © Copyright 2018</XText>
                             </View>
                         </View>
                       </TouchableWithoutFeedback>
@@ -425,8 +425,8 @@ class FrontView extends Component{
 }
 
 class HomeScreen extends Component {
-  static navigationOptions = {  headerTitle:'Accueil', 
-                                headerLeft: <MenuLoader />,
+  static navigationOptions = {  headerTitle: <XText class='title_screen'>Accueil</XText>,
+                                headerLeft:  <MenuLoader />,
                                 headerRight: <View style={{flex:1, flexDirection:'row', minHeight:'100%'}}>
                                                 <UINotification />
                                                 <AppInfos />

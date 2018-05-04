@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Screen,AnimatedBox,XImage,LineList,Pagination,SelectInput,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton} from '../../../components'
+import {Screen,AnimatedBox,XImage,XText,LineList,Pagination,SelectInput,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton} from '../../../components'
 
 import {AccountSharing} from "../../../requests"
 
@@ -360,7 +360,7 @@ class BoxStat extends Component{
               <View style={this.styles.container}>
                 <XImage source={{uri:arrow}} style={[{flex:0, width:20, marginRight:8}, this.styles.image]} />
                 <View style={{flex:1}}>
-                  <Text style={{fontWeight:'bold'}}>{this.props.data.document.toString()}</Text>
+                  <XText style={{fontWeight:'bold'}}>{this.props.data.document.toString()}</XText>
                 </View>
                 <View style={{flex:0, width:70, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
                   <ImageButton source={{uri:'validate'}} Pstyle={{padding:8}} Istyle={[this.styles.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
@@ -370,10 +370,10 @@ class BoxStat extends Component{
               {
                   this.state.showDetails == true && 
                     <View style={this.styles.infos}>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Dossier : </Text>{this.props.data.document}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Client ou Contact : </Text>{this.props.data.client}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Etat : </Text>{state}</Text>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Date : </XText>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Dossier : </XText>{this.props.data.document}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Client ou Contact : </XText>{this.props.data.client}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Etat : </XText>{state}</XText>
                     </View>
               }
             </TouchableOpacity>
@@ -432,7 +432,7 @@ class OrderBox extends Component{
     if(this.state.show)
     {
       return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={this.styles.container}>
-                  <Text style={this.styles.title}>Trier par : </Text>
+                  <XText style={this.styles.title}>Trier par : </XText>
                   <View style={{flex:1, marginTop:5}}>
                     <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={this.styles.list} />
                     {
@@ -553,9 +553,9 @@ class SharingScreen extends Component {
      return  <ScrollView style={{flex:1, padding:3}}>
                 {this.state.orderText && this.state.dataList.length > 0 && 
                   <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
-                    <Text style={{flex:0}}>Trie par: <Text style={{fontWeight:'bold'}}>{this.state.orderText}</Text></Text>
+                    <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>
                     <TouchableOpacity style={{flex:0,width:30,alignItems:'center'}} onPress={()=>this.changeDirectionSort()}>
-                      <Text style={{fontSize:14, fontWeight:'bold'}}>{arrow_direction}</Text>
+                      <XText style={{fontSize:14, fontWeight:'bold'}}>{arrow_direction}</XText>
                     </TouchableOpacity>
                   </View>
                 }

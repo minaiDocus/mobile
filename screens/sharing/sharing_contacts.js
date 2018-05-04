@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Screen,AnimatedBox,Navigator,XImage,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton,OrganizationSwitcher} from '../../components'
+import {Screen,AnimatedBox,Navigator,XImage,XText,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton,OrganizationSwitcher} from '../../components'
 
 import {User} from '../../models'
 
@@ -279,7 +279,7 @@ class BoxStat extends Component{
               <View style={this.styles.container}>
                 <XImage source={{uri:arrow}} style={[{flex:0, width:20, marginRight:8}, this.styles.image]} />
                 <View style={{flex:1}}>
-                  <Text style={{fontWeight:'bold'}}>{this.props.data.email.toString()}</Text>
+                  <XText style={{fontWeight:'bold'}}>{this.props.data.email.toString()}</XText>
                 </View>
                 <View style={{flex:0, width:70, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
                   <ImageButton source={{uri:'edition'}} Pstyle={{padding:8}} Istyle={this.styles.image} onPress={()=>this.handleEdit()}/>
@@ -289,11 +289,11 @@ class BoxStat extends Component{
               {
                   this.state.showDetails == true && 
                     <View style={this.styles.infos}>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Email : </Text>{this.props.data.email}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Société : </Text>{this.props.data.company}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Nom : </Text>{User.fullNameOf(this.props.data)}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Nb. de dossiers : </Text>{this.props.data.account_size}</Text>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Date : </XText>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Email : </XText>{this.props.data.email}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Société : </XText>{this.props.data.company}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Nom : </XText>{User.fullNameOf(this.props.data)}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Nb. de dossiers : </XText>{this.props.data.account_size}</XText>
                     </View>
               }
             </TouchableOpacity>
@@ -352,7 +352,7 @@ class OrderBox extends Component{
     if(this.state.show)
     {
       return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={this.styles.container}>
-                  <Text style={this.styles.title}>Trier par : </Text>
+                  <XText style={this.styles.title}>Trier par : </XText>
                   <View style={{flex:1, marginTop:5}}>
                     <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={this.styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['Email','email'])} title='Email' Pstyle={this.styles.list} />
@@ -369,7 +369,7 @@ class OrderBox extends Component{
 
 class SharingScreen extends Component {
   static navigationOptions = {
-       headerTitle: 'Contacts',
+       headerTitle: <XText class='title_screen'>Contacts</XText>,
        headerRight: <View style={{flex:1, flexDirection:'row'}}>
                       <OrganizationSwitcher/>
                       <ImageButton  source={{uri:"options"}} 
@@ -483,9 +483,9 @@ class SharingScreen extends Component {
      return  <ScrollView style={{flex:1, padding:3}}>
                 {this.state.orderText && this.state.dataList.length > 0 &&
                   <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
-                    <Text style={{flex:0}}>Trie par: <Text style={{fontWeight:'bold'}}>{this.state.orderText}</Text></Text>
+                    <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>
                     <TouchableOpacity style={{flex:0,width:30,alignItems:'center'}} onPress={()=>this.changeDirectionSort()}>
-                      <Text style={{fontSize:14, fontWeight:'bold'}}>{arrow_direction}</Text>
+                      <XText style={{fontSize:14, fontWeight:'bold'}}>{arrow_direction}</XText>
                     </TouchableOpacity>
                   </View>
                 }

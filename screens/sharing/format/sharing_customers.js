@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import {Screen,AnimatedBox,XImage,LineList,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm} from '../../../components'
+import {Screen,AnimatedBox,XImage,XText,LineList,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm} from '../../../components'
 
 import {AccountSharing} from "../../../requests"
 
@@ -170,7 +170,7 @@ class ViewState extends Component{
     return  <View key={index} style={{flex:1}}>
                 <View style={[style.details, {backgroundColor:colorStriped}]}>
                   <XImage source={{uri: 'arrow_up'}} style={style.image} />
-                  <Text style={{paddingHorizontal:10, flex:1}}>{data.name}</Text>
+                  <XText style={{paddingHorizontal:10, flex:1}}>{data.name}</XText>
                   <ImageButton source={{uri:'delete'}} Pstyle={{flex:0, width:20, padding:8, alignItems:'center', justifyContent:'center'}} Istyle={style.image} onPress={()=>this.handleDelete(data.id_idocus)}/>
                 </View>
             </View>
@@ -208,7 +208,7 @@ class ViewState extends Component{
               <View style={this.styles.container}>
                 <View style={{flex:1, flexDirection:'row'}}>
                   <View style={{flex:4}}>
-                    <Text style={{fontSize:16,color:'#463119'}}>{title} <Text style={{color:'#EC5656',fontWeight:'bold'}}>({counts})</Text></Text>
+                    <XText style={{fontSize:16,color:'#463119'}}>{title} <XText style={{color:'#EC5656',fontWeight:'bold'}}>({counts})</XText></XText>
                   </View>
                 </View>
                 <View style={{flex:1, marginTop:10}}>
@@ -324,7 +324,7 @@ class TabNav extends Component{
           return (
            <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={this.styles.touchable}>
             <View style={[this.styles.box, indexStyle]}>
-              <Text style={this.styles.title}>{tb.title}</Text>
+              <XText style={this.styles.title}>{tb.title}</XText>
             </View>
           </TouchableOpacity>
       )});

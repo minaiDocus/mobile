@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button} from 'react-native'
+import {StyleSheet,View,ScrollView,Modal,TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button} from 'react-native'
 import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
 
-import {Screen,Cropper,CropperView,Navigator,XImage,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload} from '../../components'
+import {Screen,Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload} from '../../components'
 
 import {UsersFetcher} from "../../requests"
 
@@ -246,7 +246,7 @@ class Header extends Component{
 }
 
 class SendScreen extends Component {
-    static navigationOptions =  {   headerTitle:'Envoi documents', 
+    static navigationOptions =  {   headerTitle: <XText class='title_screen'>Envoi documents</XText>, 
                                     headerRight: <View style={{flex:1, minWidth:80, flexDirection:'row', minHeight:'100%'}}>
                                                     <ProgressUpload />
                                                  </View>
@@ -455,7 +455,7 @@ class SendScreen extends Component {
       if(GLOB.images.length > 0)
       {
         var embedContent =  <ScrollView style={{flex:1, padding:3}}>
-                                <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.images.length} : Document(s)</Text>
+                                <XText style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.images.length} : Document(s)</XText>
                                 <BoxList datas={this.state.dataList}
                                          elementWidth={130} 
                                          renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
@@ -465,7 +465,7 @@ class SendScreen extends Component {
       {
         var embedContent =  <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
                               <View style={this.styles.boxPicture}>
-                                <Text style={{padding:10}}>Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ...</Text>
+                                <XText style={{padding:10}}>Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ...</XText>
                               </View>
                             </View>
 

@@ -158,7 +158,7 @@ class ModalInput extends Component{
                       }
                       </View>
                       <View style={{flex:0, justifyContent:'center', alignItems:'center'}}>
-                        {this.label != "" && <Text style={this.styles.label}>{this.label}</Text>}
+                        {this.label != "" && <XText style={this.styles.label}>{this.label}</XText>}
                         <View style={[this.styles.boxInput, androidStyle]}>
                           <TextInput ref="input"
                                      autoFocus={false}
@@ -308,7 +308,7 @@ export class XTextInput extends Component{
               />
             }  
             <View style={this.styles.boxText}>
-              <Text style={[this.styles.textStyle, TStyle]}>{value}</Text>
+              <XText style={[this.styles.textStyle, TStyle]}>{value}</XText>
             </View>
            </TouchableOpacity>
            

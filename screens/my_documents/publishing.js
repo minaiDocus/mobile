@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import {StyleSheet,Text,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
+import {StyleSheet,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
 import { NavigationActions } from 'react-navigation'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import {Screen,Navigator,XImage,PDFView,SimpleButton,ImageButton,BoxList,LineList,Pagination} from '../../components'
+import {Screen,Navigator,XImage,XText,PDFView,SimpleButton,ImageButton,BoxList,LineList,Pagination} from '../../components'
 
 import {DocumentsFetcher} from "../../requests"
 
@@ -101,7 +101,7 @@ class BoxZoom extends Component{
                   <SimpleButton Pstyle={{flex:0}} onPress={()=>this.hideModal()} title="Retour" />
                   <View style={this.styles.control} >
                     <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[this.styles.btnNav, {marginLeft:0}]} onPress={()=>this.prevElement()} title="<" />
-                    <Text style={this.styles.text}>Pièce N°: {GLOB.idZoom + 1} / {this.props.total}</Text>
+                    <XText style={this.styles.text}>Pièce N°: {GLOB.idZoom + 1} / {this.props.total}</XText>
                     <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[this.styles.btnNav, {marginRight:0}]} onPress={()=>this.nextElement()} title=">" />
                   </View>
                 </View>
@@ -119,8 +119,8 @@ class BoxZoom extends Component{
                     }} />
                 </View>
                 <View style={{flex:0,flexDirection:'row'}}>
-                  <Text style={[this.styles.text, this.styles.textFoot, {textAlign:'left'}]}>{this.state.current_page}</Text>
-                  <Text style={[this.styles.text, this.styles.textFoot, {textAlign:'right'}]}>{this.state.nb_pages} page(s)</Text>
+                  <XText style={[this.styles.text, this.styles.textFoot, {textAlign:'left'}]}>{this.state.current_page}</XText>
+                  <XText style={[this.styles.text, this.styles.textFoot, {textAlign:'right'}]}>{this.state.nb_pages} page(s)</XText>
                 </View>
               </View>
             </Modal>
@@ -157,10 +157,10 @@ class Header extends Component{
   render(){
     return (
               <View style={this.styles.minicontainer}>
-                <Text style={this.styles.text}>{GLOB.Pack.name || "test"}</Text>
+                <XText style={this.styles.text}>{GLOB.Pack.name || "test"}</XText>
                 {
                   GLOB.filterText != "" &&
-                  <Text style={this.styles.filter}>(Filtre active: <Text style={{color:"#F7230C", fontStyle:'italic'}}>{GLOB.filterText}</Text>)</Text>
+                  <XText style={this.styles.filter}>(Filtre active: <XText style={{color:"#F7230C", fontStyle:'italic'}}>{GLOB.filterText}</XText>)</XText>
                 }
               </View>
             );
@@ -190,8 +190,8 @@ class BoxInfos extends Component{
 
   renderItems(data){
     return  <View style={{flex:1, paddingVertical:10}}>
-              <Text style={this.styles.label}>{data.label.toString()}</Text>
-              <Text style={this.styles.value}>{data.value.toString()}</Text>
+              <XText style={this.styles.label}>{data.label.toString()}</XText>
+              <XText style={this.styles.value}>{data.value.toString()}</XText>
             </View>
   }
 
@@ -316,7 +316,7 @@ class BoxPublish extends Component{
                                                   data={this.props.datas[GLOB.idZoom]} 
                                                   total={this.props.datas.length}/>
               }
-              <Text style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{this.props.totalCount} {this.props.title}</Text>
+              <XText style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{this.props.totalCount} {this.props.title}</XText>
               <BoxList datas={this.props.datas}
                        elementWidth={110}
                        renderItems={(data, index) => <ImgBox data={data} index={index} toggleZoom={()=>this.toggleZoom()}/> } />
@@ -478,7 +478,7 @@ class TabNav extends Component{
            <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={this.styles.touchable}>
             <View style={[this.styles.box, indexStyle]}>
               <XImage source={{uri:tb.icon}} style={this.styles.icons} />
-              <Text style={this.styles.title}>{tb.title}</Text>
+              <XText style={this.styles.title}>{tb.title}</XText>
             </View>
           </TouchableOpacity>
       )});
@@ -514,7 +514,7 @@ class TabNav extends Component{
 }
 
 class PublishScreen extends Component {
-  static navigationOptions = {headerTitle: 'Mes documents',}
+  static navigationOptions = {headerTitle: <XText class='title_screen'>Mes documents</XText>}
 
   constructor(props){
     super(props);

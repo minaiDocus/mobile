@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import LinearGradient from 'react-native-linear-gradient'
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native'
+import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import { XText } from './index'
 
 export class ProgressBar extends Component{
   constructor(props){
@@ -55,7 +56,7 @@ export class ProgressBar extends Component{
     const stylePlus = this.props.style || {}
     return  <LinearGradient colors={['#FFF', '#CECECE']} style={[this.styles.container, stylePlus]}>
               <LinearGradient colors={['#00F', '#26C4EC']} style={[this.styles.bar, {width: `${this.state.width}%`}]}>
-                <Text style={this.styles.text}>{Math.ceil(this.state.width)} %</Text>
+                <XText style={this.styles.text}>{Math.ceil(this.state.width)} %</XText>
               </LinearGradient>
             </LinearGradient>
   }

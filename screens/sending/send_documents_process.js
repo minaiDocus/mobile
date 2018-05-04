@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { StyleSheet,Text,View,ScrollView,ListView,TouchableOpacity,Picker } from 'react-native'
+import { StyleSheet,View,ScrollView,ListView,TouchableOpacity,Picker } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import { NavigationActions } from 'react-navigation'
 
-import { Screen,Navigator,XImage,LinkButton,SimpleButton,SelectInput,UploderFiles,ProgressBar } from '../../components'
+import { Screen,Navigator,XImage,XText,LinkButton,SimpleButton,SelectInput,UploderFiles,ProgressBar } from '../../components'
 
 import { User,ImageSent } from '../../models'
 
@@ -280,21 +280,21 @@ class Body extends Component{
             <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
             {this.state.period_start != "" && 
               <View style={this.styles.warning}>
-                <Text style={this.styles.warntitle} >
+                <XText style={this.styles.warntitle} >
                   Attention :
-                </Text>
-                <Text>
+                </XText>
+                <XText>
                   Pour des raisons de clôture de période comptable,
                   vous ne pouvez plus affecter de documents à la période {this.state.period_start + " "}
                   après le {this.state.period_expired}.
-                </Text>
+                </XText>
               </View>
             }
 
             {valueProgress > 0 &&
               <View style={this.styles.progressBar}>
                 <ProgressBar progress={valueProgress} />
-                <Text style={{flex:1, textAlign:'center', color:colorBar}}>{(valueProgress < 1)? "Téléversement en cours ..." : "Téléversement terminé"}</Text>
+                <XText style={{flex:1, textAlign:'center', color:colorBar}}>{(valueProgress < 1)? "Téléversement en cours ..." : "Téléversement terminé"}</XText>
               </View>
             }
           </View>
@@ -306,7 +306,7 @@ class Body extends Component{
 
   render(){
     return  <View style={{flex:1, padding:3}}>
-              <Text style={this.styles.textBody}>{GLOB.dataList.length} : Document(s)</Text>
+              <XText style={this.styles.textBody}>{GLOB.dataList.length} : Document(s)</XText>
               <View style={this.styles.container}>
                 {this.state.ready && this.renderForm()}
                 {!this.state.ready && this.renderLoading()}
@@ -350,7 +350,7 @@ class Footer extends Component{
 }
 
 class SendScreen extends Component {
-  static navigationOptions = {headerTitle: 'Envoi documents',}
+  static navigationOptions = {headerTitle: <XText class='title_screen'>Envoi documents</XText>}
 
   constructor(props){
     super(props)

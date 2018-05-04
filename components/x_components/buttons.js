@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import {Text,TouchableOpacity,View,StyleSheet} from 'react-native'
+import { TouchableOpacity, View, StyleSheet } from 'react-native'
 
 import LinearGradient from 'react-native-linear-gradient'
 
-import { XImage, AnimatedBox } from '../index'
+import { XImage, AnimatedBox, XText } from '../index'
 
 export class SimpleButton extends Component{
   constructor(props){
@@ -62,7 +62,7 @@ export class SimpleButton extends Component{
 
     return <TouchableOpacity style={[this.styles.content, Pstyle_plus]} onPress={this.props.onPress}>
               {leftImage}
-              <Text style={[this.styles.text, Tstyle_plus]}>{this.props.title}</Text>
+              <XText style={[this.styles.text, Tstyle_plus]}>{this.props.title}</XText>
               {rightImage}
            </TouchableOpacity>
   }
@@ -142,10 +142,10 @@ export class BoxButton extends Component{
     return  <TouchableOpacity onPress={this.props.onPress} style={this.styles.touchable}>
               <LinearGradient colors={['#D1E949', '#C0D838', '#9DA505']} style={this.styles.boxControl}>
                 <XImage source={this.props.source} style={this.styles.icons} local={this.props.local || true} />
-                {this.props.marker && <View style={this.styles.boxMarker}><AnimatedBox type="blink" durationIn={1500} durationOut={1500}><Text style={this.styles.marker}>{this.props.marker}</Text></AnimatedBox></View> }
+                {this.props.marker && <View style={this.styles.boxMarker}><AnimatedBox type="blink" durationIn={1500} durationOut={1500}><XText style={this.styles.marker}>{this.props.marker}</XText></AnimatedBox></View> }
               </LinearGradient>
               <View style={this.styles.boxText}>
-                <Text style={this.styles.text}>{this.props.title}</Text>
+                <XText style={this.styles.text}>{this.props.title}</XText>
               </View>
             </TouchableOpacity>
   }
@@ -185,7 +185,7 @@ export class LinkButton extends Component{
 
     return <TouchableOpacity style={[this.styles.content, Pstyle_plus]} onPress={this.props.onPress}>
               {this.props.source && <XImage source={this.props.source} resizeMode={this.props.resizeMode} style={[this.styles.image, Istyle_plus]} local={this.props.local || true}/>}
-              <Text style={[this.styles.text, Tstyle_plus]}>{this.props.title}</Text>
+              <XText style={[this.styles.text, Tstyle_plus]}>{this.props.title}</XText>
            </TouchableOpacity>
   }
 }

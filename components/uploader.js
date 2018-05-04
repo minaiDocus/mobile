@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import base64 from 'base-64'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { ImageSent } from '../models'
 
-import { AnimatedBox, XFetcher, LinkButton, BoxInfos, XImage } from './index'
+import { AnimatedBox, XText, XFetcher, LinkButton, BoxInfos, XImage } from './index'
 
 export class ProgressUpload extends Component{
   constructor(props){
@@ -92,7 +92,7 @@ export class ProgressUpload extends Component{
       return <AnimatedBox ref="progressUpload" type="RightSlide" style={this.styles.box}>
                 <LinearGradient colors={colorGrad} style={this.styles.gradient}>
                   <TouchableOpacity onPress={this.showState}>
-                      <Text style={this.styles.text}>{this.state.value} %</Text>
+                      <XText style={this.styles.text}>{this.state.value} %</XText>
                   </TouchableOpacity>
                 </LinearGradient>
              </AnimatedBox>
@@ -168,8 +168,8 @@ export class UploderFiles{
 
         const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
                             <View style={{flex:2, paddingHorizontal:20}}>
-                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Rapport téléversement</Text>
-                              <Text style={{flex:1, color:'#EC5656', fontSize:10}}>Des erreurs ont été détectées lors de l'envoi de documents</Text>
+                              <XText style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Rapport téléversement</XText>
+                              <XText style={{flex:1, color:'#EC5656', fontSize:10}}>Des erreurs ont été détectées lors de l'envoi de documents</XText>
                             </View>
                             <View style={{flex:1}}>
                               <LinkButton onPress={()=>{this.showErrors()}} 
@@ -231,8 +231,8 @@ export class UploderFiles{
                                                               <XImage type='container' PStyle={imgStyles.styleContainer} style={imgStyles.styleImg} local={false} source={{uri: img.path.toString()}} />
                                                             </View>
                                                             <View style={{flex:3, padding:10}}>
-                                                              <Text style={{fontSize:10}}>- {img.name}</Text>
-                                                              <Text style={{fontSize:12, color: color_message, paddingHorizontal:7}}>{message}</Text>
+                                                              <XText style={{fontSize:10}}>- {img.name}</XText>
+                                                              <XText style={{fontSize:12, color: color_message, paddingHorizontal:7}}>{message}</XText>
                                                             </View>
                                                           </View>
                                                         </View>

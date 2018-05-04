@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {StyleSheet, Text, View} from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import { XText } from '../index'
 
 export class BoxList extends Component{
   static propTypes = {
@@ -124,10 +125,10 @@ export class LineList extends Component{
   render(){
     this.datas = this.props.datas || []
     return <View style={{flex:1}}>
-                {this.props.title && <Text style={this.styles.title}>{this.props.title}</Text>}
+                {this.props.title && <XText style={this.styles.title}>{this.props.title}</XText>}
                 <View style={[this.styles.container, this.stylesPlus]}>
                   {this.datas.length > 0 && this.datas.map((item, index) => {return this.renderItems(item, index)})}
-                  {this.datas.length <=0 && <Text style={{padding:10, fontSize:16}}>Aucun résultat trouvé</Text>}
+                  {this.datas.length <=0 && <XText style={{padding:10, fontSize:16}}>Aucun résultat trouvé</XText>}
                </View> 
            </View>
   }

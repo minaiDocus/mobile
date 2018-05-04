@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
+import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import Pdf from 'react-native-pdf'
-import {XImage} from './index'
+import { XImage } from './index'
 
 export class PDFView extends Component{
 

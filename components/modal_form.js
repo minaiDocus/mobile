@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {View, Text, Modal, StyleSheet, ScrollView} from 'react-native'
+import {View, Modal, StyleSheet, ScrollView} from 'react-native'
 
-import {SimpleButton, XTextInput, SelectInput, DatePicker} from './index'
+import {SimpleButton, XText, XTextInput, SelectInput, DatePicker} from './index'
 
 class Inputs extends Component{
   constructor(props){
@@ -50,7 +50,7 @@ class Inputs extends Component{
 
     const type = this.props.type || 'input';
     return  <View style={[this.styles.container, stylePlus]}>
-              <Text style={[this.styles.label, labelStyle]}>{this.props.label}</Text>
+              <XText style={[this.styles.label, labelStyle]}>{this.props.label}</XText>
               {type == 'input' && <XTextInput {...this.props} editable={this.props.editable} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[this.styles.input, inputStyle]} />}
               {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
               {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1.3}} />}
@@ -162,7 +162,7 @@ export class ModalForm extends Component{
               <View style={this.styles.container} >
                 <View style={this.styles.box}>
                   <View style={this.styles.head}>
-                    <Text style={{flex:1, textAlign:'center',fontSize:24}}>{this.props.title}</Text>
+                    <XText style={{flex:1, textAlign:'center',fontSize:24}}>{this.props.title}</XText>
                   </View>
                   <ScrollView style={this.styles.body}>
                     {this.renderInputs()}

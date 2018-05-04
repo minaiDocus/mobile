@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {View, Text, StyleSheet, ScrollView} from 'react-native'
+import { View, StyleSheet, ScrollView } from 'react-native'
 
-import {ImageButton} from './index'
+import { ImageButton, XText } from './index'
 
 export class BoxInfos extends Component{
   constructor(props){
@@ -47,7 +47,7 @@ export class BoxInfos extends Component{
       return  <View style={this.styles.container} >
                 <View style={this.styles.box}>
                   <View style={this.styles.head}>
-                     <Text style={{flex:1, textAlign:'center',fontSize:24, paddingLeft:25}}>{this.props.title}</Text>
+                     <XText style={{flex:1, textAlign:'center',fontSize:24, paddingLeft:25}}>{this.props.title}</XText>
                      <ImageButton  source={{uri:"delete"}} 
                       Pstyle={{flex:0, flexDirection:'column', alignItems:'center',width:25}}
                       Istyle={{width:10, height:10}}

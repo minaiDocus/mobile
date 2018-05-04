@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native'
-import {SimpleButton} from './index'
+import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import { SimpleButton, XText } from './index'
 
 export class Pagination extends Component{
 
@@ -71,14 +71,14 @@ export class Pagination extends Component{
 
       const page_number = i
       numbers = numbers.concat( <TouchableOpacity key={i} style={touchStyle} onPress={()=>this.changePage(page_number)}>
-                                  <Text style={[{fontSize:10, color:'#422D14'}, activeText]}>{i}</Text>
+                                  <XText style={[{fontSize:10, color:'#422D14'}, activeText]}>{i}</XText>
                                 </TouchableOpacity>)
     }
 
     return <View style={{flex:1, justifyContent:'center', flexDirection:'row'}} >
-            {start_page > 1 && <View style={touchStyle}><Text>...</Text></View>}
+            {start_page > 1 && <View style={touchStyle}><XText>...</XText></View>}
             {numbers.map((n)=>{return n})}
-            {end_page < this.limit_page && <View style={touchStyle}><Text>...</Text></View>}
+            {end_page < this.limit_page && <View style={touchStyle}><XText>...</XText></View>}
            </View>
   }
 

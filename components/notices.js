@@ -1,7 +1,7 @@
 import React from 'react'
-import {StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableHighlight, Alert} from 'react-native'
+import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableHighlight, Alert } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
-import {AnimatedBox} from './index'
+import { AnimatedBox, XText } from './index'
 
 export class Notice {
   static _noticeMessages = [];
@@ -152,9 +152,9 @@ class Message extends React.Component{
     if(typeof(message) === 'string')
     {
       return  <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
-                <Text style={this.styles.text}>{message}</Text>
+                <XText style={this.styles.text}>{message}</XText>
                 <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                  <Text style={this.styles.close}>X</Text>
+                  <XText style={this.styles.close}>X</XText>
                 </TouchableHighlight>
               </AnimatedBox>
     }
@@ -166,17 +166,17 @@ class Message extends React.Component{
         body =  <View style={{flex:1}}>
                   {
                     typeof(message.title) !== "undefined" && 
-                    <Text style={this.styles.title}>
+                    <XText style={this.styles.title}>
                       {message.title}
-                    </Text>
+                    </XText>
                   }
-                  <Text style={[this.styles.text, {fontSize:10}]}>{message.body}</Text>
+                  <XText style={[this.styles.text, {fontSize:10}]}>{message.body}</XText>
                 </View>
       }
       return  <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
                 {body}
                 <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                  <Text style={this.styles.close}>X</Text>
+                  <XText style={this.styles.close}>X</XText>
                 </TouchableHighlight>
               </AnimatedBox>
     }

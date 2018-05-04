@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Screen,AnimatedBox,XImage,Navigator,LineList,Pagination,ModalForm,BoxButton,LinkButton,ImageButton} from '../../components'
+import {Screen,AnimatedBox,XImage,XText,Navigator,LineList,Pagination,ModalForm,BoxButton,LinkButton,ImageButton} from '../../components'
 
 import {PaperProcess} from "../../requests"
 
@@ -131,7 +131,7 @@ class Header extends Component{
               }
               <View style={this.styles.left}>
                 <XImage source={{uri:"ico_suiv"}} style={this.styles.image} />
-                <Text style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</Text>
+                <XText style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</XText>
               </View>
               <View style={this.styles.right}> 
                 <BoxButton title="Filtre" marker={this.checkFilterActive()? "(Active)" : null} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
@@ -191,23 +191,23 @@ class BoxStat extends Component{
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={this.styles.container}>
                 <XImage source={{uri:arrow}} style={this.styles.image} />
-                <Text style={{fontSize:12, fontWeight:'bold', flex:1}}>{this.props.data.company}
+                <XText style={{fontSize:12, fontWeight:'bold', flex:1}}>{this.props.data.company}
                   {' ('} 
-                    <Text style={{fontSize:9}}>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii") 
+                    <XText style={{fontSize:9}}>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii") 
                     + ' | ' + getType(this.props.data.type)}
-                    </Text>
+                    </XText>
                   {')'} 
-                </Text>
+                </XText>
               </View>
               {
                   this.state.showDetails == true && 
                     <View style={this.styles.infos}>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Date : </Text>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Type : </Text>{getType(this.props.data.type)}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Code client : </Text>{this.props.data.code}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Société : </Text>{this.props.data.company}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>N°de suivi: </Text>{this.props.data.number}</Text>
-                      <Text style={this.styles.champ}><Text style={this.styles.label}>Nom du lot: </Text>{this.props.data.packname}</Text>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Date : </XText>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii")}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Type : </XText>{getType(this.props.data.type)}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Code client : </XText>{this.props.data.code}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Société : </XText>{this.props.data.company}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>N°de suivi: </XText>{this.props.data.number}</XText>
+                      <XText style={this.styles.champ}><XText style={this.styles.label}>Nom du lot: </XText>{this.props.data.packname}</XText>
                     </View>
               }
             </TouchableOpacity>
@@ -266,7 +266,7 @@ class OrderBox extends Component{
     if(this.state.show)
     {
       return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={this.styles.container}>
-                  <Text style={this.styles.title}>Trier par : </Text>
+                  <XText style={this.styles.title}>Trier par : </XText>
                   <View style={{flex:1, marginTop:5}}>
                     <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={this.styles.list} />
                     <LinkButton onPress={()=>this.handleOrder(['Type','type'])} title='Type' Pstyle={this.styles.list} />
@@ -285,7 +285,7 @@ class OrderBox extends Component{
 
 class StatsScreen extends Component {
   static navigationOptions = {
-       headerTitle: 'Suivi',
+       headerTitle: <XText class='title_screen'>Suivi</XText>,
        headerRight: <ImageButton  source={{uri:"options"}} 
                                   Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:50}}
                                   Istyle={{flex:0, width:7, height:36}}
@@ -387,9 +387,9 @@ class StatsScreen extends Component {
     return  <ScrollView style={{flex:1, padding:3}}>
                 {this.state.orderText && this.state.dataList.length > 0 && 
                   <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
-                    <Text style={{flex:0}}>Trie par: <Text style={{fontWeight:'bold'}}>{this.state.orderText}</Text></Text>
+                    <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>
                     <TouchableOpacity style={{flex:0,width:30,alignItems:'center'}} onPress={()=>this.changeDirectionSort()}>
-                      <Text style={{fontSize:14, fontWeight:'bold'}}>{arrow_direction}</Text>
+                      <XText style={{fontSize:14, fontWeight:'bold'}}>{arrow_direction}</XText>
                     </TouchableOpacity>
                   </View>
                 }

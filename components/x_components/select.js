@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import {Picker, View, Platform, Modal, Text, TouchableOpacity, StyleSheet, ScrollView} from 'react-native'
-import {ImageButton, AnimatedBox, XImage, XTextInput} from '../index'
+import {Picker, View, Platform, Modal, TouchableOpacity, StyleSheet, ScrollView} from 'react-native'
+import {ImageButton, AnimatedBox, XImage, XText, XTextInput} from '../index'
 
 class ModalSelect extends Component{
 
@@ -127,7 +127,7 @@ class ModalSelect extends Component{
         if(this.state.selectedItem == dt.value) styleItem = { paddingLeft:5, backgroundColor: '#707070', color:'#fff', fontWeight:'bold' }
 
         return <TouchableOpacity key={index} style={boxstyle.touchable} onPress={()=>this.changeItem(dt.value, true)}>
-                  <Text style={styleItem}>{dt.label}</Text>
+                  <XText style={styleItem}>{dt.label}</XText>
                </TouchableOpacity>
       })
       return <ScrollView style={boxstyle.container}>
@@ -215,7 +215,7 @@ class ModalSelect extends Component{
                   { 
                     this.props.textInfo != '' && this.props.textInfo != null && 
                     <View style={modal.infos}>
-                      <Text>{this.props.textInfo}</Text>
+                      <XText>{this.props.textInfo}</XText>
                     </View>
                   }
 
@@ -404,10 +404,10 @@ export class SelectInput extends Component{
                                     startAnim={this.state.startTextAnim}
                                     endAnim={this.state.endTextAnim}
                                     >
-                        <Text style={[{color:'#606060'}, stylePlus]}>{this.state.valueText}</Text>
+                        <XText style={[{color:'#606060'}, stylePlus]}>{this.state.valueText}</XText>
                       </AnimatedBox>
                     </View>
-                    <Text style={{flex:0, fontSize:10, fontWeight:'bold'}}>V</Text>
+                    <XText style={{flex:0, fontSize:10, fontWeight:'bold'}}>V</XText>
                   </TouchableOpacity>
                 </View>          
               }   

@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import { Text, TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Modal, Slider, ScrollView, findNodeHandle } from 'react-native'
+import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Modal, Slider, ScrollView, findNodeHandle } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { NavigationActions } from 'react-navigation'
 
-import { XImage, AnimatedBox, SimpleButton, LinkButton, ImageButton } from './index'
+import { XImage, XText, AnimatedBox, SimpleButton, LinkButton, ImageButton } from './index'
 
 import { User } from '../models'
 
@@ -69,9 +69,9 @@ class Header extends Component{
                 <XImage style={this.styles.logo} source={{uri:'logo'}} />
               </View>
               <View style={this.styles.right}>
-                <Text style={styles.generalText}>Bienvenue</Text>
-                {userName != "" && <Text style={{color:"#FFF"}}>{userName}</Text>}
-                <Text style={{color:"#D4DD80", fontSize:10}}>{this.master.email}</Text>
+                <XText style={styles.generalText}>Bienvenue</XText>
+                {userName != "" && <XText style={{color:"#FFF"}}>{userName}</XText>}
+                <XText style={{color:"#D4DD80", fontSize:10}}>{this.master.email}</XText>
               </View>
             </View>
   }

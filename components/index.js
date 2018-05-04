@@ -4,6 +4,7 @@ export * from './x_components/image'
 export * from './x_components/lists'
 export * from './x_components/select'
 export * from './x_components/swiper'
+export * from './x_components/text'
 export * from './x_components/text_input'
 
 export * from './animated_box'

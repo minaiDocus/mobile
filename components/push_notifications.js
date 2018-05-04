@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, Modal, ScrollView, TouchableOpacity} from 'react-native'
+import { StyleSheet, View, Modal, ScrollView, TouchableOpacity} from 'react-native'
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {ImageButton, BoxInfos} from './index'
+import { ImageButton, BoxInfos, XText } from './index'
 
-import {User,Notification} from '../models'
+import { User, Notification } from '../models'
 
-import {FireBaseNotification} from '../requests'
+import { FireBaseNotification } from '../requests'
 
 /* SIMPLE USAGE >>
     // this shall be called regardless of app state: running, background or not running. Won't be called when app is killed by user in iOS
@@ -228,8 +228,8 @@ export class UINotification extends Component{
       { 
         const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
                             <View style={{flex:1, paddingHorizontal:20}}>
-                              <Text style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Nouvelle notification</Text>
-                              <Text style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</Text>
+                              <XText style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Nouvelle notification</XText>
+                              <XText style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</XText>
                             </View>
                             <ImageButton  source={{uri:"notification_green"}} 
                               Pstyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:30}}
@@ -329,15 +329,15 @@ export class UINotification extends Component{
         const datas = this.state.datas.sorted("created_at", true).slice(0,50)
         const details = datas.map((data, index)=>{
           return  <View key={index} style={this.styles.boxNotif}>
-                     <Text style={{color:'#0064B1', fontWeight:'bold', marginBottom:4}}>
+                     <XText style={{color:'#0064B1', fontWeight:'bold', marginBottom:4}}>
                       {data.title || "-"}
                       {
                         data.is_read == false && 
-                        <Text style={{fontSize: 9, color:'#62AF05', fontStyle:'italic'}}> (Nouveau)</Text>
+                        <XText style={{fontSize: 9, color:'#62AF05', fontStyle:'italic'}}> (Nouveau)</XText>
                       }
-                     </Text>
-                     <Text style={{color:'#3F4545'}}>{data.message || "-"}</Text>
-                     <Text style={{color:'#97938B', fontSize:9, marginTop:7}}>{formatDate(data.created_at)}</Text>
+                     </XText>
+                     <XText style={{color:'#3F4545'}}>{data.message || "-"}</XText>
+                     <XText style={{color:'#97938B', fontSize:9, marginTop:7}}>{formatDate(data.created_at)}</XText>
                   </View>
         })
         return details
@@ -345,7 +345,7 @@ export class UINotification extends Component{
       else
       {
         return  <View style={this.styles.boxNotif}>
-                  <Text>Vous n'avez aucun message pour l'instant</Text>
+                  <XText>Vous n'avez aucun message pour l'instant</XText>
                 </View>
       }
     }
@@ -362,7 +362,7 @@ export class UINotification extends Component{
                   {
                   	this.state.newNotifCount > 0 && 
 	                  <View style={this.styles.bellText}>
-	                    <Text style={{backgroundColor:'rgba(0,0,0,0)', textAlign:'center', fontSize:9, color:"#FFF"}}>{this.state.newNotifCount}</Text>
+	                    <XText style={{backgroundColor:'rgba(0,0,0,0)', textAlign:'center', fontSize:9, color:"#FFF"}}>{this.state.newNotifCount}</XText>
 	                  </View>
                 	}
                 </TouchableOpacity>

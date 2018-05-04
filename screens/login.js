@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import SplashScreen from 'react-native-splash-screen'
-import { StyleSheet, Text, TextInput, View, ScrollView, Modal} from 'react-native'
+import { StyleSheet, TextInput, View, ScrollView, Modal} from 'react-native'
 
-import { Screen, XImage, XTextInput, Navigator, SimpleButton } from '../components'
+import { Screen, XImage, XText, XTextInput, Navigator, SimpleButton } from '../components'
 
 import { User } from '../models'
 
@@ -222,7 +222,7 @@ class LoginScreen extends Component {
               </View>
             }
             {
-              !this.state.ready && <Text style={this.styles.textCharging}>Communication au serveur en cours ..., Veuillez patienter svp</Text>
+              !this.state.ready && <XText style={this.styles.textCharging}>Communication au serveur en cours ..., Veuillez patienter svp</XText>
             }
             {this.state.ready && 
               <View style={this.styles.form}>
