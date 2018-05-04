@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import {View, Text, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, Modal, StyleSheet, Keyboard} from 'react-native'
-import {SimpleButton, AnimatedBox} from '../index'
+import {View, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, Modal, StyleSheet, Keyboard} from 'react-native'
+import {XText, SimpleButton, AnimatedBox, LinkButton} from '../index'
 
 class ModalInput extends Component{
   constructor(props){
@@ -9,6 +9,8 @@ class ModalInput extends Component{
     this.closing = false
 
     this.keyboardShow = false
+
+    this.state = { secureText: this.props.secureTextEntry ? 'Afficher mot de passe' : 'Cache mot de passe' }
 
     this.closeKeyboard = this.closeKeyboard.bind(this)
     this._keyboardDidShow = this._keyboardDidShow.bind(this)
@@ -67,7 +69,7 @@ class ModalInput extends Component{
               },
       box:{
             flex:0,
-            height:53,
+            height:this.props.secureTextEntry ? 73 : 53,
             width:'100%',
             alignItems:'center',
             justifyContent:'center',
@@ -113,6 +115,13 @@ class ModalInput extends Component{
     }
   }
 
+  toggleSecurityText(){
+    if(this.state.secureText == 'Afficher mot de passe')
+      this.setState({ secureText: 'Cacher mot de passe' })
+    else
+      this.setState({ secureText: 'Afficher mot de passe' })
+  }
+
   render(){
     let iosStyle = androidStyle = {}
     if(Platform.OS == 'ios')
@@ -156,7 +165,7 @@ class ModalInput extends Component{
                                      autoCorrect={(this.props.autoCorrect == false)? false : true}
                                      autoCapitalize="none"
                                      selectTextOnFocus={this.props.selectTextOnFocus || false}
-                                     secureTextEntry={this.props.secureTextEntry || false}
+                                     secureTextEntry={(this.state.secureText == 'Afficher mot de passe') ? true : false}
                                      defaultValue={this.props.currValue}
                                      onChangeText={(value)=>this.props.changeText(value)}
                                      editable={this.props.editable}
@@ -164,6 +173,7 @@ class ModalInput extends Component{
                                      keyboardType={this.props.keyboardType}
                                      style={{flex:1, fontSize:14}}/>
                         </View>
+                        {this.props.secureTextEntry && <LinkButton Pstyle={{padding:5}} Tstyle={{color:'#003366', paddingLeft:0, textDecorationLine:'underline', textAlign:'center'}} title={this.state.secureText} onPress={()=>this.toggleSecurityText()} />}
                       </View>
                       <View style={{flex:1, alignItems:'flex-start', justifyContent:'center'}}>
                       {
