@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native'
+import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal } from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
 import {Screen,Menu,XImage,XText,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM} from '../components'

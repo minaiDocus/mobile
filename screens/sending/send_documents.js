@@ -299,7 +299,7 @@ class SendScreen extends Component {
   openCamera(){
     const call = ()=>{
                         ImagePicker.openCamera({
-                          cropping: false
+                          cropping: false,
                         })
                         .then(image => {
                           this.renderImg([image], null, true);
@@ -330,7 +330,7 @@ class SendScreen extends Component {
     const call = ()=>{
                         let _img = GLOB.images[index]
                         Cropper.openCrop(
-                          {img: _img}, 
+                          {img: _img, preview: false}, 
                           (image)=>{
                             this.renderImg([image], index)
                           }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { View, PanResponder, Animated, Image, StyleSheet, Platform, Modal, ImageEditor, ImageStore } from 'react-native'
+import { View, PanResponder, Animated, Image, StyleSheet, Platform, Modal, ImageEditor, ImageStore, Dimensions } from 'react-native'
 
-import { SimpleButton, ImageButton, XImage } from './index'
+import { SimpleButton, ImageButton, XImage, XText } from './index'
 
 import { EventRegister } from 'react-native-event-listeners'
 
@@ -90,13 +90,15 @@ export class CropperView extends Component{
     this.minWidthCrop = 150
     this.minHeightCrop = 150
 
-    this.state = {open: false, ready: false, widthCrop: this.minWidthCrop, heightCrop: this.minHeightCrop, url_output: null}
+    this.state = {open: false, ready: false, widthCrop: this.minWidthCrop, heightCrop: this.minHeightCrop, url_output: null, processing: false}
+
 
     this.createPanResponder = this.createPanResponder.bind(this)
     this.restartResponder = this.restartResponder.bind(this)
     this.initialize = this.initialize.bind(this)
     this.initializePAN = this.initializePAN.bind(this)
     this.processCropping = this.processCropping.bind(this)
+    this.beforeFinalization = this.beforeFinalization.bind(this)
     this.createFinaleImage = this.createFinaleImage.bind(this)
     this.moveXY = this.moveXY.bind(this)
     this.scaleTopLeft = this.scaleTopLeft.bind(this)
@@ -120,9 +122,6 @@ export class CropperView extends Component{
   handleLayoutContent(event){
     if(!this.remake)
     {
-      let {x, y, width, height} = event.nativeEvent.layout
-      this.contentSize = {x: x, y: y, width: width, height: height}
-      
       this.calculateWorkingImage()
       this.initPositionCropper()
     }
@@ -143,16 +142,19 @@ export class CropperView extends Component{
   }
 
   initialize(options){
-    this.contentSize = {x: 0, y: 0, width: 0, height: 0}
+    this.contentSize = {width: 0, height: 0}
     this.working_image = {x: 0, y: 0, lx: 0, ly: 0, width: 0, height: 0}
     this.final_image = {width: 0, height: 0, path: null, filename: null, mime: null}
 
+    this.withPreview = options.preview || false
+
     this.moveType = null
-    this.padding = 15
     this.borderGrill = 0.5
     this.remake = false
 
     this.original_image = options.img
+
+    this.optionH = 40
     
     this.source = this.original_image.path.toString()
     
@@ -213,25 +215,41 @@ export class CropperView extends Component{
   }
 
   calculateWorkingImage(){
-    let testWorkingImage = ""
-    if(Platform.OS == "ios")
-      testWorkingImage = (Orientation == "portrait")? true : false
-    else
-      testWorkingImage = ((this.contentSize.width <= this.contentSize.height) && (this.original_image.width >= this.original_image.height)) || ((this.contentSize.width > this.contentSize.height) && (this.original_image.width > this.original_image.height))
+    let working_marge = 0.98
+    let {height, width} = Dimensions.get('window')
+    height = height - this.optionH
 
-    if(testWorkingImage)
-    { 
-      this.working_image.width = this.contentSize.width
-      this.working_image.height = (this.original_image.height / this.original_image.width) * this.working_image.width
+    let take_width = height > width
+    let dim = take_width ? width : height
+
+    this.working_width = this.working_height = dim * working_marge
+
+    this.setWorkingImageDimension()
+
+    if(take_width)
+    {
+      if(this.original_image.width < this.original_image.height)
+      {
+        dim = width + ((height - this.working_image.height) / 2)
+        this.working_width = this.working_height = dim * working_marge
+        this.setWorkingImageDimension()
+      }
     }
     else
     {
-      this.working_image.height = this.contentSize.height
-      this.working_image.width = (this.original_image.width / this.original_image.height) * this.working_image.height
+      if(this.original_image.width > this.original_image.height)
+      {
+        dim = height + ((width - this.working_image.width) / 2)
+        this.working_width = this.working_height = dim * working_marge
+        this.setWorkingImageDimension()
+      }
     }
 
-    this.working_image.x = (this.padding + (this.contentSize.width / 2)) - (this.working_image.width / 2)
-    this.working_image.y = (this.padding + (this.contentSize.height / 2)) - (this.working_image.height / 2)
+    this.paddingW = (width / 2) - (this.working_width / 2)
+    this.paddingH = (height / 2) - (this.working_height / 2)
+
+    this.working_image.x = (this.paddingW + (this.contentSize.width / 2)) - (this.working_image.width / 2)
+    this.working_image.y = (this.paddingH + (this.contentSize.height / 2)) - (this.working_image.height / 2)
 
     this.working_image.lx = this.working_image.x + this.working_image.width
     this.working_image.ly = this.working_image.y + this.working_image.height
@@ -242,14 +260,27 @@ export class CropperView extends Component{
     if(typeof(this.original_image.cropWithRotation) !== "undefined")
     {
       this.cropWithRotation = this.original_image.cropWithRotation
+      this.checkRotation = false
     }
     else
     {
-      this.cropWithRotation = false
-      if(this.original_image.width < this.original_image.height && Platform.OS != 'ios')
-      {
-        this.cropWithRotation = true
-      }
+      this.cropWithRotation = Platform.OS == 'ios' ? false : true
+      this.checkRotation = true
+    }
+  }
+
+  setWorkingImageDimension(){
+    this.contentSize = {width: this.working_width, height: this.working_height}
+
+    if(this.original_image.width >= this.original_image.height)
+    {
+      this.working_image.width = this.contentSize.width
+      this.working_image.height = (this.original_image.height / this.original_image.width) * this.working_image.width
+    }
+    else
+    {
+      this.working_image.height = this.contentSize.height
+      this.working_image.width = (this.original_image.width / this.original_image.height) * this.working_image.height
     }
   }
 
@@ -484,7 +515,7 @@ export class CropperView extends Component{
     await this.animatedTranslateY.setValue(this.pointA.y)
   }
 
-  rotatePlane(Xorg, Yorg, widthOrg, heightOrg){
+  rotatePlan(Xorg, Yorg, widthOrg, heightOrg){
     const Xend = Xorg + widthOrg
     return {x: Yorg, y: (this.original_image.width - Xend), w: heightOrg, h: widthOrg}
   }
@@ -496,6 +527,8 @@ export class CropperView extends Component{
   }
 
   processCropping(){
+    this.setState({processing: true})
+
     let cropX = ((this.pointA.x - this.working_image.x) * this.original_image.width) / this.working_image.width
     let cropY = ((this.pointA.y - this.working_image.y) * this.original_image.height) / this.working_image.height
 
@@ -504,7 +537,7 @@ export class CropperView extends Component{
 
     if(this.cropWithRotation)
     {
-      let {x, y, w, h} = this.rotatePlane(cropX, cropY, cropWidth, cropHeight)
+      let {x, y, w, h} = this.rotatePlan(cropX, cropY, cropWidth, cropHeight)
       cropX = x
       cropY= y
       cropWidth = w
@@ -518,16 +551,60 @@ export class CropperView extends Component{
 
     ImageEditor.cropImage ( this.source, 
                             cropData,
-                            (_success)=>{this.createFinaleImage(_success, cropWidth, cropHeight)},
-                            (_faillure)=>{Notice.alert("Erreur", _faillure.toString())}
+                            (_success)=>{this.beforeFinalization(_success, cropWidth, cropHeight)},
+                            (_faillure)=>{
+                              if(!this.checkRotation)
+                              {
+                                this.setState({processing: false})
+                                Notice.alert("Erreur", _faillure.toString())
+                              }
+                              else
+                              {
+                                this.cropWithRotation = !this.cropWithRotation
+                                this.checkRotation = false
+                                this.processCropping()
+                              }
+                            }
                           )
   }
 
+  beforeFinalization(_url, width, height){
+    if(this.checkRotation)
+    {
+      Image.getSize(_url,
+        (w, h)=>{
+          let test1 = w >= h
+          let test2 = this.state.widthCrop >= this.state.heightCrop
+          if(test1 != test2)
+          {
+            if(Platform.OS == "ios") ImageStore.removeImageForTag(_url) //deleting unused image
+            this.cropWithRotation = !this.cropWithRotation
+            this.checkRotation = false
+            this.processCropping()
+          }
+          else
+          {
+            this.createFinaleImage(_url, width, height)
+          }
+        },
+        (_faillure)=>{ this.createFinaleImage(_url, width, height) }
+      )
+    }
+    else
+    {
+      this.createFinaleImage(_url, width, height)
+    }
+  }
+
   createFinaleImage(_url, width, height){
+    this.setState({processing: false})
     const filename = `cr_${this.original_image.path.split("/").slice(-1)[0]}`
 
     this.final_image = {width: width, height: height, path: _url, filename: filename, mime: this.original_image.mime, cropWithRotation: this.cropWithRotation}
     this.setState({url_output: _url})
+
+    if(!this.withPreview)
+      setTimeout(()=>this.validateCropping(), 2000) //return immediatly to send screen
   }
 
   validateCropping(){
@@ -537,18 +614,18 @@ export class CropperView extends Component{
 
   renderResult(){
     return  <View style={{flex:1}}>
-              <View style={{flex:1, backgroundColor:'#000'}} >
-                <View style={{flex:1, padding:10}}>
-                  <Image style={{flex:1}} 
-                         source={{uri: this.state.url_output}}
-                         resizeMode='contain' 
-                  />
+              <View style={{flex:1, padding:10, backgroundColor:'#000'}}>
+                <Image style={{flex:1}}
+                       source={{uri: this.state.url_output}}
+                       resizeMode='contain'
+                />
+              </View>
+              { this.withPreview &&
+                <View style={{flex:0,flexDirection:'row',padding:10, height:this.optionH}}>
+                  <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.remakeCrop()} source={{uri: "remake"}} />
+                  <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.validateCropping()} source={{uri: "validate"}} />
                 </View>
-              </View>
-              <View style={{flex:0,flexDirection:'row', padding:10, height:40}}>
-                <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}} onPress={()=>this.remakeCrop()} source={{uri: "remake"}} />
-                <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}} onPress={()=>this.validateCropping()} source={{uri: "validate"}} />
-              </View>
+              }
             </View>
   }
 
@@ -561,13 +638,15 @@ export class CropperView extends Component{
         }]
     }
 
+    let _img_cropping = this.withPreview ? 'img_crop' : 'validate'
+
     return  <View style={{flex:1}}>
               <View style={{flex:1, backgroundColor:'#000'}}>
-                <View style={{flex:1, padding: this.padding}} {...this.boxPanResponder.panHandlers}>
-                  <View onLayout={(event)=>this.handleLayoutContent(event)} style={{flex:1}}>
-                    <Image style={{flex:1}} 
+                <View style={{flex:1}} {...this.boxPanResponder.panHandlers}>
+                  <View onLayout={(event)=>this.handleLayoutContent(event)} style={{flex:1, alignItems:'center', marginTop: this.paddingH}}>
+                    <Image style={{flex:0, width: this.working_width, height: this.working_height}}
                            source={{uri: this.source}}
-                           resizeMode='contain' 
+                           resizeMode='contain'
                     />
                   </View>
                 </View>
@@ -583,9 +662,10 @@ export class CropperView extends Component{
                                 />
                 </Animated.View>
               </View>
-              <View style={{flex:0,flexDirection:'row',padding:10, height:40}}>
+              <View style={{flex:0,flexDirection:'row',padding:10, height:this.optionH}}>
                 <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.closeCropper()} source={{uri: "back"}} />
-                <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.processCropping()} source={{uri: "img_crop"}} />
+                {!this.state.processing && <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.processCropping()} source={{uri: _img_cropping}} />}
+                {this.state.processing && <XImage style={{flex:1, marginHorizontal:3, alignItems:'center'}} loader={true} width={25} height={25} />}
               </View>
             </View>
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import SplashScreen from 'react-native-splash-screen'
-import { StyleSheet, TextInput, View, ScrollView, Modal} from 'react-native'
+import { StyleSheet, TextInput, View, ScrollView, Modal } from 'react-native'
 
 import { Screen, XImage, XText, XTextInput, Navigator, SimpleButton } from '../components'
 

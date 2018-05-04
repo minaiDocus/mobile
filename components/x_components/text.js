@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Platform } from 'react-native'
 
 export class XText extends Component{
   constructor(props){
@@ -19,13 +19,13 @@ export class XText extends Component{
   generateStyles(){
     this.styles = StyleSheet.create({
       default:  {
-                  fontFamily: 'lucida grande',   
+                  fontFamily: Platform.OS == 'ios' ? 'arial' : 'lucida grande',
                 }
     })
   }
 
   render(){
     var style_extended = this.props.style
-    return <Text style={[this.styles.default, this.style_class, style_extended]} >{this.props.children}</Text>           
+    return <Text style={[this.styles.default, this.style_class, style_extended]} >{this.props.children}</Text>
   }
 }
