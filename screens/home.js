@@ -372,7 +372,7 @@ class AppInfos extends Component{
                             </View>
                         </View>
                       </TouchableWithoutFeedback>
-    renderToFrontView(AppInfos)
+    renderToFrontView(AppInfos, 'fade', ()=>{clearFrontView()})
   }
 
   render(){
@@ -387,16 +387,16 @@ class AppInfos extends Component{
 class FrontView extends Component{
   constructor(props){
     super(props)
-    this.state = {children: null, animation: "fade"}
+    this.state = {children: null, animation: "fade", closeCallback: null}
   }
 
   componentWillMount(){
     this.FrontViewShowListener = EventRegister.on("openFrontView", (params)=>{
-      this.setState({children: params.children, animation: params.animation})
+      this.setState({children: params.children, animation: params.animation, closeCallback: params.closeCallback})
     })
 
     this.FrontViewHideListener = EventRegister.on("closeFrontView", ()=>{
-      this.setState({children: null, animation: "fade"})
+      this.setState({children: null, animation: "fade", closeCallback: null})
     })
   }
 
@@ -412,7 +412,7 @@ class FrontView extends Component{
                       animationType={this.state.animation} 
                       visible={true}
                       supportedOrientations={['portrait', 'landscape']}
-                      onRequestClose={()=>{}}
+                      onRequestClose={ ()=>{ if(this.state.closeCallback) this.state.closeCallback() } }
               >
                 {this.state.children}
               </Modal>

@@ -113,6 +113,7 @@ class Header extends Component{
                 <ModalForm  title="Filtre"
                             getValue={(name)=>{return eval(`${name}`)}}
                             setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                            dismiss={()=>this.closeFilter("none")}
                             inputs={[
                               {label:'Date de début :', name: 'GLOB.dataFilter.created_at_start', type:'date'},
                               {label:'Date de fin :', name: 'GLOB.dataFilter.created_at_end', type:'date'},
@@ -123,7 +124,6 @@ class Header extends Component{
                               {label:'Nom du lot :', name: 'GLOB.dataFilter.pack_name'},
                             ]}
                             buttons={[
-                              {title: "Retour", action: ()=>this.closeFilter("none")},
                               {title: "Filtrer", action: ()=>this.closeFilter("filter")},
                               {title: "Annuler filtre", action: ()=>this.closeFilter("reInit")}, 
                             ]}

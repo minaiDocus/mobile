@@ -26,8 +26,8 @@ global.CronTask = CronTask
 global.Orientation = "portrait"
 
 //Function for adding Components to the Front View Modal
-global.renderToFrontView = (children, animation="fade") => {
-  params = {children: children, animation: animation}
+global.renderToFrontView = (children, animation="fade", closeCallback=null) => {
+  params = { children: children, animation: animation, closeCallback: closeCallback }
   EventRegister.emit("openFrontView", params)
 }
 

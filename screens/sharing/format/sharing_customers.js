@@ -93,9 +93,9 @@ class ModalSharing extends Component{
     return  <ModalForm  title={boxTitle}
                         getValue={(name)=>{return eval(`${name}`)}}
                         setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                        dismiss={()=>this.props.dismiss()}
                         inputs={(this.type == "sharing")? this.formSharing() : this.formAccess()}
                         buttons={[
-                          {title: "Retour", action: ()=>this.props.dismiss()},
                           {title: "Valider", action: ()=>this.validateProcess()},
                         ]}
             />

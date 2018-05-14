@@ -198,7 +198,7 @@ class ModalSelect extends Component{
                    animationType="fade" 
                    visible={true}
                    supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{}}
+                   onRequestClose={()=>{ this.dismiss() }}
             >
               <View style={modal.container}>
                 <TouchableOpacity onPress={()=>this.dismiss()} style={{flex:1}} />

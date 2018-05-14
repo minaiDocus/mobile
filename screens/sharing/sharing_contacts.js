@@ -88,6 +88,7 @@ class ContactForm extends Component{
     return  <ModalForm  title="Ajout contact"
                         getValue={(name)=>{return eval(`${name}`)}}
                         setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                        dismiss={()=>this.props.dismiss()}
                         inputs={[
                           {label:'* Couriel :', name: 'GLOB.dataForm.email', keyboardType: 'email-address', editable: this.input_edit},
                           {label:'* Nom de la société :', name: 'GLOB.dataForm.company'},
@@ -95,7 +96,6 @@ class ContactForm extends Component{
                           {label:'Nom :', name: 'GLOB.dataForm.last_name'}
                         ]}
                         buttons={[
-                          {title: "Retour", action: ()=>this.props.dismiss()},
                           {title: "Valider", action: ()=>this.validateProcess()},
                         ]}
             />
@@ -174,6 +174,7 @@ class Header extends Component{
                   <ModalForm  title="Filtre"
                               getValue={(name)=>{return eval(`${name}`)}}
                               setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                              dismiss={()=>this.closeFilter("none")}
                               inputs={[
                                 {label:'Email :', name: 'GLOB.dataFilter.email', keyboardType: 'email-address'},
                                 {label:'Société :', name: 'GLOB.dataFilter.company'},
@@ -181,7 +182,6 @@ class Header extends Component{
                                 {label:'Nom :', name: 'GLOB.dataFilter.last_name'}
                               ]}
                               buttons={[
-                                {title: "Retour", action: ()=>this.closeFilter("none")},
                                 {title: "Filtrer", action: ()=>this.closeFilter("filter")},
                                 {title: "Annuler filtre", action: ()=>this.closeFilter("reInit")}, 
                               ]}

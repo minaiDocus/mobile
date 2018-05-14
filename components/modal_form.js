@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {View, Modal, StyleSheet, ScrollView} from 'react-native'
 
-import {SimpleButton, XText, XTextInput, SelectInput, DatePicker} from './index'
+import {SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton} from './index'
 
 class Inputs extends Component{
   constructor(props){
@@ -95,7 +95,9 @@ export class ModalForm extends Component{
       },
       head:{
         flex:0,
-        height:35,
+        minHeight:35,
+        paddingHorizontal:10,
+        flexDirection:'row',
         backgroundColor:'#EBEBEB',
         borderColor:'#000',
         borderBottomWidth:1,
@@ -157,12 +159,16 @@ export class ModalForm extends Component{
                    animationType="slide" 
                    visible={true}
                    supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{}}
+                   onRequestClose={()=>{ this.props.dismiss() }}
             >
               <View style={this.styles.container} >
                 <View style={this.styles.box}>
                   <View style={this.styles.head}>
-                    <XText style={{flex:1, textAlign:'center',fontSize:24}}>{this.props.title}</XText>
+                    <XText style={{flex:1, textAlign:'center',fontSize:24, paddingLeft:25, color: '#463119'}}>{this.props.title}</XText>
+                    <ImageButton  source={{uri:"delete"}}
+                      Pstyle={{flex:0, flexDirection:'column', alignItems:'center',width:25}}
+                      Istyle={{width:10, height:10}}
+                      onPress={()=>{this.props.dismiss()}} />
                   </View>
                   <ScrollView style={this.styles.body}>
                     {this.renderInputs()}
