@@ -290,8 +290,8 @@ export class CropperView extends Component{
     this.lastPointA.x = this.working_image.x
     this.lastPointA.y = this.working_image.y
 
-    this.pointB.x = this.pointA.x + this.minWidthCrop
-    this.pointB.y = this.pointA.y + this.minHeightCrop
+    this.pointB.x = this.pointA.x + this.working_image.width
+    this.pointB.y = this.pointA.y + this.working_image.height
     this.lastPointB.x = this.pointB.x
     this.lastPointB.y = this.pointB.y
 
