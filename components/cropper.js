@@ -4,6 +4,7 @@ import { View, PanResponder, Animated, Image, StyleSheet, Platform, Modal, Image
 import { SimpleButton, ImageButton, XImage, XText } from './index'
 
 import { EventRegister } from 'react-native-event-listeners'
+import RNFetchBlob from 'react-native-fetch-blob'
 
 export class Cropper {
   static cropListener = null;
@@ -264,7 +265,7 @@ export class CropperView extends Component{
     }
     else
     {
-      this.cropWithRotation = Platform.OS == 'ios' ? false : true
+      this.cropWithRotation = false
       this.checkRotation = true
     }
   }
@@ -521,7 +522,9 @@ export class CropperView extends Component{
   }
 
   remakeCrop(){
-    if(Platform.OS == "ios") ImageStore.removeImageForTag(this.state.url_output) //deleting unused image
+    RNFetchBlob.fs.unlink(this.state.url_output)
+                  .then(() => {})
+                  .catch((err) => {})
     this.remake = true
     this.setState({url_output: null})
   }
@@ -532,8 +535,8 @@ export class CropperView extends Component{
     let cropX = ((this.pointA.x - this.working_image.x) * this.original_image.width) / this.working_image.width
     let cropY = ((this.pointA.y - this.working_image.y) * this.original_image.height) / this.working_image.height
 
-    let cropWidth = (this.state.widthCrop * this.original_image.width) / this.working_image.width 
-    let cropHeight = (this.state.heightCrop * this.original_image.height) / this.working_image.height 
+    let cropWidth = Math.round( (this.state.widthCrop * this.original_image.width) / this.working_image.width )
+    let cropHeight = Math.round( (this.state.heightCrop * this.original_image.height) / this.working_image.height )
 
     if(this.cropWithRotation)
     {
@@ -575,9 +578,15 @@ export class CropperView extends Component{
         (w, h)=>{
           let test1 = w >= h
           let test2 = this.state.widthCrop >= this.state.heightCrop
-          if(test1 != test2)
+          let test3 = ((width-2) <= w && w <= (width+2)) && ((height-2) <= h && h <= (height+2))
+
+          if(test1 != test2 || !test3)
           {
-            if(Platform.OS == "ios") ImageStore.removeImageForTag(_url) //deleting unused image
+            //deleting unused image
+            RNFetchBlob.fs.unlink(_url)
+                          .then(() => {})
+                          .catch((err) => {})
+
             this.cropWithRotation = !this.cropWithRotation
             this.checkRotation = false
             this.processCropping()
