@@ -100,7 +100,7 @@ android {
     defaultConfig {
         applicationId "com.idocus"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 26 //target 26 is not working with FCM but actual version in prod is 26 (waiting for debbug)
         versionCode 17
         versionName "1.14"
         vectorDrawables.useSupportLibrary = true

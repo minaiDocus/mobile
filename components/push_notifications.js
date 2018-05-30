@@ -236,7 +236,7 @@ export class UINotification extends Component{
                               Istyle={{flex:0, width:20, height:20}}
                               onPress={()=>{this.toggleListNotifications()}} />
                           </View>
-        Notice.info(mess_obj, false, "push_notification_alert", 10000)
+        Notice.info(mess_obj, true, "push_notification_alert")
       }
 
     	if(typeof(message) != "undefined" && message.to_be_added == true)
@@ -414,6 +414,7 @@ export class FCMinit extends Component{
     }
 
     handleMessages(notif){
+      console.error(notif)
       if(typeof(notif) !== "undefined" && notif != null)
       {
         if(typeof(notif.message) != "undefined")
