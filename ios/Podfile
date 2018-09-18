@@ -6,6 +6,7 @@ target 'iDocus' do
   # use_frameworks!
 
   # Pods for iDocus
+  pod 'Firebase'
   pod 'Firebase/Messaging', '4.0.0'
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
@@ -13,8 +14,6 @@ target 'iDocus' do
   target 'iDocus-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
-
-
 
     pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
 
@@ -41,8 +40,8 @@ target 'iDocus-tvOS' do
   # Pods for iDocus-tvOS
 
   #target 'iDocus-tvOSTests' do
-#inherit! :search_paths
-    # Pods for testing
-#end
+  #inherit! :search_paths
+      # Pods for testing
+  #end
 
 end
