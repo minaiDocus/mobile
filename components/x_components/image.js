@@ -51,10 +51,10 @@ export class XImage extends Component{
     super(props)
 
     this.renderImage = this.renderImage.bind(this)
-    this.ajustImage = this.ajustImage.bind(this)
+    this.adjustImage = this.adjustImage.bind(this)
   }
 
-  ajustImage(e){
+  adjustImage(e){
     console.error(e)
   }
 

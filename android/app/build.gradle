@@ -94,13 +94,13 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "com.idocus"
         minSdkVersion 16
-        targetSdkVersion 26 //target 26 is not working with FCM but actual version in prod is 26 (waiting for debbug)
+        targetSdkVersion 27
         versionCode 17
         versionName "1.14"
         vectorDrawables.useSupportLibrary = true
@@ -147,10 +147,13 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-image-crop-picker')
-    //Firebase dependencies
     compile project(':react-native-fcm')
-    compile 'com.google.firebase:firebase-core:10.0.1' //this decides your firebase SDK version
+    compile project(':react-native-image-crop-picker')
+    
+    //Firebase dependencies
+    compile 'com.google.firebase:firebase-core'
+    compile 'com.google.firebase:firebase-messaging'
+
     // For animated Gif on SplashScreen
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
     // For animated GIF support

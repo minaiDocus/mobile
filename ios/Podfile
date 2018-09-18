@@ -20,6 +20,11 @@ target 'iDocus' do
 
     pod 'react-native-pdf', :path => '../node_modules/react-native-pdf'
 
+
+    pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
+
+    pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
+
   end
 
   target 'iDocusTests' do
