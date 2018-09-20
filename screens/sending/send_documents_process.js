@@ -158,24 +158,22 @@ class Body extends Component{
   }
 
   componentDidMount(){
-    FileUploader.waitFor(
-      ["refreshFormParams()"],
-      (responses) => {
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          users = User.findByListOf("code", responses[0].userList)
+    FileUploader.waitFor(["refreshFormParams()"]).then(responses => {
+      if(responses[0].error)
+      {
+        Notice.danger(responses[0].message, true, responses[0].message)
+      }
+      else
+      {
+        users = User.findByListOf("code", responses[0].userList)
 
-          this.clients = [{value:"", label:"Choisir un client"}].concat(User.createSelection(users))
-          GLOB.file_upload_params = responses[0].data
+        this.clients = [{value:"", label:"Choisir un client"}].concat(User.createSelection(users))
+        GLOB.file_upload_params = responses[0].data
 
-          GLOB.journal = GLOB.period = GLOB.customer = ""
-        }
-        this.setState({ready: true, period_start: "", period_expired: ""})
-      })
+        GLOB.journal = GLOB.period = GLOB.customer = ""
+      }
+      this.setState({ready: true, period_start: "", period_expired: ""})
+    })
   }
 
   refreshWarning(message){

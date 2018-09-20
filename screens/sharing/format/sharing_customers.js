@@ -50,9 +50,7 @@ class ModalSharing extends Component{
     {
       const call = ()=>{
                           Notice.info(message)
-                          AccountSharing.waitFor(
-                            [url],
-                            (responses)=>{
+                          AccountSharing.waitFor([url]).then(responses=>{
                               if(responses[0].error)
                               {
                                 Notice.danger(responses[0].message, true, responses[0].message)
@@ -113,19 +111,17 @@ class ViewState extends Component{
 
   deleteSharedDoc(id_doc, type='admin'){
     Notice.info("Suppression en cours ...")
-    AccountSharing.waitFor(
-      [`deleteSharedDoc(${id_doc}, "${type}")`],
-      (responses)=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          Notice.info(responses[0].message)
-          EventRegister.emit('refreshPage')
-        }
-      })
+    AccountSharing.waitFor([`deleteSharedDoc(${id_doc}, "${type}")`]).then(responses=>{
+      if(responses[0].error)
+      {
+        Notice.danger(responses[0].message, true, responses[0].message)
+      }
+      else
+      {
+        Notice.info(responses[0].message)
+        EventRegister.emit('refreshPage')
+      }
+    })
   }
 
   handleDelete(id_doc){
@@ -373,22 +369,17 @@ class SharingScreen extends Component {
 
   refreshDatas(){
     this.setState({ready: false})
-    AccountSharing.waitFor(
-      [`getSharedDocsCustomers()`],
-      (responses)=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          this.datas_shared = responses[0].data_shared
-          this.contacts = responses[0].contacts
-          this.access = responses[0].access
-        }
-
-        this.setState({ready: true})
-      })
+    AccountSharing.waitFor(['getSharedDocsCustomers()']).then(responses=>{
+      if(responses[0].error){
+        Notice.danger(e.message, true, e.message)
+      }
+      else{
+        this.datas_shared = responses[0].data_shared
+        this.contacts = responses[0].contacts
+        this.access = responses[0].access
+      }
+      this.setState({ready: true})
+    })
   }
 
   render() {

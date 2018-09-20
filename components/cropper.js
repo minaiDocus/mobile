@@ -8,20 +8,19 @@ import RNFetchBlob from 'react-native-fetch-blob'
 
 export class Cropper {
   static cropListener = null;
-  static callback;
 
-  static openCrop(options={}, callback){
-    if(Cropper.cropListener == null)
-    {
-      Cropper.cropListener = EventRegister.on("validateCrop", (image)=>{
-        Cropper.callback(image)
-        EventRegister.rm(Cropper.cropListener)
-        Cropper.cropListener = null
-      })
-    }
-
-    Cropper.callback = callback
-    EventRegister.emit("openCropper", options)
+  static openCrop(options={}){
+    return new Promise(resolve => {
+            if(Cropper.cropListener == null)
+            {
+              Cropper.cropListener = EventRegister.on("validateCrop", (image)=>{
+                EventRegister.rm(Cropper.cropListener)
+                Cropper.cropListener = null
+                resolve(image)
+              })
+            }
+            EventRegister.emit("openCropper", options)
+          })
   }
 }
 

@@ -282,10 +282,8 @@ class SendScreen extends Component {
       //console.log('removed all tmp images from tmp directory');
     }).catch(e => {})
 
-    // UsersFetcher.waitFor(
-    //   ['refreshCustomers()'],
-    //   (responses)=>{
-    //     responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
+    // UsersFetcher.waitFor(['refreshCustomers()']).then(responses=>{
+    //     responses.map(r=>{if(r.error)Notice.danger(r.message, true, r.message)})
     // })
   }
   
@@ -300,11 +298,9 @@ class SendScreen extends Component {
     const call = ()=>{
                         ImagePicker.openCamera({
                           cropping: false,
-                        })
-                        .then(image => {
+                        }).then(image => {
                           this.renderImg([image], null, true);
-                        })
-                        .catch(error => {
+                        }).catch(error => {
                           this.renderError(error);
                         });
                       }
@@ -329,12 +325,12 @@ class SendScreen extends Component {
   openCrop(index){
     const call = ()=>{
                         let _img = GLOB.images[index]
-                        Cropper.openCrop(
-                          {img: _img, preview: false}, 
-                          (image)=>{
-                            this.renderImg([image], index)
-                          }
-                        ) 
+                        Cropper.openCrop({
+                          img: _img,
+                          preview: false
+                        }).then(image=>{
+                          this.renderImg([image], index)
+                        })
                       }
     actionLocker(call)
   }

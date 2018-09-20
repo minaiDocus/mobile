@@ -212,10 +212,8 @@ class DocumentsScreen extends Component {
 
   //For refreshing Account list
   componentDidMount(){
-    // UsersFetcher.waitFor(
-    //   ['refreshCustomers()'],
-    //   (responses)=>{
-    //     responses.map(r=>{if(r!=true)Notice.danger(r, true, r)})
+    // UsersFetcher.waitFor(['refreshCustomers()']).then(responses=>{
+    //     responses.map(r=>{if(r.error)Notice.danger(r.message, true, r.message)})
     //     this.refreshDatas()
     // })
     this.refreshDatas()
@@ -233,24 +231,22 @@ class DocumentsScreen extends Component {
 
     this.setState({ready: false, loadingFilter: true})
 
-    DocumentsFetcher.waitFor(
-          [`getPacks(${this.page}, "${GLOB.filterText}", "${GLOB.clientId}")`],
-          (responses)=>{
-            responses.map(r=>{
-              if(r.error)
-              {
-                Notice.danger(r.message, true, r.message)
-                this.limit_page = 1
-                this.total = 0
-                this.setState({ready: true, loadingFilter: false})
-              }
-              else
-              {  
-                this.limit_page = r.nb_pages
-                this.total = r.total
-                this.setState({ready: true, loadingFilter: false, dataList: r.packs})
-              }
-          })
+    DocumentsFetcher.waitFor([`getPacks(${this.page}, "${GLOB.filterText}", "${GLOB.clientId}")`]).then(responses=>{
+        responses.map(r=>{
+          if(r.error)
+          {
+            Notice.danger(r.message, true, r.message)
+            this.limit_page = 1
+            this.total = 0
+            this.setState({ready: true, loadingFilter: false})
+          }
+          else
+          {  
+            this.limit_page = r.nb_pages
+            this.total = r.total
+            this.setState({ready: true, loadingFilter: false, dataList: r.packs})
+          }
+      })
     })
   }
 

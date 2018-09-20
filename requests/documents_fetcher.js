@@ -30,101 +30,30 @@ class documents_fetcher extends Requester{
     return src
   }
 
-  async getStats(dataFilters={}, page=1, order={}){
-    let response = ""
-
-    this.requestURI("api/mobile/data_loader/load_stats", {method: 'POST', params:{paper_process_contains: dataFilters, page: page, order: order}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-    return response 
+  getStats(dataFilters={}, page=1, order={}){
+    return this.requestURI("api/mobile/data_loader/load_stats", {method: 'POST', params:{paper_process_contains: dataFilters, page: page, order: order}})
   }
 
-  async getDocumentsProcessed(pack_id, page=1, text=""){
-    let response = ""
-    this.requestURI("api/mobile/data_loader/load_documents_processed", {method: 'POST', params:{id: pack_id, page: page, filter: text}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-    while(response == "")
-    {
-      await this.sleep(300)
-    } 
-    return response 
+  getDocumentsProcessed(pack_id, page=1, text=""){
+    return this.requestURI("api/mobile/data_loader/load_documents_processed", {method: 'POST', params:{id: pack_id, page: page, filter: text}})
   }
 
-  async getDocumentsProcessing(pack_id){
-    let response = ""
-    this.requestURI("api/mobile/data_loader/load_documents_processing", {method: 'POST', params:{id: pack_id}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-    while(response == "")
-    {
-      await this.sleep(300)
-    } 
-    return response 
+  getDocumentsProcessing(pack_id){
+    return this.requestURI("api/mobile/data_loader/load_documents_processing", {method: 'POST', params:{id: pack_id}})
   }
 
 
-  async refreshPacks(){
-    let response = ""
-    this.requestURI("api/mobile/data_loader/load_packs", {method: 'POST'}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    } 
-
-    return response 
+  refreshPacks(){
+    return this.requestURI("api/mobile/data_loader/load_packs", {method: 'POST'})
   }
 
-  async getPacks(page=1, text="", owner_id=0){
+  getPacks(page=1, text="", owner_id=0){
     if(owner_id <= 0)
     {
       owner_id = 'all'
     }
 
-    let response = ""
-    this.requestURI("api/mobile/data_loader/get_packs", {method: 'POST', params: {page: page, view: owner_id, filter: text}}, (r) => {
-      response = r
-    })
-    while(response == "")
-    {
-      await this.sleep(300)
-    } 
-    return response 
+    return this.requestURI("api/mobile/data_loader/get_packs", {method: 'POST', params: {page: page, view: owner_id, filter: text}})
   }
 }
 

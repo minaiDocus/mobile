@@ -1,26 +1,48 @@
 import {XFetcher} from '../components'
 
 export class Requester {
-  
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   requestURI(uri, options={}, callback={}){
-    const Fetcher = new XFetcher()
-    Fetcher.fetch(uri, options, true, callback)
+    return new Promise((resolve, reject) => {
+      const Fetcher = new XFetcher()
+      Fetcher.fetch(uri, options, true, (r)=>{
+        if(r.error)
+        {
+          if(callback.onReject != undefined)
+            callback.onReject(r)
+          reject(r)
+        }
+        else
+        {
+          if(callback.onResolve != undefined)
+            callback.onResolve(r)
+          resolve(r)
+        }
+      })
+    })
   }
 
-  async waitFor(func=[], callback){
-    let responses = []
-    let tmp_rep = ""
+  waitFor(func=[]){
+    let slf = this
+    return new Promise(resolve => {
+      let responses = []
+      let promises = []
+      let i = 0
 
-    for(var i=0; i<func.length; i++)
-    {
-      tmp_rep = await eval('this.'+func[i])
-      responses = responses.concat(tmp_rep)
-    }
+      const handleResponses = (r)=>{
+        responses = responses.concat(r)
+        i++
+        if(i < func.length)
+          launchRequests(func[i])
+        else
+          resolve(responses)
+      }
 
-    callback(responses)
+      const launchRequests = (f)=>{
+        promises[i] = eval('slf.'+f)
+        promises[i].then(r => handleResponses(r)).catch(r => handleResponses(r))
+      }
+
+      launchRequests(func[0])
+    })
   }
 }

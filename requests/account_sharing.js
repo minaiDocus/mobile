@@ -8,31 +8,11 @@ class account_sharing extends Requester{
     catch(e){return 0}
   }
 
-  async getSharedDocsCustomers(){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/load_shared_docs_customers", {method: 'POST'}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  getSharedDocsCustomers(){
+    return this.requestURI("api/mobile/account_sharing/load_shared_docs_customers", {method: 'POST'})
   }
 
-  async getSharedContacts(dataFilters={}, page=1, order={}){
-    let response = ""
-
+  getSharedContacts(dataFilters={}, page=1, order={}){
     const params =  {
                       organization_id:              this.organizationId(),
                       guest_collaborator_contains:  dataFilters,
@@ -40,72 +20,18 @@ class account_sharing extends Requester{
                       order:                        order
                     }
 
-    this.requestURI("api/mobile/account_sharing/load_shared_contacts", {method: 'POST', params}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+    return this.requestURI("api/mobile/account_sharing/load_shared_contacts", {method: 'POST', params})
   }
 
-  async addSharedDocCustomers(params){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/add_shared_docs_customers", {method: 'POST', params:{user: params}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  addSharedDocCustomers(params){
+    return this.requestURI("api/mobile/account_sharing/add_shared_docs_customers", {method: 'POST', params:{user: params}})
   }
 
-  async addSharingRequestCustomers(params){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/add_sharing_request_customers", {method: 'POST', params:{account_sharing_request: params}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  addSharingRequestCustomers(params){
+    return this.requestURI("api/mobile/account_sharing/add_sharing_request_customers", {method: 'POST', params:{account_sharing_request: params}})
   }
 
-  async getSharedDocs(dataFilters={}, page=1, order={}){
-    let response = ""
-
+  getSharedDocs(dataFilters={}, page=1, order={}){
     const params =  {
                       organization_id:            this.organizationId(), 
                       account_sharing_contains:   dataFilters,
@@ -113,199 +39,39 @@ class account_sharing extends Requester{
                       order:                      order
                     } 
 
-    this.requestURI("api/mobile/account_sharing/load_shared_docs", {method: 'POST', params}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+    return this.requestURI("api/mobile/account_sharing/load_shared_docs", {method: 'POST', params})
   }
 
-  async getListCollaborators(text=""){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/get_list_collaborators", {method: 'POST', params:{organization_id: this.organizationId(), q: text}}, (r) => {
-      if(r.error){ 
-        //handling errors
-       response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  getListCollaborators(text=""){
+    return this.requestURI("api/mobile/account_sharing/get_list_collaborators", {method: 'POST', params:{organization_id: this.organizationId(), q: text}})
   }
 
-  async getListCustomers(text=""){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/get_list_customers", {method: 'POST', params:{organization_id: this.organizationId(), q: text}}, (r) => {
-      if(r.error){ 
-        //handling errors
-       response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  getListCustomers(text=""){
+    return this.requestURI("api/mobile/account_sharing/get_list_customers", {method: 'POST', params:{organization_id: this.organizationId(), q: text}})
   }
 
-  async addSharedDoc(account_sharing){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/add_shared_docs", {method: 'POST', params:{organization_id: this.organizationId(), account_sharing}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  addSharedDoc(account_sharing){
+    return this.requestURI("api/mobile/account_sharing/add_shared_docs", {method: 'POST', params:{organization_id: this.organizationId(), account_sharing}})
   }
 
-  async addSharedContact(dataForm){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/add_shared_contacts", {method: 'POST', params:{organization_id: this.organizationId(), user: dataForm}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  addSharedContact(dataForm){
+    return this.requestURI("api/mobile/account_sharing/add_shared_contacts", {method: 'POST', params:{organization_id: this.organizationId(), user: dataForm}})
   }
 
-  async editSharedContact(dataForm){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/edit_shared_contacts", {method: 'POST', params:{organization_id: this.organizationId(), id: dataForm.id_idocus, user: dataForm}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  editSharedContact(dataForm){
+    return this.requestURI("api/mobile/account_sharing/edit_shared_contacts", {method: 'POST', params:{organization_id: this.organizationId(), id: dataForm.id_idocus, user: dataForm}})
   }
 
-  async acceptSharedDoc(id_doc){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/accept_shared_docs", {method: 'POST', params:{organization_id: this.organizationId(), id: id_doc}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  acceptSharedDoc(id_doc){
+    return this.requestURI("api/mobile/account_sharing/accept_shared_docs", {method: 'POST', params:{organization_id: this.organizationId(), id: id_doc}})
   }
 
-  async deleteSharedDoc(id_doc, type = 'admin'){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/delete_shared_docs", {method: 'POST', params:{organization_id: this.organizationId(), id: id_doc, type: type}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-    
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  deleteSharedDoc(id_doc, type = 'admin'){
+    return this.requestURI("api/mobile/account_sharing/delete_shared_docs", {method: 'POST', params:{organization_id: this.organizationId(), id: id_doc, type: type}})
   }
 
-  async deleteSharedContact(id){
-    let response = ""
-
-    this.requestURI("api/mobile/account_sharing/delete_shared_contacts", {method: 'POST', params:{organization_id: this.organizationId(), id: id}}, (r) => {
-      if(r.error){ 
-        //handling errors
-        response = r
-      }
-      else
-      {
-        response = r
-      }
-    })
-
-    while(response == "")
-    {
-      await this.sleep(300)
-    }
-
-    return response
+  deleteSharedContact(id){
+    return this.requestURI("api/mobile/account_sharing/delete_shared_contacts", {method: 'POST', params:{organization_id: this.organizationId(), id: id}})
   }
 }
 

@@ -65,19 +65,17 @@ class ContactForm extends Component{
     {
       const call = ()=>{
                           Notice.info(flash)
-                          AccountSharing.waitFor(
-                            [url],
-                            (responses)=>{
-                              if(responses[0].error)
-                              {
-                                Notice.danger(responses[0].message, true, responses[0].message)
-                              }
-                              else
-                              {
-                                Notice.info(responses[0].message)
-                              }
-                              EventRegister.emit('refreshPage_contacts', reload)
-                            })
+                          AccountSharing.waitFor([url]).then(responses=>{
+                            if(responses[0].error)
+                            {
+                              Notice.danger(responses[0].message, true, responses[0].message)
+                            }
+                            else
+                            {
+                              Notice.info(responses[0].message)
+                            }
+                            EventRegister.emit('refreshPage_contacts', reload)
+                          })
                         }
       actionLocker(call)
       this.props.dismiss()
@@ -211,19 +209,17 @@ class BoxStat extends Component{
 
   deleteSharedContact(_id){
     Notice.info("Suppression de contact en cours ...")
-    AccountSharing.waitFor(
-      [`deleteSharedContact(${_id})`],
-      (responses)=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          Notice.info(responses[0].message)
-          EventRegister.emit('refreshPage_contacts', true)
-        }
-      })
+    AccountSharing.waitFor([`deleteSharedContact(${_id})`]).then(responses=>{
+      if(responses[0].error)
+      {
+        Notice.danger(responses[0].message, true, responses[0].message)
+      }
+      else
+      {
+        Notice.info(responses[0].message)
+        EventRegister.emit('refreshPage_contacts', true)
+      }
+    })
   }
 
   handleDelete(_id){
@@ -459,22 +455,17 @@ class SharingScreen extends Component {
     }
 
     this.setState({ready: false, dataList: []})
-    AccountSharing.waitFor(
-      [`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
-      (responses)=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          GLOB.datas = responses[0].contacts || []
-        }
+    AccountSharing.waitFor([`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)}`]).then(responses => {
+      if(responses[0].error)
+        Notice.danger(e.message, true, e.message)
+      else
+        GLOB.datas = responses[0].contacts || []
 
-        this.limit_page = responses[0].nb_pages || 1
-        this.total = responses[0].total || 0
-        this.setState({ready: true, dataList: GLOB.datas})
-      })
+      this.limit_page = responses[0].nb_pages || 1
+      this.total = responses[0].total || 0
+      this.setState({ready: true, dataList: GLOB.datas})
+    })
+
   }
 
   renderStats(){

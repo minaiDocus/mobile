@@ -45,24 +45,20 @@ class Header extends Component{
   }
 
   filterAccount(text=""){
-    AccountSharing.waitFor(
-      [`getListCustomers("${text}")`],
-      (responses)=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          this.setState({optionsAccount: [{value:0, label:"Dossier client"}].concat(responses[0].dataList)})
-        }
+    AccountSharing.waitFor([`getListCustomers("${text}")`]).then(responses=>{
+      if(responses[0].error)
+      {
+        Notice.danger(responses[0].message, true, responses[0].message)
+      }
+      else
+      {
+        this.setState({optionsAccount: [{value:0, label:"Dossier client"}].concat(responses[0].dataList)})
+      }
     })
   }
 
   filterCollaborator(text=""){
-    AccountSharing.waitFor(
-      [`getListCollaborators("${text}")`],
-      (responses)=>{
+    AccountSharing.waitFor([`getListCollaborators("${text}")`]).then(responses=>{
         if(responses[0].error)
         {
           Notice.danger(responses[0].message, true, responses[0].message)
@@ -91,20 +87,18 @@ class Header extends Component{
                         {
                           Notice.info("Partage en cours ...")
                           this.setState({loading_add: true})
-                          AccountSharing.waitFor(
-                            [`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`],
-                            (responses)=>{
-                              if(responses[0].error)
-                              {
-                                Notice.danger(responses[0].message, true, responses[0].message)
-                              }
-                              else
-                              {
-                                Notice.info(responses[0].message)
-                                this.setState({loading_add: false})
-                              }
-                              EventRegister.emit('refreshPage', true)
-                            })
+                          AccountSharing.waitFor([`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`]).then(responses=>{
+                            if(responses[0].error)
+                            {
+                              Notice.danger(responses[0].message, true, responses[0].message)
+                            }
+                            else
+                            {
+                              Notice.info(responses[0].message)
+                              this.setState({loading_add: false})
+                            }
+                            EventRegister.emit('refreshPage', true)
+                          })
                         }
                         else
                         {
@@ -259,37 +253,33 @@ class BoxStat extends Component{
 
   deleteSharedDoc(id_doc){
     Notice.info("Suppression de partage en cours ...")
-    AccountSharing.waitFor(
-      [`deleteSharedDoc(${id_doc})`],
-      (responses)=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          Notice.info(responses[0].message)
-          EventRegister.emit('refreshPage', true)
-        }
-      })
+    AccountSharing.waitFor([`deleteSharedDoc(${id_doc})`]).then(responses=>{
+      if(responses[0].error)
+      {
+        Notice.danger(responses[0].message, true, responses[0].message)
+      }
+      else
+      {
+        Notice.info(responses[0].message)
+        EventRegister.emit('refreshPage', true)
+      }
+    })
   }
 
 
   acceptSharedDoc(id_doc){
     Notice.info("Partage en cours ...")
-    AccountSharing.waitFor(
-      [`acceptSharedDoc(${id_doc})`],
-      (responses)=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          Notice.info(responses[0].message)
-          EventRegister.emit('refreshPage', true)
-        }
-      })
+    AccountSharing.waitFor([`acceptSharedDoc(${id_doc})`]).then(responses=>{
+      if(responses[0].error)
+      {
+        Notice.danger(responses[0].message, true, responses[0].message)
+      }
+      else
+      {
+        Notice.info(responses[0].message)
+        EventRegister.emit('refreshPage', true)
+      }
+    })
   }
 
   handleDelete(id_doc){
@@ -530,9 +520,7 @@ class SharingScreen extends Component {
     }
 
     this.setState({ready: false, dataList: []})
-    AccountSharing.waitFor(
-      [`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
-      (responses)=>{
+    AccountSharing.waitFor([`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`]).then(responses=>{
         if(responses[0].error)
         {
           Notice.danger(responses[0].message, true, responses[0].message)

@@ -362,22 +362,20 @@ class StatsScreen extends Component {
 
     this.setState({ready: false, dataList: []})
 
-    PaperProcess.waitFor(
-      [`getStats(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`],
-      (responses)=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          GLOB.datas = responses[0].data_stats || []
-        }
+    PaperProcess.waitFor([`getStats(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`]).then(responses=>{
+      if(responses[0].error)
+      {
+        Notice.danger(responses[0].message, true, responses[0].message)
+      }
+      else
+      {
+        GLOB.datas = responses[0].data_stats || []
+      }
 
-        this.limit_page = responses[0].nb_pages || 1
-        this.total = responses[0].total || 0
-        this.setState({ready: true, dataList: GLOB.datas})
-      })
+      this.limit_page = responses[0].nb_pages || 1
+      this.total = responses[0].total || 0
+      this.setState({ready: true, dataList: GLOB.datas})
+    })
   }
 
   renderStats(){

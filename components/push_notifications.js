@@ -258,18 +258,16 @@ export class UINotification extends Component{
     }
 
     refreshData(){
-      FireBaseNotification.waitFor(
-      ['getNotifications()'],
-      (responses)=>{
-          if(responses[0].error)
-          {
-            Notice.danger(responses[0].message, true, responses[0].message)
-          }
-          else
-          {
-            let datas = responses[0].notifications || []
-            this.addNotifToRealm(datas)
-          }
+      FireBaseNotification.waitFor(['getNotifications()']).then(responses=>{
+        if(responses[0].error)
+        {
+          Notice.danger(responses[0].message, true, responses[0].message)
+        }
+        else
+        {
+          let datas = responses[0].notifications || []
+          this.addNotifToRealm(datas)
+        }
       })
     }
 
@@ -414,7 +412,6 @@ export class FCMinit extends Component{
     }
 
     handleMessages(notif){
-      console.error(notif)
       if(typeof(notif) !== "undefined" && notif != null)
       {
         if(typeof(notif.message) != "undefined")

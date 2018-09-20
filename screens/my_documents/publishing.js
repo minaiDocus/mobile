@@ -371,27 +371,25 @@ class TabNav extends Component{
 
     this.setState({published_ready: false})
     const pack_id = GLOB.Pack.pack_id || GLOB.Pack.id
-    DocumentsFetcher.waitFor(
-        [`getDocumentsProcessed(${pack_id}, ${this.pagePublished}, "${GLOB.filterText}")`],
-        (responses) => {
-          if(responses[0].error)
-          {
-            Notice.danger(responses[0].message, true, responses[0].message)
-          }
-          else
-          {
-            GLOB.pagesPublished = [].concat(responses[0].published.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:false} }))
-            this.totalPublished = responses[0].total
-            this.limit_pagePublished = responses[0].nb_pages
-          }
+    DocumentsFetcher.waitFor([`getDocumentsProcessed(${pack_id}, ${this.pagePublished}, "${GLOB.filterText}")`]).then(responses => {
+      if(responses[0].error)
+      {
+        Notice.danger(responses[0].message, true, responses[0].message)
+      }
+      else
+      {
+        GLOB.pagesPublished = [].concat(responses[0].published.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:false} }))
+        this.totalPublished = responses[0].total
+        this.limit_pagePublished = responses[0].nb_pages
+      }
 
-          if(load_publishing)
-          {
-            this.refreshDocsPublishing()
-          }
+      if(load_publishing)
+      {
+        this.refreshDocsPublishing()
+      }
 
-          this.setState({published_ready: true})
-        })
+      this.setState({published_ready: true})
+    })
   }
 
   refreshDocsPublishing(renew = true){
@@ -399,20 +397,18 @@ class TabNav extends Component{
     {
       this.setState({publishing_ready: false})
       const pack_id = GLOB.Pack.pack_id || GLOB.Pack.id
-      DocumentsFetcher.waitFor(
-          [`getDocumentsProcessing(${pack_id})`],
-          (responses) => {
-            if(responses[0].error)
-            {
-              Notice.danger(responses[0].message, true, responses[0].message)
-            }
-            else
-            {
-              GLOB.pagesPublishing = [].concat(responses[0].publishing.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:true} }))
-            }
+      DocumentsFetcher.waitFor([`getDocumentsProcessing(${pack_id})`]).then(responses => {
+        if(responses[0].error)
+        {
+          Notice.danger(responses[0].message, true, responses[0].message)
+        }
+        else
+        {
+          GLOB.pagesPublishing = [].concat(responses[0].publishing.map((doc, index)=>{return {id:doc.id, thumb:doc.thumb, large:doc.large, force_temp_doc:true} }))
+        }
 
-            this.setState({publishing_ready: true})
-          })
+        this.setState({publishing_ready: true})
+      })
     }
     else
     {

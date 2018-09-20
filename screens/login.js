@@ -40,30 +40,28 @@ class LoginScreen extends Component {
       setTimeout(()=>Notice.info(`A bientot !!`), 1000)
     }
 
-    RemoteAuthentication.waitFor(
-      [`pingServer()`],
-      (responses)=>{
-        this.setState({ready: true})
-        if(responses[0].code != 200)
-        {
-          Notice.danger({title: "Alèrte système", body: responses[0].message}, true, responses[0].message)
-          if(responses[0].code == 500)
-          { //automatic logout
-            RemoteAuthentication.logOut()
-            GLOB.system_reject = true
-          }
+    RemoteAuthentication.waitFor(['pingServer()']).then(responses=>{
+      this.setState({ready: true})
+      if(responses[0].code != 200)
+      {
+        Notice.danger({title: "Alèrte système", body: responses[0].message}, true, responses[0].message)
+        if(responses[0].code == 500)
+        { //automatic logout
+          RemoteAuthentication.logOut()
+          GLOB.system_reject = true
         }
-        
-        const user = User.getMaster()
-        if(user.id && responses[0].code != 500)
-        {
-          this.goToHome()
-        }
-        else
-        {
-          SplashScreen.hide()
-        }
-      })
+      }
+      
+      const user = User.getMaster()
+      if(user.id && responses[0].code != 500)
+      {
+        this.goToHome()
+      }
+      else
+      {
+        SplashScreen.hide()
+      }
+    })
   }
 
   componentWillUnmount(){
@@ -105,10 +103,7 @@ class LoginScreen extends Component {
     if(GLOB.password != "" && GLOB.login != "")
     {
       const params = { user_login: {login: GLOB.login, password: GLOB.password} }
-      RemoteAuthentication.logIn(params, (type, message) => {
-        if(type=='error'){this.dismissLoader(message)}
-        if(type=='success'){this.goToHome()}
-      })
+      RemoteAuthentication.logIn(params).then(r => this.goToHome()).catch(e => this.dismissLoader(e.message))
     }
     else
     {
