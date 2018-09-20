@@ -151,8 +151,8 @@ dependencies {
     compile project(':react-native-image-crop-picker')
     
     //Firebase dependencies
-    compile 'com.google.firebase:firebase-core'
-    compile 'com.google.firebase:firebase-messaging'
+    // compile 'com.google.firebase:firebase-core'
+    // compile 'com.google.firebase:firebase-messaging'
 
     // For animated Gif on SplashScreen
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
