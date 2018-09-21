@@ -24,6 +24,8 @@ target 'iDocus' do
 
     pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
 
+    pod 'RNFS', :path => '../node_modules/react-native-fs'
+
   end
 
   target 'iDocusTests' do

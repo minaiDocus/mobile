@@ -6,9 +6,11 @@ import { NavigationActions } from 'react-navigation'
 
 import {Screen,Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload} from '../../components'
 
+import { Document } from '../../models'
+
 import {UsersFetcher} from "../../requests"
 
-let GLOB = {images:[], imgToDel:"", idZoom:"", navigation:{}}
+let GLOB = {documents:[], imgToDel:"", idZoom:"", navigation:{}}
 
 const styles = {
   minicontainer:{
@@ -69,6 +71,16 @@ class BoxZoom extends Component{
                   borderLeftWidth:2,
                   borderRightWidth:2,
                   marginHorizontal:0
+                },
+      textInfo: {
+                  position: 'absolute',
+                  flex:1,
+                  left:0,
+                  right:0,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  color: '#EC5656',
+                  backgroundColor:'rgba(0,0,0,0.8)'
                 }
     })
 
@@ -104,14 +116,20 @@ class BoxZoom extends Component{
 
     var embedContent = this.props.datas.map((img, key)=>
       {
+        const doc = Document.getById(img.id_64)
+        let message = ''
+        if(doc)
+          message = doc.error || ''
         if(img.id_64 == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
-        return <XImage  key={key}
-                        type='container'
-                        PStyle={this.swiperStyle.boxImage}
-                        style={{flex:1}}
-                        source={{uri: img.path.toString()}} 
-                        local={false}
-                />
+        return  <View key={key} style={{flex:1}}>
+                  <XImage type='container'
+                          PStyle={this.swiperStyle.boxImage}
+                          style={{flex:1}}
+                          source={{uri: img.path.toString()}}
+                          local={false}
+                  />
+                  { message != '' && <XText style={this.swiperStyle.textInfo}>{message}</XText> }
+                </View>
       })
 
     return <Swiper  style={{flex:1}} 
@@ -217,13 +235,30 @@ class ImgBox extends Component{
                   flexDirection:'row',
                   height:'30%',
                   width:'100%'
-                }
+                },
+        textInfo: {
+                    flex:1,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    color: '#EC5656',
+                    backgroundColor:'rgba(0,0,0,0.8)'
+                  }
       })
   }
 
   render(){
+    const doc = Document.getById(this.element.id_64)
+    let message = ''
+    if(doc)
+      message = doc.error || ''
     return  <TouchableOpacity style={this.styles.styleTouch} onPress={()=>this.toggleOpt()}>
                 <XImage type='container' PStyle={this.styles.styleContainer} source={{uri:this.element.path.toString()}} style={this.styles.styleImg} local={false}>
+                  {
+                    this.state.options == false && message != '' &&
+                    <View style={this.styles.options}>
+                      <XText style={this.styles.textInfo}>{message}</XText>
+                    </View>
+                  }
                   { this.state.options == true &&
                     <View style={this.styles.options}>   
                       <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[this.styles.btnText]} Istyle={{width:20,height:20}} />
@@ -255,7 +290,7 @@ class SendScreen extends Component {
   constructor(props){
     super(props)
     GLOB.navigation = new Navigator(this.props.navigation)
-    this.state = { dataList: [], zoomActive: false, showCrop: false }
+    this.state = { ready: false, dataList: [], zoomActive: false }
 
     this.renderImg = this.renderImg.bind(this)
     this.renderError = this.renderError.bind(this)
@@ -267,7 +302,6 @@ class SendScreen extends Component {
       Notice.info({title: "Transfert en cours ...", body: "Un transfert est en cours, Veuillez patienter avant de lancer un autre!!"})
     }
 
-    this.resetScreen()
     this.generateStyles()
   }
 
@@ -276,22 +310,27 @@ class SendScreen extends Component {
       this.resetScreen()
   }
 
-  componentWillMount(){
-    //clearing cache picture
-    ImagePicker.clean().then(() => {
-      //console.log('removed all tmp images from tmp directory');
-    }).catch(e => {})
+  componentWillUnmount(){
+    this.resetScreen()
+  }
 
-    // UsersFetcher.waitFor(['refreshCustomers()']).then(responses=>{
-    //     responses.map(r=>{if(r.error)Notice.danger(r.message, true, r.message)})
-    // })
+  componentDidMount(){
+    this.resetScreen()
+    Document.loadAll().then(docs => {
+      GLOB.documents = docs
+      this.setState({ready: true, dataList: GLOB.documents})
+    })
   }
   
   resetScreen(){
-    GLOB.images = []
+    //clearing cache picture
+    ImagePicker.clean().catch(e => {})
+    Document.clearDocsFileCache()
+
+    GLOB.documents = []
     GLOB.imgToDel = ""
     GLOB.idZoom = ""
-    this.setState({ dataList: [], zoomActive: false, showCrop: false })
+    this.setState({ dataList: GLOB.documents, zoomActive: false })
   }
 
   openCamera(){
@@ -299,10 +338,10 @@ class SendScreen extends Component {
                         ImagePicker.openCamera({
                           cropping: false,
                         }).then(image => {
-                          this.renderImg([image], null, true);
+                          this.renderImg([image], null, true)
                         }).catch(error => {
-                          this.renderError(error);
-                        });
+                          this.renderError(error)
+                        })
                       }
     actionLocker(call)
   }
@@ -314,17 +353,17 @@ class SendScreen extends Component {
                           mediaType: 'photo',
                           maxFiles : 10 //For iOS only
                         }).then(images => {
-                          this.renderImg(images);
+                          this.renderImg(images)
                         }).catch(error => {
-                          this.renderError(error);
-                        });
+                          this.renderError(error)
+                        })
                       }
     actionLocker(call)
   }
 
   openCrop(index){
     const call = ()=>{
-                        let _img = GLOB.images[index]
+                        let _img = GLOB.documents[index]
                         Cropper.openCrop({
                           img: _img,
                           preview: false
@@ -337,6 +376,7 @@ class SendScreen extends Component {
 
   async renderImg(_img, index=null, launch_crop=false){
     let img = []
+    this.setState({ ready: false })
   
     _img.forEach((i)=>{
         if(typeof(i.filename) !== "undefined" && i.filename != null)
@@ -350,19 +390,20 @@ class SendScreen extends Component {
 
     if(index != null)
     {
-      GLOB.images[index] = img[0]
-      await this.setState({dataList: GLOB.images});
+      Document.delDocs([GLOB.documents[index].id_64])
+      GLOB.documents[index] = img[0]
+      Document.addDocs(img)
     }
     else
     {
-      let imgToAdd = [].concat(img);
+      let imgToAdd = [].concat(img)
       let toAdd = true;
       let listAdd = [];
 
       imgToAdd.map((j)=>
       {
         toAdd = true;
-        GLOB.images.map((i)=>
+        GLOB.documents.map((i)=>
         {
           if(i.id_64 == j.id_64)
           {
@@ -370,33 +411,37 @@ class SendScreen extends Component {
           }
         });
 
-        if(toAdd==true){ listAdd = listAdd.concat(j); }
+        if(toAdd==true){ listAdd = listAdd.concat(j) }
       });
 
-      GLOB.images = GLOB.images.concat(listAdd)
-      await this.setState({dataList: GLOB.images})
-      index = GLOB.images.length - 1
+      Document.addDocs(listAdd)
+      GLOB.documents = GLOB.documents.concat(listAdd)
+      index = GLOB.documents.length - 1
     }
 
-    await this.setState({showCrop: true})
+    await this.setState({ready: true, dataList: GLOB.documents})
 
     if(launch_crop)
       setTimeout(()=>this.openCrop(index), 200)
   }
 
-  async deleteElement(){
+  deleteElement(){
     let imgSave = [] 
 
-    GLOB.images.map((i)=>
+    GLOB.documents.map((i)=>
     {
       if(i.id_64 != GLOB.imgToDel.toString())
       {
-        imgSave = imgSave.concat(i);
+        imgSave = imgSave.concat(i)
+      }
+      else
+      {
+        Document.delDocs([i.id_64])
       }
     })
 
-    GLOB.images = imgSave
-    await this.setState({dataList: GLOB.images})
+    GLOB.documents = imgSave
+    this.setState({dataList: GLOB.documents})
   }
 
   toggleZoom(){
@@ -409,9 +454,9 @@ class SendScreen extends Component {
   }
 
   sendList(){
-    if(GLOB.images.length > 0)
+    if(GLOB.documents.length > 0)
     {
-      GLOB.navigation.goTo('Sending', {images: GLOB.images})
+      GLOB.navigation.goTo('Sending', {images: GLOB.documents})
     }
     else
     {
@@ -448,30 +493,38 @@ class SendScreen extends Component {
   }
 
   render() {
-      if(GLOB.images.length > 0)
+      if(this.state.ready)
       {
-        var embedContent =  <ScrollView style={{flex:1, padding:3}}>
-                                <XText style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.images.length} : Document(s)</XText>
-                                <BoxList datas={this.state.dataList}
-                                         elementWidth={130} 
-                                         renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
-                            </ScrollView>
+        if(GLOB.documents.length > 0)
+        {
+          var embedContent =  <ScrollView style={{flex:1, padding:3}}>
+                                  <XText style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.documents.length} : Document(s)</XText>
+                                  <BoxList datas={this.state.dataList}
+                                           elementWidth={130} 
+                                           renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
+                              </ScrollView>
+        }
+        else
+        {
+          var embedContent =  <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
+                                <View style={this.styles.boxPicture}>
+                                  <XText style={{padding:10}}>Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ...</XText>
+                                </View>
+                              </View>
+
+        }
       }
       else
       {
-        var embedContent =  <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
-                              <View style={this.styles.boxPicture}>
-                                <XText style={{padding:10}}>Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ...</XText>
-                              </View>
-                            </View>
-
+        var embedContent = <View style={{flex:1}}><XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} /></View>
       }
+
       return (
         <Screen style={this.styles.container}
                 navigation={GLOB.navigation}>
           <Header takePhoto={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
           {this.state.zoomActive && <BoxZoom  datas={this.state.dataList} 
-                                              cropElement={(index)=>this.openCrop(index)} 
+                                              cropElement={(index)=>this.openCrop(index)}
                                               deleteElement={this.deleteElement} 
                                               hide={this.toggleZoom} />}
           { embedContent }

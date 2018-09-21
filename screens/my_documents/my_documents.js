@@ -17,6 +17,7 @@ class Header extends Component{
     this.filterLocked = false
     this.filterCount = 0
     this.filterClock = null
+    this.customers = []
 
     this.renderCustomerSelection = this.renderCustomerSelection.bind(this)
     this.filterLock = this.filterLock.bind(this)

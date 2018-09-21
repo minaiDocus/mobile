@@ -5,7 +5,7 @@ import { NavigationActions } from 'react-navigation'
 
 import { Screen,Navigator,XImage,XText,LinkButton,SimpleButton,SelectInput,UploderFiles,ProgressBar } from '../../components'
 
-import { User,ImageSent } from '../../models'
+import { User, Document } from '../../models'
 
 import { FileUploader } from "../../requests"
 
@@ -44,12 +44,12 @@ function loadData(){
       const name = img.filename || path.split("/").slice(-1)[0]
       const id_64 = img.id_64.toString()
 
-      const img_sent = ImageSent.getImage(`id="${id_64}"`)
-      if( img_sent != null && img_sent.is_sent )
+      const doc = Document.getById(id_64)
+      if( doc != null && doc.state == 'sent' )
       {
         alreadySent = true
       }
-      else
+      else if (doc != null)
       {
         nothingToSend = false
 
@@ -59,14 +59,7 @@ function loadData(){
           name: name
         });
         
-        ImageSent.insert([{
-                            id: id_64,
-                            path: path,
-                            name: name,
-                            send_at: new Date(),
-                            pending: true,
-                            is_sent: true, 
-                        }])          
+        Document.createOrUpdate(doc.id, {state: 'sending'})
       }
     });
 
@@ -148,6 +141,7 @@ class Body extends Component{
     this.state = {ready: false, journalsOptions: [], periodsOptions: []}
 
     this.master = User.getMaster()
+    this.customers = []
     GLOB.journal = GLOB.periods = GLOB.customer = ""
 
     this.renderForm = this.renderForm.bind(this)
@@ -399,11 +393,9 @@ class SendScreen extends Component {
 
   uploadComplete(result){
     if(this.refs._baseScroll)
-    {
       this.refs._baseScroll.scrollToEnd({animated: true})
-      this.setState({progress: 1})
-      GLOB.sending_finished = true
-    }
+    this.setState({progress: 1})
+    GLOB.sending_finished = true
   }
 
   uploadError(result){

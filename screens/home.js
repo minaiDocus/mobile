@@ -467,27 +467,23 @@ class HomeScreen extends Component {
 
     DocumentsFetcher.waitFor(['refreshPacks()']).then(responses=>{
       if(responses[0].error)
-      {
         Notice.danger(responses[0].message, true, responses[0].message)
-      }
       else
-      {
         GLOB.datas = responses[0].packs || []
-      }
       this.setState({updated: true})
     })
   }
   
   render() {
     return (
-        <Screen style={{flex:1}} 
-                navigation={GLOB.navigation}>
-          <FCM />
-          <Header />
-          <TabNav updated={this.state.updated} />
-          <FrontView />
-        </Screen>
-    );
+      <Screen style={{flex:1}}
+              navigation={GLOB.navigation}>
+        <FCM />
+        <Header />
+        <TabNav updated={this.state.updated} />
+        <FrontView />
+      </Screen>
+    )
   }
 }
 

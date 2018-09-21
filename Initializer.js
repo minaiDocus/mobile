@@ -138,7 +138,18 @@ global.actionLocker = (callback) => {
 //Function for transforming realm object to JSON
 global.realmToJson = (object)=>{
   let Json_result = {}
-  Json_result = JSON.stringify(object)
-  Json_result = JSON.parse(Json_result)
-  return Json_result
+  if(Array.isArray(object))
+  {
+    return object.map(obj => {
+      Json_result = JSON.stringify(obj)
+      Json_result = JSON.parse(Json_result)
+      return Json_result
+    })
+  }
+  else
+  {
+    Json_result = JSON.stringify(object)
+    Json_result = JSON.parse(Json_result)
+    return Json_result
+  }
 }

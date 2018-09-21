@@ -4,7 +4,7 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import LinearGradient from 'react-native-linear-gradient'
 
-import { ImageSent } from '../models'
+import { Document } from '../models'
 
 import { AnimatedBox, XText, XFetcher, LinkButton, BoxInfos, XImage } from './index'
 
@@ -92,7 +92,7 @@ export class ProgressUpload extends Component{
       return <AnimatedBox ref="progressUpload" type="RightSlide" style={this.styles.box}>
                 <LinearGradient colors={colorGrad} style={this.styles.gradient}>
                   <TouchableOpacity onPress={this.showState}>
-                      <XText style={this.styles.text}>{this.state.value} %</XText>
+                    <XText style={this.styles.text}>{this.state.value} %</XText>
                   </TouchableOpacity>
                 </LinearGradient>
              </AnimatedBox>
@@ -106,7 +106,7 @@ export class ProgressUpload extends Component{
 
 export class UploderFiles{
   constructor(){
-    this.uploadErrors = []
+    // this.uploadErrors = []
     this.listLastSent = []
 
     this.launchUpload = this.launchUpload.bind(this)
@@ -119,10 +119,10 @@ export class UploderFiles{
       const Fetcher = new XFetcher()
       Fetcher.fetch(
                       "api/mobile/file_uploader", 
-                      {method: 'POST', contentType:'multipart/form-data', form_body: data}, 
+                      { method: 'POST', contentType: 'multipart/form-data', form_body: data },
                       false, 
-                      (result)=>{this.onLoad(result)}, 
-                      (progressEvent)=>{this.onProgress(progressEvent)},
+                      (result)=>{ this.onLoad(result) },
+                      (progressEvent)=>{ this.onProgress(progressEvent) },
                        -1
                     )
       UploadingFiles = true
@@ -149,22 +149,31 @@ export class UploderFiles{
   }
 
   onComplete(result){
-    EventRegister.emit('completeUploadFile', result)
     Notice.info({title:"Envoi avec succès", body: "Transfert de documents terminée"}, true, "progressUploadFile")
-    ImageSent.stateOfPending(true)
+    Document.syncDocs(Document.sending(), 'sent')
     UploadingFiles = false
+    EventRegister.emit('completeUploadFile', result)
   }
 
   onError(result){
     Notice.remove("progressUploadFile")
 
-    this.listLastSent = ImageSent.lastSent()
-    ImageSent.stateOfPending(false)
+    this.listLastSent = Document.sending()
 
     try{
       if(Array.isArray(result.message))
       {
-        this.uploadErrors = result.message
+        const uploadErrors = result.message
+
+        Document.syncDocs(this.listLastSent, 'sent')
+        this.listLastSent.map(doc_id => {
+          const doc = Document.getById(doc_id) || {}
+          uploadErrors.forEach((err)=>{
+            if(err.filename == doc.name){
+              Document.syncDocs([doc.id], 'error', err.errors)
+            }
+          })
+        })
 
         const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
                             <View style={{flex:2, paddingHorizontal:20}}>
@@ -173,7 +182,7 @@ export class UploderFiles{
                             </View>
                             <View style={{flex:1}}>
                               <LinkButton onPress={()=>{this.showErrors()}} 
-                                          title='Voir détails ...' 
+                                          title='Voir détails ...'
                                           Tstyle={{color:'#EC5656', fontWeight:'bold', paddingLeft:0, textAlign:'center'}} 
                                           Pstyle={{flex:1}} />
                             </View>
@@ -182,10 +191,12 @@ export class UploderFiles{
       }
       else
       {
-        Notice.danger({title:"Erreur envoi", body: result.message}, true, result.message)
+        Document.syncDocs(this.listLastSent, 'not_sent', result.message)
+        Notice.danger({ title: "Erreur envoi", body: result.message }, true, result.message)
       }
     }catch(e){
-      Notice.danger({title:"Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!"}, true, "erreur_upload")
+      Document.syncDocs(this.listLastSent, 'not_sent', 'erreur envoi')
+      Notice.danger({ title: "Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!" }, true, "erreur_upload")
     }
 
     UploadingFiles = false
@@ -213,33 +224,32 @@ export class UploderFiles{
     const call = ()=>{
                         const boxError = <BoxInfos title="Rapport téléversement" dismiss={()=>{clearFrontView()}}>
                                             { 
-                                              this.listLastSent.map((img, index)=>{
+                                              this.listLastSent.map((doc_id, index)=>{
+                                                let doc = Document.getById(doc_id)
                                                 let message = "Envoi ok"
                                                 let color_message = "#228B22"
 
-                                                this.uploadErrors.forEach((err)=>{
-                                                  if(err.filename == img.name)
-                                                  {
-                                                    message = err.errors
-                                                    color_message = "#EC5656"
-                                                  }
-                                                })
+                                                if(doc.state != 'sent')
+                                                {
+                                                  message = doc.error
+                                                  color_message = "#EC5656"
+                                                }
 
                                                 return  <View key={index} style={{flex:1, padding:10, borderBottomWidth:1, borderColor:'#A6A6A6'}}>
                                                           <View style={{flexDirection:'row', flex:1, backgroundColor:'#E1E2DD'}}>
                                                             <View style={{flex:1, justifyContent:'center', alignItems:'center', paddingHorizontal:5}}>
-                                                              <XImage type='container' PStyle={imgStyles.styleContainer} style={imgStyles.styleImg} local={false} source={{uri: img.path.toString()}} />
+                                                              <XImage type='container' PStyle={imgStyles.styleContainer} style={imgStyles.styleImg} local={false} source={{uri: doc.path.toString()}} />
                                                             </View>
                                                             <View style={{flex:3, padding:10}}>
-                                                              <XText style={{fontSize:10}}>- {img.name}</XText>
-                                                              <XText style={{fontSize:12, color: color_message, paddingHorizontal:7}}>{message}</XText>
+                                                              <XText style={{fontSize:10}}>- {doc.name}</XText>
+                                                              <XText style={{fontSize:12, color:color_message, paddingHorizontal:7}}>{message}</XText>
                                                             </View>
                                                           </View>
                                                         </View>
                                               })
                                             }
                                          </BoxInfos>
-                        renderToFrontView(boxError, "slide", ()=>{clearFrontView()})
+                        renderToFrontView(boxError, "slide", ()=>{ clearFrontView() })
                       }
     actionLocker(call)
   }

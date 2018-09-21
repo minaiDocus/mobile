@@ -142,37 +142,37 @@ class Example extends Component {
 
 export class UINotification extends Component{
     constructor(props){
-        super(props)
-        this.state = {newNotifCount: 0, datas: [], showList: false}
+      super(props)
+      this.state = {newNotifCount: 0, datas: [], showList: false}
 
-        this.master = User.getMaster()
+      this.master = User.getMaster()
 
-        this.listNotifView = null
+      this.listNotifView = null
 
-        this.toggleListNotifications = this.toggleListNotifications.bind(this)
-        this.refreshData = this.refreshData.bind(this)
-        this.revokeToken = this.revokeToken.bind(this)
-        this.releaseNewNotif = this.releaseNewNotif.bind(this)
-        this.addNotifToRealm = this.addNotifToRealm.bind(this)
+      this.toggleListNotifications = this.toggleListNotifications.bind(this)
+      this.refreshData = this.refreshData.bind(this)
+      this.revokeToken = this.revokeToken.bind(this)
+      this.releaseNewNotif = this.releaseNewNotif.bind(this)
+      this.addNotifToRealm = this.addNotifToRealm.bind(this)
 
-        this.generateStyles() //style generation
+      this.generateStyles() //style generation
     }
 
     componentWillMount(){
-        this.newNotificationListener = EventRegister.on('newNotification', (notif) => {
-          this.addNotification(notif)
-        })
-        this.refreshNotificationsListener = EventRegister.on('refreshNotifications', ()=>{
-          //resend token to server
-          FireBaseNotification.registerFirebaseToken(this.master.firebase_token)
-          this.refreshData()
-        })
-        this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
-          this.revokeToken()
-        })
-        this.openNotifsListener = EventRegister.on('openNotifications', ()=>{
-          this.toggleListNotifications()
-        })
+      this.newNotificationListener = EventRegister.on('newNotification', (notif) => {
+        this.addNotification(notif)
+      })
+      this.refreshNotificationsListener = EventRegister.on('refreshNotifications', ()=>{
+        //resend token to server
+        FireBaseNotification.registerFirebaseToken(this.master.firebase_token)
+        this.refreshData()
+      })
+      this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
+        this.revokeToken()
+      })
+      this.openNotifsListener = EventRegister.on('openNotifications', ()=>{
+        this.toggleListNotifications()
+      })
     }
 
     componentWillUnmount(){
@@ -369,46 +369,46 @@ export class UINotification extends Component{
 
 export class FCMinit extends Component{
     constructor(props){
-        super(props)
+      super(props)
 
-        this.master = User.getMaster()
+      this.master = User.getMaster()
 
-        this.notifTimer = null
+      this.notifTimer = null
 
-        this.handleMessages = this.handleMessages.bind(this)
-        this.handleToken = this.handleToken.bind(this)
+      this.handleMessages = this.handleMessages.bind(this)
+      this.handleToken = this.handleToken.bind(this)
     }
 
     componentDidMount(){
-        // iOS: show permission prompt for the first call. later just check permission in user settings
-        // Android: check permission in user settings
-        FCM.requestPermissions()
-            .then(()=>{/*NOTIFICATIONS ENABLED*/})
-            .catch(()=>{
-              Notice.info({title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment"}, false, "notif_block", 10000)
-            })
-        
-        FCM.getFCMToken().then((token) => {
-            //getting firebase notifications token
-            this.handleToken(token)
-        });
-        
-        this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
-            //optional, do some component related stuff
-            this.handleMessages(notif)
-        });
+      // iOS: show permission prompt for the first call. later just check permission in user settings
+      // Android: check permission in user settings
+      FCM.requestPermissions()
+          .then(()=>{/*NOTIFICATIONS ENABLED*/})
+          .catch(()=>{
+            Notice.info({title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment"}, false, "notif_block", 10000)
+          })
 
-        this.refreshToken = FCM.on(FCMEvent.RefreshToken, (token) => {
-        // fcm token may not be available on first load, catch it here 
-            this.handleToken(token)
-        });
-        
-        // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
-        // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
-        // initial notification will be triggered all the time even when open app by icon so send some action identifier when you send notification
-        FCM.getInitialNotification().then(notif => {
-           this.handleMessages(notif)
-        });
+      FCM.getFCMToken().then((token) => {
+          //getting firebase notifications token
+          this.handleToken(token)
+      });
+
+      this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
+          //optional, do some component related stuff
+          this.handleMessages(notif)
+      });
+
+      this.refreshToken = FCM.on(FCMEvent.RefreshToken, (token) => {
+      // fcm token may not be available on first load, catch it here
+          this.handleToken(token)
+      });
+
+      // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
+      // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
+      // initial notification will be triggered all the time even when open app by icon so send some action identifier when you send notification
+      FCM.getInitialNotification().then(notif => {
+         this.handleMessages(notif)
+      });
     }
 
     handleMessages(notif){
@@ -437,25 +437,25 @@ export class FCMinit extends Component{
     }
 
     handleToken(token = ""){
-        if(typeof(token) !== "undefined" && token != null && token != "")
-        {
-          //send token to server
-          let _tmp_master = realmToJson(this.master)
-          _tmp_master.authentication_token = this.master.auth_token
-          _tmp_master.firebase_token = token
-          User.createOrUpdate(_tmp_master.id, _tmp_master, true)
+      if(typeof(token) !== "undefined" && token != null && token != "")
+      {
+        //send token to server
+        let _tmp_master = realmToJson(this.master)
+        _tmp_master.authentication_token = this.master.auth_token
+        _tmp_master.firebase_token = token
+        User.createOrUpdate(_tmp_master.id, _tmp_master, true)
 
-          FireBaseNotification.registerFirebaseToken(token)
-        }
+        FireBaseNotification.registerFirebaseToken(token)
+      }
     }
 
     componentWillUnmount(){
-        // stop listening for events
-        this.notificationListener.remove()
-        this.refreshToken.remove()
+      // stop listening for events
+      this.notificationListener.remove()
+      this.refreshToken.remove()
     }
 
     render(){
-        return null
+      return null
     }
 }
