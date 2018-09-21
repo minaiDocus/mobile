@@ -225,7 +225,7 @@ class ViewState extends Component{
                   </View>
                 </View>
                 <View style={{flex:1, marginTop:10}}>
-                  {this.props.ready && null}
+                  {this.props.updated && null}
                   {details}
                 </View>
              </View>
@@ -313,9 +313,9 @@ class TabNav extends Component{
 
   render(){
     return  <ScrollableTabView tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
-              <ViewState ready={this.props.ready} type={"processed"} icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[]} />
-              <ViewState ready={this.props.ready} type={"processing"} icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
-              <ViewState ready={this.props.ready} type={"errors"} icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"message"}]}/>
+              <ViewState updated={this.props.updated} type={"processed"} icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[]} />
+              <ViewState updated={this.props.updated} type={"processing"} icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
+              <ViewState updated={this.props.updated} type={"errors"} icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"message"}]}/>
             </ScrollableTabView>
   }
 }
@@ -440,11 +440,7 @@ class HomeScreen extends Component {
     this.master = User.getMaster()
     GLOB.navigation = new Navigator(this.props.navigation)
     GLOB.datas = []
-    this.state = {showInfos: false, ready: false}
-
-    appReady = false
-
-    this.readyTimer = null
+    this.state = {showInfos: false, updated: false}
 
     this.refreshDatas = this.refreshDatas.bind(this)
   }
@@ -460,30 +456,7 @@ class HomeScreen extends Component {
   componentDidMount(){
     this.refreshDatas()
     if(GLOB.navigation.getParams("welcome"))
-    {
-      const renderLoading = () => {
-        if(!appReady)
-        {
-          renderToFrontView(  <View style={{flex:1, backgroundColor:'rgba(255,255,255,0.7)', alignItems:'center', justifyContent:'center'}}>
-                                <XImage loader={true} width={90} height={90} />
-                              </View>)
-        }
-      }
-
-      const testReady = ()=>{
-        if(this.state.ready)
-        {
-          appReady = true
-          clearFrontView()
-          setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(this.master)}`), 1000)
-          clearInterval(this.readyTimer)
-          this.readyTimer = null
-        }
-      }
-
-      setTimeout(renderLoading, 200)
-      this.readyTimer = setInterval(testReady, 1000)
-    }
+      setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(this.master)}`), 1000)
   }
 
   refreshDatas(){
@@ -501,7 +474,7 @@ class HomeScreen extends Component {
       {
         GLOB.datas = responses[0].packs || []
       }
-      this.setState({ready: true})
+      this.setState({updated: true})
     })
   }
   
@@ -511,7 +484,7 @@ class HomeScreen extends Component {
                 navigation={GLOB.navigation}>
           <FCM />
           <Header />
-          <TabNav ready={this.state.ready} />
+          <TabNav updated={this.state.updated} />
           <FrontView />
         </Screen>
     );

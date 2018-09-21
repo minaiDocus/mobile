@@ -9,6 +9,9 @@ const _schema = {
 
 
 class _organization extends TempRecord {
+  static isUpdating = false;
+  static updatedAt = 0;
+
   constructor(){
     super(_schema, _name)
   }
@@ -46,6 +49,22 @@ class _organization extends TempRecord {
       
       this.insert(new_all_org)
     }
+  }
+
+  isUpdating(){
+    return _organization.isUpdating
+  }
+
+  updating(val=true){
+    if(val == false)
+      _organization.updatedAt = (new Date().getTime()) * 0.001 //millisecond to second
+    _organization.isUpdating = val
+  }
+
+  needUpdate(){
+    now = (new Date().getTime()) * 0.001 //millisecond to second
+    diffTime = now - _organization.updatedAt
+    return (diffTime >= 600) ? true : false
   }
 }
 

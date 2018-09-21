@@ -521,18 +521,15 @@ class SharingScreen extends Component {
 
     this.setState({ready: false, dataList: []})
     AccountSharing.waitFor([`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`]).then(responses=>{
-        if(responses[0].error)
-        {
-          Notice.danger(responses[0].message, true, responses[0].message)
-        }
-        else
-        {
-          GLOB.datas = responses[0].data_shared || []
-        }
-        this.limit_page = responses[0].nb_pages || 1
-        this.total = responses[0].total || 0
-        this.setState({ready: true, dataList: GLOB.datas})
-      })
+      if(responses[0].error)
+        Notice.danger(responses[0].message, true, responses[0].message)
+      else
+        GLOB.datas = responses[0].data_shared || []
+
+      this.limit_page = responses[0].nb_pages || 1
+      this.total = responses[0].total || 0
+      this.setState({ready: true, dataList: GLOB.datas})
+    })
   }
 
   renderStats(){

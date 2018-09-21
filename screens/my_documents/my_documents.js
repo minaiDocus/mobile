@@ -26,9 +26,14 @@ class Header extends Component{
 
   componentDidMount(){
     const call = ()=>{
-      users = User.getCustomers().sorted("code")
-      this.clients = [{value:0, label:"Tous"}].concat(User.createSelection(users))
-      this.setState({ready: true})
+      if(User.isUpdating()){
+        setTimeout(call, 1000)
+      }
+      else{
+        users = User.getCustomers().sorted("code")
+        this.customers = [{value:0, label:"Tous"}].concat(User.createSelection(users))
+        this.setState({ready: true})
+      }
     }
     setTimeout(call, 1000)
   }
@@ -111,13 +116,13 @@ class Header extends Component{
 
   renderCustomerSelection(){
     let inputSelection = ""
-    if(this.clients.length == 2)
+    if(this.customers.length == 2)
     {
-      inputSelection = <XText style={this.selectStyle.label}>{this.clients[1].label}</XText>
+      inputSelection = <XText style={this.selectStyle.label}>{this.customers[1].label}</XText>
     }
     else
     {
-      inputSelection = <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} Pstyle={{flex:0, height:35}} onChange={(value) => this.handleClientChange(value)}/>
+      inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} Pstyle={{flex:0, height:35}} onChange={(value) => this.handleClientChange(value)}/>
     }
 
     return inputSelection

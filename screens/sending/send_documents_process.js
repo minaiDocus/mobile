@@ -158,22 +158,31 @@ class Body extends Component{
   }
 
   componentDidMount(){
-    FileUploader.waitFor(["refreshFormParams()"]).then(responses => {
-      if(responses[0].error)
-      {
-        Notice.danger(responses[0].message, true, responses[0].message)
+    const loading = () => {
+      if(User.isUpdating()){
+        setTimeout(loading, 1000)
       }
       else
       {
-        users = User.findByListOf("code", responses[0].userList)
+        FileUploader.waitFor(["refreshFormParams()"]).then(responses => {
+          if(responses[0].error)
+          {
+            Notice.danger(responses[0].message, true, responses[0].message)
+          }
+          else
+          {
+            users = User.findByListOf("code", responses[0].userList)
 
-        this.clients = [{value:"", label:"Choisir un client"}].concat(User.createSelection(users))
-        GLOB.file_upload_params = responses[0].data
+            this.customers = [{value:"", label:"Choisir un client"}].concat(User.createSelection(users))
+            GLOB.file_upload_params = responses[0].data
 
-        GLOB.journal = GLOB.period = GLOB.customer = ""
+            GLOB.journal = GLOB.period = GLOB.customer = ""
+          }
+          this.setState({ready: true, period_start: "", period_expired: ""})
+        })
       }
-      this.setState({ready: true, period_start: "", period_expired: ""})
-    })
+    }
+    loading()
   }
 
   refreshWarning(message){
@@ -273,7 +282,7 @@ class Body extends Component{
   const colorBar = (valueProgress < 1)? "blue" : "#C0D838"
 
   return  <View style={{flex:1}}>
-            <SelectInput textInfo='Clients' filterSearch={true} dataOptions={this.clients} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>
+            <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>
             <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
             <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
             {this.state.period_start != "" && 

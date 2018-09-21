@@ -12,29 +12,39 @@ export class OrganizationSwitcher extends Component{
   constructor(props){
     super(props)
 
-    this.state = {showList: false, organization_id: 0}
+    this.state = {ready: false, showList: false, organization_id: 0}
+    this.organizations = []
 
     this.openSelection = this.openSelection.bind(this)
   }
 
   componentWillMount(){
-
     this.changingListener = EventRegister.on("OrganizationSwitched", ()=>{this.setState({showList: false, organization_id: OrganizationSwitcher.organization.id})})
-
-    const organizations = Organization.getAll()
-    this.organizations = []
-    if(organizations.length > 0)
-    {
-      this.organizations = organizations.map((org)=>{
-        if(org.active) OrganizationSwitcher.organization = realmToJson(org)
-        this.setState({organization_id: OrganizationSwitcher.organization.id})
-        return {value: org.id, label: org.name}
-      })
-    }
   }
 
   componentWillUnmount(){
     EventRegister.rm(this.changingListener)
+  }
+
+  componentDidMount(){
+    const loading = () => {
+      if(Organization.isUpdating()){
+        setTimeout(loading, 1000)
+      }
+      else
+      {
+        const organizations = Organization.getAll()
+        if(organizations.length > 0)
+        {
+          this.organizations = organizations.map((org)=>{
+            if(org.active) OrganizationSwitcher.organization = realmToJson(org)
+            return {value: org.id, label: org.name}
+          })
+          this.setState({ready: true, organization_id: OrganizationSwitcher.organization.id})
+        }
+      }
+    }
+    loading()
   }
 
   handleChange(value){
@@ -55,7 +65,7 @@ export class OrganizationSwitcher extends Component{
   }
 
   render(){
-    if(this.organizations.length > 1)
+    if(this.organizations.length > 1 && this.state.ready)
     {
       return  <View style={{flex:1}}>
                 <ImageButton  source={{uri:"organization"}} 

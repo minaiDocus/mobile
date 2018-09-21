@@ -18,6 +18,9 @@ const _schema = {
                 }
 
 class user extends ActiveRecord {
+  static isUpdating = false;
+  static updatedAt = 0;
+
   constructor(){
     //REALM FILE && REALM SCHEMA && REALM NAME
     super(_db_name, _schema, 'User')
@@ -74,6 +77,22 @@ class user extends ActiveRecord {
   deleteCustomers(){
     customers = this.getCustomers()
     this.delete(customers)
+  }
+
+  isUpdating(){
+    return user.isUpdating
+  }
+
+  updating(val=true){
+    if(val == false)
+      user.updatedAt = (new Date().getTime()) * 0.001 //millisecond to second
+    user.isUpdating = val
+  }
+
+  needUpdate(){
+    now = (new Date().getTime()) * 0.001 //millisecond to second
+    diffTime = now - user.updatedAt
+    return (diffTime >= 300) ? true : false
   }
 }
 

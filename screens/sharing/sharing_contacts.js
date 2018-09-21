@@ -455,9 +455,9 @@ class SharingScreen extends Component {
     }
 
     this.setState({ready: false, dataList: []})
-    AccountSharing.waitFor([`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)}`]).then(responses => {
+    AccountSharing.waitFor([`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`]).then(responses => {
       if(responses[0].error)
-        Notice.danger(e.message, true, e.message)
+        Notice.danger(responses[0].message, true, responses[0].message)
       else
         GLOB.datas = responses[0].contacts || []
 
@@ -465,7 +465,6 @@ class SharingScreen extends Component {
       this.total = responses[0].total || 0
       this.setState({ready: true, dataList: GLOB.datas})
     })
-
   }
 
   renderStats(){
