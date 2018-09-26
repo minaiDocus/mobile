@@ -53,13 +53,10 @@ class LoginScreen extends Component {
       }
       
       const user = User.getMaster()
+      SplashScreen.hide()
       if(user.id && responses[0].code != 500)
       {
         this.goToHome()
-      }
-      else
-      {
-        SplashScreen.hide()
       }
     })
   }
@@ -78,7 +75,6 @@ class LoginScreen extends Component {
   }
 
   goToHome(){
-    SplashScreen.hide()
     GLOB.navigation.dismissTo('Home', {welcome: true})
   }
 

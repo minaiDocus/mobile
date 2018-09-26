@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,Modal,TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button} from 'react-native'
+import { StyleSheet, View, ScrollView, Modal, TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button } from 'react-native'
 import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'

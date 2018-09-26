@@ -1,4 +1,4 @@
-import {Requester} from './index'
+import { Requester } from './index'
 import { User, Organization } from '../models'
 
 class remote_auhtentication extends Requester{

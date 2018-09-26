@@ -460,7 +460,7 @@ class HomeScreen extends Component {
   }
 
   refreshDatas(){
-    this.setState({ready: false})
+    this.setState({updated: false})
 
     UsersFetcher.refreshOrganizations()
     UsersFetcher.refreshCustomers()
