@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import SplashScreen from 'react-native-splash-screen'
-import { StyleSheet, TextInput, View, ScrollView, Modal } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 import { Screen, XImage, XText, XTextInput, Navigator, SimpleButton } from '../components'
 
@@ -40,7 +40,7 @@ class LoginScreen extends Component {
       setTimeout(()=>Notice.info(`A bientot !!`), 1000)
     }
 
-    RemoteAuthentication.waitFor(['pingServer()']).then(responses=>{
+    RemoteAuthentication.waitFor(['pingServer()'], responses=>{
       this.setState({ready: true})
       if(responses[0].code != 200)
       {

@@ -43,7 +43,13 @@ const styles = StyleSheet.create({
     flex:1,
     margin:10
   }
-});
+})
+
+function totalVentilation(){
+  let total_ventilation = 0
+  GLOB.analysis.map(a=>{total_ventilation += parseInt(a.ventilation)})
+  return total_ventilation
+}
 
 function loadData(){
   if(typeof(GLOB.dataList) !== "undefined" && GLOB.dataList.length > 0)
@@ -177,11 +183,9 @@ class AnalysisView extends Component{
   async handleChangeSection(value){
     await this.setState({ready: false})
     GLOB.analysis[this.props.index].section = value
-    if(value == '')
-    {
-      GLOB.analysis[this.props.index].axis1 = GLOB.analysis[this.props.index].axis2 = GLOB.analysis[this.props.index].axis3 = ''
+    GLOB.analysis[this.props.index].axis1 = GLOB.analysis[this.props.index].axis2 = GLOB.analysis[this.props.index].axis3 = ''
+    if(value == '') 
       this.handleChangeVentilation(0)
-    }
 
     this.setState({ready: true})
   }
@@ -270,9 +274,7 @@ class ModalComptaAnalysis extends Component{
   constructor(props){
     super(props)
 
-    let total_ventilation = 0
-    GLOB.analysis.map(a=>{total_ventilation += parseInt(a.ventilation)})
-    this.state = {index: 0, ready: false, total_ventilation: total_ventilation}
+    this.state = {index: 0, ready: false, total_ventilation: totalVentilation()}
 
     this.hideModal = this.hideModal.bind(this)
     this.handleIndexChange = this.handleIndexChange.bind(this)
@@ -292,7 +294,7 @@ class ModalComptaAnalysis extends Component{
   componentDidMount(){
     if(GLOB.customer != '' && GLOB.customer != null && GLOB.customer != undefined)
     {
-      FileUploader.waitFor([`getComptaAnalytics(${GLOB.customer})`]).then(responses => {
+      FileUploader.waitFor([`getComptaAnalytics(${GLOB.customer})`], responses => {
         if(responses[0].error)
           this.setAnalytics([])
         else
@@ -308,9 +310,7 @@ class ModalComptaAnalysis extends Component{
   }
 
   incrementVentilation(value){
-    let total_ventilation = 0
-    GLOB.analysis.map(a=>{total_ventilation += parseInt(a.ventilation)})
-    this.setState({total_ventilation: total_ventilation})
+    this.setState({total_ventilation: totalVentilation()})
   }
 
   setAnalytics(data){
@@ -539,7 +539,7 @@ class Body extends Component{
       }
       else
       {
-        FileUploader.waitFor(["refreshFormUsers()"]).then(responses => {
+        FileUploader.waitFor(["refreshFormUsers()"], responses => {
           if(responses[0].error)
           {
             Notice.danger(responses[0].message, true, responses[0].message)
@@ -591,7 +591,7 @@ class Body extends Component{
 
     if(value != "")
     {
-      FileUploader.waitFor([`refreshFormParams(${value})`]).then(responses => {
+      FileUploader.waitFor([`refreshFormParams(${value})`], responses => {
         const file_upload_params = responses[0].data
         if(file_upload_params != undefined && file_upload_params != "" && file_upload_params != null)
         {
@@ -676,10 +676,7 @@ class Body extends Component{
   renderForm(){
   const valueProgress = this.props.progress
   const colorBar = (valueProgress < 1)? "blue" : "#C0D838"
-
-  let total_ventilation = 0
-  GLOB.analysis.map(a=>{total_ventilation += parseInt(a.ventilation)})
-  const analysis_message = (total_ventilation == 0)? 'Compta analytique (ajouter)' : 'Compta analytique (modifier)'
+  const analysis_message = (totalVentilation() == 0)? 'Compta analytique (ajouter)' : 'Compta analytique (modifier)'
 
   return  <View style={{flex:1}}>
             <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>

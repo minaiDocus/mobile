@@ -1,7 +1,6 @@
 import { ActiveRecord } from './index'
 import { ImageStore } from 'react-native'
 import fetch_blob from 'react-native-fetch-blob'
-import RNFS from 'react-native-fs'
 
 const _db_name = "documents_00"
 const _schema = {
@@ -25,14 +24,15 @@ class _document extends ActiveRecord {
   constructor(){
     //REALM FILE && REALM SCHEMA && REALM NAME
     super(_db_name, _schema, 'Documents')
+    this.RNFS = fetch_blob.fs
   }
 
   createBase64File(doc, success, faillure){
     const fname = doc.path.toString().split("/").slice(-1)[0]
     const dir = doc.path.replace("file://", '').replace(fname, '')
-    RNFS.mkdir(dir)
+    this.RNFS.mkdir(dir)
     .finally((r)=>{
-      RNFS.writeFile(doc.path.replace("file://", ''), doc.data_blob, 'base64')
+      this.RNFS.writeFile(doc.path.replace("file://", ''), doc.data_blob, 'base64')
       .then((r)=> success(doc.path))
       .catch((error) => {
         faillure(JSON.stringify(error))
@@ -42,7 +42,7 @@ class _document extends ActiveRecord {
 
   clearDocsFileCache(){
     this.getAll().map(doc => {
-      RNFS.unlink(doc.path.replace("file://", '')).catch(e=>{})
+      this.RNFS.unlink(doc.path.replace("file://", '')).catch(e=>{})
     })
   }
 
@@ -89,13 +89,6 @@ class _document extends ActiveRecord {
   }
 
   addDocs(lists){
-    // console.log(dirs.DocumentDir) // /data/user/0/com.bigjpg/files
-    // console.log(dirs.CacheDir)    // /data/user/0/com.bigjpg/cache
-    // console.log(dirs.DCIMDir)     // /storage/emulated/0/DCIM
-    // console.log(dirs.DownloadDir) // /storage/emulated/0/Download
-    // console.log(dirs.PictureDir)  // /storage/emulated/0/Pictures
-    // const dirs = fetch_blob.fs.dirs
-    // const file_path = dirs.CacheDir //recreate file to cache
     let counter = 0
 
     const getBase64 = (img)=>{
@@ -177,7 +170,7 @@ class _document extends ActiveRecord {
       const doc = this.find(`id = "${doc_id}"`)[0] || null
       if(doc)
       {
-        RNFS.unlink(doc.path.toString().replace("file://", '')).catch(e=>{})
+        this.RNFS.unlink(doc.path.replace("file://", '')).catch(e=>{})
         this.delete(doc)
       }
     })

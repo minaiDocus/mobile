@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Picker, View, Platform, Modal, TouchableOpacity, StyleSheet, ScrollView} from 'react-native'
+import {Picker, View, Platform, Modal, TouchableOpacity, StyleSheet, FlatList} from 'react-native'
 import {ImageButton, AnimatedBox, XImage, XText, XTextInput} from '../index'
 
 class ModalSelect extends Component{
@@ -19,6 +19,8 @@ class ModalSelect extends Component{
     this.renderSearch = this.renderSearch.bind(this)
     this.handleFilterChange = this.handleFilterChange.bind(this)
     this.filterLock = this.filterLock.bind(this)
+
+    this.generateStyles()
   }
 
   componentWillReceiveProps(nextProps){
@@ -74,13 +76,20 @@ class ModalSelect extends Component{
   }
 
   changeItem(itemValue, dismiss = false){
-    this.setState({selectedItem: itemValue})
     let valueText = ''
-    this.state.datas.map((val, key)=>{
-      if(val.value == itemValue){valueText=val.label}
+    this.state.datas.some((val, key)=>{
+      if(val.value == itemValue)
+        return valueText = val.label
     })
-    this.props.changeItem(itemValue, valueText)
-    if(dismiss) this.dismiss()
+    if(dismiss)
+    {
+      this.dismiss(true, itemValue, valueText)
+    }
+    else
+    {
+      this.props.changeItem(itemValue, valueText)
+      this.setState({selectedItem: itemValue})
+    }
   }
 
   renderSearch(){
@@ -122,17 +131,20 @@ class ModalSelect extends Component{
           borderBottomWidth:1
         }
       })
-      const renderItems = this.state.datas.map((dt, index)=>{
+      const renderItems = (dt)=>{
         let styleItem = { color:'#707070' }
         if(this.state.selectedItem == dt.value) styleItem = { paddingLeft:5, backgroundColor: '#707070', color:'#fff', fontWeight:'bold' }
 
-        return <TouchableOpacity key={index} style={boxstyle.touchable} onPress={()=>this.changeItem(dt.value, true)}>
+        return  <TouchableOpacity style={boxstyle.touchable} onPress={()=>this.changeItem(dt.value, true)}>
                   <XText style={styleItem}>{dt.label}</XText>
-               </TouchableOpacity>
-      })
-      return <ScrollView style={boxstyle.container}>
-               {renderItems}
-             </ScrollView>
+                </TouchableOpacity>
+      }
+
+      return <FlatList style={boxstyle.container}
+                       data={this.state.datas}
+                       keyExtractor={(item, index) => index}
+                       renderItem={({item})=> renderItems(item)}
+             />
     }
     else
     {
@@ -145,12 +157,16 @@ class ModalSelect extends Component{
     }
   }
 
-  dismiss(){
-    this.refs.animatedSelect.leave(this.props.dismiss)
+  dismiss(hasChanged=false, itemValue='', valueText=''){
+    this.refs.animatedSelect.leave(() => {
+      if(hasChanged)
+        this.props.changeItem(itemValue, valueText)
+      this.props.dismiss()
+    })
   }
 
-  render(){
-    const modal = StyleSheet.create({
+  generateStyles(){
+    this.modal = StyleSheet.create({
       container: {
         flex:1,
         flexDirection:'column',
@@ -194,32 +210,35 @@ class ModalSelect extends Component{
         borderColor:'#707070',
       }
     })
+  }
+
+  render(){
     return  <Modal transparent={true}
                    animationType="fade" 
                    visible={true}
                    supportedOrientations={['portrait', 'landscape']}
                    onRequestClose={()=>{ this.dismiss() }}
             >
-              <View style={modal.container}>
+              <View style={this.modal.container}>
                 <TouchableOpacity onPress={()=>this.dismiss()} style={{flex:1}} />
                 <AnimatedBox ref="animatedSelect" type='UpSlide' style={{flex:1}} durationIn={300} durationOut={200}>
-                  <View style={modal.head}>
+                  <View style={this.modal.head}>
                     <View style={{flex:2}}>
                       {this.props.filterSearch && this.renderSearch()}
                     </View>
                     <View style={{flex:1, alignItems: 'flex-end'}}>
-                      <ImageButton source={{uri:'validate'}} onPress={()=>this.dismiss()} Pstyle={modal.touchable} Istyle={{flex:1, width:20}} />
+                      <ImageButton source={{uri:'validate'}} onPress={()=>this.dismiss()} Pstyle={this.modal.touchable} Istyle={{flex:1, width:20}} />
                     </View>
                   </View>
                   
                   { 
                     this.props.textInfo != '' && this.props.textInfo != null && 
-                    <View style={modal.infos}>
+                    <View style={this.modal.infos}>
                       <XText>{this.props.textInfo}</XText>
                     </View>
                   }
 
-                  <View style={modal.body}>
+                  <View style={this.modal.body}>
                     {this.renderContent()}
                   </View>
                 </AnimatedBox>
@@ -326,9 +345,7 @@ export class SelectInput extends Component{
     await this.setState({selectedItem: itemValue, valueText: valueText})
     this.getCoordAnimation()
     if(this.props.onChange)
-    {
-      this.props.onChange(itemValue);
-    }
+      this.props.onChange(itemValue)
   }
 
   showModal(){
@@ -393,7 +410,7 @@ export class SelectInput extends Component{
                                                       dismiss={this.hideModal} />
               }
               {
-                this.invisible == false && 
+                this.invisible == false &&
                 <View style={{flex:1}}>
                   <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center'}} onPress={this.showModal}>
                     <View style={selectStyle} onLayout={this.getWidthLayout}> 

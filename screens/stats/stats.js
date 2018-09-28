@@ -362,7 +362,7 @@ class StatsScreen extends Component {
 
     this.setState({ready: false, dataList: []})
 
-    PaperProcess.waitFor([`getStats(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`]).then(responses=>{
+    PaperProcess.waitFor([`getStats(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`], responses=>{
       if(responses[0].error)
       {
         Notice.danger(responses[0].message, true, responses[0].message)
@@ -391,7 +391,8 @@ class StatsScreen extends Component {
                     </TouchableOpacity>
                   </View>
                 }
-                <LineList datas={this.state.dataList} 
+                <LineList datas={this.state.dataList}
+                          waitingData={!this.state.ready}
                           renderItems={(data) => <BoxStat data={data} /> } />
                 <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
              </ScrollView>
@@ -402,8 +403,7 @@ class StatsScreen extends Component {
           <Screen style={{flex: 1, flexDirection: 'column',}}
                   navigation={GLOB.navigation}>
             <Header dataCount={this.total} onFilter={()=>this.refreshDatas()}/>
-              {this.state.ready && this.renderStats()}
-              {!this.state.ready && <XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} />}
+              { this.renderStats() }
               <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>
       );

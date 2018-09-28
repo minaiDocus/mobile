@@ -3,7 +3,7 @@ import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import {Screen,AnimatedBox,XImage,XText,LineList,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm} from '../../../components'
+import {Screen,AnimatedBox,XImage,XText,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm} from '../../../components'
 
 import {AccountSharing} from "../../../requests"
 
@@ -50,7 +50,7 @@ class ModalSharing extends Component{
     {
       const call = ()=>{
                           Notice.info(message)
-                          AccountSharing.waitFor([url]).then(responses=>{
+                          AccountSharing.waitFor([url], responses=>{
                               if(responses[0].error)
                               {
                                 Notice.danger(responses[0].message, true, responses[0].message)
@@ -111,7 +111,7 @@ class ViewState extends Component{
 
   deleteSharedDoc(id_doc, type='admin'){
     Notice.info("Suppression en cours ...")
-    AccountSharing.waitFor([`deleteSharedDoc(${id_doc}, "${type}")`]).then(responses=>{
+    AccountSharing.waitFor([`deleteSharedDoc(${id_doc}, "${type}")`], responses=>{
       if(responses[0].error)
       {
         Notice.danger(responses[0].message, true, responses[0].message)
@@ -369,7 +369,7 @@ class SharingScreen extends Component {
 
   refreshDatas(){
     this.setState({ready: false})
-    AccountSharing.waitFor(['getSharedDocsCustomers()']).then(responses=>{
+    AccountSharing.waitFor(['getSharedDocsCustomers()'], responses=>{
       if(responses[0].error){
         Notice.danger(e.message, true, e.message)
       }

@@ -5,6 +5,7 @@ import { SimpleButton, ImageButton, XImage, XText } from './index'
 
 import { EventRegister } from 'react-native-event-listeners'
 import RNFetchBlob from 'react-native-fetch-blob'
+import Exif from 'react-native-exif'
 
 export class Cropper {
   static cropListener = null;
@@ -99,7 +100,8 @@ export class CropperView extends Component{
     this.initializePAN = this.initializePAN.bind(this)
     this.processCropping = this.processCropping.bind(this)
     this.beforeFinalization = this.beforeFinalization.bind(this)
-    this.createFinaleImage = this.createFinaleImage.bind(this)
+    this.beforeFinalImageCreation = this.beforeFinalImageCreation.bind(this)
+    this.createFinalImage = this.createFinalImage.bind(this)
     this.moveXY = this.moveXY.bind(this)
     this.scaleTopLeft = this.scaleTopLeft.bind(this)
     this.scaleTopRight = this.scaleTopRight.bind(this)
@@ -153,6 +155,7 @@ export class CropperView extends Component{
     this.remake = false
 
     this.original_image = options.img
+    this.image_orientation = 0
 
     this.optionH = 40
     
@@ -178,10 +181,15 @@ export class CropperView extends Component{
     
     this.setState({open: true, ready: false})
 
+    this.first_result = this.second_result = ''
+
     Image.getSize(this.source,
       (width, height)=>{
         this.original_image.width = width
         this.original_image.height = height
+        Exif.getExif(this.source).then(exif=>{
+          this.image_orientation = exif.Orientation
+        }).catch(e=>{})
         this.setState({ready: true, url_output: null, remake: false})
       },
       (_faillure)=>{
@@ -520,11 +528,17 @@ export class CropperView extends Component{
     return {x: Yorg, y: (this.original_image.width - Xend), w: heightOrg, h: widthOrg}
   }
 
+  translatePlan(Xorg, Yorg, widthOrg, heightOrg){
+    const Xend = Xorg + widthOrg
+    const Yend = Yorg + heightOrg
+    return {x: (this.original_image.width - Xend), y: (this.original_image.height - Yend), w: widthOrg, h: heightOrg}
+  }
+
   remakeCrop(){
-    RNFetchBlob.fs.unlink(this.state.url_output)
-                  .then(() => {})
-                  .catch((err) => {})
+    RNFetchBlob.fs.unlink(this.state.url_output).then(() => {}).catch((err) => {})
     this.remake = true
+    this.first_result = ''
+    this.second_result = ''
     this.setState({url_output: null})
   }
 
@@ -537,7 +551,16 @@ export class CropperView extends Component{
     let cropWidth = Math.round( (this.state.widthCrop * this.original_image.width) / this.working_image.width )
     let cropHeight = Math.round( (this.state.heightCrop * this.original_image.height) / this.working_image.height )
 
-    if(this.cropWithRotation)
+    if(this.first_result != '')
+    {
+      let {x, y , w, h} = this.translatePlan(cropX, cropY, cropWidth, cropHeight)
+      cropX = x
+      cropY= y
+      cropWidth = w
+      cropHeight = h
+    }
+
+    if(this.cropWithRotation && ![3].includes(this.image_orientation))
     {
       let {x, y, w, h} = this.rotatePlan(cropX, cropY, cropWidth, cropHeight)
       cropX = x
@@ -582,9 +605,7 @@ export class CropperView extends Component{
           if(test1 != test2 || !test3)
           {
             //deleting unused image
-            RNFetchBlob.fs.unlink(_url)
-                          .then(() => {})
-                          .catch((err) => {})
+            RNFetchBlob.fs.unlink(_url).then(() => {}).catch((err) => {})
 
             this.cropWithRotation = !this.cropWithRotation
             this.checkRotation = false
@@ -592,19 +613,43 @@ export class CropperView extends Component{
           }
           else
           {
-            this.createFinaleImage(_url, width, height)
+            this.beforeFinalImageCreation(_url, width, height)
           }
         },
-        (_faillure)=>{ this.createFinaleImage(_url, width, height) }
+        (_faillure)=>{ this.beforeFinalImageCreation(_url, width, height) }
       )
     }
     else
     {
-      this.createFinaleImage(_url, width, height)
+      this.beforeFinalImageCreation(_url, width, height)
     }
   }
 
-  createFinaleImage(_url, width, height){
+  beforeFinalImageCreation(_url, width, height){
+    if(this.first_result == '')
+    {
+      this.first_result = _url
+      this.processCropping()
+    }
+    else
+    {
+      this.second_result = _url
+      if([8,3].includes(this.image_orientation))
+      {
+        //orientation: 8, 3
+        RNFetchBlob.fs.unlink(this.first_result).then(() => {}).catch((err) => {})
+        this.createFinalImage(this.second_result, width, height)
+      }
+      else
+      {
+        //orientation : 0, 6, 1, 7, 4, 5, 2
+        RNFetchBlob.fs.unlink(this.second_result).then(() => {}).catch((err) => {})
+        this.createFinalImage(this.first_result, width, height)
+      }
+    }
+  }
+
+  createFinalImage(_url, width, height){
     this.setState({processing: false})
     const filename = `cr_${this.original_image.path.split("/").slice(-1)[0]}`
 

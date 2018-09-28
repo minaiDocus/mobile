@@ -24,6 +24,17 @@ global.Notice = Notice
 global.CronTask = CronTask
 global.Orientation = "portrait"
 
+//Function for truncating text
+global.truncate = (text, len, next='...')=>{
+  result = text
+  if(result && result.length > len)
+  {
+    result = result.substring(0, len)
+    result = result + next
+  }
+  return result
+}
+
 //Function for adding Components to the Front View Modal
 global.renderToFrontView = (children, animation="fade", closeCallback=null) => {
   params = { children: children, animation: animation, closeCallback: closeCallback }

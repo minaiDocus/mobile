@@ -147,7 +147,7 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-fs')
+    compile project(':react-native-exif')
     compile project(':react-native-fcm')
     compile project(':react-native-image-crop-picker')
     

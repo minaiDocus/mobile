@@ -256,7 +256,7 @@ class ImgBox extends Component{
                   {
                     this.state.options == false && message != '' &&
                     <View style={this.styles.options}>
-                      <XText style={this.styles.textInfo}>{message}</XText>
+                      <XText style={this.styles.textInfo}>{truncate(message, 20)}</XText>
                     </View>
                   }
                   { this.state.options == true &&
@@ -274,7 +274,7 @@ class ImgBox extends Component{
 class Header extends Component{
   render(){
     return  <View style={styles.minicontainer}>
-                <BoxButton onPress={this.props.takePhoto} source={{uri:"camera_icon"}} title="Prendre photo" />
+                <BoxButton onPress={this.props.takePicture} source={{uri:"camera_icon"}} title="Prendre photo" />
                 <BoxButton onPress={this.props.openRoll} source={{uri:"folder"}} title="Galerie photos" />
             </View>
   }
@@ -376,8 +376,7 @@ class SendScreen extends Component {
 
   async renderImg(_img, index=null, launch_crop=false){
     let img = []
-    this.setState({ ready: false })
-  
+
     _img.forEach((i)=>{
         if(typeof(i.filename) !== "undefined" && i.filename != null)
           id_64 = base64.encode(i.filename).toString()
@@ -419,7 +418,7 @@ class SendScreen extends Component {
       index = GLOB.documents.length - 1
     }
 
-    await this.setState({ready: true, dataList: GLOB.documents})
+    await this.setState({dataList: GLOB.documents})
 
     if(launch_crop)
       setTimeout(()=>this.openCrop(index), 200)
@@ -493,41 +492,23 @@ class SendScreen extends Component {
   }
 
   render() {
-      if(this.state.ready)
-      {
-        if(GLOB.documents.length > 0)
-        {
-          var embedContent =  <ScrollView style={{flex:1, padding:3}}>
-                                  <XText style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{GLOB.documents.length} : Document(s)</XText>
-                                  <BoxList datas={this.state.dataList}
-                                           elementWidth={130} 
-                                           renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } />
-                              </ScrollView>
-        }
-        else
-        {
-          var embedContent =  <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
-                                <View style={this.styles.boxPicture}>
-                                  <XText style={{padding:10}}>Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ...</XText>
-                                </View>
-                              </View>
-
-        }
-      }
-      else
-      {
-        var embedContent = <View style={{flex:1}}><XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} /></View>
-      }
-
       return (
         <Screen style={this.styles.container}
                 navigation={GLOB.navigation}>
-          <Header takePhoto={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
+          <Header takePicture={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
           {this.state.zoomActive && <BoxZoom  datas={this.state.dataList} 
                                               cropElement={(index)=>this.openCrop(index)}
                                               deleteElement={this.deleteElement} 
                                               hide={this.toggleZoom} />}
-          { embedContent }
+          <ScrollView style={{flex:1, padding:3}}>
+              <BoxList datas={this.state.dataList}
+                       title={`${this.state.dataList.length} : Document(s)`}
+                       waitingData={!this.state.ready}
+                       elementWidth={130} 
+                       renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } 
+                       noItemText="Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ..."
+                       />
+          </ScrollView>
           <View style={styles.minicontainer}>
             <SimpleButton Pstyle={this.styles.button} onPress={()=>this.sendList()} title="Suivant >>" />
           </View>

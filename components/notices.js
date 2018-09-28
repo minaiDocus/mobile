@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableHighlight, Alert } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, TouchableHighlight, Alert } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import { AnimatedBox, XText } from './index'
 

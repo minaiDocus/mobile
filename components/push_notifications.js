@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, Modal, ScrollView, TouchableOpacity} from 'react-native'
+import { StyleSheet, View, TouchableOpacity} from 'react-native'
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
 import { EventRegister } from 'react-native-event-listeners'
 
@@ -258,7 +258,7 @@ export class UINotification extends Component{
     }
 
     refreshData(){
-      FireBaseNotification.waitFor(['getNotifications()']).then(responses=>{
+      FireBaseNotification.waitFor(['getNotifications()'], responses=>{
         if(responses[0].error)
         {
           Notice.danger(responses[0].message, true, responses[0].message)

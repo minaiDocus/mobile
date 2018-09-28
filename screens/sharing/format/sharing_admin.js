@@ -45,7 +45,7 @@ class Header extends Component{
   }
 
   filterAccount(text=""){
-    AccountSharing.waitFor([`getListCustomers("${text}")`]).then(responses=>{
+    AccountSharing.waitFor([`getListCustomers("${text}")`], responses=>{
       if(responses[0].error)
       {
         Notice.danger(responses[0].message, true, responses[0].message)
@@ -58,7 +58,7 @@ class Header extends Component{
   }
 
   filterCollaborator(text=""){
-    AccountSharing.waitFor([`getListCollaborators("${text}")`]).then(responses=>{
+    AccountSharing.waitFor([`getListCollaborators("${text}")`], responses=>{
         if(responses[0].error)
         {
           Notice.danger(responses[0].message, true, responses[0].message)
@@ -87,7 +87,7 @@ class Header extends Component{
                         {
                           Notice.info("Partage en cours ...")
                           this.setState({loading_add: true})
-                          AccountSharing.waitFor([`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`]).then(responses=>{
+                          AccountSharing.waitFor([`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`], responses=>{
                             if(responses[0].error)
                             {
                               Notice.danger(responses[0].message, true, responses[0].message)
@@ -253,7 +253,7 @@ class BoxStat extends Component{
 
   deleteSharedDoc(id_doc){
     Notice.info("Suppression de partage en cours ...")
-    AccountSharing.waitFor([`deleteSharedDoc(${id_doc})`]).then(responses=>{
+    AccountSharing.waitFor([`deleteSharedDoc(${id_doc})`], responses=>{
       if(responses[0].error)
       {
         Notice.danger(responses[0].message, true, responses[0].message)
@@ -269,7 +269,7 @@ class BoxStat extends Component{
 
   acceptSharedDoc(id_doc){
     Notice.info("Partage en cours ...")
-    AccountSharing.waitFor([`acceptSharedDoc(${id_doc})`]).then(responses=>{
+    AccountSharing.waitFor([`acceptSharedDoc(${id_doc})`], responses=>{
       if(responses[0].error)
       {
         Notice.danger(responses[0].message, true, responses[0].message)
@@ -520,7 +520,7 @@ class SharingScreen extends Component {
     }
 
     this.setState({ready: false, dataList: []})
-    AccountSharing.waitFor([`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`]).then(responses=>{
+    AccountSharing.waitFor([`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`], responses=>{
       if(responses[0].error)
         Notice.danger(responses[0].message, true, responses[0].message)
       else
@@ -545,6 +545,7 @@ class SharingScreen extends Component {
                   </View>
                 }
                 <LineList datas={this.state.dataList}
+                          waitingData={!this.state.ready}
                           title={`Dossiers partagés (${this.total})`}
                           renderItems={(data) => <BoxStat data={data} deleteSharedDoc={this.deleteSharedDoc}/> } />
                 <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
@@ -556,8 +557,7 @@ class SharingScreen extends Component {
           <Screen style={{flex: 1, flexDirection: 'column',}}
                   navigation={GLOB.navigation}>
             <Header onFilter={()=>this.refreshDatas(true)}/>
-              {this.state.ready && this.renderStats()}
-              {!this.state.ready && <View style={{flex:1}}><XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} /></View>}
+              { this.renderStats() }
             <SimpleButton title='Contacts >>' Pstyle={{flex:0, maxHeight:30}} onPress={()=>GLOB.navigation.goTo("SharingContacts")} />
             <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>

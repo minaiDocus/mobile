@@ -21,28 +21,26 @@ export class Requester {
     })
   }
 
-  waitFor(func=[]){
+  async waitFor(func=[], callback){
     let slf = this
-    return new Promise(resolve => {
-      let responses = []
-      let promises = []
-      let i = 0
+    let responses = []
+    let promises = []
+    let i = 0
 
-      const handleResponses = (r)=>{
-        responses = responses.concat(r)
-        i++
-        if(i < func.length)
-          launchRequests(func[i])
-        else
-          resolve(responses)
-      }
+    const handleResponses = (r)=>{
+      responses = responses.concat(r)
+      i++
+      if(i < func.length)
+        launchRequests(func[i])
+      else
+        callback(responses)
+    }
 
-      const launchRequests = (f)=>{
-        promises[i] = eval('slf.'+f)
-        promises[i].then(r => handleResponses(r)).catch(r => handleResponses(r))
-      }
+    const launchRequests = (f)=>{
+      promises[i] = eval('slf.'+f)
+      promises[i].then(r => handleResponses(r)).catch(r => handleResponses(r))
+    }
 
-      launchRequests(func[0])
-    })
+    launchRequests(func[0])
   }
 }

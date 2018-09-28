@@ -65,7 +65,7 @@ class ContactForm extends Component{
     {
       const call = ()=>{
                           Notice.info(flash)
-                          AccountSharing.waitFor([url]).then(responses=>{
+                          AccountSharing.waitFor([url], responses=>{
                             if(responses[0].error)
                             {
                               Notice.danger(responses[0].message, true, responses[0].message)
@@ -209,7 +209,7 @@ class BoxStat extends Component{
 
   deleteSharedContact(_id){
     Notice.info("Suppression de contact en cours ...")
-    AccountSharing.waitFor([`deleteSharedContact(${_id})`]).then(responses=>{
+    AccountSharing.waitFor([`deleteSharedContact(${_id})`], responses=>{
       if(responses[0].error)
       {
         Notice.danger(responses[0].message, true, responses[0].message)
@@ -455,7 +455,7 @@ class SharingScreen extends Component {
     }
 
     this.setState({ready: false, dataList: []})
-    AccountSharing.waitFor([`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`]).then(responses => {
+    AccountSharing.waitFor([`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`], responses => {
       if(responses[0].error)
         Notice.danger(responses[0].message, true, responses[0].message)
       else
@@ -480,6 +480,7 @@ class SharingScreen extends Component {
                   </View>
                 }
                 <LineList datas={this.state.dataList}
+                          waitingData={!this.state.ready}
                           title={`Contacts (${this.total})`}
                           renderItems={(data) => <BoxStat data={data} deleteSharedDoc={this.deleteSharedDoc}/> } />
                 <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
@@ -491,8 +492,7 @@ class SharingScreen extends Component {
           <Screen style={{flex: 1, flexDirection: 'column',}}
                   navigation={GLOB.navigation}>
             <Header onFilter={()=>this.refreshDatas(true)}/>
-              {this.state.ready && this.renderStats()}
-              {!this.state.ready && <View style={{flex:1}}><XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} /></View>}
+              { this.renderStats() }
             <SimpleButton title='<< Dossiers partagés' Pstyle={{flex:0, maxHeight:30}} onPress={()=>GLOB.navigation.goBack()} />
             <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>

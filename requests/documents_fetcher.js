@@ -38,8 +38,8 @@ class documents_fetcher extends Requester{
     return this.requestURI("api/mobile/data_loader/load_documents_processed", {method: 'POST', params:{id: pack_id, page: page, filter: text}})
   }
 
-  getDocumentsProcessing(pack_id){
-    return this.requestURI("api/mobile/data_loader/load_documents_processing", {method: 'POST', params:{id: pack_id}})
+  getDocumentsProcessing(pack_id, page=1){
+    return this.requestURI("api/mobile/data_loader/load_documents_processing", {method: 'POST', params:{id: pack_id, page: page}})
   }
 
 

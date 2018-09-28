@@ -1,7 +1,50 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View } from 'react-native'
-import { XText } from '../index'
+import { XText, XImage } from '../index'
+
+class Loader extends Component{
+  constructor(props){
+    super(props)
+    this.state = {refresh: true}
+    this.forceUnmount = false
+    this.unmoutComponent = this.unmountComponent.bind(this)
+  }
+
+  componentDidUpdate(){
+    this.forceUnmount = false
+  }
+
+  unmountComponent(){
+    this.forceUnmount = true
+    this.setState({refresh: true})
+  }
+
+  render(){
+    const loaderStyle = {
+                          flex:1,
+                          top:0,
+                          left:0,
+                          right:0,
+                          bottom:0,
+                          borderRadius:10,
+                          backgroundColor: "rgba(255,255,255,0.6)",
+                          position: 'absolute',
+                          flexDirection:'column',
+                          alignItems:'center'
+                        }
+    if(this.state.refresh && !this.forceUnmount)
+    {
+      return  <View style={loaderStyle}>
+                <XImage ref='loader' loader={true} width={70} height={70} style={{alignSelf:'center', marginVertical:10}} />
+              </View>
+    }
+    else
+    {
+      return null;
+    }
+  }
+}
 
 export class BoxList extends Component{
   static propTypes = {
@@ -16,10 +59,27 @@ export class BoxList extends Component{
     this.stylesPlus = this.props.containerStyle || {}
 
     this.state = {dimensionReady: false}
+    this.itemCount = 0
+
     this.renderItems = this.renderItems.bind(this)
     this.onLayout = this.onLayout.bind(this)
+    this.removeLoader = this.removeLoader.bind(this)
 
     this.generateStyles()
+  }
+
+  componentDidMount(){
+    this.removeLoader()
+  }
+
+  componentDidUpdate(){
+    this.removeLoader()
+  }
+
+  removeLoader(){
+    this.itemCount = 0
+    if(this.refs.loader && !this.props.waitingData)
+      setTimeout(()=>{this.refs.loader.unmountComponent()}, 500)
   }
 
   onLayout(event){
@@ -40,14 +100,16 @@ export class BoxList extends Component{
 
                       elevation: 7, //Android Shadow
 
-                      shadowColor: '#000',                    //===
+                      shadowColor: '#000',                  //===
                       shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
                       shadowOpacity: 0.8,                   //===
                       shadowRadius: 2,                      //===
 
                       backgroundColor:"#E9E9E7",
                       margin:10,
-                      padding:5
+                      padding:5,
+                      minWidth: 80,
+                      minHeight: 90
                     },
         children: {
                     flex:0,
@@ -64,9 +126,21 @@ export class BoxList extends Component{
 
   render(){
     this.datas = this.props.datas || []
-    return <View style={[this.styles.container, this.stylesPlus]} onLayout={this.onLayout} >
-              {this.state.dimensionReady && this.datas.map((item, index) => {return this.renderItems(item, index)}) }
-           </View> 
+    this.itemCount = this.datas.length
+
+    let content = <View />
+    if(this.props.waitingData || this.itemCount > 0)
+      content = <Loader ref='loader' />
+    else if(this.itemCount <= 0)
+      content = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
+
+    return  <View style={{flex: 1}}>
+              {this.props.title != '' && <XText style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{this.props.title}</XText>}
+              <View style={[this.styles.container, this.stylesPlus]} onLayout={this.onLayout} >
+                {this.itemCount > 0 && this.state.dimensionReady && this.datas.map((item, index) => {return this.renderItems(item, index)})}
+                { content }
+              </View>
+            </View>
   }
 }
 
@@ -80,7 +154,22 @@ export class LineList extends Component{
     this.childStylePlus = this.props.childrenStyle || {}
     this.stylesPlus = this.props.containerStyle || {}
     this.renderItems = this.renderItems.bind(this)
+    this.removeLoader = this.removeLoader.bind(this)
     this.generateStyles()
+  }
+
+  componentDidMount(){
+    this.removeLoader()
+  }
+
+  componentDidUpdate(){
+    this.removeLoader()
+  }
+
+  removeLoader(){
+    this.itemCount = 0
+    if(this.refs.loader && !this.props.waitingData)
+      setTimeout(()=>{this.refs.loader.unmountComponent()}, 500)
   }
 
   generateStyles(){
@@ -99,36 +188,33 @@ export class LineList extends Component{
 
                       backgroundColor:"#E9E9E7",
                       margin:10,
-                      padding:5
+                      padding:5,
+                      minWidth: 80,
+                      minHeight: 90
                   },
-        children: {
-                    flex:1,
-                    flexDirection:'column',
-                    borderBottomWidth:1,
-                    borderColor:'#D6D6D6'
-                  },
-        title:{
-                flex:1,
-                marginTop:10,
-                textAlign:'center',
-                fontSize:16,
-                fontWeight:"bold"
-              }
     })
   }
 
   renderItems(item, key){
     const colorStriped = ((key % 2) == 0)? "#F2F2F2" : "#FFF";
-    return <View key={key} style={[this.styles.chindren, this.stylesPlus, {backgroundColor:colorStriped}]}>{this.props.renderItems(item, key)}</View>
+    return <View key={key} style={[this.childStylePlus, {backgroundColor:colorStriped}]}>{this.props.renderItems(item, key)}</View>
   }
 
   render(){
     this.datas = this.props.datas || []
+    this.itemCount = this.datas.length
+
+    let content = <View />
+    if(this.props.waitingData || this.itemCount > 0)
+      content = <Loader ref='loader' />
+    else if(this.itemCount <= 0)
+      content = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
+
     return <View style={{flex:1}}>
-                {this.props.title && <XText style={this.styles.title}>{this.props.title}</XText>}
+                {this.props.title != '' && <XText style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{this.props.title}</XText>}
                 <View style={[this.styles.container, this.stylesPlus]}>
-                  {this.datas.length > 0 && this.datas.map((item, index) => {return this.renderItems(item, index)})}
-                  {this.datas.length <=0 && <XText style={{padding:10, fontSize:16}}>Aucun résultat trouvé</XText>}
+                  {this.itemCount > 0 && this.datas.map((item, index) => {return this.renderItems(item, index)})}
+                  { content }
                </View> 
            </View>
   }

@@ -24,7 +24,8 @@ target 'iDocus' do
 
     pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
 
-    pod 'RNFS', :path => '../node_modules/react-native-fs'
+
+    pod 'react-native-exif', :path => '../node_modules/react-native-exif'
 
   end
 

@@ -216,12 +216,7 @@ class DocumentsScreen extends Component {
     this.refreshDatas = this.refreshDatas.bind(this)
   }
 
-  //For refreshing Account list
   componentDidMount(){
-    // UsersFetcher.waitFor(['refreshCustomers()']).then(responses=>{
-    //     responses.map(r=>{if(r.error)Notice.danger(r.message, true, r.message)})
-    //     this.refreshDatas()
-    // })
     this.refreshDatas()
   }
 
@@ -237,7 +232,7 @@ class DocumentsScreen extends Component {
 
     this.setState({ready: false, loadingFilter: true})
 
-    DocumentsFetcher.waitFor([`getPacks(${this.page}, "${GLOB.filterText}", "${GLOB.clientId}")`]).then(responses=>{
+    DocumentsFetcher.waitFor([`getPacks(${this.page}, "${GLOB.filterText}", "${GLOB.clientId}")`], responses=>{
         responses.map(r=>{
           if(r.error)
           {
@@ -265,6 +260,7 @@ class DocumentsScreen extends Component {
   renderDocuments(){
     return  <ScrollView style={{flex:1, padding:3}}>
               <LineList datas={this.state.dataList}
+                        waitingData={!this.state.ready}
                         title={`${this.total} : Document(s)`} 
                         renderItems={(data) => <BoxDocs data={data} /> } />
 
@@ -277,8 +273,7 @@ class DocumentsScreen extends Component {
         <Screen style={{flex: 1, flexDirection: 'column'}}
                 navigation={GLOB.navigation}>
           <Header onFilter={this.dataFilter} loadingFilter={this.state.loadingFilter}/>
-          {this.state.ready && this.renderDocuments()}
-          {!this.state.ready && <XImage loader={true} style={{alignSelf:'center', marginTop:10}} width={70} height={70} />}
+          { this.renderDocuments() }
         </Screen>
       )
     }

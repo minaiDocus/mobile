@@ -465,7 +465,7 @@ class HomeScreen extends Component {
     UsersFetcher.refreshOrganizations()
     UsersFetcher.refreshCustomers()
 
-    DocumentsFetcher.waitFor(['refreshPacks()']).then(responses=>{
+    DocumentsFetcher.waitFor(['refreshPacks()'], responses=>{
       if(responses[0].error)
         Notice.danger(responses[0].message, true, responses[0].message)
       else
