@@ -3,9 +3,9 @@ package com.idocus;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.devialab.exif.RCTExifPackage;
 import com.evollu.react.fcm.FIRMessagingPackage;
-import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import io.realm.react.RealmReactPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import org.wonday.pdf.RCTPdfView;
@@ -31,9 +31,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new PickerPackage(),
             new RCTExifPackage(),
             new FIRMessagingPackage(),
-            new PickerPackage(),
             new RealmReactPackage(),
             new SplashScreenReactPackage(),
             new RCTPdfView(),

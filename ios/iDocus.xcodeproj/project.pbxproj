@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -45,6 +46,8 @@
 		BB7E554D366FE441A576D11F /* libPods-iDocus-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EDAA01C67101EAF65801849 /* libPods-iDocus-tvOSTests.a */; };
 		C47AD0851CAAD9253D4981AE /* libPods-iDocus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2C6CEC3AA012A4B05BDB50D /* libPods-iDocus.a */; };
 		C83205882010A8A7005ACDB5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C83205872010A8A7005ACDB5 /* GoogleService-Info.plist */; };
+		C8F9F02121624B7600028798 /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8F9EFF721624B2500028798 /* libimageCropPicker.a */; };
+		C8F9F06921624EBB00028798 /* libReactNativeExif.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8F9F06521624E8E00028798 /* libReactNativeExif.a */; };
 		D8CBF7D0C17C4E0B9868596D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C79D01CE954DA2A115D6C5 /* libz.tbd */; };
 		E3CF6030EBC9B144B9379AF0 /* libPods-iDocusTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCEDB5D762D8EC5B7EA6981 /* libPods-iDocusTests.a */; };
 		E509C015B7EC4B4483C05930 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6107986293784752B799464C /* libRNFetchBlob.a */; };
@@ -366,6 +369,20 @@
 			remoteGlobalIDString = F60690131CA2766F0003FB26;
 			remoteInfo = RealmReact;
 		};
+		C8F9EFF621624B2500028798 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C8F9EFEE21624B2100028798 /* imageCropPicker.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3400A8081CEB54A6008A0BC7;
+			remoteInfo = imageCropPicker;
+		};
+		C8F9F06421624E8E00028798 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C8F9F03721624E8D00028798 /* ReactNativeExif.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 327633421BFAAD7E004DA88E;
+			remoteInfo = ReactNativeExif;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -413,6 +430,9 @@
 		B2C6CEC3AA012A4B05BDB50D /* libPods-iDocus.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iDocus.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C83205872010A8A7005ACDB5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Ressources/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		C83207452010B08E005ACDB5 /* iDocus.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = iDocus.entitlements; path = iDocus/iDocus.entitlements; sourceTree = "<group>"; };
+		C8C20AE821621B2100AD5298 /* Pods */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Pods; sourceTree = "<group>"; };
+		C8F9EFEE21624B2100028798 /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
+		C8F9F03721624E8D00028798 /* ReactNativeExif.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeExif.xcodeproj; path = "../node_modules/react-native-exif/ios/ReactNativeExif.xcodeproj"; sourceTree = "<group>"; };
 		CDCEDB5D762D8EC5B7EA6981 /* libPods-iDocusTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iDocusTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2BB628B4E3E12759D5DDEDB /* Pods-iDocusTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iDocusTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iDocusTests/Pods-iDocusTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D7BCB2FB4A4B4CEEBFD9E5C2 /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
@@ -437,6 +457,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8F9F06921624EBB00028798 /* libReactNativeExif.a in Frameworks */,
+				C8F9F02121624B7600028798 /* libimageCropPicker.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -608,6 +630,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C8C20AE821621B2100AD5298 /* Pods */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				F450BFF0613943C1A1C676D5 /* libc++.tbd */,
 				A2C79D01CE954DA2A115D6C5 /* libz.tbd */,
@@ -655,6 +678,8 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C8F9F03721624E8D00028798 /* ReactNativeExif.xcodeproj */,
+				C8F9EFEE21624B2100028798 /* imageCropPicker.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -725,13 +750,11 @@
 		C83205492010A83B005ACDB5 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				6A5EA152E23544B8BBE6C545 /* libRNFIRMessaging.a */,
 				6107986293784752B799464C /* libRNFetchBlob.a */,
 				F33AD7E28E3B477F98C0D000 /* libBVLinearGradient.a */,
 				37407B7A341F4A4FB643BAB9 /* libRCTPdf.a */,
 				13B5FE565D8240AE8AD90A62 /* libSplashScreen.a */,
 				A6150EEFE1834B85AF8A8C06 /* libRealmReact.a */,
-				C8C96D225D484B6894E7C481 /* libimageCropPicker.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -782,6 +805,22 @@
 			isa = PBXGroup;
 			children = (
 				C83206BB2010ACC0005ACDB5 /* libRealmReact.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C8F9EFEF21624B2100028798 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C8F9EFF721624B2500028798 /* libimageCropPicker.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C8F9F03821624E8D00028798 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C8F9F06521624E8E00028798 /* libReactNativeExif.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -925,6 +964,10 @@
 					ProjectRef = 039097D333A341D297332A35 /* BVLinearGradient.xcodeproj */;
 				},
 				{
+					ProductGroup = C8F9EFEF21624B2100028798 /* Products */;
+					ProjectRef = C8F9EFEE21624B2100028798 /* imageCropPicker.xcodeproj */;
+				},
+				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
 				},
@@ -975,6 +1018,10 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = C8F9F03821624E8D00028798 /* Products */;
+					ProjectRef = C8F9F03721624E8D00028798 /* ReactNativeExif.xcodeproj */;
 				},
 				{
 					ProductGroup = C83206B72010ACBF005ACDB5 /* Products */;
@@ -1301,6 +1348,20 @@
 			remoteRef = C83206BA2010ACC0005ACDB5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		C8F9EFF721624B2500028798 /* libimageCropPicker.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libimageCropPicker.a;
+			remoteRef = C8F9EFF621624B2500028798 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C8F9F06521624E8E00028798 /* libReactNativeExif.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativeExif.a;
+			remoteRef = C8F9F06421624E8E00028798 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1436,9 +1497,13 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-iDocus-tvOSTests/Pods-iDocus-tvOSTests-resources.sh",
+				$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController/QBImagePicker.bundle,
+				"${PODS_ROOT}/RSKImageCropper/RSKImageCropper/RSKImageCropperStrings.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1648,9 +1713,7 @@
 				INFOPLIST_FILE = iDocusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1677,9 +1740,7 @@
 				INFOPLIST_FILE = iDocusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1771,9 +1832,7 @@
 				);
 				INFOPLIST_FILE = "iDocus-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1809,9 +1868,7 @@
 				);
 				INFOPLIST_FILE = "iDocus-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1838,9 +1895,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "iDocus-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.iDocus-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
@@ -1863,9 +1918,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "iDocus-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.iDocus-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;

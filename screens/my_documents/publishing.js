@@ -101,7 +101,7 @@ class BoxZoom extends Component{
                   <SimpleButton Pstyle={{flex:0}} onPress={()=>this.hideModal()} title="Retour" />
                   <View style={this.styles.control} >
                     <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[this.styles.btnNav, {marginLeft:0}]} onPress={()=>this.prevElement()} title="<" />
-                    <XText style={this.styles.text}>Pièce N°: {GLOB.idZoom + 1} / {this.props.total}</XText>
+                    <XText style={this.styles.text}>Page N°: {GLOB.idZoom + 1} / {this.props.total}</XText>
                     <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[this.styles.btnNav, {marginRight:0}]} onPress={()=>this.nextElement()} title=">" />
                   </View>
                 </View>

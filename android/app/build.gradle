@@ -147,9 +147,9 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-image-crop-picker')
     compile project(':react-native-exif')
     compile project(':react-native-fcm')
-    compile project(':react-native-image-crop-picker')
     
     //Firebase dependencies
     // compile 'com.google.firebase:firebase-core'

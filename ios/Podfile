@@ -7,24 +7,21 @@ target 'iDocus' do
 
   # Pods for iDocus
   pod 'Firebase'
-  pod 'Firebase/Messaging', '4.0.0'
+  pod 'Firebase/Messaging'
+  pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
+  pod 'React', :path => '../node_modules/react-native'
+  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga/yoga.podspec'
 
   target 'iDocus-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
 
     pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
-
     pod 'react-native-pdf', :path => '../node_modules/react-native-pdf'
-
-
-    pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
-
+    pod 'RNImageCropPicker', :path =>  '../node_modules/react-native-image-crop-picker'
     pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
-
-
     pod 'react-native-exif', :path => '../node_modules/react-native-exif'
 
   end
@@ -47,4 +44,18 @@ target 'iDocus-tvOS' do
       # Pods for testing
   #end
 
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == 'yoga'
+      target.build_configurations.each do |config|
+        config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+        config.build_settings['GCC_WARN_64_TO_32_BIT_CONVERSION'] = 'NO'
+      end
+    end
+    if target.name == "React"
+      target.remove_from_project
+    end
+  end
 end
