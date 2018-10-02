@@ -88,34 +88,60 @@ class _document extends ActiveRecord {
     })
   }
 
+  read64FromStore(uri){
+    return new Promise((resolve, reject)=>{
+      let newPath = null
+      if(uri.toString().match(/rct\-image\-store\:/))
+        newPath = this.RNFS.dirs.CacheDir
+      ImageStore.getBase64ForTag(uri, data64 => resolve({data64, newPath}), failure => reject(failure))
+    })
+  }
+
+  read64FromFile(uri){
+    return new Promise((resolve, reject)=>{
+      let newPath = null
+      if(uri.toString().match(/rct\-image\-store\:/))
+        newPath = this.RNFS.dirs.CacheDir
+      this.RNFS.readFile(uri, 'base64').then(data64 => resolve({data64, newPath})).catch(failure => reject(failure))
+    })
+  }
+
   addDocs(lists){
     let counter = 0
 
     const getBase64 = (img)=>{
       const name = img.filename || img.path.toString().split("/").slice(-1)[0]
-      ImageStore.getBase64ForTag(img.path, (base64)=>{
+
+      const handleSuccess = (data64, newPath=null)=>{
         this.createOrUpdate(img.id_64.toString(),
-                            {
-                              data_blob: base64,
-                              name: name,
-                              path: img.path,
-                              size: img.size || 0,
-                              modificationDate: img.modificationDate || 0,
-                              mime: img.mime || '',
-                              width: img.width,
-                              height: img.height,
-                              send_at: '',
-                              state: 'new',
-                              error: ''
-                            })
+                                {
+                                  data_blob: data64,
+                                  name: name,
+                                  path: (newPath)? `${newPath}/${name}` : img.path,
+                                  size: img.size || 0,
+                                  modificationDate: img.modificationDate || 0,
+                                  mime: img.mime || '',
+                                  width: img.width,
+                                  height: img.height,
+                                  send_at: '',
+                                  state: 'new',
+                                  error: ''
+                                })
         counter += 1
         if(counter < lists.length)
           getBase64(lists[counter])
-      },
-      (failed)=>{
-        counter += 1
-        if(counter < lists.length)
-          getBase64(lists[counter])
+      }
+
+      this.read64FromFile(img.path)
+      .then(result => handleSuccess(result.data64, result.newPath))
+      .catch(failure => {
+        this.read64FromStore(img.path)
+        .then(result => handleSuccess(result.data64, result.newPath))
+        .catch(failure => {
+          counter += 1
+          if(counter < lists.length)
+            getBase64(lists[counter])
+          })
       })
     }
 
