@@ -62,7 +62,7 @@ class user extends ActiveRecord {
   findByListOf(test, arr)
   {
     return arr.map((val) => {
-              return this.find(`${test} = '${val}'`)[0] || ""
+              return this.find(`${test} = '${val}' AND master = false`)[0] || ""
             })
   }
 

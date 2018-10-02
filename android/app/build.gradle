@@ -99,10 +99,10 @@ android {
 
     defaultConfig {
         applicationId "com.idocus"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 27
-        versionCode 17
-        versionName "1.14"
+        versionCode 18
+        versionName "1.15"
         vectorDrawables.useSupportLibrary = true
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -150,10 +150,6 @@ dependencies {
     compile project(':react-native-image-crop-picker')
     compile project(':react-native-exif')
     compile project(':react-native-fcm')
-    
-    //Firebase dependencies
-    // compile 'com.google.firebase:firebase-core'
-    // compile 'com.google.firebase:firebase-messaging'
 
     // For animated Gif on SplashScreen
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'

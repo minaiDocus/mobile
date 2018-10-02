@@ -78,8 +78,10 @@ export class BoxList extends Component{
 
   removeLoader(){
     this.itemCount = 0
-    if(this.refs.loader && !this.props.waitingData)
-      setTimeout(()=>{this.refs.loader.unmountComponent()}, 500)
+    setTimeout(()=>{
+      if(this.refs.loader && !this.props.waitingData)
+        this.refs.loader.unmountComponent()
+    }, 500)
   }
 
   onLayout(event){
@@ -168,8 +170,10 @@ export class LineList extends Component{
 
   removeLoader(){
     this.itemCount = 0
-    if(this.refs.loader && !this.props.waitingData)
-      setTimeout(()=>{this.refs.loader.unmountComponent()}, 500)
+    setTimeout(()=>{
+      if(this.refs.loader && !this.props.waitingData)
+        this.refs.loader.unmountComponent()}
+    , 500)
   }
 
   generateStyles(){

@@ -298,7 +298,7 @@ class ModalComptaAnalysis extends Component{
         if(responses[0].error)
           this.setAnalytics([])
         else
-          this.setAnalytics(JSON.parse(responses[0].data)) //remove JSON parse
+          this.setAnalytics((responses[0].data)? JSON.parse(responses[0].data) : "")
         this.setState({ready: true})
       })
     }

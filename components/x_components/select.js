@@ -341,11 +341,11 @@ export class SelectInput extends Component{
     this.getCoordAnimation()
   }
 
-  async changeItem(itemValue, valueText=""){
-    await this.setState({selectedItem: itemValue, valueText: valueText})
+  changeItem(itemValue, valueText=""){
     this.getCoordAnimation()
     if(this.props.onChange)
       this.props.onChange(itemValue)
+    this.setState({selectedItem: itemValue, valueText: valueText})
   }
 
   showModal(){
