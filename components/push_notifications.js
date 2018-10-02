@@ -421,12 +421,9 @@ export class FCMinit extends Component{
           if(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray)
           {
             const openNotif = ()=>{
-              if(appReady)
-              {
-                EventRegister.emit("openNotifications")
-                clearInterval(this.notifTimer)
-                this.notifTimer = null
-              }
+              EventRegister.emit("openNotifications")
+              clearInterval(this.notifTimer)
+              this.notifTimer = null
             }
 
             this.notifTimer = setInterval(openNotif, 1500)
