@@ -101,7 +101,7 @@ android {
         applicationId "com.idocus"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 18
+        versionCode 19
         versionName "1.15"
         vectorDrawables.useSupportLibrary = true
         ndk {
