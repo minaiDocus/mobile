@@ -318,6 +318,7 @@ class BoxPublish extends Component{
               <BoxList datas={this.props.datas}
                        title={`${this.props.totalCount} ${this.props.title}`}
                        waitingData={!this.props.ready}
+                       noItemText='none'
                        elementWidth={110}
                        renderItems={(data, index) => <ImgBox data={data} index={index} toggleZoom={()=>this.toggleZoom()}/> } />
               <Pagination onPageChanged={(page)=>this.props.onChangePage(page)} nb_pages={this.props.nb_pages || 1} page={this.props.page || 1} />

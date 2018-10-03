@@ -504,9 +504,9 @@ class SendScreen extends Component {
               <BoxList datas={this.state.dataList}
                        title={`${this.state.dataList.length} : Document(s)`}
                        waitingData={!this.state.ready}
-                       elementWidth={130} 
-                       renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> } 
+                       elementWidth={130}
                        noItemText="Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ..."
+                       renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> }
                        />
           </ScrollView>
           <View style={styles.minicontainer}>

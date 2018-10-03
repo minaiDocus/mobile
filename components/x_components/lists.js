@@ -59,6 +59,8 @@ export class BoxList extends Component{
     this.stylesPlus = this.props.containerStyle || {}
 
     this.state = {dimensionReady: false}
+    this.newData = true
+    this.datas = this.props.datas || []
     this.itemCount = 0
 
     this.renderItems = this.renderItems.bind(this)
@@ -66,6 +68,18 @@ export class BoxList extends Component{
     this.removeLoader = this.removeLoader.bind(this)
 
     this.generateStyles()
+  }
+
+  componentWillReceiveProps(nextProps){
+    try
+    {
+      if(JSON.stringify(this.datas) != JSON.stringify(nextProps.datas))
+        this.newData = true
+    }catch(e)
+    {
+      this.newData = true
+    }
+    this.datas = nextProps.datas || []
   }
 
   componentDidMount(){
@@ -77,6 +91,7 @@ export class BoxList extends Component{
   }
 
   removeLoader(){
+    this.newData = false
     this.itemCount = 0
     setTimeout(()=>{
       if(this.refs.loader && !this.props.waitingData)
@@ -127,13 +142,12 @@ export class BoxList extends Component{
   }
 
   render(){
-    this.datas = this.props.datas || []
     this.itemCount = this.datas.length
 
     let content = <View />
-    if(this.props.waitingData || this.itemCount > 0)
+    if(this.props.waitingData || this.newData)
       content = <Loader ref='loader' />
-    else if(this.itemCount <= 0)
+    else if(this.itemCount <= 0 && this.props.noItemText != 'none')
       content = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
     return  <View style={{flex: 1}}>
@@ -153,12 +167,30 @@ export class LineList extends Component{
 
   constructor(props){
     super(props)
+
+    this.newData = true
+    this.datas = this.props.datas || []
+    this.itemCount = 0
+
     this.childStylePlus = this.props.childrenStyle || {}
     this.stylesPlus = this.props.containerStyle || {}
     this.renderItems = this.renderItems.bind(this)
     this.removeLoader = this.removeLoader.bind(this)
     this.generateStyles()
   }
+
+  componentWillReceiveProps(nextProps){
+    try
+    {
+      if(JSON.stringify(this.datas) != JSON.stringify(nextProps.datas))
+        this.newData = true
+    }catch(e)
+    {
+      this.newData = true
+    }
+    this.datas = nextProps.datas || []
+  }
+
 
   componentDidMount(){
     this.removeLoader()
@@ -169,6 +201,7 @@ export class LineList extends Component{
   }
 
   removeLoader(){
+    this.newData = false
     this.itemCount = 0
     setTimeout(()=>{
       if(this.refs.loader && !this.props.waitingData)
@@ -205,13 +238,12 @@ export class LineList extends Component{
   }
 
   render(){
-    this.datas = this.props.datas || []
     this.itemCount = this.datas.length
 
     let content = <View />
-    if(this.props.waitingData || this.itemCount > 0)
+    if(this.props.waitingData || this.newData)
       content = <Loader ref='loader' />
-    else if(this.itemCount <= 0)
+    else if(this.itemCount <= 0 && this.props.noItemText != 'none')
       content = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
     return <View style={{flex:1}}>
