@@ -101,8 +101,8 @@ android {
         applicationId "com.idocus"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 19
-        versionName "1.15"
+        versionCode 20
+        versionName "1.16"
         vectorDrawables.useSupportLibrary = true
         ndk {
             abiFilters "armeabi-v7a", "x86"

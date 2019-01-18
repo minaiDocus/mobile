@@ -43,7 +43,7 @@ export class ProgressUpload extends Component{
   }
 
   showState(){
-    Notice.info(`Transfert de documents ${this.state.value} %`, true, "progressUploadFile")
+    Notice.info(`Transfert de documents ${this.state.value} %`, { permanent: true, name: "progressUploadFile" })
     this.dismiss()
   }
 
@@ -114,7 +114,7 @@ export class UploderFiles{
   }
 
   launchUpload(data=null){
-    if(data !== null && typeof(data) !== "undefined")
+    if(isPresent(data))
     {
       const Fetcher = new XFetcher()
       Fetcher.fetch(
@@ -145,11 +145,11 @@ export class UploderFiles{
     let progress = progressEvent.loaded / progressEvent.total
     if(progress >= 0.99){progress = 0.99}
     if(Notice.exist("progressUploadFile") || progress <= 0.05 || progress >= 0.95)
-      Notice.info(`Transfert de documents ${Math.floor(progress * 100)} %`, true, "progressUploadFile")
+      Notice.info(`Transfert de documents ${Math.floor(progress * 100)} %`, { permanent: true, name: "progressUploadFile" })
   }
 
   onComplete(result){
-    Notice.info({title:"Envoi avec succès", body: "Transfert de documents terminée"}, true, "progressUploadFile")
+    Notice.info({title:"Envoi avec succès", body: "Transfert de documents terminée"}, { permanent: true, name: "progressUploadFile"} )
     Document.syncDocs(Document.sending(), 'sent')
     UploadingFiles = false
     EventRegister.emit('completeUploadFile', result)
@@ -187,16 +187,16 @@ export class UploderFiles{
                                           Pstyle={{flex:1}} />
                             </View>
                           </View>
-        Notice.danger(mess_obj, true, "uploadErrors")
+        Notice.danger(mess_obj, { name: "uploadErrors" })
       }
       else
       {
         Document.syncDocs(this.listLastSent, 'not_sent', result.message)
-        Notice.danger({ title: "Erreur envoi", body: result.message }, true, result.message)
+        Notice.danger({ title: "Erreur envoi", body: result.message }, { name: result.message })
       }
     }catch(e){
       Document.syncDocs(this.listLastSent, 'not_sent', 'erreur envoi')
-      Notice.danger({ title: "Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!" }, true, "erreur_upload")
+      Notice.danger({ title: "Erreur envoi", body: "Une erreur s'est produite lors de l'envoi de document!" },  { name: "erreur_upload" })
     }
 
     UploadingFiles = false

@@ -16,7 +16,7 @@ export class ProgressBar extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    if(typeof(nextProps.progress) !== "undefined" && nextProps.progress > 0)
+    if(isPresent(nextProps.progress) && nextProps.progress > 0)
       this.calculateProgress(nextProps.progress)
   }
 

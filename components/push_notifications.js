@@ -220,7 +220,7 @@ export class UINotification extends Component{
     	let notification = []
       
       let message = ""
-      if(typeof(notif.message) !== "undefined" && notif.message != ""){
+      if(isPresent(notif.message)){
         message = JSON.parse(notif.message)
       }
 
@@ -236,10 +236,10 @@ export class UINotification extends Component{
                               Istyle={{flex:0, width:20, height:20}}
                               onPress={()=>{this.toggleListNotifications()}} />
                           </View>
-        Notice.info(mess_obj, true, "push_notification_alert")
+        Notice.info(mess_obj, { permanent: true, name: "push_notification_alert" })
       }
 
-    	if(typeof(message) != "undefined" && message.to_be_added == true)
+    	if(isPresent(message) && message.to_be_added == true)
     	{
         let sendDate = formatDate((notif["google.sent_time"] || new Date()), "YYYY-MM-DDTHH:ii:ss")
     		notification = [{ 
@@ -261,7 +261,7 @@ export class UINotification extends Component{
       FireBaseNotification.waitFor(['getNotifications()'], responses=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message, true, responses[0].message)
+          Notice.danger(responses[0].message, { name: responses[0].message })
         }
         else
         {
@@ -385,7 +385,7 @@ export class FCMinit extends Component{
       FCM.requestPermissions()
           .then(()=>{/*NOTIFICATIONS ENABLED*/})
           .catch(()=>{
-            Notice.info({title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment"}, false, "notif_block", 10000)
+            Notice.info({ title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment" }, { permanent: false, name: "notif_block", delay: 10000 })
           })
 
       FCM.getFCMToken().then((token) => {
@@ -412,7 +412,7 @@ export class FCMinit extends Component{
     }
 
     handleMessages(notif){
-      if(typeof(notif) !== "undefined" && notif != null)
+      if(isPresent(notif))
       {
         if(typeof(notif.message) != "undefined")
         {
@@ -434,7 +434,7 @@ export class FCMinit extends Component{
     }
 
     handleToken(token = ""){
-      if(typeof(token) !== "undefined" && token != null && token != "")
+      if(isPresent(token))
       {
         //send token to server
         let _tmp_master = realmToJson(this.master)

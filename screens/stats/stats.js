@@ -365,7 +365,7 @@ class StatsScreen extends Component {
     PaperProcess.waitFor([`getStats(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`], responses=>{
       if(responses[0].error)
       {
-        Notice.danger(responses[0].message, true, responses[0].message)
+        Notice.danger(responses[0].message, { name: responses[0].message })
       }
       else
       {

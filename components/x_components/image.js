@@ -9,7 +9,9 @@ function require_images(name){
     arrow_up:require('../../images/arrow_up.png'),
     camera_icon:require('../../images/camera_icon.png'),
     charge:require('../../images/charge.png'),
+    compta_analytics:require('../../images/compta_analytics.png'),
     delete:require('../../images/delete.png'),
+    delete_green:require('../../images/delete_green.png'),
     doc_curr:require('../../images/doc_curr.png'),
     doc_trait:require('../../images/doc_trait.png'),
     documents:require('../../images/documents.png'),
@@ -23,10 +25,18 @@ function require_images(name){
     information:require('../../images/information.png'),
     logo:require('../../images/logo.png'),
     menu_ico:require('../../images/menu_ico.png'),
+    no_selection:require('../../images/no_selection.png'),
     options:require('../../images/options.png'),
     plane:require('../../images/plane.png'),
-    zoom_x:require('../../images/zoom_x.png'),
+    plane:require('../../images/plane.png'),
+    preaff_deliv:require('../../images/preaff_deliv.png'),
+    preaff_deliv_pending:require('../../images/preaff_deliv_pending.png'),
+    preaff_err:require('../../images/preaff_err.png'),
+    preaff_pending:require('../../images/preaff_pending.png'),
+    preaff_dupl:require('../../images/preaff_dupl.png'),
+    preaff_ignored:require('../../images/preaff_ignored.png'),
     validate:require('../../images/validate.png'),
+    validate_green:require('../../images/validate_green.png'),
     userpic:require('../../images/userpic.png'),
     cadenas:require('../../images/cadenas.png'),
     add_contact:require('../../images/add_contact.png'),
@@ -40,6 +50,7 @@ function require_images(name){
     back:require('../../images/back.png'),
     remake:require('../../images/remake.png'),
     organization:require('../../images/organization.png'),
+    zoom_x:require('../../images/zoom_x.png'),
     default: require("../../images/loader.gif"),
   }
   const loaded_img = eval('images.'+name) || images.default
@@ -64,7 +75,7 @@ export class XImage extends Component{
     if(this.props.local == false){this.local = false}
 
     this.img_source = this.props.source
-    if(typeof(this.props.source) !== "undefined" && typeof(this.props.source.uri) !== "indefined" && this.local)
+    if(typeof(this.props.source) !== 'undefined' && isPresent(this.props.source.uri) && this.local)
     {
       this.img_source = require_images(this.props.source.uri)
     }
@@ -84,7 +95,7 @@ export class XImage extends Component{
     else
     {
       const loader = require('../../images/img_loader.gif')
-      if(this.props.children || (typeof(this.props.type)!=='undefined' && this.props.type == 'container'))
+      if(this.props.children || (isPresent(this.props.type) && this.props.type == 'container'))
       {
         const absolute = {
           position:'absolute',
@@ -102,7 +113,7 @@ export class XImage extends Component{
                     onLoadEnd={this.props.onLoadEnd}
                     loadingIndicatorSource={loader}
                     />
-                  <View style={absolute}>
+                  <View style={[absolute, this.props.CStyle]}>
                     {this.props.children}
                   </View>
                 </View>

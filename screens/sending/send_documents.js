@@ -378,7 +378,7 @@ class SendScreen extends Component {
     let img = []
 
     _img.forEach((i)=>{
-        if(typeof(i.filename) !== "undefined" && i.filename != null)
+        if(isPresent(i.filename))
           id_64 = base64.encode(i.filename).toString()
         else
           id_64 = base64.encode(i.path).toString()

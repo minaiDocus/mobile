@@ -53,7 +53,7 @@ class ModalSharing extends Component{
                           AccountSharing.waitFor([url], responses=>{
                               if(responses[0].error)
                               {
-                                Notice.danger(responses[0].message, true, responses[0].message)
+                                Notice.danger(responses[0].message, { name: responses[0].message })
                               }
                               else
                               {
@@ -114,7 +114,7 @@ class ViewState extends Component{
     AccountSharing.waitFor([`deleteSharedDoc(${id_doc}, "${type}")`], responses=>{
       if(responses[0].error)
       {
-        Notice.danger(responses[0].message, true, responses[0].message)
+        Notice.danger(responses[0].message, { name: responses[0].message })
       }
       else
       {
@@ -371,7 +371,7 @@ class SharingScreen extends Component {
     this.setState({ready: false})
     AccountSharing.waitFor(['getSharedDocsCustomers()'], responses=>{
       if(responses[0].error){
-        Notice.danger(e.message, true, e.message)
+        Notice.danger(e.message, { name: e.message })
       }
       else{
         this.datas_shared = responses[0].data_shared

@@ -48,7 +48,7 @@ class Header extends Component{
     AccountSharing.waitFor([`getListCustomers("${text}")`], responses=>{
       if(responses[0].error)
       {
-        Notice.danger(responses[0].message, true, responses[0].message)
+        Notice.danger(responses[0].message, { name: responses[0].message })
       }
       else
       {
@@ -61,7 +61,7 @@ class Header extends Component{
     AccountSharing.waitFor([`getListCollaborators("${text}")`], responses=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message, true, responses[0].message)
+          Notice.danger(responses[0].message, { name: responses[0].message })
         }
         else
         {
@@ -90,7 +90,7 @@ class Header extends Component{
                           AccountSharing.waitFor([`addSharedDoc(${JSON.stringify({collaborator_id: this.state.collaborator, account_id: this.state.account})})`], responses=>{
                             if(responses[0].error)
                             {
-                              Notice.danger(responses[0].message, true, responses[0].message)
+                              Notice.danger(responses[0].message, { name: responses[0].message })
                             }
                             else
                             {
@@ -256,7 +256,7 @@ class BoxStat extends Component{
     AccountSharing.waitFor([`deleteSharedDoc(${id_doc})`], responses=>{
       if(responses[0].error)
       {
-        Notice.danger(responses[0].message, true, responses[0].message)
+        Notice.danger(responses[0].message, { name: responses[0].message })
       }
       else
       {
@@ -272,7 +272,7 @@ class BoxStat extends Component{
     AccountSharing.waitFor([`acceptSharedDoc(${id_doc})`], responses=>{
       if(responses[0].error)
       {
-        Notice.danger(responses[0].message, true, responses[0].message)
+        Notice.danger(responses[0].message, { name: responses[0].message })
       }
       else
       {
@@ -522,7 +522,7 @@ class SharingScreen extends Component {
     this.setState({ready: false, dataList: []})
     AccountSharing.waitFor([`getSharedDocs(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`], responses=>{
       if(responses[0].error)
-        Notice.danger(responses[0].message, true, responses[0].message)
+        Notice.danger(responses[0].message, {name: responses[0].message })
       else
         GLOB.datas = responses[0].data_shared || []
 

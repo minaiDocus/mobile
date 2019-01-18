@@ -467,7 +467,7 @@ class HomeScreen extends Component {
 
     DocumentsFetcher.waitFor(['refreshPacks()'], responses=>{
       if(responses[0].error)
-        Notice.danger(responses[0].message, true, responses[0].message)
+        Notice.danger(responses[0].message, { name: responses[0].message })
       else
         GLOB.datas = responses[0].packs || []
       this.setState({updated: true})

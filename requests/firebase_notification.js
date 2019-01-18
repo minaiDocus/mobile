@@ -10,7 +10,7 @@ class firebase_notification extends Requester{
   }
 
   registerFirebaseToken(token = ""){
-    if(token != "" && token != null && typeof(token) !== "undefined")
+    if(isPresent(token))
     {
       return this.requestURI("api/mobile/firebase_notification/register_firebase_token", {method: 'POST', params:{firebase_token: token, platform: Config.platform, version: Config.version}})
     }

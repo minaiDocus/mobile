@@ -44,7 +44,7 @@ class LoginScreen extends Component {
       this.setState({ready: true})
       if(responses[0].code != 200)
       {
-        Notice.danger({title: "Alèrte système", body: responses[0].message}, true, responses[0].message)
+        Notice.danger({title: "Alèrte système", body: responses[0].message}, { name: responses[0].message })
         if(responses[0].code == 500)
         { //automatic logout
           RemoteAuthentication.logOut()

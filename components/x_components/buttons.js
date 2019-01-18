@@ -52,12 +52,12 @@ export class SimpleButton extends Component{
     let rightImage = null
     if(this.props.LImage != "" && this.props.LImage != null)
     {
-      leftImage = <XImage style={[this.styles.images, {marginRight:10}]} source={this.props.LImage} local={true} />
+      leftImage = <XImage style={[this.styles.images, {marginRight:7}]} source={this.props.LImage} local={true} />
     }
 
     if(this.props.RImage != "" && this.props.RImage != null)
     {
-      rightImage = <XImage style={[this.styles.images, {marginLeft:10}]} source={this.props.RImage} local={true} />
+      rightImage = <XImage style={[this.styles.images, {marginLeft:7}]} source={this.props.RImage} local={true} />
     }
 
     return <TouchableOpacity style={[this.styles.content, Pstyle_plus]} onPress={this.props.onPress}>

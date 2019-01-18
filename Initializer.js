@@ -7,13 +7,13 @@ import { Notice, CronTask } from './components'
 import { ErrorReport } from './requests'
 
 //Private functions
-function fillWithZero(date, length_to = 2){
-  var f_date = date.toString()
-  for(var i=1; i <= (length_to - date.toString().length); i++)
+function fillWithZero(number, length_to = 2){
+  var f_number = number.toString()
+  for(var i=1; i <= (length_to - number.toString().length); i++)
   {
-    f_date = `0${f_date}`
+    f_number = `0${f_number}`
   }
-  return f_date
+  return f_number
 }
 
 
@@ -123,6 +123,11 @@ global.formatDate = (_date=null, format = "DD-MM-YYYY HH:ii") => {
   }
 }
 
+//Function for formating number view
+global.formatNumber = (number, format = 'xxx') => {
+  return fillWithZero(number, format.toString().length)
+}
+
 //Function for compacting array (deleting null values from an array)
 global.arrayCompact = (arr) => {
   let arrReturn = []
@@ -163,4 +168,9 @@ global.realmToJson = (object)=>{
     Json_result = JSON.parse(Json_result)
     return Json_result
   }
+}
+
+//Function for testing presence of variable
+global.isPresent = (variable) => {
+  return ( typeof(variable) !== 'undefined' && variable !== null && variable !== '' ) ? true : false
 }

@@ -6,23 +6,25 @@ import { AnimatedBox, XText } from './index'
 export class Notice {
   static _noticeMessages = [];
 
-  static info(message, permanent = false, name="", delay=5000){
+  static info(message, opt={}){
     const options = {
-                      permanent: permanent,
+                      permanent: opt.permanent || false,
                       type: 'info',
-                      name: name,
-                      delay: delay
+                      name: opt.name || '',
+                      delay: opt.delay || 5000,
+                      noClose: opt.noClose || false
                     }
     Notice._addNoticeMessages(message, options)
     EventRegister.emit('addNoticeMessages', null)
   }
 
-  static danger(message, permanent = true, name="", delay=5000){
+  static danger(message, opt={}){
     const options = {
-                      permanent: permanent,
+                      permanent: (opt.permanent != false)? true : false,
                       type: 'danger',
-                      name: name,
-                      delay: delay
+                      name: opt.name || '',
+                      delay: opt.delay || 5000,
+                      noClose: opt.noClose || false
                     }
     Notice._addNoticeMessages(message, options)
     EventRegister.emit('addNoticeMessages', null)
@@ -32,13 +34,13 @@ export class Notice {
     Alert.alert(...args)
   }
 
-  static remove(name=""){
-    if(name != "" && name != null && typeof(name) !== "undefined")
+  static remove(name="", with_animation=false){
+    if(isPresent(name))
     {
       Notice._noticeMessages.map((value, index)=>{
         if(value != null && value.options.name != "" && value.options.name == name)
         {
-          Notice._removeNoticeMessages(index)
+          Notice._removeNoticeMessages(index, with_animation)
         }
       })
     }
@@ -72,9 +74,18 @@ export class Notice {
     if(toAdd) Notice._noticeMessages = Notice._noticeMessages.concat([objmess])
   }
 
-  static _removeNoticeMessages(index){
-    Notice._noticeMessages[index] = null
-    EventRegister.emit('removeNoticeMessages', Notice._noticeMessages)
+  static _removeNoticeMessages(index, with_animation=false){
+    if(with_animation)
+    {
+      to_remove = Notice._noticeMessages[index].options.name || null
+    }
+    else
+    {
+      Notice._noticeMessages[index] = null
+      to_remove = null
+    }
+
+    EventRegister.emit('removeNoticeMessages', to_remove)
   }
 }
 
@@ -161,7 +172,7 @@ class Message extends React.Component{
     else
     {
       let body = <View style={{flex:1}}>{message}</View>
-      if(typeof(message.title) !== "undefined" || typeof(message.body) !== "undefined")
+      if(isPresent(message.title) || isPresent(message.body))
       {
         body =  <View style={{flex:1}}>
                   {
@@ -175,9 +186,12 @@ class Message extends React.Component{
       }
       return  <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
                 {body}
-                <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                  <XText style={this.styles.close}>X</XText>
-                </TouchableHighlight>
+                {
+                  this.options.noClose == false &&
+                  <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
+                    <XText style={this.styles.close}>X</XText>
+                  </TouchableHighlight>
+                }
               </AnimatedBox>
     }
   }
@@ -191,6 +205,7 @@ export class NoticeBox extends React.Component{
 
     this.state = {refresh: 0}
     this.renderMessage = this.renderMessage.bind(this)
+    this.closeMessage = this.closeMessage.bind(this)
     this.renderItems = this.renderItems.bind(this)
 
     this.generateStyles()
@@ -204,7 +219,10 @@ export class NoticeBox extends React.Component{
           this.renderMessage()
       })
       this._removeNoticeListener = EventRegister.on('removeNoticeMessages', (e) => {
-          this.renderMessage()
+          if(isPresent(e))
+            this.closeMessage(e)
+          else
+            this.renderMessage()
       })
     }
   }
@@ -217,6 +235,13 @@ export class NoticeBox extends React.Component{
     }
   }
 
+  closeMessage(name){
+    try{
+      eval(`this.refs.noticeOBJ_${name}.closeMessage()`)
+    }
+    catch(e){}
+  }
+
   async renderMessage(messages){
     let rotation = this.state.refresh
     rotation = (rotation > 10)? 0 : rotation+1
@@ -227,9 +252,12 @@ export class NoticeBox extends React.Component{
     let content = []
     for(i=Notice._noticeMessages.length; i>=0; i--)
     {
-      if(typeof(Notice._noticeMessages[i]) !== 'undefined' && Notice._noticeMessages[i] != null)
+      if(isPresent(Notice._noticeMessages[i]))
       {
-        content.push(<Message key={i} index={i} data={Notice._noticeMessages[i]} />)
+        if(isPresent(Notice._noticeMessages[i].options.name))
+          content.push(<Message key={i} index={i} data={Notice._noticeMessages[i]} ref={`noticeOBJ_${Notice._noticeMessages[i].options.name}`} />)
+        else
+          content.push(<Message key={i} index={i} data={Notice._noticeMessages[i]} />)
       }
     }
 

@@ -236,7 +236,7 @@ class DocumentsScreen extends Component {
         responses.map(r=>{
           if(r.error)
           {
-            Notice.danger(r.message, true, r.message)
+            Notice.danger(r.message, { name: r.message })
             this.limit_page = 1
             this.total = 0
             this.setState({ready: true, loadingFilter: false})

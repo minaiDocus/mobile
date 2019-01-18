@@ -68,7 +68,7 @@ class ContactForm extends Component{
                           AccountSharing.waitFor([url], responses=>{
                             if(responses[0].error)
                             {
-                              Notice.danger(responses[0].message, true, responses[0].message)
+                              Notice.danger(responses[0].message, { name: responses[0].message })
                             }
                             else
                             {
@@ -212,7 +212,7 @@ class BoxStat extends Component{
     AccountSharing.waitFor([`deleteSharedContact(${_id})`], responses=>{
       if(responses[0].error)
       {
-        Notice.danger(responses[0].message, true, responses[0].message)
+        Notice.danger(responses[0].message, { name: responses[0].message })
       }
       else
       {
@@ -457,7 +457,7 @@ class SharingScreen extends Component {
     this.setState({ready: false, dataList: []})
     AccountSharing.waitFor([`getSharedContacts(${JSON.stringify(GLOB.dataFilter)}, ${this.page}, ${JSON.stringify(this.order)})`], responses => {
       if(responses[0].error)
-        Notice.danger(responses[0].message, true, responses[0].message)
+        Notice.danger(responses[0].message, { name: responses[0].message })
       else
         GLOB.datas = responses[0].contacts || []
 
