@@ -162,7 +162,7 @@ class AnalysisView extends Component{
     return  <View key={index} style={this.styles.axis_group}>
               <View style={[this.styles.container, {flex:0, height:35}]}>
                 <XText style={this.styles.label}>Ventilation</XText>
-                <XTextInput defaultValue={RESULT_ANALYTIC[this.props.index].references[index].ventilation.toString()} keyboardType='numeric' onChangeText={(value)=>{this.handleChangeVentilation(index, value)}} PStyle={[this.styles.input, {height:35}]} />
+                <XTextInput selectTextOnFocus={true} defaultValue={RESULT_ANALYTIC[this.props.index].references[index].ventilation.toString()} keyboardType='numeric' onChangeText={(value)=>{this.handleChangeVentilation(index, value)}} PStyle={[this.styles.input, {height:35}]} />
               </View>
               {axis1_options.length > 0 &&
                 <View style={[this.styles.container, {flex:0, height:35}]}>
@@ -263,6 +263,11 @@ export class ModalComptaAnalysis extends Component{
         exist = true
     })
     return exist
+  }
+
+  static reset(){
+    RESULT_ANALYTIC = setNoResult()
+    return RESULT_ANALYTIC
   }
 
   componentDidMount(){

@@ -154,7 +154,7 @@ class Body extends Component{
   constructor(props){
     super(props)
 
-    this.state = {period_start: "", period_expired: "", ready: false, paramsReady: false, journalsOptions: [], periodsOptions: [], comptaAnalysisActivated: false, analysisOpen: false}
+    this.state = {period_start: "", period_expired: "", ready: false, paramsReady: false, journalsOptions: [], periodsOptions: [], comptaAnalysisActivated: false, analysisOpen: false, comptaAnalysisResume: false}
 
     this.master = User.getMaster()
     this.customers = []
@@ -207,7 +207,7 @@ class Body extends Component{
   }
 
   toggleComptaAnalysis(toggle=true){
-    this.setState({ analysisOpen: toggle })
+    this.setState({ analysisOpen: toggle, comptaAnalysisResume: ModalComptaAnalysis.exist() })
   }
 
   comptaAnalysisOnClose(data){
@@ -216,8 +216,9 @@ class Body extends Component{
   }
 
   handleChangeCustomer(value){
-    this.setState({ paramsReady: false, comptaAnalysisActivated: false })
+    this.setState({ paramsReady: false, comptaAnalysisActivated: false, comptaAnalysisResume: false })
     GLOB.journal = GLOB.period = ""
+    GLOB.analysis = ModalComptaAnalysis.reset()
     let opt_period = []
     let opt_journal = []
     let compta_analysis = false
@@ -315,6 +316,33 @@ class Body extends Component{
     })
   }
 
+  renderAnalyticResume(){
+    const _analysis_resume = GLOB.analysis.map( (a, j) => {
+      if(a.analysis != '')
+      {
+        const _references = a.references.map( (r, i) => {
+          let ref = arrayCompact([r.axis1, r.axis2, r.axis3], true).join(', ')
+          if(isPresent(ref))
+            return  <View key={i} style={{flex:1, flexDirection:'row', paddingHorizontal:10, overflow:'hidden'}}>
+                      <XText style={{flex:0, fontSize:12}}>{ref} : </XText>
+                      <XText style={{flex:0, fontSize:12, fontWeight:'bold'}}>{r.ventilation} %</XText>
+                    </View>
+        })
+
+        return  <View key={j} style={{flex:1, marginBottom:5}}>
+                  <XText style={{flex:1, marginVertical:2, fontWeight:'bold', fontSize:14}}>
+                    {a.analysis}
+                  </XText>
+                  {_references}
+                </View>
+      }
+    })
+
+    return <View style={{flex:1, backgroundColor:'#FFF', padding:5}}>
+            {_analysis_resume}
+           </View>
+  }
+
   renderForm(){
   const valueProgress = this.props.progress
   const colorBar = (valueProgress < 1)? "blue" : "#C0D838"
@@ -327,6 +355,7 @@ class Body extends Component{
                 <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
                 <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
                 {this.state.comptaAnalysisActivated && <SimpleButton Pstyle={styles.button} onPress={()=>{this.toggleComptaAnalysis(true)}} title={analysis_message} />}
+                {this.state.comptaAnalysisActivated && this.state.comptaAnalysisResume && this.renderAnalyticResume()}
                 {this.state.period_start != "" &&
                   <View style={this.styles.warning}>
                     <XText style={this.styles.warntitle} >
@@ -412,11 +441,7 @@ class SendScreen extends Component {
     GLOB.period = ''
     GLOB.journal = ''
     GLOB.sending_finished = false
-    GLOB.analysis = [
-                      {analysis: '', references: [{ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
-                      {analysis: '', references: [{ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
-                      {analysis: '', references: [{ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
-                    ]
+    GLOB.analysis = ModalComptaAnalysis.reset()
 
     this.state = {progress: 0, sending: false}
 

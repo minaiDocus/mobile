@@ -129,12 +129,18 @@ global.formatNumber = (number, format = 'xxx') => {
 }
 
 //Function for compacting array (deleting null values from an array)
-global.arrayCompact = (arr) => {
+global.arrayCompact = (arr, strict=false) => {
   let arrReturn = []
   arr.forEach((elem)=>{
-    if(elem != null && typeof(elem) !== 'undefined')
+    if(strict)
     {
-      arrReturn.push(elem)
+      if(isPresent(elem))
+        arrReturn.push(elem)
+    }
+    else
+    {
+      if(elem != null && typeof(elem) !== 'undefined')
+        arrReturn.push(elem)
     }
   })
   return arrReturn
