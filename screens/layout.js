@@ -98,7 +98,7 @@ class Header extends Component {
           try{ callback() }catch(e){}
         })
       }
-    }, 300)
+    }, 1)
   }
 
   leave(callback=null){
@@ -108,7 +108,7 @@ class Header extends Component {
           try{ callback() }catch(e){}
         })
       }
-    }, 300)
+    }, 1)
   }
 
   generateStyles(){
@@ -223,8 +223,19 @@ export class Screen extends Component{
       return false
   }
 
-  getNavigator(){
-    return this.navigation
+  openScreen(callback=null){
+    if(this.refs.header){
+      this.refs.header.start()
+      this.refs.main_page.start(()=>{
+        try{ callback() }catch(e){}
+      })
+    }
+    else
+    {
+      this.refs.main_page.start(()=>{
+        try{ callback() }catch(e){}
+      })
+    }
   }
 
   closeScreen(callback=null){
@@ -238,21 +249,6 @@ export class Screen extends Component{
     else
     {
       this.refs.main_page.leave(async ()=>{
-        try{ callback() }catch(e){}
-      })
-    }
-  }
-
-  async openScreen(callback=null){
-    if(this.refs.header){
-      this.refs.header.start()
-      this.refs.main_page.start(()=>{
-        try{ callback() }catch(e){}
-      })
-    }
-    else
-    {
-      this.refs.main_page.start(()=>{
         try{ callback() }catch(e){}
       })
     }
@@ -274,6 +270,10 @@ export class Screen extends Component{
     this.closeScreen(()=>{
       this.navigation.goBack()
     })
+  }
+
+  getNavigator(){
+    return this.navigation
   }
 
   getFrontView(){
@@ -309,8 +309,8 @@ export class Screen extends Component{
     return <View {...this.props} style={CStyle} onLayout={(event)=>{this.handleLayout(event)}} {...this.boxPanResponder.panHandlers}>
                 <XImage type='container' source={back} resizeMode='contain' CStyle={{width: '100%', height: '100%'}}>
                   { !this.noHeader && <Header ref="header" closeScreen={(callback)=>this.closeScreen(callback)} title={this.props.title} options={this.props.options} withMenu={this.props.withMenu} /> }
-                  <AnimatedBox ref='main_page' startOnLoad={false} hideTillStart={true} style={{flex: 1}} type='fade' durationIn={600} durationOut={100}>
-                   { this.props.children }
+                  <AnimatedBox ref='main_page' startOnLoad={false} hideTillStart={true} style={{flex: 1}} type='fade' durationIn={600} durationOut={300}>
+                    { this.props.children }
                   </AnimatedBox>
                   <FrontView ref='main_front_view' />
                   <NoticeBox />

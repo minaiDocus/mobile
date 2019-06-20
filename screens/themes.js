@@ -26,7 +26,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   container: { backgroundColor: 'rgba(41,41,41,0.4)' },
 
   head: {
-    shape: { backgroundColor: 'rgba(218, 223, 225, 0.6)', padding: 5 },
+    shape: { backgroundColor: '#585858', padding: 3 },
     text: {},
   },
 
@@ -35,9 +35,16 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
     text: { color: '#FFF' },
   },
 
-  circle_button: {
+  secondary_button: {
     shape: { borderWidth: 1, backgroundColor: '#17a2b8', borderColor:'#FFF', borderRadius: 200, height: 63, width: 63 },
     text: { color: '#FFF' },
+  },
+
+  box_button: {
+    shape: { linearColors: ['#D1E949', '#C0D838', '#9DA505'] },
+    marker: { fontSize: 12, fontWeight: 'bold', color: '#F7230C'},
+    box_text: { backgroundColor:'#AEAEAE' },
+    text: { color: '#FFF', fontWeight: 'bold' }
   },
 
   box: {
@@ -61,17 +68,18 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
     shape: { backgroundColor:"#FFF", borderWidth: 1, borderColor: '#fff', borderRadius:3 },
     title: { color: '#000', fontSize: 16, textAlign: 'left' },
     separator: { color: '#000', fontSize: 14 },
-    label: { },
+    label: {},
     head: { backgroundColor:'#D0D0D0' },
     foot: { backgroundColor:'#D0D0D0' },
   },
 
   tabs:{
     container: { height:30, borderColor:'#FFF', borderBottomWidth:1 },
-    shape: { backgroundColor:"#DDD", borderColor:'#F2F2F2', borderWidth:1, borderTopLeftRadius:2, borderTopRightRadius:2 },
-    title: { fontSize: 14, textAlign: 'center', fontWeight: 'bold', color: '#999' },
+    shape: { backgroundColor:"#AEAEAE", borderWidth:1, borderColor: '#DDD', borderTopLeftRadius:5, borderTopRightRadius:5, marginHorizontal: 0 },
+    title: { fontSize: 14, textAlign: 'center', fontWeight: 'bold', color: '#DDD' },
+    icons: { width: 25, height: 25 },
     selected: { 
-      shape: { backgroundColor:"#F1F1F1" },
+      shape: { backgroundColor:"#F1F1F1", borderWidth:1, borderColor: '#FFF' },
       text: { color: '#3E2F24' },
     },
   },

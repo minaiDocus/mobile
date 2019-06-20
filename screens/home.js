@@ -53,7 +53,6 @@ class Header extends Component{
                     minicontainer:{
                                     flex:0, 
                                     flexDirection:'row',
-                                    backgroundColor:'#E1E2DD',
                                     alignItems:'center',
                                     justifyContent:'center',
                                   },
@@ -62,7 +61,7 @@ class Header extends Component{
 
   render(){
     return (
-              <View style={this.styles.minicontainer}>
+              <View style={[this.styles.minicontainer, Theme.head.shape]}>
                 <BoxButton onPress={()=>{CurrentScreen.goTo('Send')}} source={{uri:"plane"}} title='Envoi documents' />
                 <BoxButton onPress={()=>{CurrentScreen.goTo('Documents')}} source={{uri:"documents"}} title='Mes documents' />
               </View>
@@ -133,29 +132,19 @@ class ViewState extends Component{
       container:  {
                     flex:1,
                     flexDirection:'column',
-                    borderRadius:10,
-                    
-                    elevation: 7, //Android shadow
-
-                    shadowColor: '#000',                  //===
-                    shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
-                    shadowOpacity: 0.8,                   //===
-                    shadowRadius: 2,                      //===
-
-                    margin:10,
-                    padding:10,
-                    backgroundColor:"#E9E9E7"
+                    margin: 10,
+                    padding: 10
                   },
       boxIco: {
-                flex:1, 
+                flex:1,
                 flexDirection:'row',
                 alignItems:'center',
                 justifyContent:'center'
              },
       icons:{
               flex:0,
-              width:40,
-              height:40
+              width:30,
+              height:30
             },
     })
   }
@@ -172,7 +161,7 @@ class ViewState extends Component{
   }
 
   renderDetails(data, index){
-    const colorStriped = ((index % 2) == 0)? "#F2F2F2" : "#FFF";
+    const colorStriped = ((index % 2) == 0)? Theme.color_striped.pair : Theme.color_striped.impair
     const arrow = (this.state.infos == index)? "arrow_down" : "arrow_up";
     var infos = this.props.infos
 
@@ -181,14 +170,14 @@ class ViewState extends Component{
       if(info.value == "updated_at")
       {
         try{
-          value = formatDate(eval("data."+info.value))
+          value = formatDate(data[info.value])
         }
         catch(e){}
       }
       else
       {
         try{
-          value = eval("data."+info.value).toString()
+          value = data[info.value].toString()
         }
         catch(e){}
       }
@@ -218,7 +207,7 @@ class ViewState extends Component{
     const details = this.props.datas.map((dt, index) => {return this.renderDetails(dt, index)});
 
     return  <ScrollView>
-              <View style={this.styles.container}>
+              <View style={[this.styles.container, Theme.box]}>
                 <View style={{flex:1, flexDirection:'row'}}>
                   <View style={this.styles.boxIco}>
                     <XImage source={{uri:icon}} style={this.styles.icons} />
@@ -253,9 +242,6 @@ class TabNav extends Component{
                   flex:0,
                   flexDirection:'row',
                   width:'100%',
-                  height:50,
-                  borderColor:'#DFE0DF',
-                  borderBottomWidth:1,
                   marginTop:10,
                 },
       icons:{
@@ -264,20 +250,9 @@ class TabNav extends Component{
               width:30,
               height:30,
             },
-      title:{
-              flex:1,
-              fontSize:12,
-              fontWeight:'bold',
-              textAlign:'center'
-            },
       box:{
             flex:1,
-            borderTopLeftRadius:10,
-            borderTopRightRadius:10,
             marginHorizontal:2,
-            backgroundColor:"#BEBEBD",
-            borderColor:'#DFE0DF',
-            borderWidth:1,
             flexDirection:'row',
             alignItems:'center',
           },
@@ -291,19 +266,21 @@ class TabNav extends Component{
       {title: "Erreurs", icon:"doc_view"},
     ]
 
-    let indexStyle = ""
+    let indexSelectedShape = indexSelectedText = ""
     const content = tabs.map((tb, index) => {
-          indexStyle = (index == this.state.index)? {backgroundColor:'#E9E9E7',borderColor:'#C0D838'} : {};
+          indexSelectedShape = (index == this.state.index)? Theme.tabs.selected.shape : {};
+          indexSelectedText = (index == this.state.index)? Theme.tabs.selected.text : {};
+
           return (
            <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
-            <View style={[this.stylesTabBar.box, indexStyle]}>
-              <XImage source={{uri:tb.icon}} style={this.stylesTabBar.icons} />
-              <XText style={this.stylesTabBar.title}>{tb.title}</XText>
+            <View style={[this.stylesTabBar.box, Theme.tabs.shape, indexSelectedShape]}>
+              { isPresent(tb.icon) && <XImage source={{uri:tb.icon}} style={[this.stylesTabBar.icons, Theme.tabs.icons]} /> }
+              <XText style={[{flex: 1}, Theme.tabs.title, indexSelectedText]}>{tb.title}</XText>
             </View>
           </TouchableOpacity>
       )})
 
-    return <View style={this.stylesTabBar.container}>
+    return <View style={[this.stylesTabBar.container, Theme.tabs.container]}>
              {content}
            </View>  
   }

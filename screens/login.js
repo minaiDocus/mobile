@@ -10,7 +10,7 @@ import { User } from '../models'
 
 import { RemoteAuthentication, UsersFetcher } from '../requests'
 
-let GLOB = { login: '', password: '', system_reject: false}
+let GLOB = { login: '', password: '', system_reject: false }
 
 class LoginScreen extends Component {
   static navigationOptions = { header: null }

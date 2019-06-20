@@ -53,7 +53,7 @@ function require_images(name){
     zoom_x:require('../../images/zoom_x.png'),
     default: require("../../images/loader.gif"),
   }
-  const loaded_img = eval('images.'+name) || images.default
+  const loaded_img = images[name] || images.default
   return loaded_img;
 }
 

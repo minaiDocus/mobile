@@ -116,35 +116,62 @@ export class BoxButton extends Component{
   constructor(props){
     super(props)
 
+    this.linearColors = null
+    this.CStyle_plus = this.TStyle_plus = {}
+    if(this.props.CStyle)
+    {
+      let styles = JSON.parse(JSON.stringify(this.props.CStyle)) //clone the props because of deletion
+
+      if(Array.isArray(styles))
+      {
+        styles.forEach(st => {
+          if(st.linearColors !== undefined && st.linearColors !== null) {
+            this.linearColors = st.linearColors
+            delete st.linearColors
+          }
+        })
+      }
+      else
+      {
+        if(styles.linearColors !== undefined) {
+          this.linearColors = styles.linearColors
+          delete styles.linearColors
+        }
+      }
+      this.CStyle_plus = styles
+    }
+
+    if(this.props.TStyle)
+      this.TStyle_plus = this.props.TStyle
+
     this.generateStyles()
   }
 
   generateStyles(){
-    const rayon = this.props.rayon || 60
+    const rayon = this.props.rayon || 45
     this.styles = StyleSheet.create({
       touchable:{
                   flex:1,
-                  margin:10,
+                  margin:3,
                   alignItems:'center'
                 },
       boxControl: {
                     alignItems:'center',
                     justifyContent:'center',
                     flex:0,
-                    backgroundColor:'#C0D838',
                     width:rayon,
                     height:rayon,
-                    marginBottom:5,
-                    borderRadius:100
+                    marginBottom:-1,
+                    borderTopRightRadius:100,
+                    borderTopLeftRadius:100
                   },
       icons:{
               flex:0,
-              width:"60%",
-              height:"60%"
+              width:"50%",
+              height:"50%"
             },
       boxText:{
                 flex:0,
-                backgroundColor:'#AEAEAE',
                 justifyContent:'center',
                 alignItems: 'center',
                 paddingHorizontal:10,
@@ -153,18 +180,12 @@ export class BoxButton extends Component{
               },
       text:{
             flex:0,
-            fontWeight:'bold',
-            color:'#fff',
             textAlign:'center'
             },
       boxMarker:{
                   position:'absolute',
                 },
-      marker:{ 
-                fontSize:12,
-                fontWeight:'bold',
-                color:'#F7230C',
-                fontStyle:'italic',
+      marker: {
                 textAlign:'center'
               }  
     })
@@ -172,12 +193,12 @@ export class BoxButton extends Component{
 
   render(){
     return  <TouchableOpacity onPress={this.props.onPress} style={this.styles.touchable}>
-              <LinearGradient colors={['#D1E949', '#C0D838', '#9DA505']} style={this.styles.boxControl}>
+              <LinearGradient colors={Theme.box_button.shape.linearColors || this.linearColors || ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']} style={[this.styles.boxControl, Theme.box_button.shape, this.CStyle_plus]}>
                 <XImage source={this.props.source} style={this.styles.icons} local={this.props.local || true} />
-                {this.props.marker && <View style={this.styles.boxMarker}><AnimatedBox type="blink" durationIn={1500} durationOut={1500}><XText style={this.styles.marker}>{this.props.marker}</XText></AnimatedBox></View> }
+                {this.props.marker && <View style={this.styles.boxMarker}><AnimatedBox type="blink" durationIn={1500} durationOut={1500}><XText style={[this.styles.marker, Theme.box_button.marker]}>{this.props.marker}</XText></AnimatedBox></View> }
               </LinearGradient>
-              <View style={this.styles.boxText}>
-                <XText style={this.styles.text}>{this.props.title}</XText>
+              <View style={[this.styles.boxText, Theme.box_button.box_text]}>
+                <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus]}>{this.props.title}</XText>
               </View>
             </TouchableOpacity>
   }
