@@ -1,5 +1,5 @@
 import base64 from 'base-64'
-import {User} from '../../models'
+import { User } from '../../models'
 
 export class XFetcher {
   request_retry = 2

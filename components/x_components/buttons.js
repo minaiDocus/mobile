@@ -9,24 +9,69 @@ export class SimpleButton extends Component{
   constructor(props){
     super(props)
 
+    this.state = { width: 0, height: 0, padding: {}  }
+
+    this.linearColors = null
+    this.CStyle_plus = this.TStyle_plus = {}
+    if(this.props.CStyle)
+    {
+      let styles = JSON.parse(JSON.stringify(this.props.CStyle)) //clone the props because of deletion
+
+      if(Array.isArray(styles))
+      {
+        styles.forEach(st => {
+          if(st.linearColors !== undefined && st.linearColors !== null) {
+            this.linearColors = st.linearColors
+            delete st.linearColors
+          }
+        })
+      }
+      else
+      {
+        if(styles.linearColors !== undefined) {
+          this.linearColors = styles.linearColors
+          delete styles.linearColors
+        }
+      }
+      this.CStyle_plus = styles
+    }
+
+    if(this.props.TStyle)
+      this.TStyle_plus = this.props.TStyle
+
+    this.getLayoutSize = this.getLayoutSize.bind(this)
     this.generateStyles()
+  }
+
+  async getLayoutSize(event){
+    if(this.state.width == 0)
+    {
+      let {width, height} = event.nativeEvent.layout
+      await this.setState({ width: width, height: height, padding: {padding: 0} })
+    }
   }
 
   generateStyles(){
     this.styles = StyleSheet.create({
       content : {
+                  flex:0,
                   flexDirection:'row',
                   alignItems:'center',
                   justifyContent:'center',
-                  padding:10,
-                  borderRadius:2,
-                  backgroundColor:'#C0D838'
+                  backgroundColor: '#A6A6A6',
+                  padding: 10,
                 },
+      touchable: {
+        flex: 0,
+        alignItems:'center',
+        justifyContent:'center',
+        padding: 0,
+        margin: 0
+      },
       text: {
               flex:0,
               textAlign:'center',
-              color:'#fff',
-              fontWeight:"bold"
+              color:'#000',
             },
       images: {
                 flex:0,
@@ -37,45 +82,32 @@ export class SimpleButton extends Component{
   }
 
   render(){
-    let Tstyle_plus = "";
-    let Pstyle_plus = "";
-    if(this.props.Tstyle)
-    {
-      Tstyle_plus = this.props.Tstyle
-    }
-    if(this.props.Pstyle)
-    {
-      Pstyle_plus = this.props.Pstyle
-    }
-
     let leftImage = null
     let rightImage = null
     if(this.props.LImage != "" && this.props.LImage != null)
-    {
       leftImage = <XImage style={[this.styles.images, {marginRight:7}]} source={this.props.LImage} local={true} />
-    }
 
     if(this.props.RImage != "" && this.props.RImage != null)
-    {
       rightImage = <XImage style={[this.styles.images, {marginLeft:7}]} source={this.props.RImage} local={true} />
-    }
 
-    return <TouchableOpacity style={[this.styles.content, Pstyle_plus]} onPress={this.props.onPress}>
-              {leftImage}
-              <XText style={[this.styles.text, Tstyle_plus]}>{this.props.title}</XText>
-              {rightImage}
-           </TouchableOpacity>
+    return  <LinearGradient onLayout={this.getLayoutSize} colors={this.linearColors || ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']} style={[this.styles.content, this.CStyle_plus, this.state.padding]}>
+              <TouchableOpacity style={[this.styles.touchable, { minWidth: this.state.width, minHeight: this.state.height }]} onPress={this.props.onPress}>
+                {leftImage}
+                  <XText style={[this.styles.text, Theme.textBold, this.TStyle_plus]}>{this.props.title}</XText>
+                {rightImage}
+              </TouchableOpacity>
+            </LinearGradient>
   }
 }
 
 export class ImageButton extends Component{
   render(){
     const flex = {flex:1}
-    const Pstyle = this.props.Pstyle || ""
-    const Istyle = this.props.Istyle || ""
+    const CStyle = this.props.CStyle || ""
+    const IStyle = this.props.IStyle || ""
 
-    return <TouchableOpacity style={[flex, Pstyle]} onPress={()=>{this.props.onPress()}}>
-              <XImage style={[flex, Istyle]} source={this.props.source} local={this.props.local || true} />
+    return <TouchableOpacity style={[flex, CStyle]} onPress={()=>{this.props.onPress()}}>
+              <XImage style={[flex, IStyle]} source={this.props.source} local={this.props.local || true} />
             </TouchableOpacity>
   }
 }
@@ -179,13 +211,13 @@ export class LinkButton extends Component{
   }
   
   render(){
-    const Tstyle_plus = this.props.Tstyle || ""
-    const Pstyle_plus = this.props.Pstyle || ""
-    const Istyle_plus = this.props.Istyle || ""
+    const TStyle_plus = this.props.TStyle || ""
+    const CStyle_plus = this.props.CStyle || ""
+    const IStyle_plus = this.props.IStyle || ""
 
-    return <TouchableOpacity style={[this.styles.content, Pstyle_plus]} onPress={this.props.onPress}>
-              {this.props.source && <XImage source={this.props.source} resizeMode={this.props.resizeMode} style={[this.styles.image, Istyle_plus]} local={this.props.local || true}/>}
-              <XText style={[this.styles.text, Tstyle_plus]}>{this.props.title}</XText>
+    return <TouchableOpacity style={[this.styles.content, CStyle_plus]} onPress={this.props.onPress}>
+              {this.props.source && <XImage source={this.props.source} resizeMode={this.props.resizeMode} style={[this.styles.image, IStyle_plus]} local={this.props.local || true}/>}
+              <XText style={[this.styles.text, TStyle_plus]}>{this.props.title}</XText>
            </TouchableOpacity>
   }
 }

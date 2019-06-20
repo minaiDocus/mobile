@@ -1,6 +1,6 @@
 import { ActiveRecord } from './index'
 import { ImageStore } from 'react-native'
-import fetch_blob from 'react-native-fetch-blob'
+import fetch_blob from 'rn-fetch-blob'
 
 const _db_name = "documents_00"
 const _schema = {

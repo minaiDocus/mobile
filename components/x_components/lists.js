@@ -214,27 +214,23 @@ export class LineList extends Component{
         container:  {
                       flex:1,
                       flexDirection:'column',
-                      borderRadius:10,
-                      
-                      elevation: 7, //Android Shadow
-
-                      shadowColor: '#000',                  //===
-                      shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
-                      shadowOpacity: 0.8,                   //===
-                      shadowRadius: 2,                      //===
-
-                      backgroundColor:"#E9E9E7",
-                      margin:10,
+                      margin:5,
                       padding:5,
                       minWidth: 80,
                       minHeight: 90
                   },
+    title:  {
+          flex:0,
+          textAlign:'center',
+          fontSize:16,
+          fontWeight:'bold'
+        }
     })
   }
 
   renderItems(item, key){
-    const colorStriped = ((key % 2) == 0)? "#F2F2F2" : "#FFF";
-    return <View key={key} style={[this.childStylePlus, {backgroundColor:colorStriped}]}>{this.props.renderItems(item, key)}</View>
+    const colorStriped = ((key % 2) == 0)? Theme.color_striped.pair : Theme.color_striped.impair;
+    return <View key={key} style={[this.childStylePlus, {backgroundColor: colorStriped}]}>{this.props.renderItems(item, key)}</View>
   }
 
   render(){
@@ -247,7 +243,7 @@ export class LineList extends Component{
       content = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
     return <View style={{flex:1}}>
-                {this.props.title != '' && <XText style={{flex:0,textAlign:'center',fontSize:16,fontWeight:'bold'}}>{this.props.title}</XText>}
+                {this.props.title != '' && <XText style={this.styles.title}>{this.props.title}</XText>}
                 <View style={[this.styles.container, this.stylesPlus]}>
                   {this.itemCount > 0 && this.datas.map((item, index) => {return this.renderItems(item, index)})}
                   { content }

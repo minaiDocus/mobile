@@ -8,21 +8,40 @@ export class Navigator {
 
     if(this.navigation.state)
       this.params = this.navigation.state.params
-    
+
     if(this.params)
       this.prevScreen = this.getParams("prevScreen") || ""
+
+    const didFocusScreen = this.navigation.addListener('didFocus', (e)=>{ this.didFocus() })
+  }
+
+  didFocus(s){
+    setTimeout(()=>{
+      CurrentScreen = ScreenList.find((s)=>{ return s.key == this.navigation.state.key }).screen
+      CurrentScreen.openScreen()
+    }, 1)
   }
 
   getParams(name)
   {
     let value = null
     try{
-      value = eval(`this.params.${name}`)
+      value = this.params[name]
     }
     catch(e){
       value = null
     }
     return value
+  }
+
+  removeParams(name){
+    try{
+      this.params[name] = null
+      delete this.params[name]
+    }
+    catch(e){
+      this.params[name] = null
+    }
   }
 
   goTo(screen, params={}){
@@ -55,7 +74,7 @@ export class Navigator {
                             index: 0,
                             actions: [
                                         NavigationActions.navigate({routeName: screen, params: parameters})
-                                      ]
+                                     ]
                         })
                         this.navigation.dispatch(resetAction)
                       }
@@ -64,16 +83,17 @@ export class Navigator {
 
   goBack(params=null){
     this.last_params = params
+
     actionLocker(this.navigation.goBack)
   }
 
   screenClose(){
-    if(this.prevScreen != "")
+    if(isPresent(this.prevScreen))
     {
       const parameters = {}
       const p_default = {
-                  initScreen: true
-                }
+                          initScreen: true
+                        }
       Object.assign(parameters, p_default, this.last_params)
       const recallAction = NavigationActions.setParams({
           key: this.prevScreen,

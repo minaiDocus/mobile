@@ -3,13 +3,16 @@ import { EventRegister } from 'react-native-event-listeners'
 import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal } from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import {Screen,Menu,XImage,XText,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM} from '../components'
+import { XImage,XText,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM } from '../components'
 
-import {User} from '../models'
+import { Menu } from './menu'
+import { Screen } from './layout'
 
-import {DocumentsFetcher, UsersFetcher} from '../requests'
+import { User } from '../models'
 
-let GLOB = { navigation:{}, datas: []}
+import { DocumentsFetcher, UsersFetcher } from '../requests'
+
+let GLOB = { datas: []}
 
 function docs_processed(){
   let result = [] 
@@ -60,8 +63,8 @@ class Header extends Component{
   render(){
     return (
               <View style={this.styles.minicontainer}>
-                <BoxButton onPress={()=>{GLOB.navigation.goTo('Send')}} source={{uri:"plane"}} title='Envoi documents' />
-                <BoxButton onPress={()=>{GLOB.navigation.goTo('Documents')}} source={{uri:"documents"}} title='Mes documents' />
+                <BoxButton onPress={()=>{CurrentScreen.goTo('Send')}} source={{uri:"plane"}} title='Envoi documents' />
+                <BoxButton onPress={()=>{CurrentScreen.goTo('Documents')}} source={{uri:"documents"}} title='Mes documents' />
               </View>
             );
   }
@@ -100,7 +103,7 @@ class ViewState extends Component{
 
   goToDocument(index){
     const pack = this.props.datas[index]
-    GLOB.navigation.goTo('Publish', {pack: pack, text:""})
+    CurrentScreen.goTo('Publish', {pack: pack, text:""})
   }
 
   generateStyles(){
@@ -160,7 +163,7 @@ class ViewState extends Component{
   renderLink(index){
     if(this.props.type == "processing" && this.props.datas[index].pack_id > 0)
     {
-      return <LinkButton onPress={()=>{this.goToDocument(index)}} title='Voir détails ...' Tstyle={{flex:1, textAlign:'right', color:'#003366'}} Pstyle={{flex:1, marginTop:10}} />
+      return <LinkButton onPress={()=>{this.goToDocument(index)}} title='Voir détails ...' TStyle={{flex:1, textAlign:'right', color:'#003366'}} CStyle={{flex:1, marginTop:10}} />
     }
     else
     {
@@ -230,12 +233,6 @@ class ViewState extends Component{
                 </View>
              </View>
            </ScrollView>
-  }
-}
-
-class MenuLoader extends Component{
-  render(){ 
-    return <Menu navigation={GLOB.navigation} /> 
   }
 }
 
@@ -377,68 +374,17 @@ class AppInfos extends Component{
 
   render(){
     return <ImageButton   source={{uri:"infos"}} 
-                          Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:40}}
-                          Istyle={{flex:0, width:20, height:20}}
+                          CStyle={{flex:0, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:40 }}
+                          IStyle={{flex:0, width:20, height:20}}
                           onPress={()=>this.showInfos()} />
   }
 }
 
-//A View that render a modal, visible on any pages but login
-class FrontView extends Component{
-  constructor(props){
-    super(props)
-    this.state = {children: null, animation: "fade", closeCallback: null}
-  }
-
-  componentWillMount(){
-    this.FrontViewShowListener = EventRegister.on("openFrontView", (params)=>{
-      this.setState({children: params.children, animation: params.animation, closeCallback: params.closeCallback})
-    })
-
-    this.FrontViewHideListener = EventRegister.on("closeFrontView", ()=>{
-      this.setState({children: null, animation: "fade", closeCallback: null})
-    })
-  }
-
-  componentWillUnmount(){
-    EventRegister.rm(this.FrontViewShowListener)
-    EventRegister.rm(this.FrontViewHideListener)
-  }
-
-  render(){
-    if(this.state.children != null)
-    {
-      return  <Modal  transparent={true}
-                      animationType={this.state.animation} 
-                      visible={true}
-                      supportedOrientations={['portrait', 'landscape']}
-                      onRequestClose={ ()=>{ if(this.state.closeCallback) this.state.closeCallback() } }
-              >
-                {this.state.children}
-              </Modal>
-    }
-    else
-    {
-      return null
-    }
-  }
-}
-
 class HomeScreen extends Component {
-  static navigationOptions = {  headerTitle: <XText class='title_screen'>Accueil</XText>,
-                                headerLeft:  <MenuLoader />,
-                                headerRight: <View style={{flex:1, flexDirection:'row', minHeight:'100%'}}>
-                                                <UINotification />
-                                                <AppInfos />
-                                                <ProgressUpload />
-                                             </View>
-                              }
-
   constructor(props){
     super(props)
 
     this.master = User.getMaster()
-    GLOB.navigation = new Navigator(this.props.navigation)
     GLOB.datas = []
     this.state = {showInfos: false, updated: false}
 
@@ -455,7 +401,7 @@ class HomeScreen extends Component {
 
   componentDidMount(){
     this.refreshDatas()
-    if(GLOB.navigation.getParams("welcome"))
+    if(CurrentScreen.getNavigator().getParams("welcome"))
       setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(this.master)}`), 1000)
   }
 
@@ -473,15 +419,26 @@ class HomeScreen extends Component {
       this.setState({updated: true})
     })
   }
+
+  renderOptions(){
+    return <View style={{flex:1, flexDirection:'row', justifyContent: 'center'}}>
+              <UINotification />
+              <AppInfos />
+              <ProgressUpload />
+           </View>
+  }
   
   render() {
     return (
-      <Screen style={{flex:1}}
-              navigation={GLOB.navigation}>
+      <Screen style={[{flex:1}, Theme.body]}
+              navigation={this.props.navigation}
+              title='Accueil'
+              withMenu={true}
+              options={this.renderOptions()}
+      >
         <FCM />
         <Header />
         <TabNav updated={this.state.updated} />
-        <FrontView />
       </Screen>
     )
   }

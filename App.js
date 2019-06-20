@@ -1,4 +1,5 @@
 import { StackNavigator } from 'react-navigation'
+import { Easing, Animated } from 'react-native'
 
 import LoginScreen from './screens/login'
 import HomeScreen from './screens/home'
@@ -15,6 +16,20 @@ import SharingScreen from './screens/sharing/account_sharing'
 import SharingContactsScreen from './screens/sharing/sharing_contacts'
 
 import './Initializer'
+import './screens/themes'
+
+const StackNavigatorConfig = {
+  initialRoutesName: 'Login',
+  headerMode: 'none',
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: Animated.timing,
+      easing: Easing.step0,
+    },
+  }),
+}
+
 
 const StackApp = StackNavigator({   Login: {
                                       screen: LoginScreen,
@@ -43,6 +58,6 @@ const StackApp = StackNavigator({   Login: {
                                     SharingContacts: {
                                       screen: SharingContactsScreen
                                     }
-                                }, {initialRouteName: 'Login'})
+                                }, StackNavigatorConfig)
 
 export default StackApp

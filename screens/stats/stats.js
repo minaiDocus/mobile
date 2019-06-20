@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Screen,AnimatedBox,XImage,XText,Navigator,LineList,Pagination,ModalForm,BoxButton,LinkButton,ImageButton} from '../../components'
+import { AnimatedBox,XImage,XText,Navigator,LineList,Pagination,ModalForm,BoxButton,LinkButton,ImageButton} from '../../components'
+
+import { Screen } from '../layout'
 
 import {PaperProcess} from "../../requests"
 
-let GLOB = {  navigation:{},
-              datas:[],
+let GLOB = {  datas:[],
               dataFilter: { created_at_start:'', 
                             created_at_end:'', 
                             type:'',
@@ -39,6 +40,17 @@ class Header extends Component{
   }
 
   closeFilter(withFilter="none"){
+    const form = this.refs.form_1
+    GLOB.dataFilter = { 
+                        created_at_start: form.values.created_at_start, 
+                        created_at_end:form.values.created_at_end, 
+                        type:form.values.type,
+                        customer_code:form.values.customer_code,
+                        customer_company:form.values.customer_company,
+                        tracking_number:form.values.tracking_number,
+                        pack_name:form.values.pack_name
+                      }
+
     if(withFilter == "reInit")
     {
       GLOB.dataFilter = { created_at_start:'', 
@@ -110,18 +122,17 @@ class Header extends Component{
   render(){
     return  <View style={this.styles.container}>
               { this.state.filter && 
-                <ModalForm  title="Filtre"
-                            getValue={(name)=>{return eval(`${name}`)}}
-                            setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                <ModalForm  ref="form_1"
+                            title="Filtre"
                             dismiss={()=>this.closeFilter("none")}
                             inputs={[
-                              {label:'Date de début :', name: 'GLOB.dataFilter.created_at_start', type:'date'},
-                              {label:'Date de fin :', name: 'GLOB.dataFilter.created_at_end', type:'date'},
-                              {label:'Type :', name: 'GLOB.dataFilter.type', type:'select', dataOptions: GLOB.types},
-                              {label:'Code client :', name: 'GLOB.dataFilter.customer_code'},
-                              {label:'Nom de la société :', name: 'GLOB.dataFilter.customer_company'},
-                              {label:'N° de suivi :', name: 'GLOB.dataFilter.tracking_number', keyboardType:'numeric'},
-                              {label:'Nom du lot :', name: 'GLOB.dataFilter.pack_name'},
+                              {label:'Date de début :', name: 'created_at_start', type:'date', value: GLOB.dataFilter.created_at_start},
+                              {label:'Date de fin :', name: 'created_at_end', type:'date', value: GLOB.dataFilter.created_at_end},
+                              {label:'Type :', name: 'type', type:'select', dataOptions: GLOB.types, value: GLOB.dataFilter.type},
+                              {label:'Code client :', name: 'customer_code', value: GLOB.dataFilter.customer_code},
+                              {label:'Nom de la société :', name: 'customer_company', value: GLOB.dataFilter.customer_company},
+                              {label:'N° de suivi :', name: 'tracking_number', keyboardType:'numeric', value: GLOB.dataFilter.tracking_number},
+                              {label:'Nom du lot :', name: 'pack_name', value: GLOB.dataFilter.pack_name},
                             ]}
                             buttons={[
                               {title: "Filtrer", action: ()=>this.closeFilter("filter")},
@@ -268,11 +279,11 @@ class OrderBox extends Component{
       return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={this.styles.container}>
                   <XText style={this.styles.title}>Trier par : </XText>
                   <View style={{flex:1, marginTop:5}}>
-                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={this.styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Type','type'])} title='Type' Pstyle={this.styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Code client','code'])} title='Code client' Pstyle={this.styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['N°de suivi','number'])} title='N°de suivi' Pstyle={this.styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Nom de lot','packname'])} title='Nom du lot' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' CStyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Type','type'])} title='Type' CStyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Code client','code'])} title='Code client' CStyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['N°de suivi','number'])} title='N°de suivi' CStyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Nom de lot','packname'])} title='Nom du lot' CStyle={this.styles.list} />
                   </View>
               </AnimatedBox>
     }
@@ -284,17 +295,8 @@ class OrderBox extends Component{
 }
 
 class StatsScreen extends Component {
-  static navigationOptions = {
-       headerTitle: <XText class='title_screen'>Suivi</XText>,
-       headerRight: <ImageButton  source={{uri:"options"}} 
-                                  Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:50}}
-                                  Istyle={{flex:0, width:7, height:36}}
-                                  onPress={()=>EventRegister.emit('clickOrderBox', true)} />
-  }
-
   constructor(props){
-    super(props);
-    GLOB.navigation = new Navigator(this.props.navigation)
+    super(props)
 
     this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
 
@@ -398,10 +400,20 @@ class StatsScreen extends Component {
              </ScrollView>
   }
 
+  renderOptions(){
+    return <ImageButton source={{uri:"options"}} 
+                        CStyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:50}}
+                        IStyle={{flex:0, width:7, height:36}}
+                        onPress={()=>EventRegister.emit('clickOrderBox', true)} />
+  }
+
   render() {
       return (
           <Screen style={{flex: 1, flexDirection: 'column',}}
-                  navigation={GLOB.navigation}>
+                  navigation={this.props.navigation}
+                  title="Suivi"
+                  options={ this.renderOptions() }
+          >
             <Header dataCount={this.total} onFilter={()=>this.refreshDatas()}/>
               { this.renderStats() }
               <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>

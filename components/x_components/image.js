@@ -62,11 +62,6 @@ export class XImage extends Component{
     super(props)
 
     this.renderImage = this.renderImage.bind(this)
-    this.adjustImage = this.adjustImage.bind(this)
-  }
-
-  adjustImage(e){
-    console.error(e)
   }
 
   renderImage(){
@@ -105,7 +100,7 @@ export class XImage extends Component{
           justifyContent:'flex-end'
         }
 
-        return  <View style={[{flex:0}, this.props.PStyle]}>
+        return  <View style={[{flex:0}, this.props.CStyle]}>
                   <Image 
                     source={this.img_source} 
                     style={this.img_style} 
@@ -113,7 +108,7 @@ export class XImage extends Component{
                     onLoadEnd={this.props.onLoadEnd}
                     loadingIndicatorSource={loader}
                     />
-                  <View style={[absolute, this.props.CStyle]}>
+                  <View style={[absolute, this.props.CldStyle]}>
                     {this.props.children}
                   </View>
                 </View>

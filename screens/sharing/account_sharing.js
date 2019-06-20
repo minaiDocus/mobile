@@ -2,14 +2,12 @@ import React, { Component } from 'react'
 import {View} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Navigator,ImageButton,OrganizationSwitcher,XText} from '../../components'
+import { Navigator,ImageButton,OrganizationSwitcher,XText } from '../../components'
 
-import {User} from '../../models'
+import { User } from '../../models'
 
 import SharingAdmin from './format/sharing_admin'
 import SharingCustomers from './format/sharing_customers'
-
-let GLOB = { navigation:{} }
 
 class HeaderOptions extends Component{
   constructor(props){
@@ -21,8 +19,8 @@ class HeaderOptions extends Component{
     if(this.current_user.is_prescriber || this.current_user.is_admin)
     {
       return <ImageButton source={{uri:"options"}} 
-                          Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:50}}
-                          Istyle={{flex:0, width:7, height:36}}
+                          CStyle={{flex:0, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:40}}
+                          IStyle={{flex:0, width:7, height:36}}
                           onPress={()=>EventRegister.emit('clickOrderBox', true)} />
     }
     else
@@ -34,28 +32,26 @@ class HeaderOptions extends Component{
 
 
 class SharingScreen extends Component {
-  static navigationOptions = {
-       headerTitle: <XText class='title_screen'>Partage dossier</XText>,
-       headerRight: <View style={{flex:1, flexDirection:'row'}}>
-                      <OrganizationSwitcher />
-                      <HeaderOptions />
-                    </View>
-  }
-
   constructor(props){
     super(props)
-    GLOB.navigation = new Navigator(this.props.navigation)
     this.current_user = User.getMaster()
+  }
+
+  renderOptions(){
+    return  <View style={{flex:1, flexDirection:'row', justifyContent: 'center'}}>
+              <OrganizationSwitcher />
+              <HeaderOptions />
+            </View>
   }
 
   render() {
     if(this.current_user.is_prescriber || this.current_user.is_admin)
     {
-      return <SharingAdmin navigation={GLOB.navigation}/>
+      return <SharingAdmin navigation={this.props.navigation} title='Partage dossier' options={ this.renderOptions() } />
     }
     else
     {
-      return <SharingCustomers navigation={GLOB.navigation}/>
+      return <SharingCustomers navigation={this.props.navigation} title='Partage dossier' options={ this.renderOptions() }/>
     }
 
   }

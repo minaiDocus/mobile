@@ -2,7 +2,7 @@ import Config from './Config'
 
 import { EventRegister } from 'react-native-event-listeners'
 
-import { Notice, CronTask } from './components'
+import { Notice } from './components'
 
 import { ErrorReport } from './requests'
 
@@ -21,9 +21,27 @@ function fillWithZero(number, length_to = 2){
 global.Config = Config
 global.UploadingFiles = false
 global.Notice = Notice
-global.CronTask = CronTask
+global.KeyboardShow = false
 global.Orientation = "portrait"
-
+//TEST
+global.PreviousScreen = null
+global.CurrentScreen = null
+global.ScreenList = []
+//TEST
+global.MonthsData =   [
+                        {label: 'Jan', value: '01'},
+                        {label: 'Fev', value: '02'},
+                        {label: 'Mar', value: '03'},
+                        {label: 'Avr', value: '04'},
+                        {label: 'Mai', value: '05'},
+                        {label: 'Jui', value: '06'},
+                        {label: 'Jul', value: '07'},
+                        {label: 'Aou', value: '08'},
+                        {label: 'Sep', value: '09'},
+                        {label: 'Oct', value: '10'},
+                        {label: 'Nov', value: '11'},
+                        {label: 'Dec', value: '12'}
+                      ]
 //Function for truncating text
 global.truncate = (text, len, next='...')=>{
   result = text
@@ -38,12 +56,12 @@ global.truncate = (text, len, next='...')=>{
 //Function for adding Components to the Front View Modal
 global.renderToFrontView = (children, animation="fade", closeCallback=null) => {
   params = { children: children, animation: animation, closeCallback: closeCallback }
-  EventRegister.emit("openFrontView", params)
+  CurrentScreen.getFrontView().openFrontView(params)
 }
 
 //Function for removing Components from Front View Modal (close front view)
 global.clearFrontView = () => {
-  EventRegister.emit("closeFrontView")
+  CurrentScreen.getFrontView().closeFrontView()
 }
 
 
@@ -143,6 +161,26 @@ global.arrayCompact = (arr, strict=false) => {
         arrReturn.push(elem)
     }
   })
+  return arrReturn
+}
+
+//Function to group by
+global.arrayGroup = (arr, by='') => {
+  let arrReturn = []
+  let keys = []
+
+  arr.forEach(elem => {
+    let curr_key = elem[by]
+
+    if( !keys.find( k => { return k == curr_key }) )
+    {
+      keys.push(curr_key)
+
+      let curr_tab = arr.filter( a => { return a[by] == curr_key })
+      arrReturn.push({ key: curr_key, groups: curr_tab })
+    }
+  })
+
   return arrReturn
 }
 

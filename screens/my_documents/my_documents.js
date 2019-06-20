@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
 
-import {Screen,XImage,XText,XTextInput,Navigator,SelectInput,Pagination,LineList} from '../../components'
+import { XImage,XText,XTextInput,Navigator,SelectInput,Pagination,LineList } from '../../components'
 
-import {User} from '../../models'
+import { Screen } from '../layout'
 
-import {UsersFetcher, DocumentsFetcher} from "../../requests"
+import { User } from '../../models'
 
-let GLOB = { navigation:{}, filterText: "", clientId: 0 }
+import { UsersFetcher, DocumentsFetcher } from "../../requests"
+
+let GLOB = { filterText: "", clientId: 0 }
 
 class Header extends Component{
   constructor(props){
@@ -123,7 +125,7 @@ class Header extends Component{
     }
     else
     {
-      inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} Pstyle={{flex:0, height:35}} onChange={(value) => this.handleClientChange(value)}/>
+      inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={{flex:0, height:35}} onChange={(value) => this.handleClientChange(value)}/>
     }
 
     return inputSelection
@@ -149,7 +151,7 @@ class Header extends Component{
                   {this.state.ready && this.renderCustomerSelection()}
                   <View style={{flex:1, flexDirection:'row'}}>
                     <XTextInput TStyle={{paddingLeft:6}} 
-                                PStyle={this.styles.inputs} 
+                                CStyle={this.styles.inputs} 
                                 placeholder="Filtre" 
                                 autoCorrect={false} 
                                 onChangeText={(value) => this.handleFilterChange(value)}/>
@@ -167,7 +169,7 @@ class BoxDocs extends Component{
   }
 
   handleClick(){
-    GLOB.navigation.goTo('Publish', {pack: this.props.data, text: GLOB.filterText})
+    CurrentScreen.goTo('Publish', {pack: this.props.data, text: GLOB.filterText})
   }
 
   generateStyles(){
@@ -199,11 +201,9 @@ class BoxDocs extends Component{
 }
 
 class DocumentsScreen extends Component {
-  static navigationOptions = {headerTitle: <XText class='title_screen'>Mes documents</XText>}
-
   constructor(props){
     super(props)
-    GLOB.navigation = new Navigator(this.props.navigation)
+
     GLOB.filterText = ""
     GLOB.clientId = 0
     this.state = {ready: false, dataList: [], loadingFilter: false}
@@ -271,7 +271,8 @@ class DocumentsScreen extends Component {
   render() {
       return (
         <Screen style={{flex: 1, flexDirection: 'column'}}
-                navigation={GLOB.navigation}>
+                title='Mes documents'
+                navigation={this.props.navigation}>
           <Header onFilter={this.dataFilter} loadingFilter={this.state.loadingFilter}/>
           { this.renderDocuments() }
         </Screen>

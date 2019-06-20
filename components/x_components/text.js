@@ -1,31 +1,25 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Platform } from 'react-native'
+import { Text } from 'react-native'
 
 export class XText extends Component{
   constructor(props){
     super(props)
-    this.generateStyles()
+    
+    this.class = this.props.class || ''
 
-    switch(this.props.class)
-    {
-      case 'title_screen' :
-        this.style_class = { fontSize:18, fontWeight:'bold', color:'#000' }
-        break;
-      default:
-        this.style_class = {}
-    }
+    this.generateStyle()
   }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-      default:  {
-                  fontFamily: Platform.OS == 'ios' ? 'arial' : 'lucida grande',
-                }
-    })
+  
+  generateStyle(){
+    this.styles = { 
+                    fontFamily: Config.platform == 'ios' ? 'arial' : 'lucida grande',
+                    color: '#000',
+                    fontSize: 12,
+                  }
   }
 
   render(){
-    var style_extended = this.props.style
-    return <Text style={[this.styles.default, this.style_class, style_extended]} >{this.props.children}</Text>
+    const style_extended = this.props.style || {}
+    return <Text style={[this.styles, (Theme.global_text || {}), style_extended]} >{this.props.children}</Text>
   }
 }

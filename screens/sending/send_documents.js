@@ -4,13 +4,15 @@ import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
 
-import {Screen,Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload} from '../../components'
+import { Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload } from '../../components'
+
+import { Screen } from '../layout'
 
 import { Document } from '../../models'
 
-import {UsersFetcher} from "../../requests"
+import { UsersFetcher } from "../../requests"
 
-let GLOB = {documents:[], imgToDel:"", idZoom:"", navigation:{}}
+let GLOB = { documents:[], imgToDel:"", idZoom:"" }
 
 const styles = {
   minicontainer:{
@@ -123,7 +125,7 @@ class BoxZoom extends Component{
         if(img.id_64 == GLOB.idZoom.toString()){ indexStart = this.currIndex = key; }
         return  <View key={key} style={{flex:1}}>
                   <XImage type='container'
-                          PStyle={this.swiperStyle.boxImage}
+                          CStyle={this.swiperStyle.boxImage}
                           style={{flex:1}}
                           source={{uri: img.path.toString()}}
                           local={false}
@@ -157,9 +159,9 @@ class BoxZoom extends Component{
                   }
                 </View>
                 <View style={{flex:0,flexDirection:'row'}}>
-                  <SimpleButton Pstyle={{flex:1, marginHorizontal:3}} onPress={()=>this.hideModal()} title="Retour" />
-                  <SimpleButton Pstyle={{flex:1, marginHorizontal:3}} onPress={()=>this.cropElement()} title="Recadrer" />
-                  <SimpleButton Pstyle={{flex:1, marginHorizontal:3}} onPress={()=>this.deleteElement()} title="Enlever" />
+                  <SimpleButton CStyle={{flex:1, marginHorizontal:3}} onPress={()=>this.hideModal()} title="Retour" />
+                  <SimpleButton CStyle={{flex:1, marginHorizontal:3}} onPress={()=>this.cropElement()} title="Recadrer" />
+                  <SimpleButton CStyle={{flex:1, marginHorizontal:3}} onPress={()=>this.deleteElement()} title="Enlever" />
                 </View>
               </View>
             </Modal>
@@ -252,7 +254,7 @@ class ImgBox extends Component{
     if(doc)
       message = doc.error || ''
     return  <TouchableOpacity style={this.styles.styleTouch} onPress={()=>this.toggleOpt()}>
-                <XImage type='container' PStyle={this.styles.styleContainer} source={{uri:this.element.path.toString()}} style={this.styles.styleImg} local={false}>
+                <XImage type='container' CStyle={this.styles.styleContainer} source={{uri:this.element.path.toString()}} style={this.styles.styleImg} local={false}>
                   {
                     this.state.options == false && message != '' &&
                     <View style={this.styles.options}>
@@ -261,9 +263,9 @@ class ImgBox extends Component{
                   }
                   { this.state.options == true &&
                     <View style={this.styles.options}>   
-                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} Pstyle={[this.styles.btnText]} Istyle={{width:20,height:20}} />
-                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} Pstyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} Istyle={{width:20,height:20}} />
-                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} Pstyle={[this.styles.btnText]} Istyle={{width:20,height:20}} />
+                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} CStyle={[this.styles.btnText]} IStyle={{width:20,height:20}} />
+                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} CStyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} IStyle={{width:20,height:20}} />
+                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} CStyle={[this.styles.btnText]} IStyle={{width:20,height:20}} />
                     </View>
                   }
                 </XImage>
@@ -281,15 +283,9 @@ class Header extends Component{
 }
 
 class SendScreen extends Component {
-    static navigationOptions =  {   headerTitle: <XText class='title_screen'>Envoi documents</XText>, 
-                                    headerRight: <View style={{flex:1, minWidth:80, flexDirection:'row', minHeight:'100%'}}>
-                                                    <ProgressUpload />
-                                                 </View>
-                                }
-
   constructor(props){
     super(props)
-    GLOB.navigation = new Navigator(this.props.navigation)
+
     this.state = { ready: false, dataList: [], zoomActive: false }
 
     this.renderImg = this.renderImg.bind(this)
@@ -455,7 +451,7 @@ class SendScreen extends Component {
   sendList(){
     if(GLOB.documents.length > 0)
     {
-      GLOB.navigation.goTo('Sending', {images: GLOB.documents})
+      CurrentScreen.goTo('Sending', {images: GLOB.documents})
     }
     else
     {
@@ -491,10 +487,18 @@ class SendScreen extends Component {
     })
   }
 
+  renderOptions(){
+    return <View style={{flex:1, minWidth:80, flexDirection:'row', minHeight:'100%'}}>
+              <ProgressUpload />
+           </View>
+  }
+
   render() {
       return (
         <Screen style={this.styles.container}
-                navigation={GLOB.navigation}>
+                title='Envoi documents'
+                options={ this.renderOptions() }
+                navigation={this.props.navigation}>
           <Header takePicture={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
           {this.state.zoomActive && <BoxZoom  datas={this.state.dataList} 
                                               cropElement={(index)=>this.openCrop(index)}
@@ -510,7 +514,7 @@ class SendScreen extends Component {
                        />
           </ScrollView>
           <View style={styles.minicontainer}>
-            <SimpleButton Pstyle={this.styles.button} onPress={()=>this.sendList()} title="Suivant >>" />
+            <SimpleButton CStyle={this.styles.button} onPress={()=>this.sendList()} title="Suivant >>" />
           </View>
           <CropperView />
         </Screen>

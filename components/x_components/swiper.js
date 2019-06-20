@@ -5,7 +5,8 @@ import ScrollableTabView from 'react-native-scrollable-tab-view'
 export class Swiper extends Component{
   constructor(props){
     super(props)
-    this.state = {index: this.props.index || 0}
+
+    this.state = { index: this.props.index || 0 }
 
     this.generateStyles()
   }
@@ -16,7 +17,9 @@ export class Swiper extends Component{
 
   handleIndexChange(index){
     this.setState({index: index})
-    this.props.onIndexChanged(index)
+
+    if(this.props.onIndexChanged)
+      this.props.onIndexChanged(index)
   }
 
   generateStyles(){
@@ -44,10 +47,10 @@ export class Swiper extends Component{
   renderPagination(){
     if(this.props.count > 1)
     {
-      const list = this.props.count
+      const count = this.props.count
       let pagination = []
       let active = ''
-      for(i=0;i<list;i++)
+      for(i=0;i<count;i++)
       {
         active = (this.state.index == i)? '#00f' : '#FFFF6B'
         pagination.push(<View key={i} style={[this.pageStyle.pages, {backgroundColor: active}]} />)
@@ -63,7 +66,6 @@ export class Swiper extends Component{
   }
 
   render(){
-    const list = this.props.count
     return  <View style={{flex:1, justifyContent:'flex-end'}}>
               <ScrollableTabView  style={this.props.style} 
                                   renderTabBar={()=>this.renderTabBar()} 
@@ -72,7 +74,7 @@ export class Swiper extends Component{
                                   onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
                 {this.props.children}
               </ScrollableTabView>
-              {this.renderPagination()}
+              { this.renderPagination() }
             </View>
   }
 }

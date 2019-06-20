@@ -89,13 +89,15 @@ export class ProgressUpload extends Component{
     const colorGrad = ['#422D14', '#422D14', '#C0D838']
     if(this.state.show && this.state.value < 99 && UploadingFiles)
     {
-      return <AnimatedBox ref="progressUpload" type="RightSlide" style={this.styles.box}>
+      return <View style={this.style.box}>
+              <AnimatedBox ref="progressUpload" type="RightSlide" style={{flex: 0}}>
                 <LinearGradient colors={colorGrad} style={this.styles.gradient}>
                   <TouchableOpacity onPress={this.showState}>
                     <XText style={this.styles.text}>{this.state.value} %</XText>
                   </TouchableOpacity>
                 </LinearGradient>
              </AnimatedBox>
+            </View>
     }
     else
     {
@@ -183,8 +185,8 @@ export class UploderFiles{
                             <View style={{flex:1}}>
                               <LinkButton onPress={()=>{this.showErrors()}} 
                                           title='Voir détails ...'
-                                          Tstyle={{color:'#EC5656', fontWeight:'bold', paddingLeft:0, textAlign:'center'}} 
-                                          Pstyle={{flex:1}} />
+                                          TStyle={{color:'#EC5656', fontWeight:'bold', paddingLeft:0, textAlign:'center'}} 
+                                          CStyle={{flex:1}} />
                             </View>
                           </View>
         Notice.danger(mess_obj, { name: "uploadErrors" })
@@ -238,7 +240,7 @@ export class UploderFiles{
                                                 return  <View key={index} style={{flex:1, padding:10, borderBottomWidth:1, borderColor:'#A6A6A6'}}>
                                                           <View style={{flexDirection:'row', flex:1, backgroundColor:'#E1E2DD'}}>
                                                             <View style={{flex:1, justifyContent:'center', alignItems:'center', paddingHorizontal:5}}>
-                                                              <XImage type='container' PStyle={imgStyles.styleContainer} style={imgStyles.styleImg} local={false} source={{uri: doc.path.toString()}} />
+                                                              <XImage type='container' CStyle={imgStyles.styleContainer} style={imgStyles.styleImg} local={false} source={{uri: doc.path.toString()}} />
                                                             </View>
                                                             <View style={{flex:3, padding:10}}>
                                                               <XText style={{fontSize:10}}>- {doc.name}</XText>

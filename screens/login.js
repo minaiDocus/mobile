@@ -2,21 +2,21 @@ import React, { Component } from 'react'
 import SplashScreen from 'react-native-splash-screen'
 import { StyleSheet, View } from 'react-native'
 
-import { Screen, XImage, XText, XTextInput, Navigator, SimpleButton } from '../components'
+import { XImage, XText, XTextInput, Navigator, SimpleButton } from '../components'
+
+import { Screen } from './layout'
 
 import { User } from '../models'
 
 import { RemoteAuthentication, UsersFetcher } from '../requests'
 
-let GLOB = {navigation: {}, login: '', password: '', system_reject: false}
+let GLOB = { login: '', password: '', system_reject: false}
 
 class LoginScreen extends Component {
-  static navigationOptions = {header: null}
+  static navigationOptions = { header: null }
 
   constructor(props){
     super(props)
-
-    GLOB.navigation = new Navigator(this.props.navigation)
 
     GLOB.login = GLOB.password = ""
     this.state = {loading: false, focusInput: false, ready: false, orientation: 'portrait'}
@@ -29,12 +29,12 @@ class LoginScreen extends Component {
     this.leaveFocusInput = this.leaveFocusInput.bind(this)
     this.submitForm = this.submitForm.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    
+
     this.generateStyles() //style generation
   }
   
   componentDidMount(){
-    if(GLOB.navigation.getParams("goodbye"))
+    if(CurrentScreen.getNavigator().getParams("goodbye"))
     {
       clearFrontView()
       setTimeout(()=>Notice.info(`A bientot !!`), 1000)
@@ -53,16 +53,17 @@ class LoginScreen extends Component {
       }
       
       const user = User.getMaster()
-      SplashScreen.hide()
+
       if(user.id && responses[0].code != 500)
       {
         this.goToHome()
+        setTimeout(()=>{ SplashScreen.hide() }, 1000)
+      }
+      else
+      {
+        SplashScreen.hide()
       }
     })
-  }
-
-  componentWillUnmount(){
-    GLOB.navigation.screenClose()
   }
 
   dismissLoader(message){
@@ -75,7 +76,7 @@ class LoginScreen extends Component {
   }
 
   goToHome(){
-    GLOB.navigation.dismissTo('Home', {welcome: true})
+    CurrentScreen.dismissTo('Home', { welcome: true })
   }
 
   handleLogin(text){
@@ -130,9 +131,9 @@ class LoginScreen extends Component {
       container:{
                   flex:1,
                   flexDirection:'column',
+                  justifyContent:'flex-start',
                   paddingHorizontal:20,
                   marginHorizontal:20,
-                  backgroundColor:'#FFF',
 
                   elevation: 7, //Android Shadow
                     
@@ -173,8 +174,8 @@ class LoginScreen extends Component {
               },
       submit: {
                 flex:0,
-                paddingVertical:9,
-                paddingHorizontal:30,
+                paddingVertical:6,
+                paddingHorizontal:10,
                 marginVertical:15,
                 alignSelf:'center'
               }
@@ -201,12 +202,13 @@ class LoginScreen extends Component {
 
   render() {
     return (
-      <Screen style={{flex:1}}
-              navigation={GLOB.navigation}
+      <Screen style={[{flex:1}, Theme.body]}
+              navigation={this.props.navigation}
               onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
+              noHeader={true}
               >
         <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
-          <View style={this.styles.container}>   
+          <View style={[this.styles.container, Theme.container]}>   
             { this.state.focusInput == false && 
               <View style={{flex:1,flexDirection:'row',alignItems:'center'}}>
                 <XImage style={{flex:1, height:100}} source={{uri:"charge"}} />
@@ -225,10 +227,12 @@ class LoginScreen extends Component {
                               onBlur={this.leaveFocusInput}
                               autoCorrect={false}
                               selectTextOnFocus={true}
-                              PStyle={this.styles.inputs} 
+                              CStyle={this.styles.inputs} 
                               placeholder="Identifiant (Email)"
                               keyboardType="email-address"
-                              next={{action: this.actionPassword}} 
+                              next={{action: this.actionPassword}}
+                              returnKeyType='next'
+                              onSubmitEditing={this.actionPassword}
                               onChangeText={(text) => this.handleLogin(text)}/>
                 </View>
                 <View style={this.styles.boxInput}>
@@ -240,13 +244,15 @@ class LoginScreen extends Component {
                               autoCorrect={false} 
                               selectTextOnFocus={true}
                               secureTextEntry={true} 
-                              PStyle={this.styles.inputs} 
+                              CStyle={this.styles.inputs}
+                              returnKeyType='go'
+                              onSubmitEditing={this.submitForm}
                               placeholder="Mot de passe"
                               next={{title: "Connexion", action: this.submitForm}}
                               previous={{action: this.actionLogin}} 
                               onChangeText={(text) => this.handlePass(text)}/>
                 </View>
-                {!this.state.loading && <SimpleButton onPress={() => this.submitForm()} Pstyle={this.styles.submit} Tstyle={{fontSize:18}} title="Connexion" />}
+                {!this.state.loading && <SimpleButton onPress={() => this.submitForm()} CStyle={[this.styles.submit, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} title="Connexion" />}
                 {this.state.loading && <View style={{flex:0, marginTop:15, alignSelf:"center"}}><XImage loader={true} width={40} height={40} /></View>}
               </View>
             }

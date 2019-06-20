@@ -138,7 +138,6 @@ class Message extends React.Component{
       title:{
               flex:1,
               color:'#FFF',
-              fontWeight:"bold",
               paddingHorizontal:20
             },
       text:{
@@ -151,7 +150,6 @@ class Message extends React.Component{
               flex:0,
               textAlign:'right',
               fontSize:18,
-              fontWeight:'bold',
               color:colorText,
               paddingHorizontal:10
             }
@@ -165,7 +163,7 @@ class Message extends React.Component{
       return  <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
                 <XText style={this.styles.text}>{message}</XText>
                 <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                  <XText style={this.styles.close}>X</XText>
+                  <XText style={[this.styles.close, Theme.textBold]}>X</XText>
                 </TouchableHighlight>
               </AnimatedBox>
     }
@@ -177,7 +175,7 @@ class Message extends React.Component{
         body =  <View style={{flex:1}}>
                   {
                     typeof(message.title) !== "undefined" && 
-                    <XText style={this.styles.title}>
+                    <XText style={[this.styles.title, Theme.textBold]}>
                       {message.title}
                     </XText>
                   }
@@ -189,7 +187,7 @@ class Message extends React.Component{
                 {
                   this.options.noClose == false &&
                   <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                    <XText style={this.styles.close}>X</XText>
+                    <XText style={[this.styles.close, Theme.textBold]}>X</XText>
                   </TouchableHighlight>
                 }
               </AnimatedBox>
@@ -237,7 +235,7 @@ export class NoticeBox extends React.Component{
 
   closeMessage(name){
     try{
-      eval(`this.refs.noticeOBJ_${name}.closeMessage()`)
+      this.refs[`noticeOBJ_${name}`].closeMessage()
     }
     catch(e){}
   }

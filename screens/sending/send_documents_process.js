@@ -4,7 +4,9 @@ import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import { NavigationActions } from 'react-navigation'
 
-import { Screen, Navigator, XImage, XText, LinkButton, SimpleButton, SelectInput, XTextInput, UploderFiles, ProgressBar } from '../../components'
+import { Navigator, XImage, XText, LinkButton, SimpleButton, SelectInput, XTextInput, UploderFiles, ProgressBar } from '../../components'
+
+import { Screen } from '../layout'
 
 import { ModalComptaAnalysis } from '../modals/compta_analytics'
 
@@ -13,7 +15,6 @@ import { User, Document } from '../../models'
 import { FileUploader } from "../../requests"
 
 let GLOB = {
-              navigation:{},
               dataList:[],
               customer: '',
               period: '',
@@ -125,7 +126,7 @@ class ImgBox extends Component{
 
   render(){
     return  <View style={{flex:0}}>
-              <XImage type='container' PStyle={this.styles.styleContainer} style={this.styles.styleImg} local={false} source={this.props.source} />
+              <XImage type='container' CStyle={this.styles.styleContainer} style={this.styles.styleImg} local={false} source={this.props.source} />
             </View>
   }
 }
@@ -349,12 +350,12 @@ class Body extends Component{
   const analysis_message = (ModalComptaAnalysis.exist()) ? 'Compta analytique (modifier)' : 'Compta analytique (ajouter)'
 
   return  <View style={{flex:1}}>
-            <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>
+            <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>
             {this.state.paramsReady &&
               <View style={{flex:1}}>
-                <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
-                <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} Pstyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
-                {this.state.comptaAnalysisActivated && <SimpleButton Pstyle={styles.button} onPress={()=>{this.toggleComptaAnalysis(true)}} title={analysis_message} />}
+                <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
+                <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
+                {this.state.comptaAnalysisActivated && <SimpleButton CStyle={styles.button} onPress={()=>{this.toggleComptaAnalysis(true)}} title={analysis_message} />}
                 {this.state.comptaAnalysisActivated && this.state.comptaAnalysisResume && this.renderAnalyticResume()}
                 {this.state.period_start != "" &&
                   <View style={this.styles.warning}>
@@ -419,24 +420,24 @@ class Footer extends Component{
   }
 
   leaveScreen(){
-    GLOB.navigation.goBack({ resetSendScreen: GLOB.sending_finished })
+    CurrentScreen.goBack({ resetSendScreen: GLOB.sending_finished })
   }
 
   render(){
     return  <View style={styles.minicontainer}>
-              <SimpleButton Pstyle={styles.button} onPress={()=>{this.leaveScreen()}} title="<< Precedent" />
-              {this.state.sending == false && this.props.sending == false && <SimpleButton Pstyle={styles.button} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
+              <SimpleButton CStyle={styles.button} onPress={()=>{this.leaveScreen()}} title="<< Precedent" />
+              {this.state.sending == false && this.props.sending == false && <SimpleButton CStyle={styles.button} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
             </View>
   }
 }
 
 class SendScreen extends Component {
-  static navigationOptions = {headerTitle: <XText class='title_screen'>Envoi documents</XText>}
-
   constructor(props){
     super(props)
-    GLOB.navigation = new Navigator(this.props.navigation)
-    GLOB.dataList = GLOB.navigation.getParams('images')
+
+    const navigation = new Navigator(this.props.navigation)
+
+    GLOB.dataList = navigation.getParams('images')
     GLOB.customer = ''
     GLOB.period = ''
     GLOB.journal = ''
@@ -456,8 +457,6 @@ class SendScreen extends Component {
   }
 
   componentWillUnmount(){
-    GLOB.navigation.screenClose()
-
     EventRegister.rm('progressUploadFile')
     EventRegister.rm('completeUploadFile')
   }
@@ -484,7 +483,8 @@ class SendScreen extends Component {
 
   render() {
       return  <Screen style={{flex: 1, flexDirection: 'column'}}
-                      navigation={GLOB.navigation}>
+                      title="Envoi documents"
+                      navigation={this.props.navigation}>
                 <Header />
                 <ScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}}>
                   <Body progress={this.state.progress} />

@@ -1,25 +1,20 @@
 import React, { Component } from 'react'
-import {View, Modal, StyleSheet, ScrollView} from 'react-native'
+import {View, StyleSheet, ScrollView, Modal} from 'react-native'
 
-import {SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton} from './index'
+import {SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton, RadioButton, CalculatorInput} from './index'
 
 class Inputs extends Component{
   constructor(props){
     super(props)
 
-    let defaultValue = null
-    if(this.props.setDefaultValue)
-    {
-      defaultValue = this.props.getValue(this.props.name)
-    }
-
-    this.state = {value: defaultValue}
+    this.state = { value: this.props.defaultValue }
 
     this.generateStyles()
   }
 
   changeValue(value){
     this.setState({value: value})
+
     this.props.setValue(this.props.name, value)
   }
 
@@ -32,28 +27,25 @@ class Inputs extends Component{
         marginVertical:7,
         marginHorizontal:8
       },
-      input:{
-        flex:1.3
-      },
-      label:{
-        flex:1,
-        fontSize:14,
-        color:'#463119'
-      }
     });
   }
 
   render(){
     const stylePlus = this.props.style || {};
     const labelStyle = this.props.labelStyle || {};
-    const inputStyle = this.props.inputStyle || {}; 
+    const inputStyle = this.props.inputStyle || {};
+    this.props.setValue(this.props.name, this.state.value)
 
     const type = this.props.type || 'input';
     return  <View style={[this.styles.container, stylePlus]}>
-              <XText style={[this.styles.label, labelStyle]}>{this.props.label}</XText>
-              {type == 'input' && <XTextInput {...this.props} editable={this.props.editable} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} PStyle={[this.styles.input, inputStyle]} />}
-              {type == 'select' && <SelectInput selectedItem={this.state.value} Pstyle={{flex:1.3}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
-              {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1.3}} />}
+              <XText style={[{flex: 1}, Theme.modal.label, labelStyle]}>{this.props.label}</XText>
+              <View style={{flex: 1.3}}>
+                {type == 'input' && <XTextInput {...this.props} editable={this.props.editable} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} CStyle={[{flex:1}, inputStyle]} />}
+                {type == 'select' && <SelectInput selectedItem={this.state.value} CStyle={{flex:1}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
+                {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1}} />}
+                {type == 'radio' && <RadioButton value={this.state.value} dataOptions={this.props.dataOptions} onChange={(value)=>this.changeValue(value)} CStyle={{flex:1}} />}
+                {isPresent(this.props.hint) && <XText style={[{flex: 1, paddingVertical: 3, color: '#A6A6A6'}, Theme.textItalic]}>{this.props.hint}</XText>}
+              </View>
             </View>
   }
 }
@@ -61,7 +53,22 @@ class Inputs extends Component{
 export class ModalForm extends Component{
   constructor(props){
     super(props)
+
+    this.values = {}
+
+    this.dismiss = this.dismiss.bind(this)
+    this.setValue = this.setValue.bind(this)
     this.generateStyles()
+  }
+
+  setValue(key, value=''){
+    this.values[key] = value
+  }
+
+  dismiss(){
+    if(this.props.dismiss){
+      this.props.dismiss()
+    }
   }
 
   generateStyles(){
@@ -76,44 +83,20 @@ export class ModalForm extends Component{
       },
       box:{
         flex:0,
-        backgroundColor:'#EBEBEB',
         width:'90%',
-        borderRadius:10,
-        paddingVertical:8
-      },
-      labels:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
-      },
-      inputs:{
-        flex:0,
-        width:15,
-        height:15,
-        marginRight:20
       },
       head:{
         flex:0,
         minHeight:35,
         paddingHorizontal:10,
         flexDirection:'row',
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderBottomWidth:1,
-      },
-      body:{
-        flex:1,
-        backgroundColor:'#FFF',
+        alignItems: 'center'
       },
       foot:{
         flex:0,
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'#EBEBEB',
-        borderColor:'#000',
-        borderTopWidth:1,
         paddingVertical:7
       },
       buttons:{
@@ -124,21 +107,31 @@ export class ModalForm extends Component{
 
   renderInputs(){
     const form = this.props.inputs.map((i, key)=>{
-      return  <Inputs   key={key}
-                        label={i.label} 
-                        name={i.name}
-                        type={i.type || 'input'}
-                        keyboardType={i.keyboardType || 'default'}
-                        dataOptions={i.dataOptions || []}
-                        setDefaultValue={(i.setDefaultValue == false)? false : true}
-                        style={i.style || null}
-                        labelStyle={i.labelStyle || null}
-                        inputStyle={i.inputStyle || null}
-                        editable = {(i.editable == false)? false : true}
-
-                        getValue={this.props.getValue}
-                        setValue={this.props.setValue}
-              />
+      if(isPresent(i.separator))
+      {
+        return  <View key={key} style={{ flex:1, marginTop: 7, marginHorizontal:5, borderBottomWidth:1, borderColor: '#A6A6A6' }}>
+                  <XText style={[{paddingVertical: 5, paddingHorizontal: 3}, Theme.modal.separator]}>{i.separator}</XText>
+                </View>
+      }
+      else
+      {
+        return  <Inputs   key={key}
+                          label={i.label} 
+                          name={i.name}
+                          type={i.type || 'input'}
+                          keyboardType={i.keyboardType || 'default'}
+                          dataOptions={i.dataOptions || []}
+                          defaultValue={(i.value === '')? '' : i.value}
+                          style={i.style || null}
+                          labelStyle={i.labelStyle || null}
+                          multiline={i.multiline || false}
+                          inputStyle={i.inputStyle || null}
+                          secureTextEntry={i.secureTextEntry || false}
+                          editable={(i.editable == false)? false : true}
+                          setValue={(key, value) => this.setValue(key, value) }
+                          hint={i.hint}
+                    />
+      }
     })
 
     return form
@@ -147,7 +140,7 @@ export class ModalForm extends Component{
   renderButtons(){
     const buttons = this.props.buttons.map((b, key)=>{
       return  <View key={key} style={{flex:1, paddingHorizontal:5}}>
-                 <SimpleButton title={b.title} onPress={()=>b.action()} />
+                <SimpleButton title={b.title} CStyle={Theme.primary_button.shape} TStyle={Theme.primary_button.text} onPress={()=>b.action()} />
               </View>
     })
 
@@ -159,25 +152,25 @@ export class ModalForm extends Component{
                    animationType="slide" 
                    visible={true}
                    supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{ this.props.dismiss() }}
+                   onRequestClose={()=>{ this.dismiss() }}
             >
               <View style={this.styles.container} >
-                <View style={this.styles.box}>
-                  <View style={this.styles.head}>
-                    <XText style={{flex:1, textAlign:'center',fontSize:24, paddingLeft:25, color: '#463119'}}>{this.props.title}</XText>
+                <View style={[this.styles.box, Theme.modal.shape]}>
+                  <View style={[this.styles.head, Theme.modal.head]}>
+                    <XText style={[{flex:1}, Theme.modal.title]}>{this.props.title}</XText>
                     <ImageButton  source={{uri:"delete"}}
-                      Pstyle={{flex:0, flexDirection:'column', alignItems:'center',width:25}}
-                      Istyle={{width:10, height:10}}
-                      onPress={()=>{this.props.dismiss()}} />
+                      CStyle={{flex:0, flexDirection:'column', alignItems:'center',width:30}}
+                      IStyle={{width:17, height:17}}
+                      onPress={()=>{this.dismiss()}} />
                   </View>
-                  <ScrollView style={this.styles.body}>
+                  <ScrollView style={{flex: 1}} keyboardShouldPersistTaps={'always'}>
                     {this.renderInputs()}
                   </ScrollView>
-                  <View style={this.styles.foot}>
+                  <View style={[this.styles.foot, Theme.modal.foot]}>
                     {this.renderButtons()}
                   </View>
                 </View>
               </View>
-          </Modal>
+            </Modal>
   }
 }

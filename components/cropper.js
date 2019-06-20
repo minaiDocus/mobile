@@ -4,7 +4,7 @@ import { View, PanResponder, Animated, Image, StyleSheet, Platform, Modal, Image
 import { SimpleButton, ImageButton, XImage, XText } from './index'
 
 import { EventRegister } from 'react-native-event-listeners'
-import RNFetchBlob from 'react-native-fetch-blob'
+import RNFetchBlob from 'rn-fetch-blob'
 import Exif from 'react-native-exif'
 
 export class Cropper {
@@ -675,8 +675,8 @@ export class CropperView extends Component{
               </View>
               { this.withPreview &&
                 <View style={{flex:0,flexDirection:'row',padding:10, height:this.optionH}}>
-                  <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.remakeCrop()} source={{uri: "remake"}} />
-                  <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.validateCropping()} source={{uri: "validate"}} />
+                  <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.remakeCrop()} source={{uri: "remake"}} />
+                  <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.validateCropping()} source={{uri: "validate"}} />
                 </View>
               }
             </View>
@@ -716,8 +716,8 @@ export class CropperView extends Component{
                 </Animated.View>
               </View>
               <View style={{flex:0,flexDirection:'row',padding:10, height:this.optionH}}>
-                <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.closeCropper()} source={{uri: "back"}} />
-                {!this.state.processing && <ImageButton Pstyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.processCropping()} source={{uri: _img_cropping}} />}
+                <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.closeCropper()} source={{uri: "back"}} />
+                {!this.state.processing && <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.processCropping()} source={{uri: _img_cropping}} />}
                 {this.state.processing && <XImage style={{flex:1, marginHorizontal:3, alignItems:'center'}} loader={true} width={25} height={25} />}
               </View>
             </View>

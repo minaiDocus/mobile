@@ -49,8 +49,8 @@ export class BoxInfos extends Component{
                   <View style={this.styles.head}>
                      <XText style={{flex:1, textAlign:'center',fontSize:24, paddingLeft:25, color: '#463119'}}>{this.props.title}</XText>
                      <ImageButton  source={{uri:"delete"}} 
-                      Pstyle={{flex:0, flexDirection:'column', alignItems:'center',width:25}}
-                      Istyle={{width:10, height:10}}
+                      CStyle={{flex:0, flexDirection:'column', alignItems:'center',width:25}}
+                      IStyle={{width:10, height:10}}
                       onPress={()=>{this.props.dismiss()}} />
                   </View>
                   <ScrollView style={this.styles.body}>

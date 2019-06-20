@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Screen,AnimatedBox,XImage,XText,LineList,Pagination,SelectInput,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton} from '../../../components'
+import { AnimatedBox,XImage,XText,LineList,Pagination,SelectInput,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton } from '../../../components'
 
-import {AccountSharing} from "../../../requests"
+import { Screen } from '../../layout'
 
-let GLOB = {  navigation:{},
+import { AccountSharing } from "../../../requests"
+
+let GLOB = {
               datas:[],
               dataFilter: {account:'', collaborator:''},
             }
@@ -113,9 +115,12 @@ class Header extends Component{
   }
 
   closeFilter(withFilter="none"){
+    const form = this.refs.form_1
+    GLOB.dataFilter = { account: form.values.account, collaborator: form.values.collaborator }
+
     if(withFilter == "reInit")
     {
-      GLOB.dataFilter = {account:'', collaborator:''}
+      GLOB.dataFilter = { account: '', collaborator: '' }
     }
 
     if(withFilter != "none")
@@ -193,13 +198,12 @@ class Header extends Component{
 
     return  <View style={this.styles.container}>
               { this.state.filter && 
-                <ModalForm  title="Filtre"
-                            getValue={(name)=>{return eval(`${name}`)}}
-                            setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                <ModalForm  ref='form_1'
+                            title="Filtre"
                             dismiss={()=>this.closeFilter("none")}
                             inputs={[
-                              {label:'Dossier :', name: 'GLOB.dataFilter.account'},
-                              {label:'Client ou contact :', name: 'GLOB.dataFilter.collaborator'}
+                              { label:'Dossier :', name: 'account', value: GLOB.dataFilter.account },
+                              { label:'Client ou contact :', name: 'collaborator', value: GLOB.dataFilter.collaborator }
                             ]}
                             buttons={[
                               {title: "Filtrer", action: ()=>this.closeFilter("filter")},
@@ -213,7 +217,7 @@ class Header extends Component{
                                 filterCallback={this.filterCollaborator} 
                                 dataOptions={this.state.optionsCollaborator}
                                 textInfo="Contact ou Client - (Tapez un therme à rechercher)" 
-                                style={{color:'#707070'}} Pstyle={this.styles.select} 
+                                style={{color:'#707070'}} CStyle={this.styles.select} 
                                 onChange={(value) => this.handleClientChange(value, "collaborator")}
                   />
                   <SelectInput  filterSearch={true}
@@ -221,10 +225,10 @@ class Header extends Component{
                                 dataOptions={this.state.optionsAccount}
                                 textInfo="Dossier client - (Tapez un therme à rechercher)" 
                                 style={{color:'#707070'}} 
-                                Pstyle={this.styles.select} 
+                                CStyle={this.styles.select} 
                                 onChange={(value) => this.handleClientChange(value, "account")}
                   />
-                  <SimpleButton Pstyle={{flex:0, height:30, width:100, margin:10}} RImage={loading_add} onPress={()=>this.addSharedDoc()} title="Partager" />
+                  <SimpleButton CStyle={{flex:0, height:30, width:100, margin:10}} RImage={loading_add} onPress={()=>this.addSharedDoc()} title="Partager" />
               </View>
               </View>
               <View style={this.styles.right}> 
@@ -353,8 +357,8 @@ class BoxStat extends Component{
                   <XText style={{fontWeight:'bold'}}>{this.props.data.document.toString()}</XText>
                 </View>
                 <View style={{flex:0, width:70, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                  <ImageButton source={{uri:'validate'}} Pstyle={{padding:8}} Istyle={[this.styles.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
-                  <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
+                  <ImageButton source={{uri:'validate'}} CStyle={{padding:8}} IStyle={[this.styles.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
+                  <ImageButton source={{uri:'delete'}} CStyle={{padding:8}} IStyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
                 </View>
               </View>
               {
@@ -424,12 +428,12 @@ class OrderBox extends Component{
       return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={this.styles.container}>
                   <XText style={this.styles.title}>Trier par : </XText>
                   <View style={{flex:1, marginTop:5}}>
-                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' CStyle={this.styles.list} />
                     {
-                    // <LinkButton onPress={()=>this.handleOrder(['Dossier','document'])} title='Dossier' Pstyle={this.styles.list} />
-                    // <LinkButton onPress={()=>this.handleOrder(['Client','client'])} title='Client' Pstyle={this.styles.list} />
+                    // <LinkButton onPress={()=>this.handleOrder(['Dossier','document'])} title='Dossier' CStyle={this.styles.list} />
+                    // <LinkButton onPress={()=>this.handleOrder(['Client','client'])} title='Client' CStyle={this.styles.list} />
                     }
-                    <LinkButton onPress={()=>this.handleOrder(['Etat','approval'])} title='Etat' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Etat','approval'])} title='Etat' CStyle={this.styles.list} />
                   </View>
               </AnimatedBox>
     }
@@ -442,8 +446,7 @@ class OrderBox extends Component{
 
 class SharingScreen extends Component {
   constructor(props){
-    super(props);
-    GLOB.navigation = this.props.navigation
+    super(props)
 
     this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
 
@@ -554,11 +557,13 @@ class SharingScreen extends Component {
 
   render() {
       return (
-          <Screen style={{flex: 1, flexDirection: 'column',}}
-                  navigation={GLOB.navigation}>
+          <Screen style={{flex: 1, flexDirection: 'column'}}
+                  title={this.props.title}
+                  options={this.props.options}
+                  navigation={this.props.navigation}>
             <Header onFilter={()=>this.refreshDatas(true)}/>
               { this.renderStats() }
-            <SimpleButton title='Contacts >>' Pstyle={{flex:0, maxHeight:30}} onPress={()=>GLOB.navigation.goTo("SharingContacts")} />
+            <SimpleButton title='Contacts >>' CStyle={{flex:0, maxHeight:30}} onPress={()=>CurrentScreen.goTo("SharingContacts")} />
             <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>
       );

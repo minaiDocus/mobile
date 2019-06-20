@@ -93,7 +93,7 @@ class ModalSelect extends Component{
   }
 
   renderSearch(){
-    const PStyle = {
+    const CStyle = {
       flex: 1,
       height:40,
       paddingLeft:11
@@ -110,7 +110,7 @@ class ModalSelect extends Component{
     
     const icon = this.state.loading? 'loader' : 'zoom_x'
     return <View style={{flex:1, flexDirection:'row', maxWidth:200}}>
-              <XTextInput PStyle={PStyle} TStyle={TStyle} placeholder="Filtre" autoCorrect={false} liveChange={liveChange} onChangeText={(value) => this.handleFilterChange(value)}/>
+              <XTextInput CStyle={CStyle} TStyle={TStyle} placeholder="Filtre" autoCorrect={false} liveChange={liveChange} onChangeText={(value) => this.handleFilterChange(value)}/>
               <XImage source={{uri:icon}} style={{flex:0, marginTop:5, width:25, height:25}} />
             </View>
   }
@@ -133,7 +133,7 @@ class ModalSelect extends Component{
       })
       const renderItems = (dt)=>{
         let styleItem = { color:'#707070' }
-        if(this.state.selectedItem == dt.value) styleItem = { paddingLeft:5, backgroundColor: '#707070', color:'#fff', fontWeight:'bold' }
+        if(this.state.selectedItem == dt.value) styleItem = [{flex: 1, paddingLeft:5, backgroundColor: '#707070', color:'#fff'}, Theme.textBold]
 
         return  <TouchableOpacity style={boxstyle.touchable} onPress={()=>this.changeItem(dt.value, true)}>
                   <XText style={styleItem}>{dt.label}</XText>
@@ -227,7 +227,7 @@ class ModalSelect extends Component{
                       {this.props.filterSearch && this.renderSearch()}
                     </View>
                     <View style={{flex:1, alignItems: 'flex-end'}}>
-                      <ImageButton source={{uri:'validate'}} onPress={()=>this.dismiss()} Pstyle={this.modal.touchable} Istyle={{flex:1, width:20}} />
+                      <ImageButton source={{uri:'validate'}} onPress={()=>this.dismiss()} CStyle={this.modal.touchable} IStyle={{flex:1, width:20}} />
                     </View>
                   </View>
                   
@@ -317,6 +317,7 @@ export class SelectInput extends Component{
         const duration = Math.abs(start * 100) / 2
 
         this.setState({startTextAnim:start, endTextAnim:0, durationAnim: duration})
+        this.refs.animatedText.start()
       }
     }
   }
@@ -328,9 +329,7 @@ export class SelectInput extends Component{
     if(options.length > 0)
     {
       if(initValue=="" && options[0].value != "")
-      {
         initValue = options[0].value
-      }
 
       options.map((val, key)=>{
         if(val.value == initValue || val.value == ""){textValue=val.label}  
@@ -389,13 +388,13 @@ export class SelectInput extends Component{
       paddingLeft:5,
       marginRight:5,
       maxHeight:20,
-      overflow:'hidden' //For iOS overflow content
+      overflow:'hidden'
     }
 
     const stylePlus = this.props.style || {}
-    const PStyle = this.props.Pstyle || {}
+    const CStyle = this.props.CStyle || {}
 
-    const parentStyle = (this.invisible)? {flex:0,width:0,height:0} : [styles].concat(PStyle)
+    const parentStyle = (this.invisible)? {flex:0,width:0,height:0} : [styles].concat(CStyle)
 
     return  <View style={parentStyle}>
               {
@@ -413,12 +412,14 @@ export class SelectInput extends Component{
                 <View style={{flex:1}}>
                   <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center'}} onPress={this.showModal}>
                     <View style={selectStyle} onLayout={this.getWidthLayout}> 
-                      <AnimatedBox  style={{width: 500}} 
+                      <AnimatedBox  ref='animatedText'
+                                    style={{width: 500}} 
                                     type="HorizontalGliss"
                                     durationIn={this.state.durationAnim}
                                     durationOut={this.state.durationAnim}
                                     startAnim={this.state.startTextAnim}
                                     endAnim={this.state.endTextAnim}
+                                    startOnLoad={false}
                                     >
                         <XText style={[{color:'#606060'}, stylePlus]}>{this.state.valueText}</XText>
                       </AnimatedBox>

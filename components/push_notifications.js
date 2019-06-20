@@ -232,8 +232,8 @@ export class UINotification extends Component{
                               <XText style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</XText>
                             </View>
                             <ImageButton  source={{uri:"notification_green"}} 
-                              Pstyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:30}}
-                              Istyle={{flex:0, width:20, height:20}}
+                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:30}}
+                              IStyle={{flex:0, width:20, height:20}}
                               onPress={()=>{this.toggleListNotifications()}} />
                           </View>
         Notice.info(mess_obj, { permanent: true, name: "push_notification_alert" })
@@ -352,11 +352,11 @@ export class UINotification extends Component{
         if(this.state.showList)
           this.renderListNotifications()
 
-        return  <TouchableOpacity style={{flex:1}} onPress={()=>{this.toggleListNotifications()}}>
+        return  <TouchableOpacity style={{flex:0}} onPress={()=>{this.toggleListNotifications()}}>
                   <ImageButton  source={{uri:"notification"}} 
-                  Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:30}}
-                  Istyle={{flex:0, width:20, height:20}}
-                  onPress={()=>{this.toggleListNotifications()}} />
+                                CStyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:30}}
+                                IStyle={{flex:0, width:20, height:20}}
+                                onPress={()=>{this.toggleListNotifications()}} />
                   {
                   	this.state.newNotifCount > 0 && 
 	                  <View style={this.styles.bellText}>

@@ -3,14 +3,11 @@ import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import {Screen,AnimatedBox,XImage,XText,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm} from '../../../components'
+import { AnimatedBox,XImage,XText,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm } from '../../../components'
+
+import { Screen } from '../../layout'
 
 import {AccountSharing} from "../../../requests"
-
-let GLOB = {
-              navigation:{},
-              dataForm: {email:'', company: '', first_name: '', last_name: ''}
-            }
 
 class ModalSharing extends Component{
   constructor(props){
@@ -19,30 +16,32 @@ class ModalSharing extends Component{
   }
 
   validateProcess(){
+    const form = this.refs.form_1
+
     let url = ""
     let message = ""
     if(this.type == "sharing")
     {
       message = "Partage en cours d'envoi ..."
-      if(GLOB.dataForm.email == '' || GLOB.dataForm.company == '')
+      if(form.values.email == '' || form.values.company == '')
       {
         Notice.alert("Erreur", "Veuillez remplir les champs obligatoires (*) svp!")
       }
       else
       {
-        url = `addSharedDocCustomers(${JSON.stringify(GLOB.dataForm)})`
+        url = `addSharedDocCustomers(${JSON.stringify(form.values)})`
       }
     }
     else
     {
       message = "Demande en cours d'envoi ..."
-      if(GLOB.dataForm.code_or_email == '')
+      if(form.values.code_or_email == '')
       {
         Notice.alert("Erreur", "Veuillez remplir les champs obligatoires (*) svp!")
       }
       else
       {
-        url = `addSharingRequestCustomers(${JSON.stringify(GLOB.dataForm)})`
+        url = `addSharingRequestCustomers(${JSON.stringify(form.values)})`
       }
     }
 
@@ -69,28 +68,25 @@ class ModalSharing extends Component{
   }
 
   formAccess(){
-    GLOB.dataForm = {code_or_email: ''}
     return [
-              {label: "* Code ou email du dossier :", name: "GLOB.dataForm.code_or_email"}
+              {label: "* Code ou email du dossier :", name: "code_or_email"}
            ]
   }
 
   formSharing(){
-    GLOB.dataForm = {email:'', company: '', first_name: '', last_name: ''}
     return [
-              {label: "* Couriel :", name: "GLOB.dataForm.email", keyboardType: "email-address"},
-              {label: "* Nom de la société :", name: "GLOB.dataForm.company"},
-              {label: "Prénom :", name: "GLOB.dataForm.first_name"},
-              {label: "Nom :", name: "GLOB.dataForm.last_name"}
+              {label: "* Couriel :", name: "email", keyboardType: "email-address"},
+              {label: "* Nom de la société :", name: "company"},
+              {label: "Prénom :", name: "first_name"},
+              {label: "Nom :", name: "last_name"}
            ]
   }
 
   render(){
     const boxTitle = this.type == "sharing"? "Partage avec un compte" : "Demande accès dossier"
 
-    return  <ModalForm  title={boxTitle}
-                        getValue={(name)=>{return eval(`${name}`)}}
-                        setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+    return  <ModalForm  ref="form_1"
+                        title={boxTitle}
                         dismiss={()=>this.props.dismiss()}
                         inputs={(this.type == "sharing")? this.formSharing() : this.formAccess()}
                         buttons={[
@@ -167,7 +163,7 @@ class ViewState extends Component{
                 <View style={[style.details, {backgroundColor:colorStriped}]}>
                   <XImage source={{uri: 'arrow_up'}} style={style.image} />
                   <XText style={{paddingHorizontal:10, flex:1}}>{data.name}</XText>
-                  <ImageButton source={{uri:'delete'}} Pstyle={{flex:0, width:20, padding:8, alignItems:'center', justifyContent:'center'}} Istyle={style.image} onPress={()=>this.handleDelete(data.id_idocus)}/>
+                  <ImageButton source={{uri:'delete'}} CStyle={{flex:0, width:20, padding:8, alignItems:'center', justifyContent:'center'}} IStyle={style.image} onPress={()=>this.handleDelete(data.id_idocus)}/>
                 </View>
             </View>
   }
@@ -342,7 +338,6 @@ class TabNav extends Component{
 class SharingScreen extends Component {
   constructor(props){
     super(props)
-    GLOB.navigation = this.props.navigation
 
     this.state = {ready: false}
 
@@ -385,7 +380,9 @@ class SharingScreen extends Component {
   render() {
       return (
           <Screen style={{flex: 1, flexDirection: 'column',}}
-                  navigation={GLOB.navigation}>
+                  title={this.props.title}
+                  options={this.props.options}
+                  navigation={this.props.navigation}>
             <Header />
             {this.state.ready && <TabNav datas_shared={this.datas_shared} contacts={this.contacts} access={this.access}/>}
             {!this.state.ready && <XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} />}

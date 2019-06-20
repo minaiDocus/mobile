@@ -4,13 +4,15 @@ import { NavigationActions } from 'react-navigation'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import {Screen,Navigator,XImage,XText,PDFView,SimpleButton,ImageButton,BoxList,LineList,Pagination} from '../../components'
+import { Navigator,XImage,XText,PDFView,SimpleButton,ImageButton,BoxList,LineList,Pagination } from '../../components'
+
+import { Screen } from '../layout'
 
 import { ModalComptaAnalysis } from '../modals/compta_analytics'
 
-import {DocumentsFetcher, FileUploader} from "../../requests"
+import { DocumentsFetcher, FileUploader } from "../../requests"
 
-let GLOB = {Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", navigation:{}, filterText: "", selectedItems:[], press_action: 'zoom'}
+let GLOB = { Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", filterText: "", selectedItems:[], press_action: 'zoom' }
 
 function getImgStampOf(state=''){
   let stamp_img = 'none'
@@ -170,18 +172,18 @@ class BoxZoom extends Component{
             >
               <View style={this.styles.boxZoom}>
                 <View style={this.styles.head}>
-                  <SimpleButton Pstyle={{flex:0}} onPress={()=>this.hideModal()} title="Retour" />
+                  <SimpleButton CStyle={{flex:0}} onPress={()=>this.hideModal()} title="Retour" />
                   {
                     this.props.selectElement &&
                     <ImageButton  source={{uri:selection_img}} 
-                                  Pstyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:45}}
-                                  Istyle={{flex:0, width:18, height:18}}
+                                  CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:45}}
+                                  IStyle={{flex:0, width:18, height:18}}
                                   onPress={()=>{this.handleSelection()}} />
                   }
                   <View style={this.styles.control} >
-                    <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[this.styles.btnNav, {marginLeft:0}]} onPress={()=>this.prevElement()} title="<-" />
+                    <SimpleButton TStyle={{fontSize:18,fontWeight:'bold',color:'#000'}} CStyle={[this.styles.btnNav, {marginLeft:0}]} onPress={()=>this.prevElement()} title="<-" />
                     <XText style={[this.styles.piece_number, style_number]}>{piece_number}</XText>
-                    <SimpleButton Tstyle={{fontSize:18,fontWeight:'bold',color:'#000'}} Pstyle={[this.styles.btnNav, {marginRight:0}]} onPress={()=>this.nextElement()} title="->" />
+                    <SimpleButton TStyle={{fontSize:18,fontWeight:'bold',color:'#000'}} CStyle={[this.styles.btnNav, {marginRight:0}]} onPress={()=>this.nextElement()} title="->" />
                   </View>
                 </View>
                 <View style={{flex:1,marginBottom:5, borderColor:'#000', borderWidth:2}}>
@@ -467,8 +469,8 @@ class ImgBox extends Component{
     }
 
     return  <TouchableOpacity style={this.styles.styleTouch} onLongPress={()=>this.prepareSelection()} onPress={()=>this.pressAction()}>
-              <XImage type='container' PStyle={[this.styles.styleContainer, styleSelected]} CStyle={{justifyContent:'flex-start'}} style={this.styles.styleImg}  source={src} local={local} >
-                { stamp_img != 'none' && <XImage type='container' source={{uri:stamp_img}} PStyle={this.styles.stamp} style={this.styles.stamp_img}/> }
+              <XImage type='container' CStyle={[this.styles.styleContainer, styleSelected]} CldStyle={{justifyContent:'flex-start'}} style={this.styles.styleImg} source={src} local={local} >
+                { stamp_img != 'none' && <XImage type='container' source={{uri:stamp_img}} CStyle={this.styles.stamp} style={this.styles.stamp_img}/> }
                 { isPresent(this.props.data.position) && <XText style={this.styles.positions}>{formatNumber(this.props.data.position, 'xxx')}</XText> }
               </XImage>
             </TouchableOpacity>
@@ -721,8 +723,6 @@ class TabNav extends Component{
 }
 
 class PublishScreen extends Component {
-  static navigationOptions = {headerTitle: <XText class='title_screen'>Mes documents</XText>}
-
   constructor(props){
     super(props)
 
@@ -733,9 +733,9 @@ class PublishScreen extends Component {
     this.unselectAllItem = this.unselectAllItem.bind(this)
     this.openComptaAnalysis = this.openComptaAnalysis.bind(this)
 
-    GLOB.navigation = new Navigator(this.props.navigation)
-    GLOB.Pack = GLOB.navigation.getParams('pack') || {}
-    GLOB.filterText = GLOB.navigation.getParams('text') || ""
+    const navigation = new Navigator(this.props.navigation)
+    GLOB.Pack =  navigation.getParams('pack') || {}
+    GLOB.filterText = navigation.getParams('text') || ""
     GLOB.press_action = 'zoom'
     GLOB.pagesPublished = GLOB.pagesPublishing = GLOB.selectedItems = []
   }
@@ -799,22 +799,22 @@ class PublishScreen extends Component {
                         <View style={{flex:1}}>
                           <View style={{flex:1, flexDirection:'row', height: 20, justifyContent:'flex-end'}}>
                             <ImageButton  source={{uri:"validate_green"}} 
-                              Pstyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
-                              Istyle={{flex:0, width:17, height:17}}
+                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
+                              IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{this.selectAllItem()}} />
                             <ImageButton  source={{uri:"no_selection"}} 
-                              Pstyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
-                              Istyle={{flex:0, width:17, height:17}}
+                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
+                              IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{this.unselectAllItem()}} />
                             <ImageButton  source={{uri:"delete_green"}} 
-                              Pstyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
-                              Istyle={{flex:0, width:17, height:17}}
+                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
+                              IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{ Notice.remove('selection_items_notification', true) }} />
                           </View>
                           <View style={{flex:1, flexDirection:'row', height: 35, justifyContent:'flex-end',  marginTop:7}}>
                             <SimpleButton LImage={{uri:"edition"}} 
-                              Pstyle={{flex:0, alignItems:'center', justifyContent:'center', backgroundColor:'#C0D838', width:125, height: 35, borderRadius: 2}}
-                              Tstyle={{fontSize: 8}}
+                              CStyle={{flex:0, alignItems:'center', justifyContent:'center', backgroundColor:'#C0D838', width:125, height: 35, borderRadius: 2}}
+                              TStyle={{fontSize: 8}}
                               title = 'Modification analytiques'
                               onPress={()=>{this.openComptaAnalysis()}} />
                           </View>
@@ -829,7 +829,8 @@ class PublishScreen extends Component {
   render() {
       return (
         <Screen style={{flex: 1, flexDirection: 'column'}}
-                navigation={GLOB.navigation}>
+                title='Mes documents'
+                navigation={this.props.navigation}>
           <Header />
           <TabNav />
           { this.state.analysisOpen && <ModalComptaAnalysis currentScreen='publishing' withCancel={true} resetOnOpen={true} hide={(data)=>this.closeComptaAnalysis(data)} pieces={GLOB.selectedItems} /> }

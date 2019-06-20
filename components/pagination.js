@@ -86,13 +86,13 @@ export class Pagination extends Component{
     return  <View style={{flexDirection:'row', marginBottom:10, marginHorizontal:10}}>
                   { this.state.page > 1 && 
                     <View style={{flex:1, alignItems:"flex-start"}}>
-                      <SimpleButton title="<<" onPress={()=>{this.changePage("prev")}} Pstyle={{width:50, paddingVertical:1}}/>
+                      <SimpleButton title="<<" onPress={()=>{this.changePage("prev")}} CStyle={{width:50, paddingVertical:1}}/>
                     </View>
                   }
                   {this.limit_page > 1 && this.renderPages()}
                   { this.state.page < this.limit_page && 
                     <View style={{flex:1, alignItems:"flex-end"}}>
-                      <SimpleButton title=">>" onPress={()=>{this.changePage("next")}} Pstyle={{width:50, paddingVertical:1}} />
+                      <SimpleButton title=">>" onPress={()=>{this.changePage("next")}} CStyle={{width:50, paddingVertical:1}} />
                     </View>
                   }
             </View>

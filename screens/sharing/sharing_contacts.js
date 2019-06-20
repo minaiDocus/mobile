@@ -2,16 +2,17 @@ import React, { Component } from 'react'
 import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import {Screen,AnimatedBox,Navigator,XImage,XText,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton,OrganizationSwitcher} from '../../components'
+import { AnimatedBox,Navigator,XImage,XText,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton,OrganizationSwitcher } from '../../components'
 
-import {User} from '../../models'
+import { Screen } from '../layout'
 
-import {AccountSharing} from "../../requests"
+import { User } from '../../models'
 
-let GLOB =  { navigation:{},
+import { AccountSharing } from "../../requests"
+
+let GLOB =  {
               datas:[],
               dataFilter: {email:'', company:'', first_name: '', last_name:''},
-              dataForm:{}
             }
 
 class ContactForm extends Component{
@@ -21,27 +22,28 @@ class ContactForm extends Component{
     this.type = (typeof(this.props.data.id_idocus) !== "undefined" && this.props.data.id_idocus > 0)? 'edit' : 'add'
     this.input_edit = true
 
-    let datas = {email:'', company: '', first_name: '', last_name: ''}
+    this.dataForm = { email:'', company: '', first_name: '', last_name: '' }
     if(this.type == "edit")
     {
       this.input_edit = false
-      datas = {
-                id_idocus: this.props.data.id_idocus,
-                email:this.props.data.email, 
-                company: this.props.data.company, 
-                first_name: this.props.data.first_name, 
-                last_name: this.props.data.last_name
-              }
+      this.dataForm = {
+                        id_idocus: this.props.data.id_idocus,
+                        email:this.props.data.email, 
+                        company: this.props.data.company, 
+                        first_name: this.props.data.first_name, 
+                        last_name: this.props.data.last_name
+                      }
     }
-
-    GLOB.dataForm = datas
   }
 
   validateProcess(){
+    const form = this.refs.form_1
+    this.dataForm = { email: form.values.email, company: form.values.company, first_name: form.values.first_name, last_name: form.values.last_name }
+
     let url = ""
     let reload = true
     
-    if(GLOB.dataForm.email == '' || GLOB.dataForm.company == '')
+    if(this.dataForm.email == '' || this.dataForm.company == '')
     {
       Notice.alert("Erreur", "Veuillez remplir les champs obligatoires (*) svp")
     }
@@ -49,13 +51,13 @@ class ContactForm extends Component{
     {
       if(this.type == "add")
       {
-        url = `addSharedContact(${JSON.stringify(GLOB.dataForm)})`
+        url = `addSharedContact(${JSON.stringify(this.dataForm)})`
         reload = true
         flash = "Ajout contact en cours ..."
       }
       else
       {
-        url = `editSharedContact(${JSON.stringify(GLOB.dataForm)})`
+        url = `editSharedContact(${JSON.stringify(this.dataForm)})`
         reload = false
         flash = "Modification contact en cours ..."
       }
@@ -83,15 +85,14 @@ class ContactForm extends Component{
   }
 
   render(){
-    return  <ModalForm  title="Ajout contact"
-                        getValue={(name)=>{return eval(`${name}`)}}
-                        setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+    return  <ModalForm  ref="form_1"
+                        title="Ajout contact"
                         dismiss={()=>this.props.dismiss()}
                         inputs={[
-                          {label:'* Couriel :', name: 'GLOB.dataForm.email', keyboardType: 'email-address', editable: this.input_edit},
-                          {label:'* Nom de la société :', name: 'GLOB.dataForm.company'},
-                          {label:'Prénom :', name: 'GLOB.dataForm.first_name'},
-                          {label:'Nom :', name: 'GLOB.dataForm.last_name'}
+                          {label:'* Couriel :', name: 'email', keyboardType: 'email-address', editable: this.input_edit, value: this.dataForm.email},
+                          {label:'* Nom de la société :', name: 'company', value: this.dataForm.company },
+                          {label:'Prénom :', name: 'first_name', value: this.dataForm.first_name },
+                          {label:'Nom :', name: 'last_name', value: this.dataForm.last_name }
                         ]}
                         buttons={[
                           {title: "Valider", action: ()=>this.validateProcess()},
@@ -127,6 +128,9 @@ class Header extends Component{
   }
 
   closeFilter(withFilter = "none"){
+    const form = this.refs.form_1
+    GLOB.dataFilter = { email: form.values.email, company: form.values.company, first_name: form.values.first_name, last_name: form.values.last_name }
+
     if(withFilter == "reInit")
     {
       GLOB.dataFilter = {email:'', company:'', first_name: '', last_name:''}
@@ -169,15 +173,14 @@ class Header extends Component{
     return  <View style={this.styles.container}>
               { this.state.openForm && <ContactForm data={this.state.dataForm} dismiss={this.closeForm} />}
               { this.state.openFilter && 
-                  <ModalForm  title="Filtre"
-                              getValue={(name)=>{return eval(`${name}`)}}
-                              setValue={(name, value)=>{eval(`${name} = "${value}"`)}}
+                  <ModalForm  ref="form_1"
+                              title="Filtre"
                               dismiss={()=>this.closeFilter("none")}
                               inputs={[
-                                {label:'Email :', name: 'GLOB.dataFilter.email', keyboardType: 'email-address'},
-                                {label:'Société :', name: 'GLOB.dataFilter.company'},
-                                {label:'Prénom :', name: 'GLOB.dataFilter.first_name'},
-                                {label:'Nom :', name: 'GLOB.dataFilter.last_name'}
+                                {label:'Email :', name: 'email', keyboardType: 'email-address', value: GLOB.dataFilter.email},
+                                {label:'Société :', name: 'company', value: GLOB.dataFilter.company},
+                                {label:'Prénom :', name: 'first_name', value: GLOB.dataFilter.first_name},
+                                {label:'Nom :', name: 'last_name', value: GLOB.dataFilter.last_name}
                               ]}
                               buttons={[
                                 {title: "Filtrer", action: ()=>this.closeFilter("filter")},
@@ -278,8 +281,8 @@ class BoxStat extends Component{
                   <XText style={{fontWeight:'bold'}}>{this.props.data.email.toString()}</XText>
                 </View>
                 <View style={{flex:0, width:70, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                  <ImageButton source={{uri:'edition'}} Pstyle={{padding:8}} Istyle={this.styles.image} onPress={()=>this.handleEdit()}/>
-                  <ImageButton source={{uri:'delete'}} Pstyle={{padding:8}} Istyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
+                  <ImageButton source={{uri:'edition'}} CStyle={{padding:8}} IStyle={this.styles.image} onPress={()=>this.handleEdit()}/>
+                  <ImageButton source={{uri:'delete'}} CStyle={{padding:8}} IStyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
                 </View>
               </View>
               {
@@ -350,9 +353,9 @@ class OrderBox extends Component{
       return  <AnimatedBox ref="animatedOptions" type='DownSlide' durationIn={300} durationOut={300} style={this.styles.container}>
                   <XText style={this.styles.title}>Trier par : </XText>
                   <View style={{flex:1, marginTop:5}}>
-                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' Pstyle={this.styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Email','email'])} title='Email' Pstyle={this.styles.list} />
-                    <LinkButton onPress={()=>this.handleOrder(['Société','company'])} title='Société' Pstyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Date','date'])} title='Date' CStyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Email','email'])} title='Email' CStyle={this.styles.list} />
+                    <LinkButton onPress={()=>this.handleOrder(['Société','company'])} title='Société' CStyle={this.styles.list} />
                   </View>
               </AnimatedBox>
     }
@@ -364,20 +367,8 @@ class OrderBox extends Component{
 }
 
 class SharingScreen extends Component {
-  static navigationOptions = {
-       headerTitle: <XText class='title_screen'>Contacts</XText>,
-       headerRight: <View style={{flex:1, flexDirection:'row'}}>
-                      <OrganizationSwitcher/>
-                      <ImageButton  source={{uri:"options"}} 
-                          Pstyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:50}}
-                          Istyle={{flex:0, width:7, height:36}}
-                          onPress={()=>EventRegister.emit('clickOrderBox_contacts', true)} />
-                    </View>
-  }
-
   constructor(props){
     super(props)
-    GLOB.navigation = new Navigator(this.props.navigation)
 
     this.dontRefreshForm = false
     this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
@@ -487,13 +478,26 @@ class SharingScreen extends Component {
              </ScrollView>
   }
 
+  renderOptions(){
+    return  <View style={{flex:1, flexDirection:'row', justifyContent: 'center'}}>
+              <OrganizationSwitcher/>
+              <ImageButton  source={{uri:"options"}} 
+                  CStyle={{flex:0, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:40}}
+                  IStyle={{flex:0, width:7, height:36}}
+                  onPress={()=>EventRegister.emit('clickOrderBox_contacts', true)} />
+            </View>
+  }
+
   render() {
       return (
           <Screen style={{flex: 1, flexDirection: 'column',}}
-                  navigation={GLOB.navigation}>
+                  title="Contacts"
+                  options={ this.renderOptions() }
+                  navigation={this.props.navigation}
+                  >
             <Header onFilter={()=>this.refreshDatas(true)}/>
               { this.renderStats() }
-            <SimpleButton title='<< Dossiers partagés' Pstyle={{flex:0, maxHeight:30}} onPress={()=>GLOB.navigation.goBack()} />
+            <SimpleButton title='<< Dossiers partagés' CStyle={{flex:0, maxHeight:30}} onPress={()=>CurrentScreen.goBack()} />
             <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>
       );

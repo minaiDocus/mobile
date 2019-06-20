@@ -4,17 +4,21 @@ import DatePic from 'react-native-datepicker'
 export class DatePicker extends Component {
   constructor(props){
     super(props)
-    this.state = {date: this.props.value}
+    
+    let c_date = this.props.value || new Date()
+
+    this.state = { date: c_date }
+
+    if(this.props.onChange)
+      this.props.onChange(c_date)
 
     this.generateStyles()
   }
 
   handleChangeDate(date){
-    this.setState({date: date});
+    this.setState({date: date})
     if(this.props.onChange)
-    {
-      this.props.onChange(date);
-    }  
+      this.props.onChange(date)
   }
 
   generateStyles(){
@@ -26,8 +30,11 @@ export class DatePicker extends Component {
                             marginLeft: 0
                           },
                       dateInput: {
-                            marginLeft: 36
-                          }
+                            marginLeft: 36,
+                          },
+                      dateText: {
+                        color: Theme.global_text.color,
+                      },
                   }
   }
 
