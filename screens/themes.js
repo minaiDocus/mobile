@@ -14,7 +14,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   },
 
   header: {
-    shape: {},
+    shape: { backgroundColor: '#E9E9E7' },
     left: {},
     middle: {
       shape: {},
@@ -26,7 +26,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   container: { backgroundColor: 'rgba(41,41,41,0.4)' },
 
   head: {
-    shape: { backgroundColor: '#585858', padding: 3 },
+    shape: { backgroundColor: 'rgba(48,48,48,0.8)', padding: 7 },
     text: {},
   },
 
@@ -43,7 +43,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   box_button: {
     shape: { linearColors: ['#D1E949', '#C0D838', '#9DA505'] },
     marker: { fontSize: 12, fontWeight: 'bold', color: '#F7230C'},
-    box_text: { backgroundColor:'#AEAEAE' },
+    box_text: { backgroundColor: 'rgba(47,79,79, 0.4)', borderWidth: 1, borderColor: '#9DA505' },
     text: { color: '#FFF', fontWeight: 'bold' }
   },
 
@@ -55,13 +55,13 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
     shadowOpacity: 0.8,                   //===
     shadowRadius: 2,                      //===
     backgroundColor:"#E9E9E7",
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#fff'
   },
 
   color_striped: {
-    pair: '#F2F2F2',
-    impair: '#FFF',
+    pair: '#FFF',
+    impair: '#F2F2F2',
   },
 
   modal: {
@@ -74,30 +74,32 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   },
 
   tabs:{
-    container: { height:30, borderColor:'#FFF', borderBottomWidth:1 },
-    shape: { backgroundColor:"#AEAEAE", borderWidth:1, borderColor: '#DDD', borderTopLeftRadius:5, borderTopRightRadius:5, marginHorizontal: 0 },
-    title: { fontSize: 14, textAlign: 'center', fontWeight: 'bold', color: '#DDD' },
+    head_container: { height:30 },
+    shape: { backgroundColor:"#AEAEAE", borderWidth:1, borderColor: '#808080', borderTopRightRadius:10, marginHorizontal: 0 },
+    title: { fontSize: 12, textAlign: 'center', fontWeight: 'bold', color: '#DDD' },
     icons: { width: 25, height: 25 },
     selected: { 
-      shape: { backgroundColor:"#F1F1F1", borderWidth:1, borderColor: '#FFF' },
-      text: { color: '#3E2F24' },
+      shape: { backgroundColor:"rgba(255,255,255,0.5)", borderWidth: 0, borderBottomWidth: 1, borderTopRightRadius: 0, borderTopLeftRadius: 10 },
+      text: { color: '#3E2F24', fontSize: 14 },
+      icon: { width:40, height:40, },
     },
+    body_container: { backgroundColor: 'rgba(119,136,153, 0.3)' }
   },
 
   menu:{
     bg: { //the background menu is a linear gradient with 3 color
-          color_1 : '#D0D0D0',
-          color_2 : '#D0D0D0',
-          color_3 : '#D0D0D0',
+          color_1 : '#A9A9A9',
+          color_2 : '#696969',
+          color_3 : '#2F4F4F',
         },
     shape: { borderWidth: 1, borderColor: '#151515', borderTopRightRadius:5, borderBottomRightRadius:5 },
     head: {
       shape: { borderColor:'#151515', borderBottomWidth:2 },
-      text_1: { fontSize: 14, color: '#000' },
+      text_1: { fontSize: 14, color: '#2F4F4F' },
       text_2: { fontSize: 12, color: '#fff' },
     },
     body: {
-      links: { fontSize: 14 },
+      links: { fontSize: 14, color: '#DCDCDC' },
     },
     footer: {
       links: { },

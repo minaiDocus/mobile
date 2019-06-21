@@ -203,17 +203,19 @@ export class UINotification extends Component{
     }
 
     releaseNewNotif(){
-      let _allNotif = []
-      let allNotifications = this.state.datas
-      allNotifications.map((notif) => {
-        let tmp = realmToJson(notif)
-        tmp.is_read = true
-        _allNotif.push(tmp)
-      })
+      setTimeout(()=>{
+        let _allNotif = []
+        let allNotifications = this.state.datas
+        allNotifications.map((notif) => {
+          let tmp = realmToJson(notif)
+          tmp.is_read = true
+          _allNotif.push(tmp)
+        })
 
-      this.addNotifToRealm(_allNotif)
+        this.addNotifToRealm(_allNotif)
 
-      FireBaseNotification.releaseNewNotifications()
+        FireBaseNotification.releaseNewNotifications()
+      }, 1)
     }
 
     addNotification(notif){
@@ -291,7 +293,7 @@ export class UINotification extends Component{
               			height:20,
                     margin:2,
               			borderRadius:100,
-              			backgroundColor:'#cc1b41',
+              			backgroundColor:'rgba(139,0,0, 0.6)',
               			justifyContent:'center',
               			alignItems:'center'
               		},
@@ -360,7 +362,7 @@ export class UINotification extends Component{
                   {
                   	this.state.newNotifCount > 0 && 
 	                  <View style={this.styles.bellText}>
-	                    <XText style={{backgroundColor:'rgba(0,0,0,0)', textAlign:'center', fontSize:9, color:"#FFF"}}>{this.state.newNotifCount}</XText>
+	                    <XText style={{textAlign:'center', fontSize:9, color:"#FFF"}}>{this.state.newNotifCount}</XText>
 	                  </View>
                 	}
                 </TouchableOpacity>

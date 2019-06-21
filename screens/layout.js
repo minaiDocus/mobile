@@ -22,6 +22,7 @@ class FrontView extends Component{
     super(props)
 
     this.state = {children: null, animation: "fade", closeCallback: null}
+    this.animation = 'fade'
 
     this.handleBackPress = this.handleBackPress.bind(this)
     this.openFrontView = this.openFrontView.bind(this)
@@ -37,11 +38,12 @@ class FrontView extends Component{
   }
 
   openFrontView(params){
-    this.setState({children: params.children, animation: params.animation, closeCallback: params.closeCallback})
+    this.animation = params.animation || 'fade'
+    this.setState({children: params.children, animation: this.animation, closeCallback: params.closeCallback})
   }
 
   closeFrontView(){
-    this.setState({children: null, animation: "fade", closeCallback: null})
+    this.setState({children: null, animation: (this.animation || 'fade'), closeCallback: null})
   }
 
   handleBackPress(){

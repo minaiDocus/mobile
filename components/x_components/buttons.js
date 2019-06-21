@@ -162,8 +162,8 @@ export class BoxButton extends Component{
                     width:rayon,
                     height:rayon,
                     marginBottom:-1,
-                    borderTopRightRadius:100,
-                    borderTopLeftRadius:100
+                    borderRadius:100,
+                    borderRadius:100
                   },
       icons:{
               flex:0,
@@ -172,11 +172,14 @@ export class BoxButton extends Component{
             },
       boxText:{
                 flex:0,
+                position: 'absolute',
+                top: 10,
                 justifyContent:'center',
                 alignItems: 'center',
                 paddingHorizontal:10,
                 paddingVertical:5,
-                borderRadius:5
+                borderTopLeftRadius:10,
+                borderBottomRightRadius:10,
               },
       text:{
             flex:0,

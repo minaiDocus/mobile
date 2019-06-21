@@ -21,10 +21,7 @@ export class BoxInfos extends Component{
                 },
       box:{
             flex:0,
-            backgroundColor:'#EBEBEB',
-            width:'90%',
-            borderRadius:10,
-            paddingVertical:8
+            width:'90%'
           },
       head:{
               flex:0,
@@ -37,7 +34,6 @@ export class BoxInfos extends Component{
             },
       body:{
               flex:1,
-              backgroundColor:'#fff',
               padding:10
             },
       })
@@ -45,9 +41,9 @@ export class BoxInfos extends Component{
 
   render(){
       return  <View style={this.styles.container} >
-                <View style={this.styles.box}>
-                  <View style={this.styles.head}>
-                     <XText style={{flex:1, textAlign:'center',fontSize:24, paddingLeft:25, color: '#463119'}}>{this.props.title}</XText>
+                <View style={[this.styles.box, Theme.modal.shape]}>
+                  <View style={[this.styles.head, Theme.modal.head]}>
+                     <XText style={[{flex: 1, paddingTop: 5}, Theme.modal.title]}>{this.props.title}</XText>
                      <ImageButton  source={{uri:"delete"}} 
                       CStyle={{flex:0, flexDirection:'column', alignItems:'center',width:25}}
                       IStyle={{width:10, height:10}}

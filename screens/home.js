@@ -3,7 +3,7 @@ import { EventRegister } from 'react-native-event-listeners'
 import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal } from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { XImage,XText,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM } from '../components'
+import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM } from '../components'
 
 import { Menu } from './menu'
 import { Screen } from './layout'
@@ -225,75 +225,6 @@ class ViewState extends Component{
   }
 }
 
-class TabNav extends Component{
-  constructor(props){
-    super(props);
-    this.state = {index: 0}
-    this.generateStyles() //style generation
-  }
-
-  handleIndexChange(index){
-    this.setState({index: index})
-  }
-
-  generateStyles(){
-    this.stylesTabBar = StyleSheet.create({
-      container:{
-                  flex:0,
-                  flexDirection:'row',
-                  width:'100%',
-                  marginTop:10,
-                },
-      icons:{
-              flex:0,
-              marginLeft:5,
-              width:30,
-              height:30,
-            },
-      box:{
-            flex:1,
-            marginHorizontal:2,
-            flexDirection:'row',
-            alignItems:'center',
-          },
-    })
-  }
-
-  renderTabBar(){
-    const tabs = [
-      {title: "Traités", icon:"doc_trait"},
-      {title: "En cours", icon:"doc_curr"},
-      {title: "Erreurs", icon:"doc_view"},
-    ]
-
-    let indexSelectedShape = indexSelectedText = ""
-    const content = tabs.map((tb, index) => {
-          indexSelectedShape = (index == this.state.index)? Theme.tabs.selected.shape : {};
-          indexSelectedText = (index == this.state.index)? Theme.tabs.selected.text : {};
-
-          return (
-           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
-            <View style={[this.stylesTabBar.box, Theme.tabs.shape, indexSelectedShape]}>
-              { isPresent(tb.icon) && <XImage source={{uri:tb.icon}} style={[this.stylesTabBar.icons, Theme.tabs.icons]} /> }
-              <XText style={[{flex: 1}, Theme.tabs.title, indexSelectedText]}>{tb.title}</XText>
-            </View>
-          </TouchableOpacity>
-      )})
-
-    return <View style={[this.stylesTabBar.container, Theme.tabs.container]}>
-             {content}
-           </View>  
-  }
-
-  render(){
-    return  <ScrollableTabView tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
-              <ViewState updated={this.props.updated} type={"processed"} icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[]} />
-              <ViewState updated={this.props.updated} type={"processing"} icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
-              <ViewState updated={this.props.updated} type={"errors"} icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"message"}]}/>
-            </ScrollableTabView>
-  }
-}
-
 class AppInfos extends Component{
   constructor(props){
     super(props)
@@ -342,7 +273,7 @@ class AppInfos extends Component{
                               </View>
                               <XText>www.idocus.com</XText>
                               <XText>version : {Config.version.toString()}</XText>
-                              <XText>IDOCUS © Copyright 2018</XText>
+                              <XText>IDOCUS © Copyright 2019</XText>
                             </View>
                         </View>
                       </TouchableWithoutFeedback>
@@ -415,7 +346,19 @@ class HomeScreen extends Component {
       >
         <FCM />
         <Header />
-        <TabNav updated={this.state.updated} />
+        <TabNav 
+          headers={ 
+                    [
+                      {title: "Traités", icon:"doc_trait"},
+                      {title: "En cours", icon:"doc_curr"},
+                      {title: "Erreurs", icon:"doc_view"},
+                    ]
+                  }
+        >
+          <ViewState updated={this.state.updated} type={"processed"} icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[]} />
+          <ViewState updated={this.state.updated} type={"processing"} icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
+          <ViewState updated={this.state.updated} type={"errors"} icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"message"}]}/>
+        </TabNav>
       </Screen>
     )
   }

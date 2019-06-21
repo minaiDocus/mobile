@@ -38,9 +38,10 @@ class Header extends Component{
             },
       logobox:{
                 flex:0,
-                height:65,
-                width:65,
-                borderRadius:100,
+                // height:80,
+                height:40,
+                width:80,
+                borderTopLeftRadius:100,
                 backgroundColor:'#fff',
               },
       logo: {
@@ -53,6 +54,8 @@ class Header extends Component{
   }
 
   render(){
+    // test
+    this.generateStyles()
     const userName = User.fullNameOf(this.master) || ""
     return  <View style={[this.styles.container, Theme.menu.head.shape]} >
               <View style={this.styles.left} >
