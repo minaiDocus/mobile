@@ -14,16 +14,6 @@ import { UsersFetcher } from "../../requests"
 
 let GLOB = { documents:[], imgToDel:"", idZoom:"" }
 
-const styles = {
-  minicontainer:{
-                  flex:0, 
-                  flexDirection:'row',
-                  backgroundColor:'#E1E2DD',
-                  alignItems:'center',
-                  justifyContent:'center',
-                },
-}
-
 class BoxZoom extends Component{
   constructor(props){
     super(props)
@@ -204,23 +194,26 @@ class ImgBox extends Component{
   }
 
   generateStyles(){
+    const imgWidth = 120 - 20
+    const imgHeight = 113 - 20
+
     this.styles = StyleSheet.create({
         styleTouch: {
                       flex:0,
                       marginVertical:5,
                       alignItems:'center',
-                      width:127
+                      width:imgWidth + 7
                     },
         styleImg: {
                     flex:0,
-                    width:120,
-                    height:113,
+                    width:imgWidth,
+                    height:imgHeight,
                   },
         styleContainer:{
                           backgroundColor:'#fff',
                           borderRadius:5,
-                          width:126,
-                          height:119,
+                          width: imgWidth + 3,
+                          height: imgHeight + 3,
                           justifyContent:'center',
                           alignItems:'center',
                         },
@@ -249,6 +242,8 @@ class ImgBox extends Component{
   }
 
   render(){
+    // test
+    this.generateStyles()
     const doc = Document.getById(this.element.id_64)
     let message = ''
     if(doc)
@@ -263,9 +258,9 @@ class ImgBox extends Component{
                   }
                   { this.state.options == true &&
                     <View style={this.styles.options}>   
-                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} CStyle={[this.styles.btnText]} IStyle={{width:20,height:20}} />
-                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} CStyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} IStyle={{width:20,height:20}} />
-                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} CStyle={[this.styles.btnText]} IStyle={{width:20,height:20}} />
+                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
+                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} CStyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} IStyle={{width:18,height:18}} />
+                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
                     </View>
                   }
                 </XImage>
@@ -274,8 +269,24 @@ class ImgBox extends Component{
 }
 
 class Header extends Component{
+  constructor(props){
+    super(props)
+    this.generateStyles() //style generation
+  }
+
+  generateStyles(){
+    this.styles = {
+                    minicontainer:{
+                                    flex:0, 
+                                    flexDirection:'row',
+                                    alignItems:'center',
+                                    justifyContent:'center',
+                                  },
+                  }
+  }
+
   render(){
-    return  <View style={styles.minicontainer}>
+    return  <View style={[this.styles.minicontainer, Theme.head.shape]}>
                 <BoxButton onPress={this.props.takePicture} source={{uri:"camera_icon"}} title="Prendre photo" />
                 <BoxButton onPress={this.props.openRoll} source={{uri:"folder"}} title="Galerie photos" />
             </View>
@@ -465,24 +476,9 @@ class SendScreen extends Component {
                     flex: 1,
                     flexDirection: 'column',
                   },
-      boxPicture:{
-                    flex:1,
-                    borderRadius:10,
-                    
-                    elevation: 7, //Android shadow
-
-                    shadowColor: '#000',                  //===
-                    shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
-                    shadowOpacity: 0.8,                   //===
-                    shadowRadius: 2,                      //===
-
-                    backgroundColor:"#E9E9E7",
-                    margin:10,
-                    padding:5
-                  },
       button: {
-                flex:1,
-                margin:10
+                flex:0,
+                margin:3
               }
     })
   }
@@ -494,27 +490,32 @@ class SendScreen extends Component {
   }
 
   render() {
+    // test
+    this.generateStyles()
       return (
-        <Screen style={this.styles.container}
+        <Screen style={[{flex:1}, Theme.body]}
                 title='Envoi documents'
                 options={ this.renderOptions() }
                 navigation={this.props.navigation}>
           <Header takePicture={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
-          {this.state.zoomActive && <BoxZoom  datas={this.state.dataList} 
-                                              cropElement={(index)=>this.openCrop(index)}
-                                              deleteElement={this.deleteElement} 
-                                              hide={this.toggleZoom} />}
+          {
+            this.state.zoomActive &&
+            <BoxZoom  datas={this.state.dataList} 
+                      cropElement={(index)=>this.openCrop(index)}
+                      deleteElement={this.deleteElement} 
+                      hide={this.toggleZoom} />
+          }
           <ScrollView style={{flex:1, padding:3}}>
               <BoxList datas={this.state.dataList}
                        title={`${this.state.dataList.length} : Document(s)`}
                        waitingData={!this.state.ready}
-                       elementWidth={130}
+                       elementWidth={130 - 20}
                        noItemText="Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ..."
                        renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> }
                        />
           </ScrollView>
-          <View style={styles.minicontainer}>
-            <SimpleButton CStyle={this.styles.button} onPress={()=>this.sendList()} title="Suivant >>" />
+          <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
+            <SimpleButton CStyle={[this.styles.button, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>this.sendList()} title="Suivant >>" />
           </View>
           <CropperView />
         </Screen>

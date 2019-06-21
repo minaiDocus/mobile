@@ -36,7 +36,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   },
 
   secondary_button: {
-    shape: { borderWidth: 1, backgroundColor: '#17a2b8', borderColor:'#FFF', borderRadius: 200, height: 63, width: 63 },
+    shape: { borderRadius: 2, backgroundColor: '#808080' },
     text: { color: '#FFF' },
   },
 
@@ -62,6 +62,23 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   color_striped: {
     pair: '#FFF',
     impair: '#F2F2F2',
+  },
+
+  lists:{
+    shape: {
+      borderRadius:3,
+      elevation: 7, //Android Shadow
+      shadowColor: '#000',                  //===
+      shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+      shadowOpacity: 0.8,                   //===
+      shadowRadius: 2,                      //===
+      backgroundColor:"#E9E9E7",
+      borderWidth: 2,
+      borderColor: '#fff',
+      padding: 5,
+      margin: 5
+    },
+    title: { textAlign:'center',fontSize:14, fontWeight:'bold' },
   },
 
   modal: {

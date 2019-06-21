@@ -54,8 +54,6 @@ class Header extends Component{
   }
 
   render(){
-    // test
-    this.generateStyles()
     const userName = User.fullNameOf(this.master) || ""
     return  <View style={[this.styles.container, Theme.menu.head.shape]} >
               <View style={this.styles.left} >
