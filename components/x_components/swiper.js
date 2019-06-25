@@ -8,11 +8,17 @@ export class Swiper extends Component{
 
     this.state = { index: this.props.index || 0 }
 
+    this.changePage = this.changePage.bind(this)
+
     this.generateStyles()
   }
 
   renderTabBar(){
     return <View style={{flex:0, width:0,height:0}} />
+  }
+
+  changePage(page=0){
+    this.handleIndexChange(page)
   }
 
   handleIndexChange(index){
@@ -70,7 +76,8 @@ export class Swiper extends Component{
               <ScrollableTabView  style={this.props.style} 
                                   renderTabBar={()=>this.renderTabBar()} 
                                   tabBarPosition="top" 
-                                  initialPage={this.props.index} 
+                                  initialPage={this.props.index || 0}
+                                  page={this.state.index || 0}
                                   onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
                 {this.props.children}
               </ScrollableTabView>

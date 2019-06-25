@@ -162,7 +162,6 @@ class Header extends Component{
       container:{
         flex:0, 
         flexDirection:'row',
-        backgroundColor:'#E1E2DD',
         alignItems:'center',
         justifyContent:'center',
       }
@@ -170,7 +169,7 @@ class Header extends Component{
   }
 
   render(){ 
-    return  <View style={this.styles.container}>
+    return  <View style={[this.styles.container, Theme.head.shape]}>
               { this.state.openForm && <ContactForm data={this.state.dataForm} dismiss={this.closeForm} />}
               { this.state.openFilter && 
                   <ModalForm  ref="form_1"
@@ -188,8 +187,8 @@ class Header extends Component{
                               ]}
                   />
               }
-              <BoxButton title="Ajout" onPress={()=>{this.openForm()}} source={{uri:"add_contact"}} rayon={60}/>
-              <BoxButton title="Filtre" marker={this.checkFilterActive()? "(Active)" : null} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+              <BoxButton title="Ajout" onPress={()=>{this.openForm()}} source={{uri:"add_contact"}}/>
+              <BoxButton title="Filtre" marker={this.checkFilterActive()? "(Active)" : null} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}}/>
             </View>
   }
 }
@@ -410,9 +409,7 @@ class SharingScreen extends Component {
 
   toggleOrderBox(){
     if(GLOB.datas.length > 0)
-    {
       this.setState({orderBox: !this.state.orderBox})
-    }
   }
 
   changePage(page=1){
@@ -490,14 +487,16 @@ class SharingScreen extends Component {
 
   render() {
       return (
-          <Screen style={{flex: 1, flexDirection: 'column',}}
+          <Screen style={[{flex:1}, Theme.body]}
                   title="Contacts"
                   options={ this.renderOptions() }
                   navigation={this.props.navigation}
                   >
             <Header onFilter={()=>this.refreshDatas(true)}/>
               { this.renderStats() }
-            <SimpleButton title='<< Dossiers partagés' CStyle={{flex:0, maxHeight:30}} onPress={()=>CurrentScreen.goBack()} />
+            <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
+              <SimpleButton title='<< Dossiers partagés' CStyle={[{flex: 0, margin: 3}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>CurrentScreen.goBack()} />
+            </View>
             <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>
       );

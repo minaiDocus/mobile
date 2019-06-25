@@ -3,7 +3,7 @@ import { View, Modal, StyleSheet, ScrollView, TouchableOpacity } from 'react-nat
 
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { SimpleButton, XImage, XText, XTextInput, SelectInput } from '../../components'
+import { SimpleButton, XImage, XText, XTextInput, SelectInput, TabNav } from '../../components'
 
 import { FileUploader } from "../../requests"
 
@@ -73,30 +73,6 @@ class AnalysisView extends Component{
     return total_ventilation
   }
 
-  renderTabBar(){
-    const tabs = [
-      {title: "1"},
-      {title: "2"},
-      {title: "3"},
-    ]
-
-    let indexStyle = ""
-    const content = tabs.map((tb, index) => {
-          indexStyle = (index == this.state.axis_index)? {backgroundColor:'#C0D838', borderWidth:0} : {}
-          indexStyleText = (index == this.state.axis_index)? {color:'#FFF'} : {}
-          return (
-           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
-            <View style={[this.stylesTabBar.box, indexStyle]}>
-              <XText style={[this.stylesTabBar.title, indexStyleText]}>{tb.title}</XText>
-            </View>
-          </TouchableOpacity>
-      )})
-
-    return <View style={this.stylesTabBar.container}>
-             {content}
-           </View>
-  }
-
   generateStyles(){
     this.styles = StyleSheet.create({
       container: {
@@ -129,7 +105,7 @@ class AnalysisView extends Component{
                   flex:0,
                   flexDirection:'row',
                   width:'100%',
-                  height:25,
+                  height:20,
                   borderColor:'#DFE0DF',
                   borderBottomWidth:1,
                   marginTop:10,
@@ -149,13 +125,37 @@ class AnalysisView extends Component{
       box:{
             flex:1,
             marginHorizontal:2,
-            backgroundColor:"#CFCFCD",
+            backgroundColor: "#CFCFCD",
             borderColor:'#DFE0DF',
             borderWidth:1,
             flexDirection:'row',
             alignItems:'center',
           },
     })
+  }
+
+  renderTabBar(){
+    const tabs = [
+      {title: "1"},
+      {title: "2"},
+      {title: "3"},
+    ]
+
+    let indexStyle = ""
+    const content = tabs.map((tb, index) => {
+          indexStyle = (index == this.state.axis_index)? {backgroundColor:(Theme.primary_button.shape.backgroundColor || '#C0D838'), borderWidth:0} : {}
+          indexStyleText = (index == this.state.axis_index)? {color:(Theme.primary_button.text.color || '#FFF')} : {}
+          return (
+           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
+            <View style={[this.stylesTabBar.box, indexStyle]}>
+              <XText style={[this.stylesTabBar.title, indexStyleText]}>{tb.title}</XText>
+            </View>
+          </TouchableOpacity>
+      )})
+
+    return <View style={this.stylesTabBar.container}>
+             {content}
+           </View>
   }
 
   renderAxisGroup(index, analysis_name, analytics_data, axis1_options, axis2_options, axis3_options){
@@ -236,7 +236,7 @@ export class ModalComptaAnalysis extends Component{
   constructor(props){
     super(props)
 
-    this.state = { index: 0, ready: false }
+    this.state = { ready: false }
 
     this.customer = this.props.customer || null
     this.journal  = this.props.journal  || ''
@@ -251,7 +251,6 @@ export class ModalComptaAnalysis extends Component{
       RESULT_ANALYTIC = setNoResult()
 
     this.hideModal = this.hideModal.bind(this)
-    this.handleIndexChange = this.handleIndexChange.bind(this)
 
     this.generateStyles()
   }
@@ -392,97 +391,23 @@ export class ModalComptaAnalysis extends Component{
     }
   }
 
-  handleIndexChange(index){
-    this.setState({index: index})
-  }
-
   generateStyles(){
     this.styles = StyleSheet.create({
         box:    {
                   flex:1,
-                  padding:"5%",
+                  padding:"3%",
                   backgroundColor:'rgba(0,0,0,0.8)',
                   flexDirection:'column',
                 },
         content:  {
                     flex:1,
                     backgroundColor:'#fff',
-                    padding:10
                   },
         formbox:   {
                   flex:1,
-                  borderRadius:10,
-
-                  elevation: 7, //Android shadow
-
-                  shadowColor: '#000',                  //===
-                  shadowOffset: {width: 0, height: 2},  //=== iOs shadow
-                  shadowOpacity: 0.8,                   //===
-                  shadowRadius: 2,                      //===
-
-                  padding:5,
                   marginVertical:8,
-                  backgroundColor:"#E9E9E7"
                 }
     })
-
-    this.stylesTabBar = StyleSheet.create({
-      container:{
-                  flex:0,
-                  flexDirection:'row',
-                  width:'100%',
-                  height:50,
-                  borderColor:'#DFE0DF',
-                  borderBottomWidth:1,
-                  marginTop:10,
-                },
-      icons:{
-              flex:0,
-              marginLeft:5,
-              width:30,
-              height:30,
-            },
-      title:{
-              flex:1,
-              fontSize:12,
-              fontWeight:'bold',
-              textAlign:'center'
-            },
-      box:{
-            flex:1,
-            borderTopLeftRadius:10,
-            borderTopRightRadius:10,
-            marginHorizontal:2,
-            backgroundColor:"#BEBEBD",
-            borderColor:'#DFE0DF',
-            borderWidth:1,
-            flexDirection:'row',
-            alignItems:'center',
-          },
-    })
-  }
-
-  renderTabBar(){
-    const tabs = [
-      {title: "Analyse 1"},
-      {title: "Analyse 2"},
-      {title: "Analyse 3"},
-    ]
-
-    let indexStyle = ""
-    const content = tabs.map((tb, index) => {
-          indexStyle = (index == this.state.index)? {backgroundColor:'#E9E9E7', borderColor:'#C0D838'} : {};
-          return (
-           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
-            <View style={[this.stylesTabBar.box, indexStyle]}>
-              <XText style={this.stylesTabBar.title}>{tb.title}</XText>
-            </View>
-          </TouchableOpacity>
-      )})
-
-    return <View style={this.stylesTabBar.container}>
-             {content}
-           </View>
   }
 
   render(){
@@ -493,24 +418,26 @@ export class ModalComptaAnalysis extends Component{
                    onRequestClose={()=>{ this.hideModal(this.props.withCancel || false) }}
             >
               <View style={this.styles.box}>
-                <View style={this.styles.content}>
-                  <View style={{flex:1}}>
-                    <XText style={{flex:0, minHeight:35, textAlign:'center', fontSize:24, color: '#463119'}}>Compta Analytique</XText>
+                <View style={[this.styles.content, Theme.modal.shape]}>
+                  <View style={{flex:1, padding: 5}}>
+                    <XText style={{flex:0, minHeight:25, textAlign:'center', fontSize:18, color: '#463119'}}>Compta Analytique</XText>
                     <XText style={{flex:0}}>Ventilation à 100% par analyse uniquement.</XText>
                     <View style={this.styles.formbox}>
                       {this.state.ready &&
-                        <ScrollableTabView tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
+                        <TabNav headers={[{title: "Analyse 1"}, {title: "Analyse 2"}, {title: "Analyse 3"}]}
+                                CStyle={{ backgroundColor: 'transparent' }}
+                        >
                           <AnalysisView index={0}/>
                           <AnalysisView index={1}/>
                           <AnalysisView index={2}/>
-                        </ScrollableTabView>
+                        </TabNav>
                       }
                       {!this.state.ready && <XImage loader={true} style={{flex:1, width:60, height:60, alignSelf:'center'}} />}
                     </View>
                   </View>
-                  <View style={{flex:0,flexDirection:'row'}}>
-                    <SimpleButton CStyle={{flex:1, marginHorizontal:3}} onPress={()=>this.hideModal()} title="Valider" />
-                    {this.props.withCancel && <SimpleButton CStyle={{flex:1, marginHorizontal:3}} onPress={()=>this.hideModal(true)} title="Annuler" /> }
+                  <View style={[{flex:0, flexDirection:'row', paddingVertical:7, paddingHorizontal:5 }, Theme.modal.foot]}>
+                    <SimpleButton CStyle={[{flex:0, width: (!this.state.withCancel? '100%' : '50%')}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.hideModal()} title="Valider" />
+                    {this.props.withCancel && <SimpleButton CStyle={[{flex:0, width: '47%', marginLeft: '3%'}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.hideModal(true)} title="Annuler" /> }
                   </View>
                 </View>
               </View>

@@ -109,9 +109,9 @@ class ModalSelect extends Component{
     }
     
     const icon = this.state.loading? 'loader' : 'zoom_x'
-    return <View style={{flex:1, flexDirection:'row', maxWidth:200}}>
+    return <View style={{flex:1, flexDirection:'row', paddingTop: 3, maxWidth:200}}>
               <XTextInput CStyle={CStyle} TStyle={TStyle} placeholder="Filtre" autoCorrect={false} liveChange={liveChange} onChangeText={(value) => this.handleFilterChange(value)}/>
-              <XImage source={{uri:icon}} style={{flex:0, marginTop:5, width:25, height:25}} />
+              <XImage source={{uri:icon}} style={{flex:0, marginTop:5, width:20, height:20}} />
             </View>
   }
 
@@ -424,7 +424,7 @@ export class SelectInput extends Component{
                         <XText style={[{color:'#606060'}, stylePlus]}>{this.state.valueText}</XText>
                       </AnimatedBox>
                     </View>
-                    <XText style={{flex:0, fontSize:10, fontWeight:'bold'}}>V</XText>
+                    <XText style={{flex:0, fontSize:10, fontWeight:'bold', padding: 2}}>V</XText>
                   </TouchableOpacity>
                 </View>          
               }   

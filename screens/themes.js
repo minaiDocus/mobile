@@ -27,7 +27,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
 
   head: {
     shape: { backgroundColor: 'rgba(48,48,48,0.8)', padding: 7 },
-    text: {},
+    text: { color: '#fff' },
   },
 
   primary_button: {
@@ -36,7 +36,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   },
 
   secondary_button: {
-    shape: { borderRadius: 2, backgroundColor: '#808080' },
+    shape: { borderRadius: 2, backgroundColor: '#2F4F4F' },
     text: { color: '#FFF' },
   },
 

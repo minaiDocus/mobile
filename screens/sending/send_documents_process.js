@@ -27,19 +27,6 @@ let GLOB = {
                         ]
           }
 
-
-const styles = StyleSheet.create({
-  minicontainer:{
-    flex:0, 
-    flexDirection:'row',
-    backgroundColor:'#E1E2DD'
-  },
-  button: {
-    flex:1,
-    margin:10
-  }
-})
-
 function loadData(){
   if(typeof(GLOB.dataList) !== "undefined" && GLOB.dataList.length > 0)
   {
@@ -140,7 +127,7 @@ class Header extends Component{
 
   render(){
     const dataList = this.state.dataList;
-    return  <View style={styles.minicontainer}>
+    return  <View style={[{flex: 0, flexDirection: 'row'}, Theme.head.shape, {padding: 0, paddingHorizontal: 1}]}>
               <ScrollView style={{flex:1}}>
                 <ListView horizontal={true}
                           contentContainerStyle={{flex:0,flexDirection:'row'}}
@@ -266,25 +253,6 @@ class Body extends Component{
         container:{
           flex:1,
           flexDirection:'column',
-          borderRadius:10,
-         
-          elevation: 7, //Android shadow
-
-          shadowColor: '#000',                  //===
-          shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
-          shadowOpacity: 0.8,                   //===
-          shadowRadius: 2,                      //===
-          
-          backgroundColor:"#E9E9E7",
-          margin:10,
-          paddingHorizontal:20,
-          paddingVertical:10
-        },
-        textBody:{
-          flex:0,
-          textAlign:'center',
-          fontSize:16,
-          fontWeight:'bold'
         },
         inputs:{
           flex: 1,
@@ -355,7 +323,7 @@ class Body extends Component{
               <View style={{flex:1}}>
                 <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
                 <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
-                {this.state.comptaAnalysisActivated && <SimpleButton CStyle={styles.button} onPress={()=>{this.toggleComptaAnalysis(true)}} title={analysis_message} />}
+                {this.state.comptaAnalysisActivated && <SimpleButton CStyle={Theme.primary_button.shape} TStyle={Theme.primary_button.text} onPress={()=>{this.toggleComptaAnalysis(true)}} title={analysis_message} />}
                 {this.state.comptaAnalysisActivated && this.state.comptaAnalysisResume && this.renderAnalyticResume()}
                 {this.state.period_start != "" &&
                   <View style={this.styles.warning}>
@@ -388,8 +356,8 @@ class Body extends Component{
 
   render(){
     return  <View style={{flex:1, padding:3}}>
-              <XText style={this.styles.textBody}>{GLOB.dataList.length} : Document(s)</XText>
-              <View style={this.styles.container}>
+              <XText style={Theme.lists.title}>{GLOB.dataList.length} : Document(s)</XText>
+              <View style={[this.styles.container, Theme.lists.shape]}>
                 {this.state.ready && this.renderForm()}
                 {!this.state.ready && this.renderLoading()}
               </View>
@@ -424,9 +392,9 @@ class Footer extends Component{
   }
 
   render(){
-    return  <View style={styles.minicontainer}>
-              <SimpleButton CStyle={styles.button} onPress={()=>{this.leaveScreen()}} title="<< Precedent" />
-              {this.state.sending == false && this.props.sending == false && <SimpleButton CStyle={styles.button} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
+    return  <View style={[{flex: 0, flexDirection: 'row', padding: 1}, Theme.head.shape]}>
+              <SimpleButton CStyle={[{flex: 0, width: (this.state.sending? '100%' : '50%')}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>{this.leaveScreen()}} title="<< Precedent" />
+              {this.state.sending == false && this.props.sending == false && <SimpleButton CStyle={[{flex: 0, width: '47%', marginLeft: '3%'}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
             </View>
   }
 }

@@ -79,7 +79,7 @@ class BoxZoom extends Component{
     this.styles = StyleSheet.create({
         boxZoom:{
                   flex:1,
-                  padding:"10%",
+                  padding:"5%",
                   backgroundColor:'rgba(0,0,0,0.8)',
                   flexDirection:'column',
                 },
@@ -87,7 +87,8 @@ class BoxZoom extends Component{
                     flex:1,
                     marginBottom:15,
                     borderColor:'#fff',
-                    borderWidth:2
+                    borderWidth:2,
+                    overflow: 'hidden'
                   },
         loader: {
                   backgroundColor:'#fff',
@@ -149,9 +150,9 @@ class BoxZoom extends Component{
                   }
                 </View>
                 <View style={{flex:0,flexDirection:'row'}}>
-                  <SimpleButton CStyle={{flex:1, marginHorizontal:3}} onPress={()=>this.hideModal()} title="Retour" />
-                  <SimpleButton CStyle={{flex:1, marginHorizontal:3}} onPress={()=>this.cropElement()} title="Recadrer" />
-                  <SimpleButton CStyle={{flex:1, marginHorizontal:3}} onPress={()=>this.deleteElement()} title="Enlever" />
+                  <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.hideModal()} title="Retour" />
+                  <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.cropElement()} title="Recadrer" />
+                  <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.deleteElement()} title="Enlever" />
                 </View>
               </View>
             </Modal>
@@ -242,13 +243,11 @@ class ImgBox extends Component{
   }
 
   render(){
-    // test
-    this.generateStyles()
     const doc = Document.getById(this.element.id_64)
     let message = ''
     if(doc)
       message = doc.error || ''
-    return  <TouchableOpacity style={this.styles.styleTouch} onPress={()=>this.toggleOpt()}>
+    return  <TouchableOpacity style={this.styles.styleTouch} onLongPress={()=>{this.zoom()}} onPress={()=>this.toggleOpt()}>
                 <XImage type='container' CStyle={this.styles.styleContainer} source={{uri:this.element.path.toString()}} style={this.styles.styleImg} local={false}>
                   {
                     this.state.options == false && message != '' &&
@@ -490,8 +489,6 @@ class SendScreen extends Component {
   }
 
   render() {
-    // test
-    this.generateStyles()
       return (
         <Screen style={[{flex:1}, Theme.body]}
                 title='Envoi documents'

@@ -154,6 +154,8 @@ class Header extends Component{
         right:{
           flex:1,
           flexDirection:'row',
+          alignItems: 'center',
+          justifyContent: 'center',
           paddingHorizontal:20,
         },
         image:{
@@ -163,7 +165,8 @@ class Header extends Component{
           marginRight:15
         },
         select:{
-          flex:1,
+          flex:0,
+          height: 25,
           width:'100%'
         },
         filterbox:{
@@ -196,7 +199,7 @@ class Header extends Component{
       loading_add = {uri:"img_loader"}
     }  
 
-    return  <View style={this.styles.container}>
+    return  <View style={[this.styles.container, Theme.head.shape, { padding: 0 }]}>
               { this.state.filter && 
                 <ModalForm  ref='form_1'
                             title="Filtre"
@@ -217,7 +220,8 @@ class Header extends Component{
                                 filterCallback={this.filterCollaborator} 
                                 dataOptions={this.state.optionsCollaborator}
                                 textInfo="Contact ou Client - (Tapez un therme à rechercher)" 
-                                style={{color:'#707070'}} CStyle={this.styles.select} 
+                                style={{color:'#707070'}}
+                                CStyle={this.styles.select} 
                                 onChange={(value) => this.handleClientChange(value, "collaborator")}
                   />
                   <SelectInput  filterSearch={true}
@@ -228,11 +232,11 @@ class Header extends Component{
                                 CStyle={this.styles.select} 
                                 onChange={(value) => this.handleClientChange(value, "account")}
                   />
-                  <SimpleButton CStyle={{flex:0, height:30, width:100, margin:10}} RImage={loading_add} onPress={()=>this.addSharedDoc()} title="Partager" />
-              </View>
+                  <SimpleButton CStyle={[{flex:0, height:30, width:100, margin:10}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text}  RImage={loading_add} onPress={()=>this.addSharedDoc()} title="Partager" />
+                </View>
               </View>
               <View style={this.styles.right}> 
-                <BoxButton title="Filtre" marker={this.checkFilterActive()? "(Active)" : null} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+                <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} />
               </View>
             </View> 
   }
@@ -557,13 +561,15 @@ class SharingScreen extends Component {
 
   render() {
       return (
-          <Screen style={{flex: 1, flexDirection: 'column'}}
+          <Screen style={[{flex:1}, Theme.body]}
                   title={this.props.title}
                   options={this.props.options}
                   navigation={this.props.navigation}>
             <Header onFilter={()=>this.refreshDatas(true)}/>
               { this.renderStats() }
-            <SimpleButton title='Contacts >>' CStyle={{flex:0, maxHeight:30}} onPress={()=>CurrentScreen.goTo("SharingContacts")} />
+            <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
+              <SimpleButton title='Contacts >>' CStyle={[{flex: 0, margin: 3}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>CurrentScreen.goTo("SharingContacts")} />
+            </View>
             <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>
       );

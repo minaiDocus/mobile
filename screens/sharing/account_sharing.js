@@ -30,7 +30,6 @@ class HeaderOptions extends Component{
   }
 }
 
-
 class SharingScreen extends Component {
   constructor(props){
     super(props)

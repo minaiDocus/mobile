@@ -148,7 +148,6 @@ export class BoxButton extends Component{
   }
 
   generateStyles(){
-    const rayon = this.props.rayon || 45
     this.styles = StyleSheet.create({
       touchable:{
                   flex:1,
@@ -159,8 +158,8 @@ export class BoxButton extends Component{
                     alignItems:'center',
                     justifyContent:'center',
                     flex:0,
-                    width:rayon,
-                    height:rayon,
+                    width:45,
+                    height:45,
                     marginBottom:-1,
                     borderRadius:100,
                     borderRadius:100
@@ -174,6 +173,7 @@ export class BoxButton extends Component{
                 flex:0,
                 position: 'absolute',
                 top: 10,
+                minWidth: 90,
                 justifyContent:'center',
                 alignItems: 'center',
                 paddingHorizontal:10,
@@ -185,12 +185,6 @@ export class BoxButton extends Component{
             flex:0,
             textAlign:'center'
             },
-      boxMarker:{
-                  position:'absolute',
-                },
-      marker: {
-                textAlign:'center'
-              }  
     })
   }
 
@@ -198,10 +192,18 @@ export class BoxButton extends Component{
     return  <TouchableOpacity onPress={this.props.onPress} style={this.styles.touchable}>
               <LinearGradient colors={Theme.box_button.shape.linearColors || this.linearColors || ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']} style={[this.styles.boxControl, Theme.box_button.shape, this.CStyle_plus]}>
                 <XImage source={this.props.source} style={this.styles.icons} local={this.props.local || true} />
-                {this.props.marker && <View style={this.styles.boxMarker}><AnimatedBox type="blink" durationIn={1500} durationOut={1500}><XText style={[this.styles.marker, Theme.box_button.marker]}>{this.props.marker}</XText></AnimatedBox></View> }
               </LinearGradient>
               <View style={[this.styles.boxText, Theme.box_button.box_text]}>
-                <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus]}>{this.props.title}</XText>
+                {
+                  this.props.blink &&
+                  <AnimatedBox type="blink" durationIn={600} durationOut={600}>
+                    <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus, {color: 'rgb(139,0,0)'}]}>{this.props.title}</XText>
+                  </AnimatedBox>
+                }
+                {
+                  !this.props.blink &&
+                  <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus]}>{this.props.title}</XText>
+                }
               </View>
             </TouchableOpacity>
   }

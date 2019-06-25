@@ -4,7 +4,7 @@ import { NavigationActions } from 'react-navigation'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { Navigator,XImage,XText,PDFView,SimpleButton,ImageButton,BoxList,LineList,Pagination } from '../../components'
+import { Navigator,XImage,XText,PDFView,SimpleButton,ImageButton,BoxList,LineList,Pagination,TabNav, Swiper } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -46,29 +46,76 @@ function getImgStampOf(state=''){
   return stamp_img
 }
 
+class SwiperPdf extends Component{
+  constructor(props){
+    super(props)
+
+    this.nextElement = this.nextElement.bind(this)
+    this.prevElement = this.prevElement.bind(this)
+  }
+
+  nextElement(){
+    GLOB.idZoom = GLOB.idZoom + 1 
+    if(typeof(this.props.datas[GLOB.idZoom]) === 'undefined')
+      GLOB.idZoom = GLOB.idZoom - 1
+    else
+      this.refs.main_swiper.changePage(GLOB.idZoom)
+  }
+
+  prevElement(){
+    GLOB.idZoom = GLOB.idZoom - 1 
+    if(typeof(this.props.datas[GLOB.idZoom]) === 'undefined')
+      GLOB.idZoom = GLOB.idZoom + 1
+    else
+      this.refs.main_swiper.changePage(GLOB.idZoom)
+  }
+
+  renderElement(){
+    return this.props.datas.map((e, i)=>{
+      return <BoxZoom  key={i}
+                       index={i}
+                       counts={this.props.datas.length}
+                       hide={()=> { this.props.hide() }}
+                       nextElement={this.nextElement}
+                       prevElement={this.prevElement}
+                       selectElement={(isPresent(e.actionOnSelect))? this.props.selectElement : false} 
+                       data={e} 
+                       total={this.props.datas.length}/>
+    })
+  }
+
+  render(){
+    return  <Modal transparent={false}
+                   animationType="slide" 
+                   visible={true}
+                   supportedOrientations={['portrait', 'landscape']}
+                   onRequestClose={()=>{ this.props.hide() }}
+            >
+              <Swiper ref='main_swiper' style={{flex: 1}} index={GLOB.idZoom || 0}>
+                { this.renderElement() }
+              </Swiper>
+            </Modal>
+  }
+} 
+
 class BoxZoom extends Component{
   constructor(props){
     super(props)
 
     exist = GLOB.selectedItems.find(elem => { return elem == this.props.data.id })
 
+    this.src = null
     this.state = { nb_pages: 0, current_page: 1, is_selected: exist? true : false }
 
     this.generateStyles()
   }
 
-  hideModal(){
-    this.props.hide();
-  }
-
   nextElement(){
-    this.hideModal()
-    setTimeout(()=>this.props.nextElement(), 300)
+    this.props.nextElement()
   }
 
   prevElement(){
-    this.hideModal()
-    setTimeout(()=>this.props.prevElement(), 300)
+    this.props.prevElement()
   }
 
   handleSelection(){
@@ -77,19 +124,20 @@ class BoxZoom extends Component{
   }
 
   indicator(){
-    return <View style={{flex:0, width:'100%', height:'100%', backgroundColor:'#FFF', alignItems:'center', justifyContent:'center'}}>
+    return  <View style={{flex:0, width:'100%', height:'100%', backgroundColor:'#FFF', alignItems:'center', justifyContent:'center'}}>
               <XImage loader={true} width={70} height={70} style={{marginTop:10}} />
-           </View>
+            </View>
   }
 
   generateStyles(){
     this.styles = StyleSheet.create({
       boxZoom:{
                   flex:1,
-                  padding:"5%",
-                  backgroundColor:'#FFF',
+                  paddingHorizontal:"3%",
+                  paddingVertical:"2%",
                   flexDirection:'column',
-                  justifyContent:'flex-end'
+                  justifyContent:'flex-end',
+                  backgroundColor: Theme.modal.shape.backgroundColor || '#fff'
               },
       head: {
               flex:0,
@@ -97,19 +145,26 @@ class BoxZoom extends Component{
               borderBottomWidth:2,
               borderColor:'#DFE0DF',
               paddingBottom:5,
-              height:35,
-              marginBottom:10
+              height: 30,
+              width: '100%',
+              marginBottom:7,
             },
-      wrapper:{
-                flex:1,
-                alignItems:'center',
-                marginBottom:10,
-                backgroundColor:'#FFF'
-              },
+      foot: { 
+              flex:0,
+              flexDirection:'row',
+              alignItems:'center',
+              justifyContent:'center',
+            },
+      body: {
+              flex:1,
+              marginBottom:5,
+              overflow: 'hidden',
+              borderColor:'#000',
+              borderWidth:2
+            },
       text: {
               flex:0,
               textAlign:'center',
-              marginBottom:5,
               color:'#000',
               fontSize:18
             },
@@ -143,14 +198,16 @@ class BoxZoom extends Component{
               },
       btnNav: {
                 flex:0,
+                width: 30,
+                height: 20,
                 marginHorizontal:10,
-                backgroundColor:'#fff'
               }
     })
   }
 
   render(){
-    const src = DocumentsFetcher.renderDocumentUri(this.props.data.large, this.props.data.force_temp_doc)
+    if(!this.src)
+      this.src = DocumentsFetcher.renderDocumentUri(this.props.data.large, this.props.data.force_temp_doc)
 
     const selection_img = this.state.is_selected ? 'no_selection' : 'validate_green'
 
@@ -164,48 +221,45 @@ class BoxZoom extends Component{
       style_number = {backgroundColor:'#F89406'}
     }
 
-    return  <Modal transparent={false}
-                   animationType="slide" 
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{ this.hideModal() }}
-            >
-              <View style={this.styles.boxZoom}>
-                <View style={this.styles.head}>
-                  <SimpleButton CStyle={{flex:0}} onPress={()=>this.hideModal()} title="Retour" />
+    return  <View style={this.styles.boxZoom}>
+              <View style={this.styles.head}>
+                <SimpleButton CStyle={[{flex:0, width: 50, height: 20}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.props.hide()} title="Retour" />
+                {
+                  this.props.selectElement &&
+                  <ImageButton  source={{uri:selection_img}} 
+                                CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:45, backgroundColor: 'transparent', marginHorizontal: 5}}
+                                IStyle={{flex:0, width:18, height:18}}
+                                onPress={()=>{this.handleSelection()}} />
+                }
+                <View style={this.styles.control} >
                   {
-                    this.props.selectElement &&
-                    <ImageButton  source={{uri:selection_img}} 
-                                  CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:45}}
-                                  IStyle={{flex:0, width:18, height:18}}
-                                  onPress={()=>{this.handleSelection()}} />
+                    this.props.index > 0 && <SimpleButton TStyle={Theme.secondary_button.text} CStyle={[this.styles.btnNav, Theme.secondary_button.shape, {marginLeft:0}]} onPress={()=>this.prevElement()} title="<-" />
                   }
-                  <View style={this.styles.control} >
-                    <SimpleButton TStyle={{fontSize:18,fontWeight:'bold',color:'#000'}} CStyle={[this.styles.btnNav, {marginLeft:0}]} onPress={()=>this.prevElement()} title="<-" />
-                    <XText style={[this.styles.piece_number, style_number]}>{piece_number}</XText>
-                    <SimpleButton TStyle={{fontSize:18,fontWeight:'bold',color:'#000'}} CStyle={[this.styles.btnNav, {marginRight:0}]} onPress={()=>this.nextElement()} title="->" />
-                  </View>
-                </View>
-                <View style={{flex:1,marginBottom:5, borderColor:'#000', borderWidth:2}}>
-                  <PDFView
-                    source={src}
-                    onLoadComplete={(pageCount, filePath)=>{
-                      this.setState({nb_pages: pageCount})
-                    }}
-                    onPageChanged={(page,pageCount)=>{
-                      this.setState({current_page: page})
-                    }}
-                    onError={(error)=>{
-                      Notice.alert("Erreur loading pdf", error)
-                    }} />
-                </View>
-                <View style={{flex:0,flexDirection:'row',alignItems:'center', justifyContent:'center'}}>
-                  <XText style={[this.styles.text, this.styles.textFoot, {textAlign:'left'}]}>{this.state.current_page}</XText>
-                  { stamp_img != 'none' && <XImage source={{uri:stamp_img}} style={this.styles.stamp} /> }
-                  <XText style={[this.styles.text, this.styles.textFoot, {textAlign:'right'}]}>{this.state.nb_pages} page(s)</XText>
+                  <XText style={[this.styles.piece_number, style_number]}>{piece_number}</XText>
+                  {
+                    this.props.index < (this.props.counts - 1) && <SimpleButton TStyle={Theme.secondary_button.text} CStyle={[this.styles.btnNav, Theme.secondary_button.shape, {marginRight:0}]} onPress={()=>this.nextElement()} title="->" />
+                  }
                 </View>
               </View>
-            </Modal>
+              <View style={this.styles.body}>
+                <PDFView
+                  source={this.src}
+                  onLoadComplete={(pageCount, filePath)=>{
+                    this.setState({nb_pages: pageCount})
+                  }}
+                  onPageChanged={(page,pageCount)=>{
+                    this.setState({current_page: page})
+                  }}
+                  onError={(error)=>{
+                    Notice.alert("Erreur loading pdf", error)
+                  }} />
+              </View>
+              <View style={this.styles.foot}>
+                <XText style={[this.styles.text, this.styles.textFoot, {textAlign:'left'}]}>{this.state.current_page}</XText>
+                { stamp_img != 'none' && <XImage source={{uri:stamp_img}} style={this.styles.stamp} /> }
+                <XText style={[this.styles.text, this.styles.textFoot, {textAlign:'right'}]}>{this.state.nb_pages} page(s)</XText>
+              </View>
+            </View>
   }
 }
 
@@ -220,10 +274,8 @@ class Header extends Component{
        minicontainer:{
                       flex:0, 
                       flexDirection:'column',
-                      backgroundColor:'#E1E2DD',
                       alignItems:'center',
                       justifyContent:'center',
-                      paddingVertical:10,
                     },
         text: {
                 fontSize:18,
@@ -238,11 +290,11 @@ class Header extends Component{
 
   render(){
     return (
-              <View style={this.styles.minicontainer}>
-                <XText style={this.styles.text}>{GLOB.Pack.name || "test"}</XText>
+              <View style={[this.styles.minicontainer, Theme.head.shape]}>
+                <XText style={[this.styles.text, Theme.head.text]}>{GLOB.Pack.name || "test"}</XText>
                 {
-                  GLOB.filterText != "" &&
-                  <XText style={this.styles.filter}>(Filtre active: <XText style={{color:"#F7230C", fontStyle:'italic'}}>{GLOB.filterText}</XText>)</XText>
+                  isPresent(GLOB.filterText) &&
+                  <XText style={[this.styles.filter, Theme.head.text]}>(Filtre active: <XText style={{color:"#F7230C", fontStyle:'italic'}}>{GLOB.filterText}</XText>)</XText>
                 }
               </View>
             );
@@ -483,31 +535,11 @@ class BoxPublish extends Component{
     this.state = { zoomActive: false }
 
     this.toggleZoom = this.toggleZoom.bind(this)
-    this.nextElement = this.nextElement.bind(this)
-    this.prevElement = this.prevElement.bind(this)
     this.selectElement = this.selectElement.bind(this)
   }
 
   async toggleZoom(){
     await this.setState({zoomActive: !this.state.zoomActive})
-  }
-
-  nextElement(){
-    GLOB.idZoom = GLOB.idZoom + 1 
-    if(typeof(this.props.datas[GLOB.idZoom]) === 'undefined')
-    {
-      GLOB.idZoom = 0
-    }
-    setTimeout(this.toggleZoom, 500)
-  }
-
-  prevElement(){
-    GLOB.idZoom = GLOB.idZoom - 1 
-    if(typeof(this.props.datas[GLOB.idZoom]) === 'undefined')
-    {
-      GLOB.idZoom = this.props.datas.length - 1
-    }
-    setTimeout(this.toggleZoom, 500)
   }
 
   selectElement(){
@@ -517,12 +549,9 @@ class BoxPublish extends Component{
 
   render(){
     return <ScrollView style={{flex:0, padding:3}}>
-              {this.state.zoomActive && <BoxZoom  hide={this.toggleZoom} 
-                                                  nextElement={this.nextElement} 
-                                                  prevElement={this.prevElement}
-                                                  selectElement={(isPresent(this.props.datas[GLOB.idZoom].actionOnSelect))? this.selectElement : false} 
-                                                  data={this.props.datas[GLOB.idZoom]} 
-                                                  total={this.props.datas.length}/>
+              {this.state.zoomActive && <SwiperPdf  hide={this.toggleZoom} 
+                                                    datas={this.props.datas}
+                                                  />
               }
               <BoxList datas={this.props.datas}
                        title={`${this.props.totalCount} ${this.props.title}`}
@@ -535,7 +564,7 @@ class BoxPublish extends Component{
   }
 }
 
-class TabNav extends Component{
+class CustomTabNav extends Component{
   constructor(props){
     super(props);
     this.state = {index: 0, published_ready: false, publishing_ready: false}
@@ -549,8 +578,6 @@ class TabNav extends Component{
 
     this.changePagePublished = this.changePagePublished.bind(this)
     this.changePagePublishing = this.changePagePublishing.bind(this)
-
-    this.generateStyles()
   }
 
   componentDidMount(){
@@ -627,76 +654,8 @@ class TabNav extends Component{
     }
   }
 
-  handleIndexChange(index){
-    this.setState({index: index})
-  }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-        container:{
-          flex:0,
-          flexDirection:'row',
-          width:'100%',
-          height:50,
-          borderColor:'#DFE0DF',
-          borderBottomWidth:1,
-          marginTop:10,
-        },
-        icons:{
-          flex:0,
-          marginLeft:5,
-          width:30,
-          height:30,
-        },
-        touchable:{
-          flex:1
-        },
-        title:{
-          flex:1,
-          fontSize:12,
-          fontWeight:'bold',
-          textAlign:'center'
-        },
-        box:{
-          flex:1,
-          borderTopLeftRadius:10,
-          borderTopRightRadius:10,
-          marginHorizontal:2,
-          backgroundColor:"#BEBEBD",
-          borderColor:'#DFE0DF',
-          borderWidth:1,
-          flexDirection:'row',
-          alignItems:'center',
-        }
-    })
-  }
-
-  renderTabBar(){
-    const tabs = [
-      {title: "Infos", icon:"information"},
-      {title: "En cours", icon:"doc_curr"},
-      {title: "Publiés", icon:"doc_trait"},
-    ]
-
-    var indexStyle = "";
-    const content = tabs.map((tb, index) => {
-          indexStyle = (index == this.state.index)? {backgroundColor:'#E9E9E7',borderColor:'#C0D838'} : {};
-          return (
-           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={this.styles.touchable}>
-            <View style={[this.styles.box, indexStyle]}>
-              <XImage source={{uri:tb.icon}} style={this.styles.icons} />
-              <XText style={this.styles.title}>{tb.title}</XText>
-            </View>
-          </TouchableOpacity>
-      )});
-
-    return <View style={this.styles.container}>
-             {content}
-           </View>  
-  }
-
   render(){
-    return  <ScrollableTabView tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
+    return  <TabNav headers={[{title: "Infos", icon:"information"}, {title: "En cours", icon:"doc_curr"}, {title: "Publiés", icon:"doc_trait"}]}>
               <BoxInfos key={0}
                         nb_published={this.totalPublished}
                         nb_publishing={this.totalPublishing}/>
@@ -718,7 +677,7 @@ class TabNav extends Component{
                           onChangePage={(page)=>this.changePagePublished(page)}
                           nb_pages={this.limit_pagePublished}
                           page={this.pagePublished} />
-            </ScrollableTabView>
+            </TabNav>
   }
 }
 
@@ -832,7 +791,7 @@ class PublishScreen extends Component {
                 title='Mes documents'
                 navigation={this.props.navigation}>
           <Header />
-          <TabNav />
+          <CustomTabNav />
           { this.state.analysisOpen && <ModalComptaAnalysis currentScreen='publishing' withCancel={true} resetOnOpen={true} hide={(data)=>this.closeComptaAnalysis(data)} pieces={GLOB.selectedItems} /> }
         </Screen>
       );

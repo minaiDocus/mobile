@@ -89,7 +89,6 @@ class Header extends Component{
       container:{
         flex:0,
         flexDirection:'row',
-        backgroundColor:'#E1E2DD',
         width:'100%',
       },
       left:{
@@ -106,8 +105,8 @@ class Header extends Component{
       },
       image:{
         flex:0,
-        width:40,
-        height:40,
+        width:30,
+        height:30,
         marginRight:15
       },
       filterbox:{
@@ -120,7 +119,7 @@ class Header extends Component{
   }
 
   render(){
-    return  <View style={this.styles.container}>
+    return  <View style={[this.styles.container, Theme.head.shape]}>
               { this.state.filter && 
                 <ModalForm  ref="form_1"
                             title="Filtre"
@@ -142,10 +141,10 @@ class Header extends Component{
               }
               <View style={this.styles.left}>
                 <XImage source={{uri:"ico_suiv"}} style={this.styles.image} />
-                <XText style={{flex:2, fontSize:18,fontWeight:'bold'}}>Suivi : {this.props.dataCount}</XText>
+                <XText style={[{flex:2, fontSize:16,fontWeight:'bold'}, Theme.head.text]}>Suivi : {this.props.dataCount}</XText>
               </View>
               <View style={this.styles.right}> 
-                <BoxButton title="Filtre" marker={this.checkFilterActive()? "(Active)" : null} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} rayon={60}/>
+                <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}}/>
               </View>
             </View>
   }
@@ -409,7 +408,7 @@ class StatsScreen extends Component {
 
   render() {
       return (
-          <Screen style={{flex: 1, flexDirection: 'column',}}
+          <Screen style={[{flex:1}, Theme.body]}
                   navigation={this.props.navigation}
                   title="Suivi"
                   options={ this.renderOptions() }

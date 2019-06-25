@@ -63,6 +63,8 @@ export class BoxList extends Component{
     this.datas = this.props.datas || []
     this.itemCount = 0
 
+    this.padding = 2
+
     this.renderItems = this.renderItems.bind(this)
     this.onLayout = this.onLayout.bind(this)
     this.removeLoader = this.removeLoader.bind(this)
@@ -101,8 +103,8 @@ export class BoxList extends Component{
 
   onLayout(event){
     let {width, height} = event.nativeEvent.layout
-    this.width = width - 12
-    this.elements = Math.floor(this.width / (this.props.elementWidth+2))
+    this.width = width
+    this.elements = Math.floor(this.width / (this.props.elementWidth))
     this.setState({dimensionReady: true})
   }
 
@@ -119,14 +121,14 @@ export class BoxList extends Component{
         children: {
                     flex:0,
                     flexDirection:'column',
-                    alignItems:'center'
+                    alignItems:'center',
                   }
     })
   }
 
   renderItems(item, key){
     const wd = (this.width) / this.elements
-    return <View key={key} style={[this.styles.children, this.childStylePlus, {width: wd}]}>{this.props.renderItems(item, key)}</View>
+    return <View key={key} style={[this.styles.children, this.childStylePlus, {width: (wd - this.padding), padding: this.padding, margin: 0}]}>{this.props.renderItems(item, key)}</View>
   }
 
   render(){
@@ -136,11 +138,11 @@ export class BoxList extends Component{
     if(this.props.waitingData || this.newData)
       content = <Loader ref='loader' />
     else if(this.itemCount <= 0 && this.props.noItemText != 'none')
-      content = <XText>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
+      content = <XText style={{padding: 10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
     return  <View style={{flex: 1}}>
               {this.props.title != '' && <XText style={[{flex:0}, Theme.lists.title]}>{this.props.title}</XText>}
-              <View style={[this.styles.container, Theme.lists.shape, this.stylesPlus]} onLayout={this.onLayout} >
+              <View style={[this.styles.container, Theme.lists.shape, {padding: 0}, this.stylesPlus]} onLayout={this.onLayout} >
                 {this.itemCount > 0 && this.state.dimensionReady && this.datas.map((item, index) => {return this.renderItems(item, index)})}
                 { content }
               </View>
@@ -231,7 +233,7 @@ export class LineList extends Component{
       content = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
     return <View style={{flex:1}}>
-                {this.props.title != '' && <XText style={[this.styles.title, Theme.lists.title]}>{this.props.title}</XText>}
+                {isPresent(this.props.title) && <XText style={[this.styles.title, Theme.lists.title]}>{this.props.title}</XText>}
                 <View style={[this.styles.container, Theme.lists.shape, this.stylesPlus]}>
                   {this.itemCount > 0 && this.datas.map((item, index) => {return this.renderItems(item, index)})}
                   { content }

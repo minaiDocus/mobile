@@ -83,7 +83,8 @@ class Header extends Component{
                             fontSize:16,
                             fontWeight:'bold',
                             marginTop:5,
-                            paddingHorizontal:10
+                            paddingHorizontal:10,
+                            backgroundColor: '#FFF'
                           }
                         }
     this.styles = StyleSheet.create({
@@ -92,7 +93,7 @@ class Header extends Component{
                   flexDirection:'row',
                   backgroundColor:'#E1E2DD',
                   width:'100%',
-                  height:90,
+                  height:80,
                 },
       inputs: {
                 flex: 1,
@@ -102,7 +103,7 @@ class Header extends Component{
               flex:1,
               flexDirection:'row',
               alignItems:'center',
-              paddingLeft:30,
+              paddingLeft:15,
               justifyContent:'center'
             },
       right:{
@@ -111,8 +112,8 @@ class Header extends Component{
             },
       image:{
               flex:0,
-              width:40,
-              height:40
+              width:30,
+              height:30
             }
     })
   }
@@ -125,7 +126,7 @@ class Header extends Component{
     }
     else
     {
-      inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={{flex:0, height:35}} onChange={(value) => this.handleClientChange(value)}/>
+      inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={{flex:0, height:35, backgroundColor: '#FFF'}} onChange={(value) => this.handleClientChange(value)}/>
     }
 
     return inputSelection
@@ -135,21 +136,21 @@ class Header extends Component{
     const imageInput = ()=>{
       if(this.props.loadingFilter || this.state.loading)
       {
-        return <XImage loader={true} style={{flex:0, marginTop:5}} width={25} height={25} />
+        return <XImage loader={true} style={{flex:0, marginTop:5}} width={18} height={18} />
       }
       else
       {
-        return <XImage source={{uri:"zoom_x"}} style={{flex:0, marginTop:5, width:25, height:25}} />
+        return <XImage source={{uri:"zoom_x"}} style={{flex:0, marginTop:5, marginLeft:5, width:18, height:18}} />
       }
     }
 
-    return  <View style={this.styles.container}>
+    return  <View style={[this.styles.container, Theme.head.shape]}>
                 <View style={this.styles.left}>
                   <XImage source={{uri:"ico_docs"}} style={this.styles.image} />
                 </View>
                 <View style={this.styles.right}>
                   {this.state.ready && this.renderCustomerSelection()}
-                  <View style={{flex:1, flexDirection:'row'}}>
+                  <View style={{flex:1, flexDirection:'row', marginLeft: 3}}>
                     <XTextInput TStyle={{paddingLeft:6}} 
                                 CStyle={this.styles.inputs} 
                                 placeholder="Filtre" 
@@ -259,9 +260,10 @@ class DocumentsScreen extends Component {
 
   renderDocuments(){
     return  <ScrollView style={{flex:1, padding:3}}>
+              <XText style={[{flex:0, textAlign:'center', fontSize:16, fontWeight:'bold'}, Theme.lists.title]}>{`${this.total} : Document(s)`} </XText>
+              <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} CStyle={{marginBottom: 0}} />
               <LineList datas={this.state.dataList}
                         waitingData={!this.state.ready}
-                        title={`${this.total} : Document(s)`} 
                         renderItems={(data) => <BoxDocs data={data} /> } />
 
               <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />

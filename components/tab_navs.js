@@ -72,7 +72,9 @@ export class TabNav extends Component{
   }
 
   render(){
-    return  <ScrollableTabView style={Theme.tabs.body_container} tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
+    const CStyle = this.props.CStyle || {}
+
+    return  <ScrollableTabView style={[Theme.tabs.body_container, CStyle, {overflow: 'hidden'}]} tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
               { this.props.children }
             </ScrollableTabView>
   }

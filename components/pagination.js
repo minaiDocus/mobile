@@ -48,7 +48,7 @@ export class Pagination extends Component{
     let activeText = {}
     const touchStyle = {
       flex:0, 
-      paddingHorizontal:3, 
+      paddingHorizontal:5, 
       height:20, 
       margin:1,
       alignItems:'center',
@@ -71,11 +71,11 @@ export class Pagination extends Component{
 
       const page_number = i
       numbers = numbers.concat( <TouchableOpacity key={i} style={touchStyle} onPress={()=>this.changePage(page_number)}>
-                                  <XText style={[{fontSize:10, color:'#422D14'}, activeText]}>{i}</XText>
+                                  <XText style={[{fontSize:14, color:'#422D14'}, activeText]}>{i}</XText>
                                 </TouchableOpacity>)
     }
 
-    return <View style={{flex:1, justifyContent:'center', flexDirection:'row'}} >
+    return <View style={{flex:0, justifyContent:'center', flexDirection:'row'}} >
             {start_page > 1 && <View style={touchStyle}><XText>...</XText></View>}
             {numbers.map((n)=>{return n})}
             {end_page < this.limit_page && <View style={touchStyle}><XText>...</XText></View>}
@@ -83,19 +83,21 @@ export class Pagination extends Component{
   }
 
   render(){
-    return  <View style={{flexDirection:'row', marginBottom:10, marginHorizontal:10}}>
-                  { this.state.page > 1 && 
-                    <View style={{flex:1, alignItems:"flex-start"}}>
-                      <SimpleButton title="<<" onPress={()=>{this.changePage("prev")}} CStyle={{width:50, paddingVertical:1}}/>
-                    </View>
+    const CStyle = this.props.CStyle || {}
+    return  <View style={[{flex:1, flexDirection:'row', marginBottom:10, marginHorizontal:10}, CStyle]}>
+                  { 
+                    this.state.page > 1 && 
+                     <View style={{flex:1, alignItems:"flex-start"}}>
+                       <SimpleButton title="<<" onPress={()=>{this.changePage("prev")}} CStyle={[{width:50, paddingVertical:1}, Theme.secondary_button.shape]} TStyle={Theme.secondary_button.text}/>
+                     </View>
                   }
                   {this.limit_page > 1 && this.renderPages()}
-                  { this.state.page < this.limit_page && 
+                  { 
+                    this.state.page < this.limit_page && 
                     <View style={{flex:1, alignItems:"flex-end"}}>
-                      <SimpleButton title=">>" onPress={()=>{this.changePage("next")}} CStyle={{width:50, paddingVertical:1}} />
+                      <SimpleButton title=">>" onPress={()=>{this.changePage("next")}} CStyle={[{width:50, paddingVertical:1}, Theme.secondary_button.shape]} TStyle={Theme.secondary_button.text} />
                     </View>
                   }
             </View>
   }
-
 }
