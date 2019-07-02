@@ -180,7 +180,7 @@ export class ModalForm extends Component{
                     <XText style={[{flex:1}, Theme.modal.title]}>{this.props.title}</XText>
                     <ImageButton  source={{uri:"delete"}}
                       CStyle={{flex:0, flexDirection:'column', alignItems:'center',width:30}}
-                      IStyle={{width:17, height:17}}
+                      IStyle={{width:15, height:15}}
                       onPress={()=>{this.dismiss()}} />
                   </View>
                   <ScrollView style={{flex: 1}} keyboardShouldPersistTaps={'always'}>

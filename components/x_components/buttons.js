@@ -183,8 +183,14 @@ export class BoxButton extends Component{
               },
       text:{
             flex:0,
-            textAlign:'center'
+            textAlign:'center',
             },
+      blinkedText:  {
+                      color: '#990000',
+                      textShadowColor:'#fff',
+                      textShadowOffset:{width: 2, height: 1},
+                      textShadowRadius:1
+                    }
     })
   }
 
@@ -197,7 +203,7 @@ export class BoxButton extends Component{
                 {
                   this.props.blink &&
                   <AnimatedBox type="blink" durationIn={600} durationOut={600}>
-                    <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus, {color: 'rgb(139,0,0)'}]}>{this.props.title}</XText>
+                    <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus, this.styles.blinkedText]}>{this.props.title}</XText>
                   </AnimatedBox>
                 }
                 {

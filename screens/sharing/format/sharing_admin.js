@@ -387,20 +387,19 @@ class OrderBox extends Component{
   }
 
   componentWillReceiveProps(prevProps){
-    if(prevProps.visible == true)
-    {
+    if(prevProps.visible === true){
       this.setState({show: true})
     }
-    else
-    {
+    else if(prevProps.visible === false){
       if(this.refs.animatedOptions)
-        this.refs.animatedOptions.leave(()=>this.setState({show: false}))
+        this.refs.animatedOptions.leave(()=>{ this.setState({show: false}) })
     }
   }
 
   handleOrder(order_by){
-    this.refs.animatedOptions.leave()
-    this.props.handleOrder(order_by)
+    this.refs.animatedOptions.leave(()=>{
+      this.props.handleOrder(order_by)
+    })
   }
 
   generateStyles(){

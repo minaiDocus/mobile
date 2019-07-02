@@ -188,7 +188,7 @@ class Header extends Component{
                   />
               }
               <BoxButton title="Ajout" onPress={()=>{this.openForm()}} source={{uri:"add_contact"}}/>
-              <BoxButton title="Filtre" marker={this.checkFilterActive()? "(Active)" : null} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}}/>
+              <BoxButton title="Filtre" blink={!this.state.openFilter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}}/>
             </View>
   }
 }

@@ -18,6 +18,7 @@ export class AnimatedBox extends Component{
     this.isStarting = false
     this.isLeaving = false
     this.animateOpacity = this.props.animateOpacity || false
+    this.isLeaved = true
 
     this.getLayout = false
 
@@ -144,102 +145,111 @@ export class AnimatedBox extends Component{
   }
 
   start(callbackIn=null){
-    setTimeout(async ()=>{
-      if(!this.isStarting)
-      {
-        this.isStarting = true
-
-        if(AnimatedBox.currentAnimationNumbers > AnimatedBox.maxAnimationNumbers && !this.forceAnimation)
+    if(!this.isLeaved){
+      setTimeout(()=>{ try{callbackIn()}catch(e){} }, 1)
+    }
+    else{
+      setTimeout(async ()=>{
+        if(!this.isStarting)
         {
-          const waitForStrat = ()=>{
-            const self = this
-            setTimeout(()=>{
-              this.isStarting = false
-              self.start(callbackIn)
-            }, 50)
-          }
+          this.isStarting = true
 
-          waitForStrat()
-        }
-        else
-        {
-          this.initAnimation()
-
-          if(this.type == 'transform'){
-            await this.setState({
-              translateX: new Animated.Value(this.startX),
-              translateY: new Animated.Value(this.startY),
-              scaleW: new Animated.Value(this.startW),
-              scaleH: new Animated.Value(this.startH),
-              manualMove: false, ready: true
-            })
-          }
-          else{
-            let sValue = this.startAnim
-            if(this.state.manualMove)
-            {
-              if(this.css == 'left')
-                sValue = this.current_position.x || this.startAnim
-              else if(this.css == 'top')
-                sValue = this.current_position.y || this.startAnim
+          if(AnimatedBox.currentAnimationNumbers > AnimatedBox.maxAnimationNumbers && !this.forceAnimation)
+          {
+            const waitForStrat = ()=>{
+              const self = this
+              setTimeout(()=>{
+                this.isStarting = false
+                self.start(callbackIn)
+              }, 50)
             }
-            await this.setState({cssAnim: new Animated.Value(sValue), manualMove: false, ready: true})
-          }
 
-          this.animationIn(callbackIn)
+            waitForStrat()
+          }
+          else
+          {
+            this.initAnimation()
+
+            if(this.type == 'transform'){
+              await this.setState({
+                translateX: new Animated.Value(this.startX),
+                translateY: new Animated.Value(this.startY),
+                scaleW: new Animated.Value(this.startW),
+                scaleH: new Animated.Value(this.startH),
+                manualMove: false, ready: true
+              })
+            }
+            else{
+              let sValue = this.startAnim
+              if(this.state.manualMove)
+              {
+                if(this.css == 'left')
+                  sValue = this.current_position.x || this.startAnim
+                else if(this.css == 'top')
+                  sValue = this.current_position.y || this.startAnim
+              }
+              await this.setState({cssAnim: new Animated.Value(sValue), manualMove: false, ready: true})
+            }
+
+            this.animationIn(callbackIn)
+          }
         }
-      }
-   }, 10)
+     }, 10)
+    }
   }
 
   leave(callbackOut=null){
-    setTimeout(async ()=>{
-      if(!this.isLeaving)
-      {
-        this.isLeaving = true
-
-        if(AnimatedBox.currentAnimationNumbers > AnimatedBox.maxAnimationNumbers && !this.forceAnimation)
+    if(this.isLeaved){
+      setTimeout(()=>{ try{callbackOut()}catch(e){} }, 1)
+    }
+    else{
+      setTimeout(async ()=>{
+        if(!this.isLeaving)
         {
-          const waitForLeave = ()=>{
-            const self = this
-            setTimeout(()=>{
-              this.isLeaving = false
-              self.leave(callbackOut)
-            }, 50)
-          }
+          this.isLeaving = true
 
-          waitForLeave()
-        }
-        else
-        {
-          this.moveGotParams = false
-
-          if(this.type == 'transform'){
-            await this.setState({
-              translateX: new Animated.Value(this.endX),
-              translateY: new Animated.Value(this.endY),
-              scaleW: new Animated.Value(this.endW),
-              scaleH: new Animated.Value(this.endH),
-              manualMove: false, ready: true
-            })
-          }
-          else{
-            let sValue = this.endAnim
-            if(this.state.manualMove)
-            {
-              if(this.css == 'left')
-                sValue = this.current_position.x || this.endAnim
-              else if(this.css == 'top')
-                sValue = this.current_position.y || this.endAnim
+          if(AnimatedBox.currentAnimationNumbers > AnimatedBox.maxAnimationNumbers && !this.forceAnimation)
+          {
+            const waitForLeave = ()=>{
+              const self = this
+              setTimeout(()=>{
+                this.isLeaving = false
+                self.leave(callbackOut)
+              }, 50)
             }
-            await this.setState({cssAnim: new Animated.Value(sValue), manualMove: false, ready: true})
+
+            waitForLeave()
           }
+          else
+          {
+            this.moveGotParams = false
 
+            if(this.type == 'transform'){
+              await this.setState({
+                translateX: new Animated.Value(this.endX),
+                translateY: new Animated.Value(this.endY),
+                scaleW: new Animated.Value(this.endW),
+                scaleH: new Animated.Value(this.endH),
+                manualMove: false, ready: true
+              })
+            }
+            else{
+              let sValue = this.endAnim
+              if(this.state.manualMove)
+              {
+                if(this.css == 'left')
+                  sValue = this.current_position.x || this.endAnim
+                else if(this.css == 'top')
+                  sValue = this.current_position.y || this.endAnim
+              }
+              await this.setState({cssAnim: new Animated.Value(sValue), manualMove: false, ready: true})
+            }
 
-          this.animationOut(callbackOut)
+            this.animationOut(callbackOut)
+          }
         }
-      }
-    }, 10)
+      }, 10)
+    }
   }
 
   move(options={}){
@@ -319,8 +329,8 @@ export class AnimatedBox extends Component{
 
     const final_callback = () => {
       if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers -= 1
-
       this.isStarting = false
+      this.isLeaved = false
 
       try
       {
@@ -354,6 +364,7 @@ export class AnimatedBox extends Component{
     const final_callback = () => {
       if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers -= 1
       this.isLeaving = false
+      this.isLeaved = true
 
       try
       {
