@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { View, Modal, BackHandler, PanResponder} from 'react-native'
+import { View, BackHandler, PanResponder} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import PropTypes from 'prop-types'
-import { NoticeBox, XImage, XText, AnimatedBox, ImageButton, Navigator } from '../components'
+import { NoticeBox, XImage, XText, AnimatedBox, ImageButton, Navigator, XModal } from '../components'
 
 import { Menu } from './menu'
+
+import { UsersFetcher } from '../requests'
 
 function addScreenKey(key, screen){
   ScreenList.push({ key: key, screen: screen })
@@ -12,6 +14,27 @@ function addScreenKey(key, screen){
 
 function removeScreenKey(key){
   ScreenList = ScreenList.filter((f)=>{ return f.key != key })
+}
+
+class DataLoader {
+  constructor(){}
+
+  fetch_all(){
+    this.fetch_users()
+    this.fetch_organizations()
+  }
+
+  fetch_users(){
+    setTimeout(()=>{
+      UsersFetcher.refreshCustomers()
+    }, 1)
+  }
+
+  fetch_organizations(){
+    setTimeout(()=>{
+      UsersFetcher.refreshOrganizations()
+    }, 1)
+  }
 }
 
 //A View that render a modal, visible on any pages but login
@@ -43,30 +66,38 @@ class FrontView extends Component{
   }
 
   closeFrontView(){
-    this.setState({children: null, animation: (this.animation || 'fade'), closeCallback: null})
+    const clear = ()=>{
+      this.setState({children: null, animation: (this.animation || 'fade'), closeCallback: null})
+    }
+
+    try{
+      this.refs.main_modal.closeModal(()=>{ clear() })
+    }catch(e){
+      clear()
+    }
   }
 
   handleBackPress(){
-    // if(isPresent(PreviousScreen) && CurrentScreen != 'login')
-    //   EventRegister.emit('leavePage', ()=>{ this.props.navigation.dismissTo(PreviousScreen) })
+    if(CurrentScreen.screen_name != 'Login')
+      CurrentScreen.goBack()
     return true
   }
 
   render(){
     if(this.state.children != null)
     {
-      return  <Modal  transparent={true}
-                      animationType={this.state.animation} 
+      return  <XModal ref='main_modal'
+                      transparent={true}
+                      animationType={this.animation}
                       visible={true}
-                      supportedOrientations={['portrait', 'landscape']}
                       onRequestClose={ ()=>{ if(this.state.closeCallback) this.state.closeCallback() } }
               >
                 {this.state.children}
-              </Modal>
+              </XModal>
     }
     else
     {
-      return null
+      return <View style={{flex: 0}} />
     }
   }
 }
@@ -174,10 +205,13 @@ export class Screen extends Component{
   constructor(props){
     super(props)
 
+    this.dataLoader = new DataLoader()
+
     this.navigation = new Navigator(this.props.navigation)
     addScreenKey(this.navigation.navigation.state.key, this)
 
     CurrentScreen = this
+    this.screen_name = this.props.name
 
     this.width = this.last_width = 0
     this.height = this.last_height = 0
@@ -202,6 +236,13 @@ export class Screen extends Component{
   componentWillUnmount(){
     this.navigation.screenClose()
     removeScreenKey(this.navigation.navigation.state.key)
+  }
+
+  componentWillReceiveProps(nextProps){
+    try{
+      if(nextProps.navigation.state.params.initScreen && this.screen_name != 'Login')
+        this.dataLoader.fetch_all()
+    }catch(e){}
   }
 
   createPanResponder(_move_function){
@@ -269,17 +310,16 @@ export class Screen extends Component{
   }
 
   goBack(params={}){
-    this.closeScreen(()=>{
-      this.navigation.goBack()
-    })
+    if(isPresent(this.navigation.prevScreen))
+    {
+      this.closeScreen(()=>{
+        this.navigation.goBack()
+      })
+    }
   }
 
   getNavigator(){
     return this.navigation
-  }
-
-  getFrontView(){
-    return this.refs.main_front_view
   }
 
   handleLayout(event){
@@ -304,19 +344,23 @@ export class Screen extends Component{
     this.last_height = this.height
   }
 
+  getFrontView(){
+    return this.refs.main_front_view
+  }
+
   render(){
     const CStyle = this.props.style
     const back = require('../images/bg_body.png')
 
     return <View {...this.props} style={CStyle} onLayout={(event)=>{this.handleLayout(event)}} {...this.boxPanResponder.panHandlers}>
-                <XImage type='container' source={back} resizeMode='contain' CStyle={{width: '100%', height: '100%'}}>
-                  { !this.noHeader && <Header ref="header" closeScreen={(callback)=>this.closeScreen(callback)} title={this.props.title} options={this.props.options} withMenu={this.props.withMenu} /> }
-                  <AnimatedBox ref='main_page' startOnLoad={false} hideTillStart={true} style={{flex: 1}} type='fade' durationIn={600} durationOut={300}>
-                    { this.props.children }
-                  </AnimatedBox>
-                  <FrontView ref='main_front_view' />
-                  <NoticeBox />
-                </XImage>
+              <XImage type='container' source={back} resizeMode='contain' CStyle={{width: '100%', height: '100%'}}>
+                { !this.noHeader && <Header ref="header" closeScreen={(callback)=>this.closeScreen(callback)} title={this.props.title} options={this.props.options} withMenu={this.props.withMenu} /> }
+                <AnimatedBox ref='main_page' startOnLoad={false} hideTillStart={true} style={{flex: 1}} type='fade' durationIn={600} durationOut={300}>
+                  { this.props.children }
+                </AnimatedBox>
+              </XImage>
+              <FrontView ref='main_front_view' />
+              <NoticeBox />
            </View>
   }
 }

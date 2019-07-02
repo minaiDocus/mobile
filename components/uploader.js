@@ -251,7 +251,7 @@ export class UploderFiles{
                                               })
                                             }
                                          </BoxInfos>
-                        renderToFrontView(boxError, "slide", ()=>{ clearFrontView() })
+                        renderToFrontView(boxError, "UpSlide", ()=>{ clearFrontView() })
                       }
     actionLocker(call)
   }

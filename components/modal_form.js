@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {View, StyleSheet, ScrollView, Modal} from 'react-native'
+import {View, StyleSheet, ScrollView} from 'react-native'
 
-import {SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton, RadioButton, CalculatorInput} from './index'
+import {XModal, SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton, RadioButton, CalculatorInput} from './index'
 
 class Inputs extends Component{
   constructor(props){
@@ -66,8 +66,16 @@ export class ModalForm extends Component{
   }
 
   dismiss(){
-    if(this.props.dismiss){
-      this.props.dismiss()
+    const call = ()=>{
+      if(this.props.dismiss){
+        this.props.dismiss()
+      }
+    }
+
+    try{
+      this.refs.main_modal.closeModal( ()=>call() )
+    }catch(e){
+      call()
     }
   }
 
@@ -139,8 +147,20 @@ export class ModalForm extends Component{
 
   renderButtons(){
     const buttons = this.props.buttons.map((b, key)=>{
+      const action = ()=>{
+        if(b.withDismiss){
+          try{
+            this.refs.main_modal.closeModal( ()=>b.action() )
+          }catch(e){
+            b.action()
+          }
+        }else{
+          b.action()
+        }
+      }
+
       return  <View key={key} style={{flex:1, paddingHorizontal:5}}>
-                <SimpleButton title={b.title} CStyle={Theme.primary_button.shape} TStyle={Theme.primary_button.text} onPress={()=>b.action()} />
+                <SimpleButton title={b.title} CStyle={Theme.primary_button.shape} TStyle={Theme.primary_button.text} onPress={()=>action()} />
               </View>
     })
 
@@ -148,11 +168,11 @@ export class ModalForm extends Component{
   }
 
   render(){
-    return  <Modal transparent={true}
-                   animationType="slide" 
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{ this.dismiss() }}
+    return  <XModal ref='main_modal'
+                    transparent={true}
+                    animationType="DownSlide"
+                    visible={true}
+                    onRequestClose={()=>{ this.dismiss() }}
             >
               <View style={this.styles.container} >
                 <View style={[this.styles.box, Theme.modal.shape]}>
@@ -171,6 +191,6 @@ export class ModalForm extends Component{
                   </View>
                 </View>
               </View>
-            </Modal>
+            </XModal>
   }
 }

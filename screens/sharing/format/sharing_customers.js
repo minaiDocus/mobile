@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
@@ -63,7 +63,7 @@ class ModalSharing extends Component{
                         }
       actionLocker(call)
 
-      this.props.dismiss()
+      this.refs.form_1.dismiss()
     }
   }
 
@@ -381,6 +381,8 @@ class SharingScreen extends Component {
       return (
           <Screen style={{flex: 1, flexDirection: 'column',}}
                   title={this.props.title}
+                  name='Sharing'
+                  withMenu={true}
                   options={this.props.options}
                   navigation={this.props.navigation}>
             <Header />

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import {View, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, Modal, StyleSheet, Keyboard, Dimensions} from 'react-native'
-import {XText, SimpleButton, AnimatedBox, LinkButton} from '../index'
+import {View, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Keyboard, Dimensions} from 'react-native'
+import {XModal, XText, SimpleButton, AnimatedBox, LinkButton} from '../index'
 
 class ModalInput extends Component{
   constructor(props){
@@ -170,11 +170,10 @@ class ModalInput extends Component{
         borderBottomWidth:0,
       }
     }
-    return <Modal  transparent={true}
-                   animationType="none" 
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{this.closeKeyboard()}}
+    return <XModal  transparent={true}
+                    animationType="none"
+                    visible={true}
+                    onRequestClose={()=>{this.closeKeyboard()}}
             >
               { this.props.withAnimation &&
                 <AnimatedBox ref='fakeInput'
@@ -238,7 +237,7 @@ class ModalInput extends Component{
                   </TouchableWithoutFeedback>
                 </View>
               }
-            </Modal>
+            </XModal>
   }
 }
 

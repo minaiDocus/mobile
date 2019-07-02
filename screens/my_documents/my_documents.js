@@ -274,6 +274,8 @@ class DocumentsScreen extends Component {
       return (
         <Screen style={{flex: 1, flexDirection: 'column'}}
                 title='Mes documents'
+                name='Documents'
+                withMenu={true}
                 navigation={this.props.navigation}>
           <Header onFilter={this.dataFilter} loadingFilter={this.state.loadingFilter}/>
           { this.renderDocuments() }

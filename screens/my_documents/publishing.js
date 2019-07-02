@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,Modal,TouchableOpacity} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
 import { NavigationActions } from 'react-navigation'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { Navigator,XImage,XText,PDFView,SimpleButton,ImageButton,BoxList,LineList,Pagination,TabNav, Swiper } from '../../components'
+import { XModal,Navigator,XImage,XText,PDFView,SimpleButton,ImageButton,BoxList,LineList,Pagination,TabNav, Swiper } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -52,6 +52,8 @@ class SwiperPdf extends Component{
 
     this.nextElement = this.nextElement.bind(this)
     this.prevElement = this.prevElement.bind(this)
+    this.selectElement = this.selectElement.bind(this)
+    this.closeModal = this.closeModal.bind(this)
   }
 
   nextElement(){
@@ -70,31 +72,40 @@ class SwiperPdf extends Component{
       this.refs.main_swiper.changePage(GLOB.idZoom)
   }
 
+  selectElement(){
+    if(isPresent(GLOB.idZoom) && typeof(this.props.datas[GLOB.idZoom]) !== 'undefined' && isPresent(this.props.datas[GLOB.idZoom].actionOnSelect))
+      EventRegister.emit(`select_element_${this.props.datas[GLOB.idZoom].id}`, 'toggle')
+  }
+
+  closeModal(){
+    this.refs.main_modal.closeModal(()=>this.props.hide())
+  }
+
   renderElement(){
     return this.props.datas.map((e, i)=>{
       return <BoxZoom  key={i}
                        index={i}
                        counts={this.props.datas.length}
-                       hide={()=> { this.props.hide() }}
+                       hide={()=> { this.closeModal() }}
                        nextElement={this.nextElement}
                        prevElement={this.prevElement}
-                       selectElement={(isPresent(e.actionOnSelect))? this.props.selectElement : false} 
+                       selectElement={(isPresent(e.actionOnSelect))? this.selectElement : false} 
                        data={e} 
                        total={this.props.datas.length}/>
     })
   }
 
   render(){
-    return  <Modal transparent={false}
-                   animationType="slide" 
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{ this.props.hide() }}
+    return  <XModal ref='main_modal'
+                    transparent={true}
+                    animationType="UpSlide"
+                    visible={true}
+                    onRequestClose={()=>{ this.closeModal() }}
             >
-              <Swiper ref='main_swiper' style={{flex: 1}} index={GLOB.idZoom || 0}>
+              <Swiper ref='main_swiper' style={{flex: 1}} index={GLOB.idZoom || 0} onIndexChanged={(index)=>{ GLOB.idZoom = index }}>
                 { this.renderElement() }
               </Swiper>
-            </Modal>
+            </XModal>
   }
 } 
 
@@ -125,7 +136,7 @@ class BoxZoom extends Component{
 
   indicator(){
     return  <View style={{flex:0, width:'100%', height:'100%', backgroundColor:'#FFF', alignItems:'center', justifyContent:'center'}}>
-              <XImage loader={true} width={70} height={70} style={{marginTop:10}} />
+              <XImage loader={true} width={40} height={40} style={{marginTop:10}} />
             </View>
   }
 
@@ -251,7 +262,8 @@ class BoxZoom extends Component{
                     this.setState({current_page: page})
                   }}
                   onError={(error)=>{
-                    Notice.alert("Erreur loading pdf", error)
+                    if(! (/Canceled/i.test(error.toString())) )
+                      Notice.alert("Erreur loading pdf", error.toString())
                   }} />
               </View>
               <View style={this.styles.foot}>
@@ -535,16 +547,10 @@ class BoxPublish extends Component{
     this.state = { zoomActive: false }
 
     this.toggleZoom = this.toggleZoom.bind(this)
-    this.selectElement = this.selectElement.bind(this)
   }
 
   async toggleZoom(){
     await this.setState({zoomActive: !this.state.zoomActive})
-  }
-
-  selectElement(){
-    if(isPresent(GLOB.idZoom) && typeof(this.props.datas[GLOB.idZoom]) !== 'undefined' && isPresent(this.props.datas[GLOB.idZoom].actionOnSelect))
-      EventRegister.emit(`select_element_${this.props.datas[GLOB.idZoom].id}`, 'toggle')
   }
 
   render(){
@@ -789,6 +795,7 @@ class PublishScreen extends Component {
       return (
         <Screen style={{flex: 1, flexDirection: 'column'}}
                 title='Mes documents'
+                name='Publish'
                 navigation={this.props.navigation}>
           <Header />
           <CustomTabNav />

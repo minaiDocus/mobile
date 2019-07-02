@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Modal, Slider, ScrollView, findNodeHandle, Animated } from 'react-native'
+import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Slider, ScrollView, findNodeHandle, Animated } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { NavigationActions } from 'react-navigation'
 
-import { XImage, XText, AnimatedBox, SimpleButton, LinkButton, ImageButton, ModalForm } from '../components'
+import { XModal, XImage, XText, AnimatedBox, SimpleButton, LinkButton, ImageButton, ModalForm } from '../components'
 
 import { User } from '../models'
 
@@ -141,11 +141,11 @@ class Body extends Component{
   render(){
     return  <View style={this.styles.container}>
               <ScrollView>
-                <LinkButton onPress={()=>{this.props.navigate(null)}} source={{uri:'ico_home'}} resizeMode='contain' title='Accueil' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
-                <LinkButton onPress={()=>{this.props.navigate('Send')}} source={{uri:'ico_send'}} resizeMode='contain' title='Envoi documents' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
-                <LinkButton onPress={()=>{this.props.navigate('Documents')}} source={{uri:'ico_docs'}} resizeMode='contain' title='Mes documents' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
-                <LinkButton onPress={()=>{this.props.navigate('Stats')}} source={{uri:'ico_suiv'}} resizeMode='contain' title='Suivi' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
-                <LinkButton onPress={()=>{this.props.navigate('Sharing')}} source={{uri:'ico_sharing'}} resizeMode='contain' title='Partage dossier' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Home')? 'Home' : null)}} source={{uri:'ico_home'}} resizeMode='contain' title='Accueil' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Send')? 'Send' : null)}} source={{uri:'ico_send'}} resizeMode='contain' title='Envoi documents' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Documents')? 'Documents' : null)}} source={{uri:'ico_docs'}} resizeMode='contain' title='Mes documents' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Stats')? 'Stats' : null)}} source={{uri:'ico_suiv'}} resizeMode='contain' title='Suivi' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Sharing')? 'Sharing' : null)}} source={{uri:'ico_sharing'}} resizeMode='contain' title='Partage dossier' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
               </ScrollView>
             </View>
   }
@@ -226,11 +226,11 @@ class ModalMenu extends Component{
   }
 
   render(){
-    return  <Modal transparent={true}
-                   visible={this.state.visible}
-                   animationType="fade"
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{ this.modalDismiss() }}
+    return  <XModal transparent={true}
+                    visible={this.state.visible}
+                    animationType="fade"
+                    supportedOrientations={['portrait', 'landscape']}
+                    onRequestClose={()=>{ this.modalDismiss() }}
             >
             <View style={[this.styles.container]}>
               <AnimatedBox  ref="animatedMenu" 
@@ -251,7 +251,7 @@ class ModalMenu extends Component{
                 <View style={{flex:1}} />
               </TouchableWithoutFeedback>
             </View>
-          </Modal>
+          </XModal>
   }
 }
 
@@ -281,7 +281,7 @@ export class Menu extends Component{
     this.toggleMenu(true)
 
     if(screen != 'close' && screen != null)
-      CurrentScreen.goTo(screen)
+      CurrentScreen.dismissTo(screen)
   }
 
   panHanlder(evt, gestureState, type){

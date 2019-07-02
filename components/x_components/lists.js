@@ -36,7 +36,7 @@ class Loader extends Component{
     if(this.state.refresh && !this.forceUnmount)
     {
       return  <View style={loaderStyle}>
-                <XImage ref='loader' loader={true} width={70} height={70} style={{alignSelf:'center', marginVertical:10}} />
+                <XImage ref='loader' loader={true} width={40} height={40} style={{alignSelf:'center', marginVertical:10}} />
               </View>
     }
     else

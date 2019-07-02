@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
 import { AnimatedBox,Navigator,XImage,XText,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton,OrganizationSwitcher } from '../../components'
@@ -80,7 +80,7 @@ class ContactForm extends Component{
                           })
                         }
       actionLocker(call)
-      this.props.dismiss()
+      this.refs.form_1.dismiss()
     }
   }
 
@@ -182,8 +182,8 @@ class Header extends Component{
                                 {label:'Nom :', name: 'last_name', value: GLOB.dataFilter.last_name}
                               ]}
                               buttons={[
-                                {title: "Filtrer", action: ()=>this.closeFilter("filter")},
-                                {title: "Annuler filtre", action: ()=>this.closeFilter("reInit")}, 
+                                {title: "Filtrer", withDismiss: true, action: ()=>this.closeFilter("filter")},
+                                {title: "Annuler filtre", withDismiss: true, action: ()=>this.closeFilter("reInit")},
                               ]}
                   />
               }
@@ -489,6 +489,7 @@ class SharingScreen extends Component {
       return (
           <Screen style={[{flex:1}, Theme.body]}
                   title="Contacts"
+                  name='SharingContacts'
                   options={ this.renderOptions() }
                   navigation={this.props.navigation}
                   >

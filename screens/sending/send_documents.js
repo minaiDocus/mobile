@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, ScrollView, Modal, TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button } from 'react-native'
+import { StyleSheet, View, ScrollView, TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button } from 'react-native'
 import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
 
-import { Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload } from '../../components'
+import { XModal, Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -37,7 +37,7 @@ class BoxZoom extends Component{
   }
 
   hideModal(){
-    this.props.hide()
+    this.refs.main_modal.closeModal(()=>this.props.hide())
   }
 
   deleteElement(){
@@ -134,11 +134,11 @@ class BoxZoom extends Component{
   }
 
   render(){
-    return  <Modal transparent={true}
-                   animationType="slide" 
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{ this.hideModal() }}
+    return  <XModal ref='main_modal'
+                    transparent={true}
+                    animationType="UpSlide"
+                    visible={true}
+                    onRequestClose={()=>{ this.hideModal() }}
             >
               <View style={this.styles.boxZoom}>
                 <View style={this.styles.boxSwiper}>
@@ -155,7 +155,7 @@ class BoxZoom extends Component{
                   <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.deleteElement()} title="Enlever" />
                 </View>
               </View>
-            </Modal>
+            </XModal>
   }
 }
 
@@ -492,6 +492,8 @@ class SendScreen extends Component {
       return (
         <Screen style={[{flex:1}, Theme.body]}
                 title='Envoi documents'
+                name='Send'
+                withMenu={true}
                 options={ this.renderOptions() }
                 navigation={this.props.navigation}>
           <Header takePicture={()=>this.openCamera()} openRoll={()=>this.openRoll()} />

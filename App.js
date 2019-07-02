@@ -31,7 +31,8 @@ const StackNavigatorConfig = {
 }
 
 
-const StackApp = StackNavigator({   Login: {
+const StackApp = StackNavigator({
+                                    Login: {
                                       screen: LoginScreen,
                                     }, 
                                     Home: { 
@@ -46,11 +47,11 @@ const StackApp = StackNavigator({   Login: {
                                     Documents: {
                                       screen: DocumentsScreen
                                     },
-                                    Stats: {
-                                      screen: StatsScreen
-                                    },
                                     Publish: {
                                       screen: PublishScreen
+                                    },
+                                    Stats: {
+                                      screen: StatsScreen
                                     },
                                     Sharing: {
                                       screen: SharingScreen

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
 import { AnimatedBox,XImage,XText,Navigator,LineList,Pagination,ModalForm,BoxButton,LinkButton,ImageButton} from '../../components'
@@ -134,8 +134,8 @@ class Header extends Component{
                               {label:'Nom du lot :', name: 'pack_name', value: GLOB.dataFilter.pack_name},
                             ]}
                             buttons={[
-                              {title: "Filtrer", action: ()=>this.closeFilter("filter")},
-                              {title: "Annuler filtre", action: ()=>this.closeFilter("reInit")}, 
+                              {title: "Filtrer", withDismiss: true, action: ()=>this.closeFilter("filter")},
+                              {title: "Annuler filtre", withDismiss: true, action: ()=>this.closeFilter("reInit")},
                             ]}
                 />
               }
@@ -411,6 +411,8 @@ class StatsScreen extends Component {
           <Screen style={[{flex:1}, Theme.body]}
                   navigation={this.props.navigation}
                   title="Suivi"
+                  name='Stats'
+                  withMenu={true}
                   options={ this.renderOptions() }
           >
             <Header dataCount={this.total} onFilter={()=>this.refreshDatas()}/>

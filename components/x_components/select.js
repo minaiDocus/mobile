@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import {Picker, View, Platform, Modal, TouchableOpacity, StyleSheet, FlatList} from 'react-native'
-import {ImageButton, AnimatedBox, XImage, XText, XTextInput} from '../index'
+import {Picker, View, Platform, TouchableOpacity, StyleSheet, FlatList} from 'react-native'
+import {XModal, ImageButton, AnimatedBox, XImage, XText, XTextInput} from '../index'
 
 class ModalSelect extends Component{
 
@@ -92,71 +92,6 @@ class ModalSelect extends Component{
     }
   }
 
-  renderSearch(){
-    const CStyle = {
-      flex: 1,
-      height:40,
-      paddingLeft:11
-    }
-    const TStyle = {
-      fontSize:16
-    }
-
-    let liveChange = true
-    if(this.props.filterCallback != null)
-    {
-      liveChange = false
-    }
-    
-    const icon = this.state.loading? 'loader' : 'zoom_x'
-    return <View style={{flex:1, flexDirection:'row', paddingTop: 3, maxWidth:200}}>
-              <XTextInput CStyle={CStyle} TStyle={TStyle} placeholder="Filtre" autoCorrect={false} liveChange={liveChange} onChangeText={(value) => this.handleFilterChange(value)}/>
-              <XImage source={{uri:icon}} style={{flex:0, marginTop:5, width:20, height:20}} />
-            </View>
-  }
-
-  renderContent(){
-    if(Platform.OS == 'android')
-    {
-      const boxstyle = StyleSheet.create({
-        container:{
-          flex:1,
-          backgroundColor:'#fff'
-        },
-        touchable:{
-          flex:1,
-          borderColor:'#D6D6D6',
-          marginVertical:5,
-          marginHorizontal:10,
-          borderBottomWidth:1
-        }
-      })
-      const renderItems = (dt)=>{
-        let styleItem = { color:'#707070' }
-        if(this.state.selectedItem == dt.value) styleItem = [{flex: 1, paddingLeft:5, backgroundColor: '#707070', color:'#fff'}, Theme.textBold]
-
-        return  <TouchableOpacity style={boxstyle.touchable} onPress={()=>this.changeItem(dt.value, true)}>
-                  <XText style={styleItem}>{dt.label}</XText>
-                </TouchableOpacity>
-      }
-
-      return <FlatList style={boxstyle.container}
-                       data={this.state.datas}
-                       keyExtractor={(item, index) => index}
-                       renderItem={({item})=> renderItems(item)}
-             />
-    }
-    else
-    {
-      return  <Picker
-                    style={{flex:1}}
-                    selectedValue={this.state.selectedItem}
-                    onValueChange={(itemValue, itemIndex) => this.changeItem(itemValue)}>
-                    {this.state.datas.map((val, key)=>{return <Picker.Item label={val.label} value={val.value} key={key} />})}
-              </Picker>
-    }
-  }
-
   dismiss(hasChanged=false, itemValue='', valueText=''){
     this.refs.animatedSelect.leave(() => {
       if(hasChanged)
@@ -182,7 +117,7 @@ class ModalSelect extends Component{
         elevation: 4,
 
         shadowColor: '#000',                  //===
-        shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
+        shadowOffset: {width: 0, height: 2},  //=== iOs shadow
         shadowOpacity: 0.8,                   //===
         shadowRadius: 2,                      //===
 
@@ -212,12 +147,77 @@ class ModalSelect extends Component{
     })
   }
 
+  renderSearch(){
+    const CStyle = {
+      flex: 1,
+      height:40,
+      paddingLeft:11
+    }
+    const TStyle = {
+      fontSize:16
+    }
+
+    let liveChange = true
+    if(this.props.filterCallback != null)
+    {
+      liveChange = false
+    }
+    
+    const icon = this.state.loading? 'loader' : 'zoom_x'
+    return <View style={{flex:1, flexDirection:'row', paddingTop: 3, maxWidth:200}}>
+              <XTextInput CStyle={CStyle} TStyle={TStyle} placeholder="Filtre" autoCorrect={false} liveChange={liveChange} onChangeText={(value) => this.handleFilterChange(value)}/>
+              <XImage source={{uri:icon}} style={{flex:0, marginLeft:5, marginTop:5, width:20, height:20}} />
+            </View>
+  }
+
+  renderContent(){
+    if(Platform.OS == 'android')
+    {
+      const boxstyle = StyleSheet.create({
+        container:{
+          flex:1,
+          backgroundColor:'#fff'
+        },
+        touchable:{
+          flex:1,
+          borderColor:'#D6D6D6',
+          marginVertical:5,
+          marginHorizontal:10,
+          borderBottomWidth:1
+        }
+      })
+
+      const renderItems = (dt)=>{
+        let styleItem = { color:'#707070' }
+        if(this.state.selectedItem == dt.value) styleItem = [{flex: 1, paddingLeft:5, backgroundColor: '#707070', color:'#fff'}, Theme.textBold]
+
+        return  <TouchableOpacity style={boxstyle.touchable} onPress={()=>this.changeItem(dt.value, true)}>
+                  <XText style={styleItem}>{dt.label}</XText>
+                </TouchableOpacity>
+      }
+
+      return  <FlatList style={boxstyle.container}
+                        data={this.state.datas}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({item})=> renderItems(item)}
+              />
+    }
+    else
+    {
+      return  <Picker
+                    style={{flex:1}}
+                    selectedValue={this.state.selectedItem}
+                    onValueChange={(itemValue, itemIndex) => this.changeItem(itemValue)}>
+                    {this.state.datas.map((val, key)=>{return <Picker.Item label={val.label} value={val.value} key={key} />})}
+              </Picker>
+    }
+  }
+
   render(){
-    return  <Modal transparent={true}
-                   animationType="fade" 
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{ this.dismiss() }}
+    return  <XModal transparent={true}
+                    animationType="fade"
+                    visible={true}
+                    onRequestClose={()=>{ this.dismiss() }}
             >
               <View style={this.modal.container}>
                 <TouchableOpacity onPress={()=>this.dismiss()} style={{flex:1}} />
@@ -243,13 +243,13 @@ class ModalSelect extends Component{
                   </View>
                 </AnimatedBox>
               </View>
-            </Modal>
+            </XModal>
   }
 }
 
 export class SelectInput extends Component{
   constructor(props){
-    super(props);
+    super(props)
 
     this.state = {
                     selectedItem: "", 

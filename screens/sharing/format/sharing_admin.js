@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,TouchableOpacity,Modal} from 'react-native'
+import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
 import { AnimatedBox,XImage,XText,LineList,Pagination,SelectInput,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton } from '../../../components'
@@ -209,8 +209,8 @@ class Header extends Component{
                               { label:'Client ou contact :', name: 'collaborator', value: GLOB.dataFilter.collaborator }
                             ]}
                             buttons={[
-                              {title: "Filtrer", action: ()=>this.closeFilter("filter")},
-                              {title: "Annuler filtre", action: ()=>this.closeFilter("reInit")}, 
+                              {title: "Filtrer", withDismiss: true, action: ()=>this.closeFilter("filter")},
+                              {title: "Annuler filtre", withDismiss: true, action: ()=>this.closeFilter("reInit")},
                             ]}
                 />
               }
@@ -563,6 +563,8 @@ class SharingScreen extends Component {
       return (
           <Screen style={[{flex:1}, Theme.body]}
                   title={this.props.title}
+                  name='Sharing'
+                  withMenu={true}
                   options={this.props.options}
                   navigation={this.props.navigation}>
             <Header onFilter={()=>this.refreshDatas(true)}/>

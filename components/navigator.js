@@ -17,8 +17,10 @@ export class Navigator {
 
   didFocus(s){
     setTimeout(()=>{
-      CurrentScreen = ScreenList.find((s)=>{ return s.key == this.navigation.state.key }).screen
-      CurrentScreen.openScreen()
+      if(ScreenList.length > 0){
+        CurrentScreen = ScreenList.find((s)=>{ return s.key == this.navigation.state.key }).screen
+        CurrentScreen.openScreen()
+      }
     }, 1)
   }
 
@@ -72,9 +74,9 @@ export class Navigator {
                         
                         const resetAction = NavigationActions.reset({
                             index: 0,
-                            actions: [
+                            actions:  [
                                         NavigationActions.navigate({routeName: screen, params: parameters})
-                                     ]
+                                      ]
                         })
                         this.navigation.dispatch(resetAction)
                       }

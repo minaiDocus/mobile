@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal } from 'react-native'
+import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
 import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM } from '../components'
@@ -10,7 +10,7 @@ import { Screen } from './layout'
 
 import { User } from '../models'
 
-import { DocumentsFetcher, UsersFetcher } from '../requests'
+import { DocumentsFetcher } from '../requests'
 
 let GLOB = { datas: []}
 
@@ -41,7 +41,6 @@ function docs_errors(){
   return result
 }
 
-
 class Header extends Component{
   constructor(props){
     super(props)
@@ -62,8 +61,8 @@ class Header extends Component{
   render(){
     return (
               <View style={[this.styles.minicontainer, Theme.head.shape]}>
-                <BoxButton onPress={()=>{CurrentScreen.goTo('Send')}} source={{uri:"plane"}} title='Envoi documents' />
-                <BoxButton onPress={()=>{CurrentScreen.goTo('Documents')}} source={{uri:"documents"}} title='Mes documents' />
+                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Send')}} source={{uri:"plane"}} title='Envoi documents' />
+                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Documents')}} source={{uri:"documents"}} title='Mes documents' />
               </View>
             );
   }
@@ -277,7 +276,7 @@ class AppInfos extends Component{
                             </View>
                         </View>
                       </TouchableWithoutFeedback>
-    renderToFrontView(AppInfos, 'fade', ()=>{clearFrontView()})
+    renderToFrontView(AppInfos, 'UpSlide', ()=>{clearFrontView()})
   }
 
   render(){
@@ -316,9 +315,6 @@ class HomeScreen extends Component {
   refreshDatas(){
     this.setState({updated: false})
 
-    UsersFetcher.refreshOrganizations()
-    UsersFetcher.refreshCustomers()
-
     DocumentsFetcher.waitFor(['refreshPacks()'], responses=>{
       if(responses[0].error)
         Notice.danger(responses[0].message, { name: responses[0].message })
@@ -341,6 +337,7 @@ class HomeScreen extends Component {
       <Screen style={[{flex:1}, Theme.body]}
               navigation={this.props.navigation}
               title='Accueil'
+              name='Home'
               withMenu={true}
               options={this.renderOptions()}
       >

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, ScrollView, ListView, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, View, ScrollView, ListView, TouchableOpacity } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import { NavigationActions } from 'react-navigation'
@@ -121,18 +121,20 @@ class ImgBox extends Component{
 class Header extends Component{
   constructor(props){
     super(props)
-    this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
-    this.state = { dataList: this.ds.cloneWithRows(GLOB.dataList), }
+  }
+
+  renderItems(){
+    return GLOB.dataList.map((d, k)=>{
+      return <ImgBox key={k} source={{ uri: d.path.toString() }} />
+    })
   }
 
   render(){
-    const dataList = this.state.dataList;
     return  <View style={[{flex: 0, flexDirection: 'row'}, Theme.head.shape, {padding: 0, paddingHorizontal: 1}]}>
-              <ScrollView style={{flex:1}}>
-                <ListView horizontal={true}
-                          contentContainerStyle={{flex:0,flexDirection:'row'}}
-                          dataSource={dataList}
-                          renderRow={(img) => <ImgBox source={ {uri: img.path.toString()} } /> } />
+              <ScrollView style={{flex:1}} horizontal={true}>
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                  { this.renderItems() }
+                </View>
               </ScrollView>
             </View>
   }
@@ -351,7 +353,7 @@ class Body extends Component{
   }
 
   renderLoading(){
-    return <XImage loader={true} style={{flex:1, width:60, height:60, alignSelf:'center'}} />
+    return <XImage loader={true} style={{flex:1, width:40, height:40, alignSelf:'center'}} />
   }
 
   render(){
@@ -452,6 +454,7 @@ class SendScreen extends Component {
   render() {
       return  <Screen style={{flex: 1, flexDirection: 'column'}}
                       title="Envoi documents"
+                      name='Sending'
                       navigation={this.props.navigation}>
                 <Header />
                 <ScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}}>

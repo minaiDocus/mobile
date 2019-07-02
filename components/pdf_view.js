@@ -4,11 +4,10 @@ import Pdf from 'react-native-pdf'
 import { XImage } from './index'
 
 export class PDFView extends Component{
-
   constructor(props){
     super(props)
 
-    this.state = {ready: false}
+    this.state = { ready: false }
 
     this.source = this.props.source || null
     this.erreur = ""
@@ -21,15 +20,10 @@ export class PDFView extends Component{
   }
 
   componentDidMount(){
-    if(this.source == null){
+    if(this.source == null) {
       this.erreur = "URL pdf invalid"
       this.props.onError(this.erreur)
     }
-  }
-
-  handleLayout(){
-    this.setState({ready: false})
-    setTimeout(()=>this.setState({ready: true}), 1000)
   }
 
   generateStyles(){
@@ -55,29 +49,30 @@ export class PDFView extends Component{
   }
 
   loading(){
-     return <View style={this.styles.loading}>
-              <XImage loader={true} width={70} height={70} style={{marginTop:10}} />
+    return  <View style={this.styles.loading}>
+              <XImage loader={true} width={40} height={40} style={{marginTop:10}} />
             </View> 
   }
 
   render(){
-    return  <View style={this.styles.container} onLayout={this.handleLayout.bind(this)}>
-                {this.state.ready && <Pdf
-                                        source={this.source}
-                                        scale={1}
-                                        activityIndicator={this.loading()}
-                                        onLoadComplete={(pageCount, filePath)=>{
-                                          this.props.onLoadComplete(pageCount, filePath)
-                                        }}
-                                        onPageChanged={(page,pageCount)=>{
-                                          this.props.onPageChanged(page, pageCount)
-                                        }}
-                                        onError={(error)=>{
-                                          this.props.onError(error)
-                                        }}
-                                        style={this.styles.pdfStyle}/>
-                }
-                {!this.state.ready && this.loading()}
+    return  <View style={this.styles.container}>
+              <Pdf
+                source={this.source}
+                scale={1}
+                activityIndicator={this.loading()}
+                onLoadComplete={(pageCount, filePath)=>{
+                  setTimeout(()=>{ this.setState({ ready: true }) }, 1000)
+                  this.props.onLoadComplete(pageCount, filePath)
+                }}
+                onPageChanged={(page,pageCount)=>{
+                  this.props.onPageChanged(page, pageCount)
+                }}
+                onError={(error)=>{
+                  this.props.onError(error)
+                }}
+                style={this.styles.pdfStyle}/>
+
+              { !this.state.ready && this.loading() }
             </View>
   }
 }

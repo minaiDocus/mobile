@@ -23,11 +23,11 @@ global.UploadingFiles = false
 global.Notice = Notice
 global.KeyboardShow = false
 global.Orientation = "portrait"
-//TEST
+
 global.PreviousScreen = null
 global.CurrentScreen = null
 global.ScreenList = []
-//TEST
+
 global.MonthsData =   [
                         {label: 'Jan', value: '01'},
                         {label: 'Fev', value: '02'},

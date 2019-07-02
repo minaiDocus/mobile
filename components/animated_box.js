@@ -89,6 +89,7 @@ export class AnimatedBox extends Component{
       this.startAnim = (this.startAnim !== null)? this.startAnim : 0
       this.endAnim = 1
       this.css = 'opacity'
+      this.forceAnimation = true
       this.callbackIn = ()=>{this.animationOut(this.animationIn)}
     }
     else if(this.type == 'HorizontalGliss') //loop animation from left to right 
@@ -96,6 +97,7 @@ export class AnimatedBox extends Component{
       this.startAnim = (this.startAnim !== null)? this.startAnim : this.props.startAnim
       this.endAnim = (this.endAnim !== null)? this.endAnim : this.props.endAnim
       this.css = 'left'
+      this.forceAnimation = true
       this.callbackIn = ()=>{this.animationOut(this.animationIn)}
     }
     else if(this.type == 'VerticalGliss') //loop animation from Top to Bottom 
@@ -103,6 +105,7 @@ export class AnimatedBox extends Component{
       this.startAnim = (this.startAnim !== null)? this.startAnim : this.props.startAnim
       this.endAnim = (this.endAnim !== null)? this.endAnim : this.props.endAnim
       this.css = 'top'
+      this.forceAnimation = true
       this.callbackIn = ()=>{this.animationOut(this.animationIn)}
     }
     else if(this.type == 'transform') //move the element to porition { x: A, y: B } OR/AND scale to { w: A, h: B}

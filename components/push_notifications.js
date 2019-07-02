@@ -184,7 +184,7 @@ export class UINotification extends Component{
 
     componentDidUpdate(){
       if(this.state.showList)
-        renderToFrontView(this.listNotifView, "slide", ()=>{this.toggleListNotifications()})
+        renderToFrontView(this.listNotifView, "UpSlide", ()=>{this.toggleListNotifications()})
     }
 
     componentDidMount(){

@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { View, Modal, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { SimpleButton, XImage, XText, XTextInput, SelectInput, TabNav } from '../../components'
+import { XModal, SimpleButton, XImage, XText, XTextInput, SelectInput, TabNav } from '../../components'
 
 import { FileUploader } from "../../requests"
 
@@ -360,7 +360,7 @@ export class ModalComptaAnalysis extends Component{
   hideModal(cancel=false){
     if(cancel)
     {
-      this.props.hide('')
+      this.refs.main_modal.closeModal(()=>this.props.hide(''))
       RESULT_ANALYTIC = setNoResult()
     }
     else
@@ -387,7 +387,7 @@ export class ModalComptaAnalysis extends Component{
       if(error_message != '')
         Notice.alert(error_message)
       else
-        this.props.hide(RESULT_ANALYTIC)
+        this.refs.main_modal.closeModal(()=>this.props.hide(RESULT_ANALYTIC))
     }
   }
 
@@ -411,11 +411,11 @@ export class ModalComptaAnalysis extends Component{
   }
 
   render(){
-    return  <Modal transparent={true}
-                   animationType="slide"
-                   visible={true}
-                   supportedOrientations={['portrait', 'landscape']}
-                   onRequestClose={()=>{ this.hideModal(this.props.withCancel || false) }}
+    return  <XModal ref='main_modal'
+                    transparent={true}
+                    animationType="DownSlide"
+                    visible={true}
+                    onRequestClose={()=>{ this.hideModal(this.props.withCancel || false) }}
             >
               <View style={this.styles.box}>
                 <View style={[this.styles.content, Theme.modal.shape]}>
@@ -432,15 +432,15 @@ export class ModalComptaAnalysis extends Component{
                           <AnalysisView index={2}/>
                         </TabNav>
                       }
-                      {!this.state.ready && <XImage loader={true} style={{flex:1, width:60, height:60, alignSelf:'center'}} />}
+                      {!this.state.ready && <XImage loader={true} style={{flex:1, width:40, height:40, alignSelf:'center'}} />}
                     </View>
                   </View>
                   <View style={[{flex:0, flexDirection:'row', paddingVertical:7, paddingHorizontal:5 }, Theme.modal.foot]}>
-                    <SimpleButton CStyle={[{flex:0, width: (!this.state.withCancel? '100%' : '50%')}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.hideModal()} title="Valider" />
+                    <SimpleButton CStyle={[{flex:0, width: (!this.props.withCancel? '100%' : '50%')}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.hideModal()} title="Valider" />
                     {this.props.withCancel && <SimpleButton CStyle={[{flex:0, width: '47%', marginLeft: '3%'}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.hideModal(true)} title="Annuler" /> }
                   </View>
                 </View>
               </View>
-            </Modal>
+            </XModal>
   }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { View, PanResponder, Animated, Image, StyleSheet, Platform, Modal, ImageEditor, ImageStore, Dimensions } from 'react-native'
+import { View, PanResponder, Animated, Image, StyleSheet, Platform, ImageEditor, ImageStore, Dimensions } from 'react-native'
 
-import { SimpleButton, ImageButton, XImage, XText } from './index'
+import { SimpleButton, ImageButton, XImage, XText, XModal } from './index'
 
 import { EventRegister } from 'react-native-event-listeners'
 import RNFetchBlob from 'rn-fetch-blob'
@@ -725,21 +725,19 @@ export class CropperView extends Component{
 
   render(){
     if(this.state.open)
-      return  <Modal  transparent={false}
-                      animationType="fade" 
-                      visible={true}
-                      supportedOrientations={['portrait', 'landscape']}
-                      onRequestClose={()=>{}}
+      return  <XModal  transparent={false}
+                       animationType="fade"
+                       visible={true}
               >
                 {
                   !this.state.ready && 
                   <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
-                    <XImage loader={true} width={90} height={90} />
+                    <XImage loader={true} width={50} height={50} />
                   </View>
                 }
                 {this.state.ready && this.state.url_output == null && this.renderCropper()}
                 {this.state.ready && this.state.url_output != null && this.renderResult()}
-              </Modal> 
+              </XModal>
     else
       return null
   }

@@ -18,6 +18,8 @@ class LoginScreen extends Component {
   constructor(props){
     super(props)
 
+    this.screen_name = 'Login'
+
     GLOB.login = GLOB.password = ""
     this.state = {loading: false, focusInput: false, ready: false, orientation: 'portrait'}
 
@@ -204,6 +206,7 @@ class LoginScreen extends Component {
     return (
       <Screen style={[{flex:1}, Theme.body]}
               navigation={this.props.navigation}
+              name='Login'
               onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
               noHeader={true}
               >
