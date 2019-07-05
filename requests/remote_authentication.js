@@ -18,7 +18,10 @@ class remote_auhtentication extends Requester{
 
   logOut(){
     Organization.deleteAll()
+    _organization.updatedAt = 0
+
     User.deleteAll()
+    user.updatedAt = 0
   }
 }
 

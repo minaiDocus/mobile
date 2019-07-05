@@ -3,7 +3,7 @@ import { EventRegister } from 'react-native-event-listeners'
 import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,FCMinit as FCM } from '../components'
+import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification} from '../components'
 
 import { Menu } from './menu'
 import { Screen } from './layout'
@@ -339,9 +339,9 @@ class HomeScreen extends Component {
               title='Accueil'
               name='Home'
               withMenu={true}
+              noFCMUi={true}
               options={this.renderOptions()}
       >
-        <FCM />
         <Header />
         <TabNav 
           headers={ 

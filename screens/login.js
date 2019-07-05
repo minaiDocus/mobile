@@ -207,6 +207,7 @@ class LoginScreen extends Component {
       <Screen style={[{flex:1}, Theme.body]}
               navigation={this.props.navigation}
               name='Login'
+              noFCM={true}
               onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
               noHeader={true}
               >

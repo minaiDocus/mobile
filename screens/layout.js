@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { View, BackHandler, PanResponder} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import PropTypes from 'prop-types'
-import { NoticeBox, XImage, XText, AnimatedBox, ImageButton, Navigator, XModal } from '../components'
+import { NoticeBox, XImage, XText, AnimatedBox, ImageButton, Navigator, XModal, UINotification, FCMinit as FCM } from '../components'
 
 import { Menu } from './menu'
 
@@ -216,6 +216,8 @@ export class Screen extends Component{
     this.orientation = "none"
 
     this.noHeader = this.props.noHeader || false
+    this.noFCM = this.props.noFCM || false
+    this.noFCMUi = this.props.noFCMUi || false
 
     this.closeScreen = this.closeScreen.bind(this)
     this.openScreen = this.openScreen.bind(this)
@@ -359,6 +361,8 @@ export class Screen extends Component{
               </XImage>
               <FrontView ref='main_front_view' />
               <NoticeBox />
+              { !this.noFCM && <FCM /> }
+              { !this.noFCMUi && !this.noFCM && <UINotification visible={false} /> }
            </View>
   }
 }

@@ -145,13 +145,14 @@ export class UINotification extends Component{
       super(props)
       this.state = {newNotifCount: 0, datas: [], showList: false}
 
+      this.visible = (this.props.visible === false)? false : true
+
       this.master = User.getMaster()
 
       this.listNotifView = null
 
       this.toggleListNotifications = this.toggleListNotifications.bind(this)
       this.refreshData = this.refreshData.bind(this)
-      this.revokeToken = this.revokeToken.bind(this)
       this.releaseNewNotif = this.releaseNewNotif.bind(this)
       this.addNotifToRealm = this.addNotifToRealm.bind(this)
 
@@ -159,26 +160,22 @@ export class UINotification extends Component{
     }
 
     componentWillMount(){
-      this.newNotificationListener = EventRegister.on('newNotification', (notif) => {
-        this.addNotification(notif)
-      })
       this.refreshNotificationsListener = EventRegister.on('refreshNotifications', ()=>{
-        //resend token to server
-        FireBaseNotification.registerFirebaseToken(this.master.firebase_token)
         this.refreshData()
       })
-      this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
-        this.revokeToken()
+
+      this.addNotifToRealmListener = EventRegister.on('addNotifToRealm', (notifs)=>{
+        this.addNotifToRealm(notifs)
       })
+
       this.openNotifsListener = EventRegister.on('openNotifications', ()=>{
         this.toggleListNotifications()
       })
     }
 
     componentWillUnmount(){
-        EventRegister.rm(this.newNotificationListener)
         EventRegister.rm(this.refreshNotificationsListener)
-        EventRegister.rm(this.revokeTokenListener)
+        EventRegister.rm(this.addNotifToRealmListener)
         EventRegister.rm(this.openNotifsListener)
     }
 
@@ -189,17 +186,6 @@ export class UINotification extends Component{
 
     componentDidMount(){
       setTimeout(()=>this.refreshData(), 1500)
-    }
-
-    revokeToken(){
-      FCM.deleteInstanceId()
-        .then( () => {
-          //Deleted instance id successfully
-          //This will reset Instance ID and revokes all tokens.
-        })
-        .catch(error => {
-          //Error while deleting instance id
-        });
     }
 
     releaseNewNotif(){
@@ -216,47 +202,6 @@ export class UINotification extends Component{
 
         FireBaseNotification.releaseNewNotifications()
       }, 1)
-    }
-
-    addNotification(notif){
-    	let notification = []
-      
-      let message = ""
-      if(isPresent(notif.message)){
-        message = JSON.parse(notif.message)
-      }
-
-      if(!(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray))
-      { 
-        const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
-                            <View style={{flex:1, paddingHorizontal:20}}>
-                              <XText style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Nouvelle notification</XText>
-                              <XText style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</XText>
-                            </View>
-                            <ImageButton  source={{uri:"notification_green"}} 
-                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:30}}
-                              IStyle={{flex:0, width:20, height:20}}
-                              onPress={()=>{this.toggleListNotifications()}} />
-                          </View>
-        Notice.info(mess_obj, { permanent: true, name: "push_notification_alert" })
-      }
-
-    	if(isPresent(message) && message.to_be_added == true)
-    	{
-        let sendDate = formatDate((notif["google.sent_time"] || new Date()), "YYYY-MM-DDTHH:ii:ss")
-    		notification = [{ 
-    											"id": notif["google.message_id"] || sendDate,
-    											"title": message.title,
-    											"message": message.body,
-    											"created_at": sendDate,
-    											"is_read": false
-    										}]
-	    	this.addNotifToRealm(notification)
-    	}
-    	else
-    	{
-    		this.refreshData()
-    	}
     }
 
     refreshData(){
@@ -283,6 +228,7 @@ export class UINotification extends Component{
         this.setState({datas: result, newNotifCount: nb_new})
       }
     }
+
 
     generateStyles(){
     	this.styles = StyleSheet.create({
@@ -354,18 +300,22 @@ export class UINotification extends Component{
         if(this.state.showList)
           this.renderListNotifications()
 
-        return  <TouchableOpacity style={{flex:0}} onPress={()=>{this.toggleListNotifications()}}>
-                  <ImageButton  source={{uri:"notification"}} 
-                                CStyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:30}}
-                                IStyle={{flex:0, width:20, height:20}}
-                                onPress={()=>{this.toggleListNotifications()}} />
-                  {
-                  	this.state.newNotifCount > 0 && 
-	                  <View style={this.styles.bellText}>
-	                    <XText style={{textAlign:'center', fontSize:9, color:"#FFF"}}>{this.state.newNotifCount}</XText>
-	                  </View>
-                	}
-                </TouchableOpacity>
+        let view = <View style={{flex: 0, width: 0, height: 0}} />
+        if(this.visible)
+          view =  <TouchableOpacity style={{flex:0}} onPress={()=>{this.toggleListNotifications()}}>
+                    <ImageButton  source={{uri:"notification"}}
+                                  CStyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:30}}
+                                  IStyle={{flex:0, width:20, height:20}}
+                                  onPress={()=>{this.toggleListNotifications()}} />
+                    {
+                      this.state.newNotifCount > 0 &&
+                      <View style={this.styles.bellText}>
+                        <XText style={{textAlign:'center', fontSize:9, color:"#FFF"}}>{this.state.newNotifCount}</XText>
+                      </View>
+                    }
+                  </TouchableOpacity>
+
+        return view
     }
 }
 
@@ -379,38 +329,76 @@ export class FCMinit extends Component{
 
       this.handleMessages = this.handleMessages.bind(this)
       this.handleToken = this.handleToken.bind(this)
+      this.addNotification = this.addNotification.bind(this)
+    }
+
+    componentWillMount(){
+      this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
+        this.revokeToken()
+      })
     }
 
     componentDidMount(){
+      if(FCMinitCheker)
+        this.initializeFCM()
+
+      this.notificationListener = AppFcm.on(FCMEvent.Notification, async (notif) => {
+          //optional, do some component related stuff
+          this.handleMessages(notif)
+      })
+
+      this.refreshToken = AppFcm.on(FCMEvent.RefreshToken, (token) => {
+        // fcm token may not be available on first load, catch it here
+        // if(isPresent(this.master.firebase_token))
+        //   FireBaseNotification.registerFirebaseToken(this.master.firebase_token) //resend token to server
+        // else
+        this.handleToken(token)
+      })
+    }
+
+    componentWillUnmount(){
+      // stop listening for events
+      this.notificationListener.remove()
+      this.refreshToken.remove()
+      EventRegister.rm(this.revokeTokenListener)
+    }
+
+    initializeFCM(){
+      FCMinitCheker = false
+
+      AppFcm = FCM
+
       // iOS: show permission prompt for the first call. later just check permission in user settings
       // Android: check permission in user settings
-      FCM.requestPermissions()
+      AppFcm.requestPermissions()
           .then(()=>{/*NOTIFICATIONS ENABLED*/})
           .catch(()=>{
             Notice.info({ title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment" }, { permanent: false, name: "notif_block", delay: 10000 })
-          })
+          });
 
-      FCM.getFCMToken().then((token) => {
+      AppFcm.getFCMToken().then((token) => {
           //getting firebase notifications token
           this.handleToken(token)
       });
-
-      this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
-          //optional, do some component related stuff
-          this.handleMessages(notif)
-      });
-
-      this.refreshToken = FCM.on(FCMEvent.RefreshToken, (token) => {
-      // fcm token may not be available on first load, catch it here
-          this.handleToken(token)
-      });
-
       // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
       // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
       // initial notification will be triggered all the time even when open app by icon so send some action identifier when you send notification
-      FCM.getInitialNotification().then(notif => {
+      AppFcm.getInitialNotification().then(notif => {
          this.handleMessages(notif)
       });
+    }
+
+    revokeToken(){
+      FCMinitCheker = true
+
+      AppFcm.deleteInstanceId()
+          .then( () => {
+            //Deleted instance id successfully
+            //This will reset Instance ID and revokes all tokens.
+          })
+          .catch(error => {
+            //Error while deleting instance id
+          });
     }
 
     handleMessages(notif){
@@ -418,7 +406,7 @@ export class FCMinit extends Component{
       {
         if(typeof(notif.message) != "undefined")
         {
-          EventRegister.emit('newNotification', notif)
+          this.addNotification(notif)
 
           if(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray)
           {
@@ -429,7 +417,7 @@ export class FCMinit extends Component{
             }
 
             this.notifTimer = setInterval(openNotif, 1500)
-            FCM.removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
+            AppFcm.removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
           }
         }
       }
@@ -448,13 +436,49 @@ export class FCMinit extends Component{
       }
     }
 
-    componentWillUnmount(){
-      // stop listening for events
-      this.notificationListener.remove()
-      this.refreshToken.remove()
+    addNotification(notif){
+      let notification = []
+
+      let message = ""
+      if(isPresent(notif.message)){
+        message = JSON.parse(notif.message)
+      }
+
+      if(!(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray))
+      {
+        const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
+                            <View style={{flex:1, paddingHorizontal:20}}>
+                              <XText style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Nouvelle notification</XText>
+                              <XText style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</XText>
+                            </View>
+                            <ImageButton  source={{uri:"notification_green"}}
+                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:30}}
+                              IStyle={{flex:0, width:20, height:20}}
+                              onPress={()=>{EventRegister.emit("openNotifications")}} />
+                          </View>
+        Notice.info(mess_obj, { permanent: true, name: "push_notification_alert" })
+      }
+
+      if(isPresent(message) && message.to_be_added == true)
+      {
+        let sendDate = formatDate((notif["google.sent_time"] || new Date()), "YYYY-MM-DDTHH:ii:ss")
+        notification = [{
+                          "id": notif["google.message_id"] || sendDate,
+                          "title": message.title,
+                          "message": message.body,
+                          "created_at": sendDate,
+                          "is_read": false
+                        }]
+
+        EventRegister.emit('addNotifToRealm', notification)
+      }
+      else
+      {
+        EventRegister.emit('refreshNotifications')
+      }
     }
 
     render(){
-      return null
+      return <View style={{flex: 0, width: 0, height: 0}} />
     }
 }

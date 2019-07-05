@@ -18,6 +18,9 @@ function fillWithZero(number, length_to = 2){
 
 
 //Globals functions && declarations
+global.FCMinitCheker = true //check initialization of FCM
+global.AppFcm = null
+
 global.Config = Config
 global.UploadingFiles = false
 global.Notice = Notice
@@ -216,5 +219,10 @@ global.realmToJson = (object)=>{
 
 //Function for testing presence of variable
 global.isPresent = (variable) => {
-  return ( typeof(variable) !== 'undefined' && variable !== null && variable !== '' ) ? true : false
+  if(typeof(variable) === 'object' && variable !== null)
+    return ( Object.keys(variable).length > 0 )
+  else if(Array.isArray(variable) && variable !== null)
+    return ( variable.length > 0 )
+  else
+    return ( typeof(variable) !== 'undefined' && variable !== null && variable !== '' ) ? true : false
 }
