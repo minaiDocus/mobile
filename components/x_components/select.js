@@ -216,6 +216,7 @@ class ModalSelect extends Component{
   render(){
     return  <XModal transparent={true}
                     animationType="fade"
+                    indication={false}
                     visible={true}
                     onRequestClose={()=>{ this.dismiss() }}
             >

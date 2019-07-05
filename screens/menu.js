@@ -228,8 +228,8 @@ class ModalMenu extends Component{
   render(){
     return  <XModal transparent={true}
                     visible={this.state.visible}
-                    animationType="fade"
-                    supportedOrientations={['portrait', 'landscape']}
+                    animationType="none"
+                    indication={false}
                     onRequestClose={()=>{ this.modalDismiss() }}
             >
             <View style={[this.styles.container]}>

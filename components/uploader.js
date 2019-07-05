@@ -89,7 +89,7 @@ export class ProgressUpload extends Component{
     const colorGrad = ['#422D14', '#422D14', '#C0D838']
     if(this.state.show && this.state.value < 99 && UploadingFiles)
     {
-      return <View style={this.style.box}>
+      return <View style={this.styles.box}>
               <AnimatedBox ref="progressUpload" type="RightSlide" style={{flex: 0}}>
                 <LinearGradient colors={colorGrad} style={this.styles.gradient}>
                   <TouchableOpacity onPress={this.showState}>

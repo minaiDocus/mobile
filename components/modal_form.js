@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {View, StyleSheet, ScrollView} from 'react-native'
 
-import {XModal, SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton, RadioButton, CalculatorInput} from './index'
+import {XModal, SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton, RadioButton } from './index'
 
 class Inputs extends Component{
   constructor(props){
@@ -57,6 +57,7 @@ export class ModalForm extends Component{
     this.values = {}
 
     this.dismiss = this.dismiss.bind(this)
+    this.close = this.close.bind(this)
     this.setValue = this.setValue.bind(this)
     this.generateStyles()
   }
@@ -66,14 +67,16 @@ export class ModalForm extends Component{
   }
 
   dismiss(){
+    this.close(this.props.dismiss)
+  }
+
+  close(callback=null){
     const call = ()=>{
-      if(this.props.dismiss){
-        this.props.dismiss()
-      }
+      try{ callback() }catch(e){}
     }
 
     try{
-      this.refs.main_modal.closeModal( ()=>call() )
+      this.refs.main_modal.closeModal(()=>call())
     }catch(e){
       call()
     }

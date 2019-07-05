@@ -24,7 +24,7 @@ function docs_processed(){
 }
 
 function docs_processing(){ 
-  let result = [] 
+  let result = []
   GLOB.datas.forEach((elem)=>{
     if (elem.type == "temp_pack")
       result = result.concat(elem)

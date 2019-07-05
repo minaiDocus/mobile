@@ -39,8 +39,6 @@ class DataLoader {
 
 //A View that render a modal, visible on any pages but login
 class FrontView extends Component{
-  static loaded = false;
-  
   constructor(props){
     super(props)
 

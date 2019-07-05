@@ -377,9 +377,8 @@ class Footer extends Component{
     const call = ()=> {
                         if(GLOB.period != "" && GLOB.journal != "" && GLOB.customer != "")
                         {
+                          setTimeout(()=>{ new UploderFiles().launchUpload(loadData()) }, 1)
                           this.setState({sending: true})
-                          CronTask.addTask(UploderFiles)
-                          CronTask.task.launchUpload(loadData())
                         }
                         else
                         {
@@ -394,9 +393,9 @@ class Footer extends Component{
   }
 
   render(){
-    return  <View style={[{flex: 0, flexDirection: 'row', padding: 1}, Theme.head.shape]}>
-              <SimpleButton CStyle={[{flex: 0, width: (this.state.sending? '100%' : '50%')}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>{this.leaveScreen()}} title="<< Precedent" />
-              {this.state.sending == false && this.props.sending == false && <SimpleButton CStyle={[{flex: 0, width: '47%', marginLeft: '3%'}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
+    return  <View style={[{flex: 0, flexDirection: 'row', padding: 1, width: '100%'}, Theme.head.shape]}>
+              <SimpleButton CStyle={[{flex: 1}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>{this.leaveScreen()}} title="<< Precedent" />
+              {this.state.sending == false && this.props.sending == false && <SimpleButton CStyle={[{flex: 1, marginLeft: '3%'}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
             </View>
   }
 }
