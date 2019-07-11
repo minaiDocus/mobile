@@ -42,7 +42,7 @@ class Inputs extends Component{
               <View style={{flex: 1.3}}>
                 {type == 'input' && <XTextInput {...this.props} editable={this.props.editable} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} CStyle={[{flex:1}, inputStyle]} />}
                 {type == 'select' && <SelectInput selectedItem={this.state.value} CStyle={{flex:1}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
-                {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1}} />}
+                {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1}} minDate={this.props.options.minDate} maxDate={this.props.options.maxDate} allowBlank={this.props.options.allowBlank || false} />}
                 {type == 'radio' && <RadioButton value={this.state.value} dataOptions={this.props.dataOptions} onChange={(value)=>this.changeValue(value)} CStyle={{flex:1}} />}
                 {isPresent(this.props.hint) && <XText style={[{flex: 1, paddingVertical: 3, color: '#A6A6A6'}, Theme.textItalic]}>{this.props.hint}</XText>}
               </View>
@@ -141,6 +141,7 @@ export class ModalForm extends Component{
                           editable={(i.editable == false)? false : true}
                           setValue={(key, value) => this.setValue(key, value) }
                           hint={i.hint}
+                          options={i}
                     />
       }
     })

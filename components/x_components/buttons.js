@@ -63,6 +63,7 @@ export class SimpleButton extends Component{
                 },
       touchable: {
         flex: 0,
+        flexDirection: 'row',
         alignItems:'center',
         justifyContent:'center',
         padding: 0,

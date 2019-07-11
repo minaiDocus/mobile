@@ -23,24 +23,35 @@ export class Requester {
 
   async waitFor(func=[], callback){
     let slf = this
-    let responses = []
-    let promises = []
-    let i = 0
+    setTimeout(()=>{
+      let responses = []
+      let promises = []
+      let i = 0
 
-    const handleResponses = (r)=>{
-      responses = responses.concat(r)
-      i++
-      if(i < func.length)
-        launchRequests(func[i])
-      else
-        callback(responses)
-    }
+      const handleResponses = (r)=>{
+        responses = responses.concat(r)
+        i++
+        if(i < func.length)
+          launchRequests(func[i])
+        else
+          callback(responses)
+      }
 
-    const launchRequests = (f)=>{
-      promises[i] = eval('slf.'+f)
-      promises[i].then(r => handleResponses(r)).catch(r => handleResponses(r))
-    }
+      const launchRequests = (f)=>{
+        // let func_name = f.split('(')[0].trim()
+        // let params = f.replace(/([^()]*)[(](.*)[)]/,'$2').trim()
 
-    launchRequests(func[0])
+        // if(func_name == params){ params = '' }
+          
+        // if(isPresent(params))
+        //   promises[i] = slf[func_name](eval(params))
+        // else
+        //   promises[i] = slf[func_name]
+        promises[i] = eval(`slf.${f}`)
+        promises[i].then(r => handleResponses(r)).catch(r => handleResponses(r))
+      }
+
+      launchRequests(func[0])
+    }, 1)
   }
 }

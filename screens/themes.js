@@ -81,6 +81,20 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
     title: { textAlign:'center',fontSize:14, fontWeight:'bold' },
   },
 
+  table:{
+    head: {
+      shape: { backgroundColor: '#3e2f24' },
+      th_text: { textAlign: 'center', color: '#fff' },
+      th_shape: { borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#999'}, //Don't use borderWidth style only
+    },
+    body:{
+      td_text: {},
+      td_shape: { padding: 5, borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: '#999' },
+      pair:{ backgroundColor: '#FFF' },
+      impair: { backgroundColor: '#F2F2F2'}
+    }
+  },
+
   modal: {
     shape: { backgroundColor:"#FFF", borderWidth: 1, borderColor: '#fff', borderRadius:3 },
     title: { color: '#000', fontSize: 16, textAlign: 'left' },

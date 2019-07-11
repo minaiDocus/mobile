@@ -11,13 +11,16 @@ export class TabNav extends Component{
 
     this.headers = this.props.headers || []
 
-    this.state = { index: 0 }
+    this.state = { index: this.props.initialPage || 0 }
 
     this.generateStyles() //style generation
   }
 
   handleIndexChange(index){
     this.setState({index: index})
+
+    if(this.props.handleIndexChange)
+      this.props.handleIndexChange(index)
   }
 
   generateStyles(){
@@ -44,13 +47,15 @@ export class TabNav extends Component{
   }
 
   renderTabBar(){
+    const barStylePlus = this.props.BStyle || {}
+
     if(this.headers.length > 0)
     {
       let indexSelectedShape = indexSelectedText = indexSelectedIcon = ""
       const content = this.headers.map((tb, index) => {
-            indexSelectedShape = (index == this.state.index)? Theme.tabs.selected.shape : {};
-            indexSelectedText = (index == this.state.index)? Theme.tabs.selected.text : {};
-            indexSelectedIcon = (index == this.state.index)? Theme.tabs.selected.icon : {};
+            indexSelectedShape = (index == this.state.index)? (barStylePlus.selectedHead || Theme.tabs.selected.shape) : (barStylePlus.head || {});
+            indexSelectedText = (index == this.state.index)? (barStylePlus.selectedText || Theme.tabs.selected.text) : (barStylePlus.text || {});
+            indexSelectedIcon = (index == this.state.index)? (barStylePlus.selectedIcon || Theme.tabs.selected.icon) : (barStylePlus.icon || {});
 
             return (
              <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
@@ -61,7 +66,7 @@ export class TabNav extends Component{
             </TouchableOpacity>
         )})
 
-      return <View style={[this.stylesTabBar.container, Theme.tabs.head_container]}>
+      return <View style={[this.stylesTabBar.container, Theme.tabs.head_container, barStylePlus.shape]}>
                {content}
              </View>
     }
@@ -74,7 +79,7 @@ export class TabNav extends Component{
   render(){
     const CStyle = this.props.CStyle || {}
 
-    return  <ScrollableTabView style={[Theme.tabs.body_container, CStyle, {overflow: 'hidden'}]} tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
+    return  <ScrollableTabView style={[Theme.tabs.body_container, CStyle, {overflow: 'hidden'}]} tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} initialPage={this.props.initialPage || 0} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
               { this.props.children }
             </ScrollableTabView>
   }

@@ -101,7 +101,7 @@ class ViewState extends Component{
 
   goToDocument(index){
     const pack = this.props.datas[index]
-    CurrentScreen.goTo('Publish', {pack: pack, text:""})
+    CurrentScreen.goTo('Publish', { type: 'pack', pack: pack, filter:{} })
   }
 
   generateStyles(){

@@ -155,6 +155,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-image-resizer')
+    implementation project(':react-native-exif')
     implementation project(':react-native-fcm')
     implementation project(':realm')
     implementation project(':react-native-pdf')
@@ -162,7 +164,6 @@ dependencies {
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-splash-screen')
     implementation project(':react-native-image-crop-picker')
-    implementation project(':react-native-exif')
 
     // For animated Gif on SplashScreen
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'

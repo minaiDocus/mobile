@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { StyleSheet, View, ScrollView, ListView, TouchableOpacity } from 'react-native'
+import ImageResizer from 'react-native-image-resizer'
+
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import { NavigationActions } from 'react-navigation'
@@ -27,8 +29,10 @@ let GLOB = {
                         ]
           }
 
-function loadData(){
-  if(typeof(GLOB.dataList) !== "undefined" && GLOB.dataList.length > 0)
+function sendDatas(){
+  let documents_count = GLOB.dataList.length
+
+  if(typeof(GLOB.dataList) !== "undefined" && documents_count > 0)
   {
     let nothingToSend = true
     let alreadySent = false
@@ -44,9 +48,9 @@ function loadData(){
     form.append('file_prev_period_offset', GLOB.period)
     form.append('file_compta_analysis', JSON.stringify(GLOB.analysis))
 
-    GLOB.dataList.forEach((img) => {
-      const path = img.path.toString()
-      const name = img.filename || path.split("/").slice(-1)[0]
+    const prepare_sending = (img, resized_path = null)=>{
+      const path = resized_path || img.path.toString()
+      const name = (resized_path)? path.split("/").slice(-1)[0] : (img.filename || path.split("/").slice(-1)[0])
       const id_64 = img.id_64.toString()
 
       const doc = Document.getById(id_64)
@@ -60,28 +64,59 @@ function loadData(){
 
         form.append('files[]', {
           uri: path,
-          type: img.mime.toString(),
+          type: (resized_path)? 'image/jpeg' : img.mime.toString(),
           name: name
         });
-        
-        Document.createOrUpdate(doc.id, {state: 'sending'})
+
+        Document.createOrUpdate(doc.id, {state: 'sending', name: name})
+      }
+    }
+
+    let iteration = 0
+    GLOB.dataList.forEach(async (img) => {
+      //resize image before sending if needed
+      const size_limit = 3000
+      if(img.width > size_limit || img.height > size_limit)
+      {
+        let new_path = null
+        await ImageResizer.createResizedImage(img.path.toString(), size_limit, size_limit, 'JPEG', 100, 0).then(result=>{
+          new_path = result.uri.toString()
+        }).catch((err)=>{
+          new_path = null
+        })
+
+        prepare_sending(img, new_path)
+        iteration += 1
+      }
+      else
+      {
+        prepare_sending(img)
+        iteration += 1
       }
     });
 
-    GLOB.dataList = []
-    
-    if(alreadySent)
-      Notice.info({title: "Envoi", body: "Certains fichiers ont déjà été envoyés!!"})
+    const finalize_sending = ()=>{
+      if(iteration >= documents_count)
+      {
+        iteration = -1 //for multiple sending instance security
 
-    if(nothingToSend)
-      return null
-    else
-      return form
+        if(alreadySent)
+          Notice.info({title: "Envoi", body: "Certains fichiers ont déjà été envoyés!!"})
+
+        if(!nothingToSend)
+          new UploderFiles().launchUpload(form)
+      }
+      else if(iteration >= 0)
+      {
+        setTimeout(()=>{ finalize_sending() }, 100)
+      }
+    }
+    
+    finalize_sending()
   }
   else
   {
     Notice.info({title: "Erreur", body: "Aucun document à envoyer!!"})
-    return null
   }
 }
 
@@ -377,7 +412,7 @@ class Footer extends Component{
     const call = ()=> {
                         if(GLOB.period != "" && GLOB.journal != "" && GLOB.customer != "")
                         {
-                          setTimeout(()=>{ new UploderFiles().launchUpload(loadData()) }, 1)
+                          setTimeout(()=>{ sendDatas() }, 1)
                           this.setState({sending: true})
                         }
                         else

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
+import { StyleSheet,View,ScrollView,TouchableOpacity } from 'react-native'
 
-import { XImage,XText,XTextInput,Navigator,SelectInput,Pagination,LineList } from '../../components'
+import { XImage,XText,TabNav,XTextInput,Navigator,SelectInput,Pagination,LineList,BoxButton,ModalForm } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -9,12 +9,15 @@ import { User } from '../../models'
 
 import { UsersFetcher, DocumentsFetcher } from "../../requests"
 
-let GLOB = { filterText: "", clientId: 0 }
+let GLOB = { clientId: 0, dataFilter: {} }
 
 class Header extends Component{
   constructor(props){
     super(props)
-    this.state = {client: 0, search: "", ready: false, loading: false}
+    this.state = {search: "", ready: false, filter: false}
+
+    GLOB.clientId = 0
+    GLOB.dataFilter = {}
 
     this.filterLocked = false
     this.filterCount = 0
@@ -22,7 +25,9 @@ class Header extends Component{
     this.customers = []
 
     this.renderCustomerSelection = this.renderCustomerSelection.bind(this)
-    this.filterLock = this.filterLock.bind(this)
+    this.openFilter = this.openFilter.bind(this)
+    this.closeFilter = this.closeFilter.bind(this)
+    this.formInputs = this.formInputs.bind(this)
 
     this.generateStyles()
   }
@@ -38,139 +43,174 @@ class Header extends Component{
         this.setState({ready: true})
       }
     }
+
     setTimeout(call, 1000)
   }
 
-  async filterLock()
-  {
-    this.filterCount--
-    if(this.filterCount <= 0)
-    {
-      await this.setState({loading: false})
-      this.filterLocked = false
-      this.dataFilter()
-      clearTimeout(this.filterClock)
-    }
-    else
-    {
-      this.filterClock = setTimeout(this.filterLock, 1000)
-    }
+  openFilter(){
+    this.setState({filter: true})
+  }
+
+  closeFilter(withFilter="none"){
+    const form = this.refs.form_1
+    if(isPresent(form.values.content))
+      GLOB.dataFilter['by_piece'] = {
+                                      content: form.values.content,
+                                    }
+
+    if(isPresent(form.values.is_delivered) || isPresent(form.values.third_party) || isPresent(form.values.piece_number))
+      GLOB.dataFilter['by_preseizure'] =  {
+                                            is_delivered : form.values.is_delivered,
+                                            third_party : form.values.third_party,
+                                            piece_number : form.values.piece_number,
+                                          }
+
+    if(withFilter == "reInit")
+      GLOB.dataFilter = {}
+
+    if(withFilter != "none")
+      this.props.onFilter()
+
+    this.setState({filter: false})
+  }
+
+  checkFilterActive(){
+    if (isPresent(GLOB.dataFilter)) return true
+    else return false
   }
 
   async handleClientChange(value){
-    await this.setState({client: value})
-    this.dataFilter()
+    GLOB.clientId = value
+    this.props.onFilter()
   }
 
-  async handleFilterChange(value){
-    await this.setState({search: value, loading: true})
-    this.filterCount = 2
-    if(!this.filterLocked)
-    {
-      this.filterLocked = true
-      this.filterLock()
-    }
-  }
+  formInputs(){
+    let content = ''
+    let is_delivered = ''
+    let third_party = ''
+    let piece_number = ''
 
-  dataFilter(){
-    this.props.onFilter(this.state.client, this.state.search)
+    try{ content = GLOB.dataFilter.by_piece.content }catch(e){}
+    try{ is_delivered = GLOB.dataFilter.by_preseizure.is_delivered }catch(e){}
+    try{ third_party = GLOB.dataFilter.by_preseizure.third_party }catch(e){}
+    try{ piece_number = GLOB.dataFilter.by_preseizure.piece_number }catch(e){}
+
+    const inputs =  [
+                      { label:'Contenu :', name: 'content', value:  content },
+                      { separator:'Filtre lié à la pré-affectation' },
+                      { label:'Livraison écriture comptable :', name: 'is_delivered', type: 'select', dataOptions:[{label: 'Tous', value: ''}, {label: 'Livrée', value: '1'}, {label: 'Non livrée', value: '2'}], value: is_delivered },
+                      { label:'Nom de tiers :', name: 'third_party', value: third_party },
+                      { label:'N° de pièce d\'origine :', name: 'piece_number', value: piece_number },
+                    ]
+
+    return inputs
   }
 
   generateStyles(){
-    this.selectStyle =  {
-                          label:{
-                            color:'#707070',
-                            fontSize:16,
-                            fontWeight:'bold',
-                            marginTop:5,
-                            paddingHorizontal:10,
-                            backgroundColor: '#FFF'
-                          }
-                        }
     this.styles = StyleSheet.create({
       container:{
                   flex:0,
                   flexDirection:'row',
                   backgroundColor:'#E1E2DD',
-                  width:'100%',
-                  height:80,
+                  width:'100%'
                 },
-      inputs: {
-                flex: 1,
-                height:40,
-              },
       left: {
-              flex:1,
+              flex:2,
               flexDirection:'row',
               alignItems:'center',
-              paddingLeft:15,
-              justifyContent:'center'
+              marginLeft:20,
+              justifyContent:'center',
             },
       right:{
-              flex:4,
+              flex:1,
+              flexDirection:'row',
+              alignItems: 'center',
+              justifyContent: 'center',
               paddingHorizontal:20,
             },
-      image:{
-              flex:0,
-              width:30,
-              height:30
-            }
+      select: {
+                flex:0,
+                marginTop: 7,
+                height: 25,
+                width:'100%'
+              },
+      label:{
+              color:'#707070',
+              fontSize:16,
+              fontWeight:'bold',
+              marginTop:5,
+              height: 25,
+              width:'100%',
+              backgroundColor: '#FFF'
+            },
+      form:{
+            flex:1,
+            backgroundColor:'#FFF',
+            paddingHorizontal:8,
+
+            elevation: 7, //Android Shadow
+            
+            shadowColor: '#000',                  //===
+            shadowOffset: {width: 0, height: 0},  //=== iOs shadow    
+            shadowOpacity: 0.8,                   //===
+            shadowRadius: 2,                      //===
+
+            height: '100%',
+            alignItems:'center'
+          }
     })
   }
 
   renderCustomerSelection(){
-    let inputSelection = ""
+    let inputSelection = null
+
     if(this.customers.length == 2)
-    {
-      inputSelection = <XText style={this.selectStyle.label}>{this.customers[1].label}</XText>
-    }
+      inputSelection = <XText style={this.styles.label}>{this.customers[1].label}</XText>
     else
-    {
-      inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={{flex:0, height:35, backgroundColor: '#FFF'}} onChange={(value) => this.handleClientChange(value)}/>
-    }
+      inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={this.styles.select} onChange={(value) => this.handleClientChange(value)}/>
 
     return inputSelection
   }
 
   render(){
-    const imageInput = ()=>{
-      if(this.props.loadingFilter || this.state.loading)
-      {
-        return <XImage loader={true} style={{flex:0, marginTop:5}} width={18} height={18} />
-      }
-      else
-      {
-        return <XImage source={{uri:"zoom_x"}} style={{flex:0, marginTop:5, marginLeft:5, width:18, height:18}} />
-      }
-    }
-
-    return  <View style={[this.styles.container, Theme.head.shape]}>
-                <View style={this.styles.left}>
-                  <XImage source={{uri:"ico_docs"}} style={this.styles.image} />
+    return  <View style={[this.styles.container, Theme.head.shape, { padding: 0 }]}>
+              { this.state.filter && 
+                <ModalForm  ref='form_1'
+                            title="Filtre"
+                            dismiss={()=>this.closeFilter("none")}
+                            inputs={this.formInputs()}
+                            buttons={[
+                              {title: "Filtrer", withDismiss: true, action: ()=>this.closeFilter("filter")},
+                              {title: "Annuler filtre", withDismiss: true, action: ()=>this.closeFilter("reInit")},
+                            ]}
+                />
+              }
+              <View style={this.styles.left}>
+                <View style={this.styles.form}>
+                  { this.state.ready && this.renderCustomerSelection() }
+                  { !this.state.ready && <XImage loader={true} width={40} height={40} /> }
                 </View>
-                <View style={this.styles.right}>
-                  {this.state.ready && this.renderCustomerSelection()}
-                  <View style={{flex:1, flexDirection:'row', marginLeft: 3}}>
-                    <XTextInput TStyle={{paddingLeft:6}} 
-                                CStyle={this.styles.inputs} 
-                                placeholder="Filtre" 
-                                autoCorrect={false} 
-                                onChangeText={(value) => this.handleFilterChange(value)}/>
-                    {imageInput()}
-                  </View>
+              </View>
+              <View style={this.styles.right}>
+                <View style={{flex:1, flexDirection:'row', marginLeft: 3, padding: 5}}>
+                  <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} />
                 </View>
+              </View>
             </View>
   }
 }
 
-class BoxDocs extends Component{
+class BoxDocs extends Component {
   constructor(props){
     super(props)
     this.generateStyles()
   }
 
   handleClick(){
-    CurrentScreen.goTo('Publish', {pack: this.props.data, text: GLOB.filterText})
+    if(this.props.data.type == 'pack')
+      CurrentScreen.goTo('Publish', {type: 'pack', pack: this.props.data, filter: GLOB.dataFilter})
+    else
+      CurrentScreen.goTo('Publish', {type: 'report', report: this.props.data, filter: GLOB.dataFilter})
   }
 
   generateStyles(){
@@ -201,18 +241,17 @@ class BoxDocs extends Component{
   }
 }
 
-class DocumentsScreen extends Component {
+class DataBloc extends Component {
   constructor(props){
     super(props)
 
-    GLOB.filterText = ""
-    GLOB.clientId = 0
-    this.state = {ready: false, dataList: [], loadingFilter: false}
+    this.state = { ready: false, datas: [], limitPage: 1, total: 0 }
 
-    this.page = this.limit_page = 1
-    this.total = 0
+    this.page = 1
 
-    this.dataFilter = this.dataFilter.bind(this)
+    this.type = this.props.type || 'documents'
+    this.title = (this.type == 'documents')? 'Document(s)' : 'Opération(s)'
+
     this.changePage = this.changePage.bind(this)
     this.refreshDatas = this.refreshDatas.bind(this)
   }
@@ -221,53 +260,70 @@ class DocumentsScreen extends Component {
     this.refreshDatas()
   }
 
-  changePage(page=1){
-    this.page = page
-    this.refreshDatas(false)
-  }
-
   refreshDatas(renew = true){
-    if(renew){
+    if(renew)
       this.page = 1
-    }
 
-    this.setState({ready: false, loadingFilter: true})
+    this.setState({ready: false})
 
-    DocumentsFetcher.waitFor([`getPacks(${this.page}, "${GLOB.filterText}", "${GLOB.clientId}")`], responses=>{
+    let url = `getPacks(${this.page}, "${GLOB.clientId}", ${JSON.stringify(GLOB.dataFilter)})`
+    if(this.type != 'documents')
+      url = `getReports(${this.page}, "${GLOB.clientId}", ${JSON.stringify(GLOB.dataFilter)})`
+
+    DocumentsFetcher.waitFor([url], responses=>{
         responses.map(r=>{
           if(r.error)
           {
             Notice.danger(r.message, { name: r.message })
-            this.limit_page = 1
-            this.total = 0
-            this.setState({ready: true, loadingFilter: false})
+            this.setState({ready: true, limitPage: 1, total: 0})
           }
           else
-          {  
-            this.limit_page = r.nb_pages
-            this.total = r.total
-            this.setState({ready: true, loadingFilter: false, dataList: r.packs})
+          {
+            let datas = []
+            if(this.type == 'documents')
+              datas = r.packs
+            else
+              datas = r.reports
+
+            this.setState({ready: true, datas: datas, limitPage: r.nb_pages, total: r.total})
           }
       })
     })
   }
 
-  dataFilter(client_id=0, text=""){
-    GLOB.clientId = client_id
-    GLOB.filterText = text
-    this.refreshDatas()
+  changePage(page=1){
+    this.page = page
+    this.refreshDatas(false)
   }
 
-  renderDocuments(){
+  render(){
     return  <ScrollView style={{flex:1, padding:3}}>
-              <XText style={[{flex:0, textAlign:'center', fontSize:16, fontWeight:'bold'}, Theme.lists.title]}>{`${this.total} : Document(s)`} </XText>
-              <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} CStyle={{marginBottom: 0}} />
-              <LineList datas={this.state.dataList}
+              <XText style={[{flex:0, textAlign:'center', fontSize:16, fontWeight:'bold'}, Theme.lists.title]}>{`${this.state.total} : ${this.title}`}</XText>
+              <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} CStyle={{marginBottom: 0}} />
+              <LineList datas={this.state.datas}
                         waitingData={!this.state.ready}
                         renderItems={(data) => <BoxDocs data={data} /> } />
 
-              <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
+              <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} />
             </ScrollView>
+  }
+}
+
+class DocumentsScreen extends Component {
+  constructor(props){
+    super(props)
+
+    GLOB.filterText = ""
+    GLOB.clientId = 0
+
+    this.refreshDatas = this.refreshDatas.bind(this)
+  }
+
+  refreshDatas(renew = true){
+    setTimeout(()=>{
+      try{ this.refs.documents.refreshDatas(renew) }catch(e){}
+      try{ this.refs.operations.refreshDatas(renew) }catch(e){}
+    }, 1)
   }
 
   render() {
@@ -277,8 +333,18 @@ class DocumentsScreen extends Component {
                 name='Documents'
                 withMenu={true}
                 navigation={this.props.navigation}>
-          <Header onFilter={this.dataFilter} loadingFilter={this.state.loadingFilter}/>
-          { this.renderDocuments() }
+          <Header onFilter={()=>this.refreshDatas()} />
+          <TabNav 
+            headers={ 
+                      [
+                        {title: "Documents"},
+                        {title: "Opérations"},
+                      ]
+                    }
+          >
+            <DataBloc ref='documents' type='documents' />
+            <DataBloc ref='operations' type='operations' />
+          </TabNav>
         </Screen>
       )
     }

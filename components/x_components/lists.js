@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, ScrollView } from 'react-native'
 import { XText, XImage } from '../index'
 
 class Loader extends Component{
@@ -158,6 +158,11 @@ export class LineList extends Component{
   constructor(props){
     super(props)
 
+    this.state = { view: null }
+
+    this.ready = false
+    this.refresh = true
+
     this.newData = true
     this.datas = this.props.datas || []
     this.itemCount = 0
@@ -166,6 +171,7 @@ export class LineList extends Component{
     this.stylesPlus = this.props.containerStyle || {}
     this.renderItems = this.renderItems.bind(this)
     this.removeLoader = this.removeLoader.bind(this)
+    this.prepareView = this.prepareView.bind(this)
     this.generateStyles()
   }
 
@@ -181,18 +187,18 @@ export class LineList extends Component{
     this.datas = nextProps.datas || []
   }
 
+  // componentDidMount(){
+  //   this.removeLoader()
+  // }
 
-  componentDidMount(){
-    this.removeLoader()
-  }
-
-  componentDidUpdate(){
-    this.removeLoader()
-  }
+  // componentDidUpdate(){
+  //   this.removeLoader()
+  // }
 
   removeLoader(){
     this.newData = false
     this.itemCount = 0
+    this.ready = true
     setTimeout(()=>{
       if(this.refs.loader && !this.props.waitingData)
         this.refs.loader.unmountComponent()}
@@ -223,11 +229,29 @@ export class LineList extends Component{
     return <View key={key} style={[this.childStylePlus, {backgroundColor: colorStriped}]}>{this.props.renderItems(item, key)}</View>
   }
 
-  render(){
+  prepareView(){
     this.itemCount = this.datas.length
 
+    if(this.refresh){
+      this.refresh = false
+      this.ready = false
+      setTimeout(async ()=>{
+        let view  = null
+        if(this.itemCount > 0)
+          view = this.datas.map((item, index) => {return this.renderItems(item, index)})
+
+        await this.setState({ view: view })
+        this.removeLoader()
+        this.refresh = true
+      }, 1000)
+    }
+  }
+
+  render(){
+    this.prepareView()
+
     let content = <View />
-    if(this.props.waitingData || this.newData)
+    if(this.props.waitingData || !this.ready || this.newData)
       content = <Loader ref='loader' />
     else if(this.itemCount <= 0 && this.props.noItemText != 'none')
       content = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
@@ -235,9 +259,68 @@ export class LineList extends Component{
     return <View style={{flex:1}}>
                 {isPresent(this.props.title) && <XText style={[this.styles.title, Theme.lists.title]}>{this.props.title}</XText>}
                 <View style={[this.styles.container, Theme.lists.shape, this.stylesPlus]}>
-                  {this.itemCount > 0 && this.datas.map((item, index) => {return this.renderItems(item, index)})}
+                  { this.state.view }
                   { content }
                </View> 
            </View>
+  }
+}
+
+export class Table extends Component{
+  constructor(props){
+    super(props)
+
+    this.headers = this.props.headers
+    this.body    = this.props.body
+  }
+
+  renderHeader(){
+    return  <View ref={1} style={[{flex: 0, width: '100%', flexDirection: 'row'}, Theme.table.head.shape]}>
+              {
+                this.headers.map((h, i)=>{
+                  const borderStyle = (i < this.headers.length-1)? { borderRightWidth: 0 } : {}
+
+                  let view = null
+                  if(typeof(h) === 'string' || !isNaN(h))
+                    view = <XText key={i} style={[{flex: 1}, Theme.table.head.th_text, Theme.table.head.th_shape, borderStyle]}>{h}</XText>
+                  else
+                    view =  <View key={i} style={[{flex: 1}, Theme.table.head.th_shape, borderStyle]}>
+                              {h}
+                            </View>
+                  return view
+                })
+              }
+            </View>
+  }
+
+  renderBody(){
+    return  this.body.map((b, i)=>{
+                  const parityStyle = ((i % 2) == 0)? Theme.table.body.pair : Theme.table.body.impair
+                  return  <View key={i+1} style={[{flex: 0, width: '100%', flexDirection: 'row'}, parityStyle]}>
+                            { 
+                              b.map((row, j)=>{
+                                const borderStyle = (j < b.length-1)? { borderRightWidth: 0 } : {}
+
+                                if(typeof(row) === 'string' || !isNaN(row))
+                                  view = <XText key={j} style={[{flex: 1}, Theme.table.body.td_text, Theme.table.body.td_shape, borderStyle]}>{row}</XText>
+                                else
+                                  view =  <View key={j} style={[{flex: 1}, Theme.table.body.td_shape, borderStyle]}>
+                                            {row}
+                                          </View>
+
+                                return view
+                              })
+                            }
+                          </View>
+            })
+  }
+
+  render(){
+    return  <View style={{flex: 1}}>
+              { this.renderHeader() }
+              <ScrollView>
+                { this.renderBody() }
+              </ScrollView>
+            </View>
   }
 }

@@ -5235,10 +5235,10 @@ react-native-event-listeners@^1.0.3:
   dependencies:
     type-detect "4.0.3"
 
-react-native-exif@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-exif/-/react-native-exif-0.3.0.tgz#8d2b44fe1c8d57764f1b13e96b7dc5828d2954ca"
-  integrity sha1-jStE/hyNV3ZPGxPpa33Fgo0pVMo=
+react-native-exif@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-exif/-/react-native-exif-0.4.0.tgz#70f7230e5eae2a2dfc1623b01c419d81a95620f3"
+  integrity sha512-86e4fUn2S5yW20wo/yUAzhwZZ3czHk1rJyAsVD36jcB//gxb0DQBYVNmGLowXqo83Z48AsdHua2moHyIRJKDew==
 
 react-native-fcm@^16.2.4:
   version "16.2.4"
@@ -5249,6 +5249,11 @@ react-native-image-crop-picker@^0.21.1:
   version "0.21.3"
   resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.21.3.tgz#04457a3f2a888949f51be4a670dcf2520b9994f8"
   integrity sha512-qzY8aSYZxH4L9XYRk4V1n8x1gfq+ykNG0Kc0a9ne+JWwAQkf2P8aTKeNd4noNFZEOSJBiD4XXE/pbX55dQ5F3g==
+
+react-native-image-resizer@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-resizer/-/react-native-image-resizer-1.0.1.tgz#e9eeb7f81596ffc490f822897952b046c07ee95c"
+  integrity sha512-upBF/9TIs4twg19dSkSaDW/MzMpNbysEXtPuapu3GqvOuGIYHKQ30v6httDn7rIb6uCcNIWL1BwZJM2cDt/C9Q==
 
 react-native-linear-gradient@^2.5.4:
   version "2.5.4"

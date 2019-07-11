@@ -7,18 +7,14 @@ export class Pagination extends Component{
   constructor(props){
     super(props)
 
-    this.state = {page: this.props.page || 1}
-    this.limit_page = this.props.nb_pages
+    this.state = {page: (this.props.page || 1), limit_page: this.props.nb_pages}
 
     this.changePage = this.changePage.bind(this)
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.page >= 1){
-      this.setState({page: nextProps.page})
-    }
-    if(nextProps.nb_pages >= 1){
-      this.limit_page = nextProps.nb_pages
+    if(nextProps.page >= 1 || nextProps.nb_pages){
+      this.setState({page: (isPresent(nextProps.page)? nextProps.page : this.state.page), limit_page: (isPresent(nextProps.nb_pages)? nextProps.nb_pages : this.state.limit_page)})
     }
   }
 
@@ -33,7 +29,7 @@ export class Pagination extends Component{
     else if(arg_page == "next")
     {
       _page = page + 1
-      page = (_page < this.limit_page)? _page : this.limit_page
+      page = (_page < this.state.limit_page)? _page : this.state.limit_page
     }
     else
     {
@@ -55,11 +51,13 @@ export class Pagination extends Component{
       justifyContent:'center'
     }
 
-    let start_page = this.state.page - 2
+    const step = 2
+
+    let start_page = this.state.page - step
     start_page = (start_page < 1)? 1 : start_page
 
-    let end_page = start_page + 4
-    end_page = (end_page > this.limit_page)? this.limit_page : end_page
+    let end_page = this.state.page + step
+    end_page = (end_page > this.state.limit_page)? this.state.limit_page : end_page
 
     for(i=start_page; i<=end_page; i++)
     {
@@ -78,7 +76,7 @@ export class Pagination extends Component{
     return <View style={{flex:0, justifyContent:'center', flexDirection:'row'}} >
             {start_page > 1 && <View style={touchStyle}><XText>...</XText></View>}
             {numbers.map((n)=>{return n})}
-            {end_page < this.limit_page && <View style={touchStyle}><XText>...</XText></View>}
+            {end_page < this.state.limit_page && <View style={touchStyle}><XText>...</XText></View>}
            </View>
   }
 
@@ -91,9 +89,9 @@ export class Pagination extends Component{
                        <SimpleButton title="<<" onPress={()=>{this.changePage("prev")}} CStyle={[{width:50, paddingVertical:1}, Theme.secondary_button.shape]} TStyle={Theme.secondary_button.text}/>
                      </View>
                   }
-                  {this.limit_page > 1 && this.renderPages()}
+                  {this.state.limit_page > 1 && this.renderPages()}
                   { 
-                    this.state.page < this.limit_page && 
+                    this.state.page < this.state.limit_page &&
                     <View style={{flex:1, alignItems:"flex-end"}}>
                       <SimpleButton title=">>" onPress={()=>{this.changePage("next")}} CStyle={[{width:50, paddingVertical:1}, Theme.secondary_button.shape]} TStyle={Theme.secondary_button.text} />
                     </View>

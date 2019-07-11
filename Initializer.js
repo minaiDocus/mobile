@@ -187,6 +187,38 @@ global.arrayGroup = (arr, by='') => {
   return arrReturn
 }
 
+//Function for removing empty keys from an object json
+global.jsonCompact = (json, strict=false) => {
+  let jsonResult = {}
+
+  if(isPresent(json))
+  {
+    let arraykeys = Object.keys(json)
+    arraykeys.forEach(key=>{
+      let present = false
+      let value   = json[key]
+
+      if(strict)
+        present = isPresent(value)
+      else
+        present = (value != null && typeof(value) !== 'undefined')
+
+      if(present && typeof(value) === 'object'){
+        let result = jsonCompact(value, strict)
+        if(strict && isPresent(result))
+          jsonResult[key] = result
+        else if(result != null && typeof(result) !== 'undefined')
+          jsonResult[key] = result
+      }
+      else if(present){
+        jsonResult[key] = value
+      }
+    })
+  }
+  
+  return jsonResult
+}
+
 //Protect speed double press for launching an action
 global.actionLock = false
 global.actionLocker = (callback) => {

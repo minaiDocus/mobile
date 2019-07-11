@@ -272,7 +272,7 @@ export class ModalComptaAnalysis extends Component{
   componentDidMount(){
     if( this.pieces.length > 0 || ( isPresent(this.customer) && isPresent(this.journal) ) )
     {
-      FileUploader.waitFor([`getComptaAnalytics(${this.customer}, '${this.journal}', '${JSON.stringify(this.pieces)}')`], responses => {
+      FileUploader.waitFor([`getComptaAnalytics(${this.customer}, '${this.journal}', ${JSON.stringify(this.pieces)})`], responses => {
         if(responses[0].error){
           this.setAnalytics()
         }
