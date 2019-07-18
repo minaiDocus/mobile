@@ -180,7 +180,7 @@ export class UINotification extends Component{
     }
 
     componentDidUpdate(){
-      if(this.state.showList)
+      if(this.state.showList && this.listNotifView)
         renderToFrontView(this.listNotifView, "UpSlide", ()=>{this.toggleListNotifications()})
     }
 
@@ -229,6 +229,16 @@ export class UINotification extends Component{
       }
     }
 
+    toggleListNotifications(){
+      if(this.state.showList)
+      {
+        this.listNotifView = null
+        this.releaseNewNotif()
+        clearFrontView()
+      }
+
+      this.setState({showList: !this.state.showList})
+    }
 
     generateStyles(){
     	this.styles = StyleSheet.create({
@@ -251,16 +261,6 @@ export class UINotification extends Component{
                     backgroundColor:'#FFF'
                   },
     	})
-    }
-
-    toggleListNotifications(){
-      if(this.state.showList)
-      {
-        this.releaseNewNotif()
-        clearFrontView()
-      }
-      
-      this.setState({showList: !this.state.showList}) 
     }
 
     renderListNotifications(){
@@ -376,10 +376,12 @@ export class FCMinit extends Component{
             Notice.info({ title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment" }, { permanent: false, name: "notif_block", delay: 10000 })
           });
 
-      AppFcm.getFCMToken().then((token) => {
-          //getting firebase notifications token
-          this.handleToken(token)
-      });
+      if(!isPresent(this.master.firebase_token)){
+        AppFcm.getFCMToken().then((token) => { /*getting firebase notifications token */ this.handleToken(token) })
+      }
+      else{
+        this.handleToken(this.master.firebase_token)
+      }
       // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
       // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
       // initial notification will be triggered all the time even when open app by icon so send some action identifier when you send notification
@@ -392,7 +394,7 @@ export class FCMinit extends Component{
       FCMinitCheker = true
 
       AppFcm.deleteInstanceId()
-          .then( () => {
+          .then(() => {
             //Deleted instance id successfully
             //This will reset Instance ID and revokes all tokens.
           })

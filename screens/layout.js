@@ -353,7 +353,7 @@ export class Screen extends Component{
     const back = require('../images/bg_body.png')
 
     return <View {...this.props} style={CStyle} onLayout={(event)=>{this.handleLayout(event)}} {...this.boxPanResponder.panHandlers}>
-              <XImage type='container' source={back} resizeMode='contain' CStyle={{width: '100%', height: '100%'}}>
+              <XImage type='container' source={back} resizeMode='cover' style={{width: '100%', height: '100%'}} CStyle={{width: '100%', height: '100%'}}>
                 { !this.noHeader && <Header ref="header" closeScreen={(callback)=>this.closeScreen(callback)} title={this.props.title} options={this.props.options} withMenu={this.props.withMenu} /> }
                 <AnimatedBox ref='main_page' startOnLoad={false} hideTillStart={true} style={{flex: 1}} type='fade' durationIn={600} durationOut={300}>
                   { this.props.children }

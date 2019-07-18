@@ -9,13 +9,7 @@ import { Screen } from '../layout'
 import {PaperProcess} from "../../requests"
 
 let GLOB = {  datas:[],
-              dataFilter: { created_at_start:'', 
-                            created_at_end:'', 
-                            type:'',
-                            customer_code:'',
-                            customer_company:'',
-                            tracking_number:'',
-                            pack_name:''},
+              dataFilter: {},
               types: [{value:"", label:"---"},{value:"kit", label:"Kit"},{value:"receipt", label:"Réception"},{value:"scan", label:"Numérisation"},{value:"return", label:"Retour"}],
             }
 
@@ -51,36 +45,19 @@ class Header extends Component{
                         pack_name:form.values.pack_name
                       }
 
+    GLOB.dataFilter = jsonCompact(GLOB.dataFilter, true)
+
     if(withFilter == "reInit")
-    {
-      GLOB.dataFilter = { created_at_start:'', 
-                          created_at_end:'', 
-                          type:'',
-                          customer_code:'',
-                          customer_company:'',
-                          tracking_number:'',
-                          pack_name:''
-                        }
-    }
+      GLOB.dataFilter = {}
 
     if(withFilter != "none")
-    {
       this.props.onFilter()
-    }
 
     this.setState({filter: false})
   }
 
   checkFilterActive(){
-    if (  GLOB.dataFilter.created_at_start != "" ||
-          GLOB.dataFilter.created_at_end != "" || 
-          GLOB.dataFilter.type != "" || 
-          GLOB.dataFilter.customer_code != "" ||
-          GLOB.dataFilter.customer_company != "" ||
-          GLOB.dataFilter.tracking_number != "" || 
-          GLOB.dataFilter.pack_name != ""
-        ) 
-      return true
+    if (isPresent(GLOB.dataFilter)) return true
     else return false
   }
 
@@ -125,8 +102,8 @@ class Header extends Component{
                             title="Filtre"
                             dismiss={()=>this.closeFilter("none")}
                             inputs={[
-                              {label:'Date de début :', name: 'created_at_start', type:'date', value: GLOB.dataFilter.created_at_start},
-                              {label:'Date de fin :', name: 'created_at_end', type:'date', value: GLOB.dataFilter.created_at_end},
+                              {label:'Date de début :', name: 'created_at_start', type:'date', allowBlank: true, value: GLOB.dataFilter.created_at_start},
+                              {label:'Date de fin :', name: 'created_at_end', type:'date', allowBlank: true, value: GLOB.dataFilter.created_at_end},
                               {label:'Type :', name: 'type', type:'select', dataOptions: GLOB.types, value: GLOB.dataFilter.type},
                               {label:'Code client :', name: 'customer_code', value: GLOB.dataFilter.customer_code},
                               {label:'Nom de la société :', name: 'customer_company', value: GLOB.dataFilter.customer_company},
@@ -325,9 +302,7 @@ class StatsScreen extends Component {
 
   toggleOrderBox(){
     if(GLOB.datas.length > 0)
-    {
       this.setState({orderBox: !this.state.orderBox})
-    }
   }
 
   changePage(page=1){
@@ -379,7 +354,6 @@ class StatsScreen extends Component {
   }
 
   renderStats(){
-
     const arrow_direction = this.state.direction? 'V' : 'Λ'
 
     return  <ScrollView style={{flex:1, padding:3}}>
@@ -415,8 +389,8 @@ class StatsScreen extends Component {
                   options={ this.renderOptions() }
           >
             <Header dataCount={this.total} onFilter={()=>this.refreshDatas()}/>
-              { this.renderStats() }
-              <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
+            { this.renderStats() }
+            <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>
       );
     }

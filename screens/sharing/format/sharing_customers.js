@@ -3,7 +3,7 @@ import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { AnimatedBox,XImage,XText,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm } from '../../../components'
+import { AnimatedBox,XImage,XText,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm,TabNav } from '../../../components'
 
 import { Screen } from '../../layout'
 
@@ -247,91 +247,11 @@ class Header extends Component{
   }
 
   render(){
-    return  <View style={this.styles.container}>
+    return  <View style={[this.styles.container, Theme.head.shape]}>
               {this.state.openModal && <ModalSharing type={this.state.typeModal} dismiss={this.closeModalSharing} />}
               <BoxButton title="Partage avec un compte" onPress={()=>{this.openModalSharing('sharing')}} source={{uri:"sharing_account"}} rayon={60}/>
               <BoxButton title="Demande accès dossier" onPress={()=>{this.openModalSharing('access')}} source={{uri:"request_access"}} rayon={60}/>
             </View> 
-  }
-}
-
-class TabNav extends Component{
-  constructor(props){
-    super(props);
-    this.state = {index: 0}
-
-    this.generateStyles()
-  }
-
-  handleIndexChange(index){
-    this.setState({index: index})
-  }
-
-  generateStyles(){
-    this.styles = StyleSheet.create({
-        container:{
-          flex:0,
-          flexDirection:'row',
-          width:'100%',
-          height:20,
-          borderColor:'#DFE0DF',
-          borderBottomWidth:1,
-          marginTop:10,
-        },
-        touchable:{
-          flex:1,
-        },
-        title:{
-          flex:1,
-          borderTopLeftRadius:10,
-          borderTopRightRadius:10,
-          backgroundColor:'rgba(0,0,0,0)', //for fixing bug on ios
-          fontSize:12,
-          fontWeight:'bold',
-          textAlign:'center'
-        },
-        box:{
-          flex:1,
-          borderTopLeftRadius:10,
-          borderTopRightRadius:10,
-          marginHorizontal:2,
-          backgroundColor:"#BEBEBD",
-          borderColor:'#DFE0DF',
-          borderWidth:1,
-          flexDirection:'row',
-          alignItems:'center',
-        },
-    })
-  }
-
-  renderTabBar(){
-    const tabs = [
-      {title: "Partages"},
-      {title: "Contacts"},
-      {title: "Demandes"},
-    ]
-    var indexStyle = "";
-    const content = tabs.map((tb, index) => {
-          indexStyle = (index == this.state.index)? {backgroundColor:'#E9E9E7',borderColor:'#C0D838'} : {};
-          return (
-           <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={this.styles.touchable}>
-            <View style={[this.styles.box, indexStyle]}>
-              <XText style={this.styles.title}>{tb.title}</XText>
-            </View>
-          </TouchableOpacity>
-      )});
-
-    return <View style={this.styles.container}>
-             {content}
-           </View>  
-  }
-
-  render(){
-    return  <ScrollableTabView tabBarPosition="top" renderTabBar={()=>this.renderTabBar()} page={this.state.index} onChangeTab={(object) => {this.handleIndexChange(object.i)}}>
-              <ViewState type={"datas_shared"} title="Liste des dossiers qui me sont partagés" datas={this.props.datas_shared} />
-              <ViewState type={"contacts"} title="Liste des contacts avec qui je partage mon compte" datas={this.props.contacts} />
-              <ViewState type={"access"} title="Liste des mes demandes d'accès" datas={this.props.access} />
-            </ScrollableTabView>
   }
 }
 
@@ -386,7 +306,17 @@ class SharingScreen extends Component {
                   options={this.props.options}
                   navigation={this.props.navigation}>
             <Header />
-            {this.state.ready && <TabNav datas_shared={this.datas_shared} contacts={this.contacts} access={this.access}/>}
+            { 
+              this.state.ready &&
+              <TabNav headers={[{title: "Partages"},
+                              {title: "Contacts"},
+                              {title: "Demandes"}]}
+              >
+                <ViewState type={"datas_shared"} title="Liste des dossiers qui me sont partagés" datas={this.datas_shared} />
+                <ViewState type={"contacts"} title="Liste des contacts avec qui je partage mon compte" datas={this.contacts} />
+                <ViewState type={"access"} title="Liste des mes demandes d'accès" datas={this.access} />
+              </TabNav>
+            }
             {!this.state.ready && <XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} />}
           </Screen>
       )

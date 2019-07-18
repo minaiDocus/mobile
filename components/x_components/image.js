@@ -5,6 +5,7 @@ import {Image, View, StyleSheet} from 'react-native'
 function require_images(name){
   const images = {
     arrow_doc:require('../../images/arrow_doc.png'),
+    arrow_doc_green:require('../../images/arrow_doc_green.png'),
     arrow_down:require('../../images/arrow_down.png'),
     arrow_up:require('../../images/arrow_up.png'),
     camera_icon:require('../../images/camera_icon.png'),

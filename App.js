@@ -7,7 +7,8 @@ import HomeScreen from './screens/home'
 import SendDocScreen from './screens/sending/send_documents'
 import SendProcessScreen from './screens/sending/send_documents_process'
 
-import DocumentsScreen from './screens/my_documents/my_documents'
+import InvoicesScreen from './screens/my_documents/invoices'
+import OperationsScreen from './screens/my_documents/operations'
 import PublishScreen from './screens/my_documents/publishing'
 
 import StatsScreen from './screens/stats/stats'
@@ -44,8 +45,11 @@ const StackApp = StackNavigator({
                                     Sending: {
                                       screen: SendProcessScreen
                                     },
-                                    Documents: {
-                                      screen: DocumentsScreen
+                                    Invoices: {
+                                      screen: InvoicesScreen
+                                    },
+                                    Operations: {
+                                      screen: OperationsScreen
                                     },
                                     Publish: {
                                       screen: PublishScreen

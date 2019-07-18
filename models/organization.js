@@ -61,6 +61,10 @@ class _organization extends TempRecord {
     _organization.isUpdating = val
   }
 
+  resetUpdatedAt(){
+    _organization.updatedAt = 0
+  }
+
   needUpdate(){
     now = (new Date().getTime()) * 0.001 //millisecond to second
     diffTime = now - _organization.updatedAt

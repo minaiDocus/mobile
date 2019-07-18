@@ -53,17 +53,32 @@ class Header extends Component{
 
   closeFilter(withFilter="none"){
     const form = this.refs.form_1
-    if(isPresent(form.values.content))
-      GLOB.dataFilter['by_piece'] = {
-                                      content: form.values.content,
-                                    }
+    GLOB.dataFilter = {}
 
-    if(isPresent(form.values.is_delivered) || isPresent(form.values.third_party) || isPresent(form.values.piece_number))
-      GLOB.dataFilter['by_preseizure'] =  {
-                                            is_delivered : form.values.is_delivered,
-                                            third_party : form.values.third_party,
-                                            piece_number : form.values.piece_number,
-                                          }
+    GLOB.dataFilter['by_all'] = {
+                                  position: form.values.position,
+                                  position_operation: isPresent(form.values.position)? '0' : ''
+                                }
+    GLOB.dataFilter['by_pack'] =  {
+                                    name: form.values.name,
+                                  }
+    GLOB.dataFilter['by_piece'] = {
+                                    content: form.values.content,
+                                    tags: form.values.tags,
+                                  }
+    GLOB.dataFilter['by_preseizure'] =  {
+                                          is_delivered: form.values.is_delivered,
+                                          third_party: form.values.third_party,
+                                          piece_number: form.values.piece_number,
+                                          delivery_tried_at: form.values.delivery_tried_at,
+                                          delivery_tried_at_operation: isPresent(form.values.delivery_tried_at)? '0' : '',
+                                          date: form.values.date,
+                                          date_operation: isPresent(form.values.date)? '0' : '',
+                                          amount: form.values.amount,
+                                          amount_operation: isPresent(form.values.amount)? '0' : '',
+                                        }
+
+    GLOB.dataFilter = jsonCompact(GLOB.dataFilter, true)
 
     if(withFilter == "reInit")
       GLOB.dataFilter = {}
@@ -85,22 +100,50 @@ class Header extends Component{
   }
 
   formInputs(){
+    let name = ''
     let content = ''
+    let position = ''
+    let tags = ''
     let is_delivered = ''
+    let delivery_tried_at = ''
+    let date = ''
     let third_party = ''
     let piece_number = ''
+    let amount = ''
 
+    try{ name = GLOB.dataFilter.by_pack.name }catch(e){}
+    try{ position = GLOB.dataFilter.by_all.position }catch(e){}
     try{ content = GLOB.dataFilter.by_piece.content }catch(e){}
+    try{ tags = GLOB.dataFilter.by_piece.tags }catch(e){}
     try{ is_delivered = GLOB.dataFilter.by_preseizure.is_delivered }catch(e){}
+    try{ delivery_tried_at = GLOB.dataFilter.by_preseizure.delivery_tried_at }catch(e){}
+    try{ date = GLOB.dataFilter.by_preseizure.date }catch(e){}
     try{ third_party = GLOB.dataFilter.by_preseizure.third_party }catch(e){}
     try{ piece_number = GLOB.dataFilter.by_preseizure.piece_number }catch(e){}
+    try{ amount = GLOB.dataFilter.by_preseizure.amount }catch(e){}
+
+    let year = formatDate(new Date(), 'YYYY')
+    let month = formatDate(new Date(), 'MM')
+    let day = formatDate(new Date(), 'DD')
+    month = parseInt(month) + 4
+    if(month > 12){
+      month = 1
+      year = parseInt(year) + 1
+    }
+    const max_date = `${year}-${formatNumber(month, '00')}-${day}`
 
     const inputs =  [
-                      { label:'Contenu :', name: 'content', value:  content },
+                      { label:'Nom du lot :', name: 'name', value: name },
+                      { label:'Contenu :', name: 'content', value: content },
+                      { label:'N° de pièce iDocus :', name: 'position', keyboardType: 'numeric', value: position },
+                      { label:'Tags :', name: 'tags', value: tags },
                       { separator:'Filtre lié à la pré-affectation' },
                       { label:'Livraison écriture comptable :', name: 'is_delivered', type: 'select', dataOptions:[{label: 'Tous', value: ''}, {label: 'Livrée', value: '1'}, {label: 'Non livrée', value: '2'}], value: is_delivered },
+                      { label:'Date livraison', name: 'delivery_tried_at', type: 'date', allowBlank: true, value: delivery_tried_at },
+                      { label:'Date facture', name: 'date', type: 'date', maxDate: max_date, allowBlank: true, value: date },
                       { label:'Nom de tiers :', name: 'third_party', value: third_party },
                       { label:'N° de pièce d\'origine :', name: 'piece_number', value: piece_number },
+                      { label:'Montant :', name: 'amount', keyboardType: 'decimal-pad', value: amount },
                     ]
 
     return inputs
@@ -135,11 +178,11 @@ class Header extends Component{
                 width:'100%'
               },
       label:{
+              flex: 0,
               color:'#707070',
-              fontSize:16,
+              fontSize:12,
               fontWeight:'bold',
               marginTop:5,
-              height: 25,
               width:'100%',
               backgroundColor: '#FFF'
             },
@@ -165,7 +208,7 @@ class Header extends Component{
     let inputSelection = null
 
     if(this.customers.length == 2)
-      inputSelection = <XText style={this.styles.label}>{this.customers[1].label}</XText>
+      inputSelection = <XText style={this.styles.label}>{truncate(this.customers[1].label, 40)}</XText>
     else
       inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={this.styles.select} onChange={(value) => this.handleClientChange(value)}/>
 
@@ -303,17 +346,16 @@ class DataBloc extends Component {
               <LineList datas={this.state.datas}
                         waitingData={!this.state.ready}
                         renderItems={(data) => <BoxDocs data={data} /> } />
-
               <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} />
             </ScrollView>
   }
 }
 
-class DocumentsScreen extends Component {
+class InvoicesScreen extends Component {
   constructor(props){
     super(props)
 
-    GLOB.filterText = ""
+    GLOB.dataFilter = {}
     GLOB.clientId = 0
 
     this.refreshDatas = this.refreshDatas.bind(this)
@@ -329,8 +371,8 @@ class DocumentsScreen extends Component {
   render() {
       return (
         <Screen style={{flex: 1, flexDirection: 'column'}}
-                title='Mes documents'
-                name='Documents'
+                title='Pièces / Pré-affectations'
+                name='Invoices'
                 withMenu={true}
                 navigation={this.props.navigation}>
           <Header onFilter={()=>this.refreshDatas()} />
@@ -350,4 +392,4 @@ class DocumentsScreen extends Component {
     }
 }
 
-export default DocumentsScreen;
+export default InvoicesScreen;

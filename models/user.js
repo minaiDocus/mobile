@@ -89,6 +89,10 @@ class user extends ActiveRecord {
     user.isUpdating = val
   }
 
+  resetUpdatedAt(){
+    user.updatedAt = 0
+  }
+
   needUpdate(){
     now = (new Date().getTime()) * 0.001 //millisecond to second
     diffTime = now - user.updatedAt

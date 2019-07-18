@@ -2,6 +2,7 @@ export * from './active_request'
 
 export * from './account_sharing'
 export * from './documents_fetcher'
+export * from './operations_fetcher'
 export * from './error_report'
 export * from './file_uploader'
 export * from './firebase_notification'

@@ -42,11 +42,11 @@ export class Requester {
         // let params = f.replace(/([^()]*)[(](.*)[)]/,'$2').trim()
 
         // if(func_name == params){ params = '' }
-          
+
         // if(isPresent(params))
-        //   promises[i] = slf[func_name](eval(params))
+        //   slf[func_name](eval(params)).then(r => handleResponses(r)).catch(r => handleResponses(r))
         // else
-        //   promises[i] = slf[func_name]
+        //   slf[func_name]().then(r => handleResponses(r)).catch(r => handleResponses(r))
         promises[i] = eval(`slf.${f}`)
         promises[i].then(r => handleResponses(r)).catch(r => handleResponses(r))
       }

@@ -233,12 +233,12 @@ export class LinkButton extends Component{
       text:  {
                 flex:3,
                 textAlign:'left',
-                paddingLeft:10
               },
       image:  {
                 flex:1,
                 width:30,
                 height:20,
+                marginRight: 10
               }
     })
   }

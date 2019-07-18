@@ -62,7 +62,7 @@ class Header extends Component{
     return (
               <View style={[this.styles.minicontainer, Theme.head.shape]}>
                 <BoxButton onPress={()=>{CurrentScreen.dismissTo('Send')}} source={{uri:"plane"}} title='Envoi documents' />
-                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Documents')}} source={{uri:"documents"}} title='Mes documents' />
+                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Invoices')}} source={{uri:"documents"}} title='Mes factures' />
               </View>
             );
   }
@@ -276,7 +276,7 @@ class AppInfos extends Component{
                             </View>
                         </View>
                       </TouchableWithoutFeedback>
-    renderToFrontView(AppInfos, 'UpSlide', ()=>{clearFrontView()})
+    renderToFrontView(AppInfos, 'fade', ()=>{clearFrontView()})
   }
 
   render(){

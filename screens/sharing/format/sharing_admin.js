@@ -10,7 +10,7 @@ import { AccountSharing } from "../../../requests"
 
 let GLOB = {
               datas:[],
-              dataFilter: {account:'', collaborator:''},
+              dataFilter: {},
             }
 
 class Header extends Component{
@@ -118,21 +118,19 @@ class Header extends Component{
     const form = this.refs.form_1
     GLOB.dataFilter = { account: form.values.account, collaborator: form.values.collaborator }
 
+    GLOB.dataFilter = jsonCompact(GLOB.dataFilter, true)
+
     if(withFilter == "reInit")
-    {
-      GLOB.dataFilter = { account: '', collaborator: '' }
-    }
+      GLOB.dataFilter = {}
 
     if(withFilter != "none")
-    {
       this.props.onFilter()
-    }
 
     this.setState({filter: false})
   }
 
   checkFilterActive(){
-    if (GLOB.dataFilter.account != "" || GLOB.dataFilter.collaborator != "") return true
+    if (isPresent(GLOB.dataFilter)) return true
     else return false
   }
 

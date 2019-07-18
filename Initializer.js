@@ -207,7 +207,7 @@ global.jsonCompact = (json, strict=false) => {
         let result = jsonCompact(value, strict)
         if(strict && isPresent(result))
           jsonResult[key] = result
-        else if(result != null && typeof(result) !== 'undefined')
+        else if(!strict && result != null && typeof(result) !== 'undefined')
           jsonResult[key] = result
       }
       else if(present){
