@@ -75,10 +75,10 @@ class ModalSharing extends Component{
 
   formSharing(){
     return [
-              {label: "* Couriel :", name: "email", keyboardType: "email-address"},
-              {label: "* Nom de la société :", name: "company"},
-              {label: "Prénom :", name: "first_name"},
-              {label: "Nom :", name: "last_name"}
+              {label: "* Couriel", name: "email", keyboardType: "email-address"},
+              {label: "* Nom de la société", name: "company"},
+              {label: "Prénom", name: "first_name"},
+              {label: "Nom", name: "last_name"}
            ]
   }
 
@@ -139,8 +139,8 @@ class ViewState extends Component{
       },
       image:{
         flex:0,
-        width:15,
-        height:15
+        width:19,
+        height:19
       },
       details:{
         flex:1,
@@ -161,9 +161,9 @@ class ViewState extends Component{
 
     return  <View key={index} style={{flex:1}}>
                 <View style={[style.details, {backgroundColor:colorStriped}]}>
-                  <XImage source={{uri: 'arrow_up'}} style={style.image} />
+                  <XImage source={{icon: 'caret-right'}} style={style.image} />
                   <XText style={{paddingHorizontal:10, flex:1}}>{data.name}</XText>
-                  <ImageButton source={{uri:'delete'}} CStyle={{flex:0, width:20, padding:8, alignItems:'center', justifyContent:'center'}} IStyle={style.image} onPress={()=>this.handleDelete(data.id_idocus)}/>
+                  <ImageButton source={{icon: 'close'}} CStyle={{flex:0, width:20, padding:8, alignItems:'center', justifyContent:'center'}} IStyle={style.image} onPress={()=>this.handleDelete(data.id_idocus)}/>
                 </View>
             </View>
   }

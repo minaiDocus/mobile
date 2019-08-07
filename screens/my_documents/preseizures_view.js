@@ -169,8 +169,8 @@ class BoxZoom extends Component{
     this.edition['id'] = account.id
 
     this.form_inputs =  [
-                          { label: "Numéro :", name: "number", value: account.number },
-                          { label: "Lettrage :", name: "lettering", value: account.lettering },
+                          { label: "Numéro", name: "number", value: account.number },
+                          { label: "Lettrage", name: "lettering", value: account.lettering },
                         ]
 
     this.setState({ showForm: true })
@@ -181,8 +181,8 @@ class BoxZoom extends Component{
     this.edition['id'] = entry.id
 
     this.form_inputs =  [
-                          { label: "* Type :", name: "type", type:'radio', dataOptions:[{label: 'Débit', value: '1'}, {label: 'Crédit', value: '2'}], value: entry.type },
-                          { label: "* Montant :", name: "amount", keyboardType: 'decimal-pad', value: entry.amount || 0 },
+                          { label: "* Type", name: "type", type:'radio', dataOptions:[{label: 'Débit', value: '1'}, {label: 'Crédit', value: '2'}], value: entry.type },
+                          { label: "* Montant", name: "amount", keyboardType: 'decimal-pad', value: entry.amount || 0 },
                         ]
 
     this.setState({ showForm: true })
@@ -224,8 +224,6 @@ class BoxZoom extends Component{
     this.styles = StyleSheet.create({
       boxZoom:{
                 flex:1,
-                paddingHorizontal:"5%",
-                paddingVertical:"2%",
                 flexDirection:'column',
                 justifyContent:'flex-end',
                 backgroundColor: Theme.modal.shape.backgroundColor || '#fff'
@@ -233,23 +231,26 @@ class BoxZoom extends Component{
       head: {
               flex:0,
               flexDirection:'row',
+              alignItems: 'center',
               borderBottomWidth:2,
               borderColor:'#DFE0DF',
-              paddingBottom:5,
               height: 30,
+              paddingHorizontal:"2%",
               width: '100%',
-              marginBottom:7,
             },
       foot: { 
               flex:0,
               flexDirection:'row',
               alignItems:'center',
               justifyContent:'center',
+              padding:"3%",
             },
       body: {
               flex:1,
-              marginBottom:5,
+              marginHorizontal:"3%",
+              marginVertical:"2%",
               overflow: 'hidden',
+              backgroundColor: '#000',
               borderColor:'#000',
               borderWidth:2
             },
@@ -310,7 +311,7 @@ class BoxZoom extends Component{
 
     let stamp_img = getImgStampOf(this.props.data.state)
 
-    return  <View style={{flex: 1}}>
+    return  <View style={{flex: 1, paddingHorizontal: '3%'}}>
               <View style={this.styles.body}>
               {
                 this.src &&
@@ -376,9 +377,9 @@ class BoxZoom extends Component{
                           selectedText: { color: '#fff' }
                         }
 
-      return  <TabNav  CStyle={{flex: 1}}
-                        BStyle={ barStyle }
-                        headers={tab_headers} 
+      return  <TabNav CStyle={{flex: 1}}
+                      BStyle={ barStyle }
+                      headers={tab_headers} 
               >
                 <View ref='entries' style={{flex: 1}}>
                 <XText style={{flex: 0, paddingBottom: 5, marginLeft: 3}}>Unité monétaire: <XText style={{fontWeight: 'bold'}}>{ this.preseizure.currency || 'EUR' }</XText></XText>
@@ -396,7 +397,7 @@ class BoxZoom extends Component{
               </TabNav>
     }
 
-    return <View style={{flex: 1.3, alignItems: 'center', justifyContent: 'center'}}>
+    return <View style={{flex: 1.3, alignItems: 'center', justifyContent: 'center', paddingHorizontal: '3%'}}>
             { !this.state.ready && <XImage loader={true} width={40} height={40} /> }
             { this.state.ready && renderDetails() }
             { stamp_img != 'none' && <XImage source={{uri:stamp_img}} style={this.styles.stamp_absolute} /> }
@@ -404,7 +405,7 @@ class BoxZoom extends Component{
   }
 
   render(){
-    const selection_img = this.state.is_selected ? 'no_selection' : 'validate_green'
+    const selection_img = this.state.is_selected ? 'ban' : 'check'
 
     let piece_number = GLOB.idZoom + 1
     let style_number = { backgroundColor:'#BEBEBD' }
@@ -427,11 +428,12 @@ class BoxZoom extends Component{
                 />
 
               }
-              <View style={this.styles.head}>
+              <View style={[this.styles.head, Theme.modal.head]}>
                 <SimpleButton CStyle={[{flex:0, width: 50, height: 20}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.props.hide()} title="Retour" />
                 {
                   this.props.selectElement &&
-                  <ImageButton  source={{uri:selection_img}} 
+                  <ImageButton  source={{icon:selection_img}}
+                                IOptions={{color: Theme.primary_button.shape.backgroundColor}}
                                 CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:45, backgroundColor: 'transparent', marginHorizontal: 5}}
                                 IStyle={{flex:0, width:18, height:18}}
                                 onPress={()=>{this.handleSelection()}} />
@@ -446,7 +448,7 @@ class BoxZoom extends Component{
                   }
                 </View>
               </View>
-              <XText style={{flex: 0, marginBottom: 3}}>{this.props.data.name}</XText>
+              <XText style={{flex: 0, marginBottom: 3, padding: '3%'}}>{this.props.data.name}</XText>
               {
                 GLOB.source == 'pack' &&
                 <TabNav headers={[{title: "Pré-affectation"}, {title: "Pièce"}]}
@@ -552,7 +554,8 @@ class BoxInfos extends Component{
                 <SimpleButton CStyle={[{position: 'absolute', top:0, right:0, zIndex: 200, elevation: 8 /**Elevate because of line list elevation**/}, Theme.primary_button.shape]}
                               TStyle={Theme.primary_button.text}
                               title='Livraison écritures'
-                              LImage={{uri:'loopc_green'}}
+                              LImage={{icon: 'refresh'}}
+                              IOptions={{color:Theme.primary_button.text.color}}
                               onPress={()=>{this.multiDelivery()}}/>
               }
             </ScrollView>
@@ -767,8 +770,8 @@ class PreseizureBox extends Component{
                     <XText style={{flex: 1}}>{truncate(this.props.data.error_message, 30)}</XText>
                   </View>
                   <View style={{flex: 0, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                    { !this.state.is_delivered && <ImageButton source={{uri:'loopc'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.deliver()}}/> }
-                    <ImageButton source={{uri:'edition'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.edit()}}/>
+                    { !this.state.is_delivered && <ImageButton source={{icon: 'refresh'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.deliver()}}/> }
+                    <ImageButton source={{icon: 'edit'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.edit()}}/>
                   </View>
                 </View>
               </View>
@@ -832,20 +835,20 @@ class BoxPublish extends Component{
         }
         const max_date = `${year}-${formatNumber(month, '00')}-${day}`
 
-        this.form_inputs.push({ label: "Date :", name: "date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.date })
-        this.form_inputs.push({ label: "Date d'échéance:", name: "deadline_date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.deadline_date })
-        this.form_inputs.push({ label: "Nom de tiers :", name: "third_party", value: preseizure.third_party })
+        this.form_inputs.push({ label: "Date", name: "date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.date })
+        this.form_inputs.push({ label: "Date d'échéance", name: "deadline_date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.deadline_date })
+        this.form_inputs.push({ label: "Nom de tiers", name: "third_party", value: preseizure.third_party })
 
         if(this.editionType == 'simple')
         {
-          this.form_inputs.push({ label: "Libelé opération :", name: "operation_label", value: preseizure.operation_label })
-          this.form_inputs.push({ label: "Numéro de pièces :", name: "piece_number", value: preseizure.piece_number })
-          this.form_inputs.push({ label: "Montant d'origine :", name: "amount", keyboardType: 'decimal-pad', value: preseizure.amount })
+          this.form_inputs.push({ label: "Libelé opération", name: "operation_label", value: preseizure.operation_label })
+          this.form_inputs.push({ label: "Numéro de pièces", name: "piece_number", value: preseizure.piece_number })
+          this.form_inputs.push({ label: "Montant d'origine", name: "amount", keyboardType: 'decimal-pad', value: preseizure.amount })
         }
 
-        this.form_inputs.push({ label: "Devise :", name: "currency", value: preseizure.currency })
-        this.form_inputs.push({ label: "Taux de conversion :", name: "conversion_rate", keyboardType: 'decimal-pad', value: preseizure.conversion_rate })
-        this.form_inputs.push({ label: "Remarque :", name: "observation", multiline: true, value: preseizure.observation })
+        this.form_inputs.push({ label: "Devise", name: "currency", value: preseizure.currency })
+        this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", keyboardType: 'decimal-pad', value: preseizure.conversion_rate })
+        this.form_inputs.push({ label: "Remarque", name: "observation", multiline: true, value: preseizure.observation })
       }
 
       if(this.editionType == 'simple')
@@ -1071,7 +1074,7 @@ export class PreseizuresView extends Component{
           try{ callback() }catch(e){}
         }
 
-        Notice.alert('Livraison écriture', `Voulez vous vraiment livrer tous les écritures comptables non livrées du lot vers ${GLOB.pack_or_report.software_human_name}?`, 
+        Notice.alert('Livraison écriture', `Voulez vous vraiment livrer tout les écritures comptables non livrées du lot vers ${GLOB.pack_or_report.software_human_name}?`, 
           [
             {text: 'Oui', onPress: () => call() },
             {text: 'Non', style: 'cancel'}
@@ -1093,25 +1096,30 @@ export class PreseizuresView extends Component{
                         </View>
                         <View style={{flex:1}}>
                           <View style={{flex:1, flexDirection:'row', height: 20, justifyContent:'flex-end'}}>
-                            <ImageButton  source={{uri:"validate_green"}} 
+                            <ImageButton  source={{icon:"check"}}
+                              IOptions={{size: 17, color: '#FFF'}}
                               CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
                               IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{this.selectAllItem()}} />
-                            <ImageButton  source={{uri:"no_selection"}} 
+                            <ImageButton  source={{icon:"ban"}} 
+                              IOptions={{size: 17, color: '#FFF'}}
                               CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
                               IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{this.unselectAllItem()}} />
-                            <ImageButton  source={{uri:"delete_green"}} 
+                            <ImageButton  source={{icon:"close"}} 
+                              IOptions={{size: 17, color: '#FFF'}}
                               CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
                               IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{ Notice.remove('selection_items_notification', true) }} />
                           </View>
                           <View style={{flex:1, flexDirection:'row', height: 35, justifyContent:'flex-end',  marginTop:7}}>
-                            <ImageButton  source={{uri:"loopc_green"}} 
+                            <ImageButton  source={{icon:"refresh"}}
+                              IOptions={{size: 17, color: '#FFF'}}
                               CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
                               IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{this.multiDelivery()}} />
-                            <ImageButton  source={{uri:"edition_green"}} 
+                            <ImageButton  source={{icon:"edit"}} 
+                              IOptions={{size: 17, color: '#FFF'}}
                               CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
                               IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{this.multiEdition()}} />

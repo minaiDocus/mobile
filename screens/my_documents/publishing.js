@@ -35,7 +35,7 @@ class PublishScreen extends Component{
   componentDidMount(){
     setTimeout(()=>{
       this.refs.main_animated.start()
-    }, 2000)
+    }, 1300)
   }
 
   changeView(view = null){

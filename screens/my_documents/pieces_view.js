@@ -141,8 +141,6 @@ class BoxZoom extends Component{
     this.styles = StyleSheet.create({
       boxZoom:{
                 flex:1,
-                paddingHorizontal:"3%",
-                paddingVertical:"2%",
                 flexDirection:'column',
                 justifyContent:'flex-end',
                 backgroundColor: Theme.modal.shape.backgroundColor || '#fff'
@@ -150,23 +148,26 @@ class BoxZoom extends Component{
       head: {
               flex:0,
               flexDirection:'row',
+              alignItems: 'center',
               borderBottomWidth:2,
               borderColor:'#DFE0DF',
-              paddingBottom:5,
               height: 30,
+              paddingHorizontal:"2%",
               width: '100%',
-              marginBottom:7,
             },
       foot: { 
               flex:0,
               flexDirection:'row',
               alignItems:'center',
               justifyContent:'center',
+              padding:"3%",
             },
       body: {
               flex:1,
-              marginBottom:5,
+              marginHorizontal:"3%",
+              marginVertical:"2%",
               overflow: 'hidden',
+              backgroundColor: '#000',
               borderColor:'#000',
               borderWidth:2
             },
@@ -217,7 +218,7 @@ class BoxZoom extends Component{
     if(!this.src)
       this.src = DocumentsFetcher.renderDocumentUri(this.props.data.large, this.props.data.force_temp_doc)
 
-    const selection_img = this.state.is_selected ? 'no_selection' : 'validate_green'
+    const selection_img = this.state.is_selected ? 'ban' : 'check'
 
     let stamp_img = getImgStampOf(this.props.data.state)
 
@@ -230,11 +231,12 @@ class BoxZoom extends Component{
     }
 
     return  <View style={this.styles.boxZoom}>
-              <View style={this.styles.head}>
+              <View style={[this.styles.head, Theme.modal.head]}>
                 <SimpleButton CStyle={[{flex:0, width: 50, height: 20}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.props.hide()} title="Retour" />
                 {
                   this.props.selectElement &&
-                  <ImageButton  source={{uri:selection_img}} 
+                  <ImageButton  source={{icon:selection_img}} 
+                                IOptions={{color: Theme.primary_button.shape.backgroundColor}}
                                 CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:45, backgroundColor: 'transparent', marginHorizontal: 5}}
                                 IStyle={{flex:0, width:18, height:18}}
                                 onPress={()=>{this.handleSelection()}} />
@@ -263,7 +265,7 @@ class BoxZoom extends Component{
                       Notice.alert("Erreur loading pdf", error.toString())
                   }} />
               </View>
-              <View style={this.styles.foot}>
+              <View style={[this.styles.foot, Theme.modal.foot]}>
                 <XText style={[this.styles.text, this.styles.textFoot, {textAlign:'left'}]}>{this.state.current_page}</XText>
                 { stamp_img != 'none' && <XImage source={{uri:stamp_img}} style={this.styles.stamp} /> }
                 <XText style={[this.styles.text, this.styles.textFoot, {textAlign:'right'}]}>{this.state.nb_pages} page(s)</XText>
@@ -774,21 +776,25 @@ export class PiecesView extends Component{
                         </View>
                         <View style={{flex:1}}>
                           <View style={{flex:1, flexDirection:'row', height: 20, justifyContent:'flex-end'}}>
-                            <ImageButton  source={{uri:"validate_green"}} 
+                            <ImageButton  source={{icon:"check"}}
+                              IOptions={{size: 17, color: '#FFF'}}
                               CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
                               IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{this.selectAllItem()}} />
-                            <ImageButton  source={{uri:"no_selection"}} 
+                            <ImageButton  source={{icon:"ban"}}
+                              IOptions={{size: 17, color: '#FFF'}}
                               CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
                               IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{this.unselectAllItem()}} />
-                            <ImageButton  source={{uri:"delete_green"}} 
+                            <ImageButton  source={{icon:"close"}}
+                              IOptions={{size: 17, color: '#FFF'}}
                               CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
                               IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{ Notice.remove('selection_items_notification', true) }} />
                           </View>
                           <View style={{flex:1, flexDirection:'row', height: 35, justifyContent:'flex-end',  marginTop:7}}>
-                            <SimpleButton LImage={{uri:"edition"}} 
+                            <SimpleButton LImage={{icon: "edit"}}
+                              IOptions={{size: 16}} 
                               CStyle={{flex:0, alignItems:'center', justifyContent:'center', backgroundColor:'#C0D838', width:125, height: 35, borderRadius: 2}}
                               TStyle={{fontSize: 8}}
                               title = 'Modification analytiques'

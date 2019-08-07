@@ -133,17 +133,17 @@ class Header extends Component{
     const max_date = `${year}-${formatNumber(month, '00')}-${day}`
 
     const inputs =  [
-                      { label:'Nom du lot :', name: 'name', value: name },
-                      { label:'Contenu :', name: 'content', value: content },
-                      { label:'N° de pièce iDocus :', name: 'position', keyboardType: 'numeric', value: position },
-                      { label:'Tags :', name: 'tags', value: tags },
+                      { label:'Nom du lot', name: 'name', value: name },
+                      { label:'Contenu', name: 'content', value: content },
+                      { label:'N° de pièce iDocus', name: 'position', keyboardType: 'numeric', value: position },
+                      { label:'Tags', name: 'tags', value: tags },
                       { separator:'Filtre lié à la pré-affectation' },
-                      { label:'Livraison écriture comptable :', name: 'is_delivered', type: 'select', dataOptions:[{label: 'Tous', value: ''}, {label: 'Livrée', value: '1'}, {label: 'Non livrée', value: '2'}], value: is_delivered },
+                      { label:'Livraison écriture comptable', name: 'is_delivered', type: 'select', dataOptions:[{label: 'Tous', value: ''}, {label: 'Livrée', value: '1'}, {label: 'Non livrée', value: '2'}], value: is_delivered },
                       { label:'Date livraison', name: 'delivery_tried_at', type: 'date', allowBlank: true, value: delivery_tried_at },
                       { label:'Date facture', name: 'date', type: 'date', maxDate: max_date, allowBlank: true, value: date },
-                      { label:'Nom de tiers :', name: 'third_party', value: third_party },
-                      { label:'N° de pièce d\'origine :', name: 'piece_number', value: piece_number },
-                      { label:'Montant :', name: 'amount', keyboardType: 'decimal-pad', value: amount },
+                      { label:'Nom de tiers', name: 'third_party', value: third_party },
+                      { label:'N° de pièce d\'origine', name: 'piece_number', value: piece_number },
+                      { label:'Montant', name: 'amount', keyboardType: 'decimal-pad', value: amount },
                     ]
 
     return inputs
@@ -236,7 +236,7 @@ class Header extends Component{
               </View>
               <View style={this.styles.right}>
                 <View style={{flex:1, flexDirection:'row', marginLeft: 3, padding: 5}}>
-                  <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} />
+                  <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{icon: "filter"}} />
                 </View>
               </View>
             </View>
@@ -267,8 +267,8 @@ class BoxDocs extends Component {
                     },
         image:{
                 flex:0,
-                width:15,
-                height:15,
+                width:19,
+                height:19,
                 marginRight:20
               }
     })
@@ -277,7 +277,7 @@ class BoxDocs extends Component {
   render(){
     return  <TouchableOpacity style={{flex:1}} onPress={()=>this.handleClick()} >
               <View style={this.styles.container}>
-                <XImage source={{uri:"arrow_doc"}} style={this.styles.image} />
+                <XImage source={{icon: "caret-right"}} style={this.styles.image} />
                 <XText>{this.props.data.name.toString()}</XText>
               </View>
             </TouchableOpacity>

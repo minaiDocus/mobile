@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import SplashScreen from 'react-native-splash-screen'
 import { StyleSheet, View } from 'react-native'
 
-import { XImage, XText, XTextInput, Navigator, SimpleButton } from '../components'
+import { XImage, XText, XTextInput, Navigator, SimpleButton, AnimatedBox } from '../components'
 
 import { Screen } from './layout'
 
@@ -21,16 +21,15 @@ class LoginScreen extends Component {
     this.screen_name = 'Login'
 
     GLOB.login = GLOB.password = ""
-    this.state = {loading: false, focusInput: false, ready: false, orientation: 'portrait'}
+    this.state = {loading: false, ready: false, orientation: 'portrait'}
 
     this.goToHome = this.goToHome.bind(this)
     this.actionLogin = this.actionLogin.bind(this)
     this.actionPassword = this.actionPassword.bind(this)
     this.dismissLoader = this.dismissLoader.bind(this)
-    this.focusInput = this.focusInput.bind(this)
-    this.leaveFocusInput = this.leaveFocusInput.bind(this)
     this.submitForm = this.submitForm.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.hideSplash = this.hideSplash.bind(this)
 
     this.generateStyles() //style generation
   }
@@ -59,13 +58,25 @@ class LoginScreen extends Component {
       if(user.id && responses[0].code != 500)
       {
         this.goToHome()
-        setTimeout(()=>{ SplashScreen.hide() }, 1000)
+        setTimeout(()=>{ this.hideSplash() }, 1000)
       }
       else
       {
-        SplashScreen.hide()
+        this.hideSplash()
       }
     })
+  }
+
+  hideSplash(){
+    SplashScreen.hide()
+
+    setTimeout(()=>{
+      try{
+        this.refs.animated_logo.start(()=>{
+          this.refs.animated_copyright.start()
+        })
+      }catch(e){}
+    }, 700)
   }
 
   dismissLoader(message){
@@ -78,7 +89,16 @@ class LoginScreen extends Component {
   }
 
   goToHome(){
-    CurrentScreen.dismissTo('Home', { welcome: true })
+    try{
+      this.refs.animated_copyright.leave(()=>{
+        this.refs.animated_logo.leave(()=>{
+          CurrentScreen.dismissTo('Home', { welcome: true })
+        })
+      })
+    }
+    catch(e){
+      CurrentScreen.dismissTo('Home', { welcome: true })
+    }
   }
 
   handleLogin(text){
@@ -87,14 +107,6 @@ class LoginScreen extends Component {
 
   handlePass(text){
     GLOB.password = text
-  }
-
-  focusInput(){
-    this.setState({focusInput: true})
-  }
-
-  leaveFocusInput(){
-    this.setState({focusInput: false})
   }
 
   handleSubmit(){
@@ -134,7 +146,7 @@ class LoginScreen extends Component {
                   flex:1,
                   flexDirection:'column',
                   justifyContent:'flex-start',
-                  paddingHorizontal:20,
+                  paddingHorizontal:3,
                   marginHorizontal:20,
 
                   elevation: 7, //Android Shadow
@@ -164,11 +176,6 @@ class LoginScreen extends Component {
                   alignItems:'center',
                   maxHeight:50,
                 },
-      icons:{
-              flex:0,
-              width:20,
-              height:20,
-            },
       inputs: {
                 flex:1,
                 height:40,
@@ -213,22 +220,17 @@ class LoginScreen extends Component {
               >
         <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
           <View style={[this.styles.container, Theme.container]}>   
-            { this.state.focusInput == false && 
-              <View style={{flex:1,flexDirection:'row',alignItems:'center'}}>
-                <XImage style={{flex:1, height:100}} source={{uri:"charge"}} />
-              </View>
-            }
+            <AnimatedBox ref='animated_logo' type='DownSlide' startOnLoad={false} hideTillStart={true} durationIn={300} durationOut={300} style={{flex:0,flexDirection:'row',alignItems:'center', paddingVertical: 20, marginTop:3, backgroundColor: 'rgba(0,0,0,0.4)'}}>
+              <XImage style={{flex:0, width: '100%', height:70}} source={{uri:"charge"}} />
+            </AnimatedBox>
             {
               !this.state.ready && <XText style={this.styles.textCharging}>Communication au serveur en cours ..., Veuillez patienter svp</XText>
             }
             {this.state.ready && 
               <View style={this.styles.form}>
                 <View style={this.styles.boxInput}>
-                  <XImage style={this.styles.icons} source={{uri:"userpic"}} />
                   <XTextInput ref="inputLogin"
                               editable={!this.state.loading}
-                              onFocus={this.focusInput} 
-                              onBlur={this.leaveFocusInput}
                               autoCorrect={false}
                               selectTextOnFocus={true}
                               CStyle={this.styles.inputs} 
@@ -237,14 +239,12 @@ class LoginScreen extends Component {
                               next={{action: this.actionPassword}}
                               returnKeyType='next'
                               onSubmitEditing={this.actionPassword}
+                              RImage={{icon: "user"}}
                               onChangeText={(text) => this.handleLogin(text)}/>
                 </View>
                 <View style={this.styles.boxInput}>
-                  <XImage style={this.styles.icons} source={{uri:"cadenas"}} />
                   <XTextInput ref="inputPassword"
                               editable={!this.state.loading}
-                              onFocus={this.focusInput} 
-                              onBlur={this.leaveFocusInput} 
                               autoCorrect={false} 
                               selectTextOnFocus={true}
                               secureTextEntry={true} 
@@ -253,7 +253,8 @@ class LoginScreen extends Component {
                               onSubmitEditing={this.submitForm}
                               placeholder="Mot de passe"
                               next={{title: "Connexion", action: this.submitForm}}
-                              previous={{action: this.actionLogin}} 
+                              previous={{action: this.actionLogin}}
+                              RImage={{icon: "lock"}}
                               onChangeText={(text) => this.handlePass(text)}/>
                 </View>
                 {!this.state.loading && <SimpleButton onPress={() => this.submitForm()} CStyle={[this.styles.submit, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} title="Connexion" />}
@@ -261,6 +262,11 @@ class LoginScreen extends Component {
               </View>
             }
           </View>
+        </View>
+        <View style={{flex:0, position:'absolute', bottom: 0, right: 0, width: '70%'}}>
+          <AnimatedBox ref='animated_copyright' type='RightSlide' startOnLoad={false} hideTillStart={true} durationIn={300} durationOut={300} style={{flex:1, flexDirection:'row', alignItems:'center', padding: 2, backgroundColor: '#4C5A65', borderTopLeftRadius: 5}}>
+            <XText style={{flex:1, textAlign: 'right', paddingHorizontal: 10, fontSize: 10, color: '#FFF'}}>IDOCUS © Copyright {Config.cp_year.toString()}</XText>
+          </AnimatedBox>
         </View>
       </Screen>
     )

@@ -89,10 +89,10 @@ class ContactForm extends Component{
                         title="Ajout contact"
                         dismiss={()=>this.props.dismiss()}
                         inputs={[
-                          {label:'* Couriel :', name: 'email', keyboardType: 'email-address', editable: this.input_edit, value: this.dataForm.email},
-                          {label:'* Nom de la société :', name: 'company', value: this.dataForm.company },
-                          {label:'Prénom :', name: 'first_name', value: this.dataForm.first_name },
-                          {label:'Nom :', name: 'last_name', value: this.dataForm.last_name }
+                          {label:'* Couriel', name: 'email', keyboardType: 'email-address', editable: this.input_edit, value: this.dataForm.email},
+                          {label:'* Nom de la société', name: 'company', value: this.dataForm.company },
+                          {label:'Prénom', name: 'first_name', value: this.dataForm.first_name },
+                          {label:'Nom', name: 'last_name', value: this.dataForm.last_name }
                         ]}
                         buttons={[
                           {title: "Valider", action: ()=>this.validateProcess()},
@@ -188,7 +188,7 @@ class Header extends Component{
                   />
               }
               <BoxButton title="Ajout" onPress={()=>{this.openForm()}} source={{uri:"add_contact"}}/>
-              <BoxButton title="Filtre" blink={!this.state.openFilter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}}/>
+              <BoxButton title="Filtre" blink={!this.state.openFilter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{icon: "filter"}}/>
             </View>
   }
 }
@@ -248,8 +248,8 @@ class BoxStat extends Component{
         },
         image:{
           flex:0,
-          width:15,
-          height:15
+          width:19,
+          height:19
         },
         champ:{
           flex:1,
@@ -271,17 +271,17 @@ class BoxStat extends Component{
   }
 
   render(){
-    const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"
+    const arrow = (this.state.showDetails)? "caret-down" : "caret-right"
 
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={this.styles.container}>
-                <XImage source={{uri:arrow}} style={[{flex:0, width:20, marginRight:8}, this.styles.image]} />
+                <XImage source={{icon:arrow}} style={[{flex:0, width:20, marginRight:8}, this.styles.image]} />
                 <View style={{flex:1}}>
                   <XText style={{fontWeight:'bold'}}>{this.props.data.email.toString()}</XText>
                 </View>
                 <View style={{flex:0, width:70, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                  <ImageButton source={{uri:'edition'}} CStyle={{padding:8}} IStyle={this.styles.image} onPress={()=>this.handleEdit()}/>
-                  <ImageButton source={{uri:'delete'}} CStyle={{padding:8}} IStyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
+                  <ImageButton source={{icon:'edit'}} CStyle={{padding:8}} IStyle={this.styles.image} onPress={()=>this.handleEdit()}/>
+                  <ImageButton source={{icon:'close'}} CStyle={{padding:8}} IStyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
                 </View>
               </View>
               {

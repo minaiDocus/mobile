@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {View, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Keyboard, Dimensions} from 'react-native'
-import {XModal, XText, SimpleButton, AnimatedBox, LinkButton} from '../index'
+import {XModal, XImage, XText, SimpleButton, AnimatedBox, LinkButton} from '../index'
 
 class ModalInput extends Component{
   constructor(props){
@@ -201,7 +201,7 @@ class ModalInput extends Component{
                       }
                       </View>
                       <View style={{flex:0, justifyContent: 'center', alignItems:'center'}}>
-                        {this.label && <XText style={this.styles.label}>{this.label}</XText>}
+                        {this.props.label && <XText style={this.styles.label}>{this.props.label}</XText>}
                         <View style={[this.styles.boxInput, androidStyle]}>
                           <TextInput ref="input"
                                      onSubmitEditing={()=>{this.closeKeyboard(this.props.onSubmitEditing)}}
@@ -259,7 +259,7 @@ export class XTextInput extends Component{
     this.next_action = this.props.next || null      
 
     this.liveChange = this.props.liveChange || false
-    this.label = this.props.placeholder || this.props.label || ""
+    this.label = this.props.label || this.props.placeholder || null
 
     this.openKeyboard = this.openKeyboard.bind(this)
     this.closeKeyboard = this.closeKeyboard.bind(this)
@@ -330,26 +330,41 @@ export class XTextInput extends Component{
     this.styles = StyleSheet.create({
       prevStyle:  {
                     minHeight:30,
-                    paddingBottom:8
+                    overflow: 'hidden'
                   },
       textStyle:  {
                     flex:1,
-                    color: this.editable? '#606060' : '#A6A6A6',
+                    color: this.editable? Theme.inputs.label.color : '#A6A6A6',
                   },
       boxText:  {
                   flex:1,
-                  borderBottomWidth:1,
-                  borderColor:'#909090',
-                  backgroundColor: '#FFF',
-                  padding:5
-                }
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingHorizontal: 5
+                },
+      labelBox:{
+        flex: 0,
+        justifyContent: 'center',
+        width: '41%',
+        height: '98%',
+        borderColor: Theme.inputs.shape.borderColor || '#999',
+        borderRightWidth: 2,
+        borderTopLeftRadius: Theme.inputs.shape.borderRadius,
+        borderBottomLeftRadius: Theme.inputs.shape.borderRadius,
+        backgroundColor: '#FFF',
+        marginRight: 5,
+        marginLeft: -5,
+        paddingTop: 1,
+        paddingLeft: 5,
+        overflow: 'hidden'
+      },
     })
   }
 
   render(){
     const CStyle = this.props.CStyle
     const TStyle = this.props.TStyle
-    let value = this.state.value || this.props.placeholder || ""
+    let value = this.state.value || this.label || ""
     if(this.props.secureTextEntry && this.state.value.length > 0)
     {
       let password = ""
@@ -363,6 +378,7 @@ export class XTextInput extends Component{
             {this.state.openKeyboard && 
               <ModalInput 
                 {...this.props}
+                label={this.label}
                 currValue={this.state.value}
                 closeKeyboard={this.closeKeyboard}
                 changeText={this.changeText}
@@ -374,8 +390,11 @@ export class XTextInput extends Component{
               />
             }  
             <TouchableOpacity style={{flex: 1}} onPress={()=>this.openKeyboard()} >
-              <View ref='mainView' style={this.styles.boxText} onLayout={this.onLayoutOnce} >
+              <View ref='mainView' style={[this.styles.boxText, Theme.inputs.shape]} onLayout={this.onLayoutOnce} >
+                {this.props.LImage && <XImage size={17} color={Theme.primary_button.shape.backgroundColor} source={this.props.LImage} />}
+                {this.state.value.length > 0 && this.label && <View style={this.styles.labelBox}><XText style={{flex: 0}}>{this.label}</XText></View>}
                 <XText style={[this.styles.textStyle, TStyle]}>{value}</XText>
+                {this.props.RImage && <XImage size={17} color={Theme.primary_button.shape.backgroundColor} source={this.props.RImage} />}
               </View>
             </TouchableOpacity>
           </View>

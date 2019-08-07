@@ -676,7 +676,7 @@ export class CropperView extends Component{
               { this.withPreview &&
                 <View style={{flex:0,flexDirection:'row',padding:10, height:this.optionH}}>
                   <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.remakeCrop()} source={{uri: "remake"}} />
-                  <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.validateCropping()} source={{uri: "validate"}} />
+                  <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.validateCropping()} source={{icon: "check"}} IOptions={{size: 23}} />
                 </View>
               }
             </View>
@@ -691,7 +691,7 @@ export class CropperView extends Component{
         }]
     }
 
-    let _img_cropping = this.withPreview ? 'img_crop' : 'validate'
+    let _img_cropping = this.withPreview ? 'crop' : 'check'
 
     return  <View style={{flex:1}}>
               <View style={{flex:1, backgroundColor:'#000'}}>
@@ -717,7 +717,7 @@ export class CropperView extends Component{
               </View>
               <View style={{flex:0,flexDirection:'row',padding:10, height:this.optionH}}>
                 <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.closeCropper()} source={{uri: "back"}} />
-                {!this.state.processing && <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.processCropping()} source={{uri: _img_cropping}} />}
+                {!this.state.processing && <ImageButton CStyle={{flex:1, marginHorizontal:3, alignItems:'center'}}  onPress={()=>this.processCropping()} source={{icon: _img_cropping}} IOptions={{size: 23}} />}
                 {this.state.processing && <XImage style={{flex:1, marginHorizontal:3, alignItems:'center'}} loader={true} width={25} height={25} />}
               </View>
             </View>

@@ -303,7 +303,7 @@ export class UINotification extends Component{
         let view = <View style={{flex: 0, width: 0, height: 0}} />
         if(this.visible)
           view =  <TouchableOpacity style={{flex:0}} onPress={()=>{this.toggleListNotifications()}}>
-                    <ImageButton  source={{uri:"notification"}}
+                    <ImageButton  source={{icon: "bell"}}
                                   CStyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:30}}
                                   IStyle={{flex:0, width:20, height:20}}
                                   onPress={()=>{this.toggleListNotifications()}} />
@@ -453,7 +453,8 @@ export class FCMinit extends Component{
                               <XText style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Nouvelle notification</XText>
                               <XText style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</XText>
                             </View>
-                            <ImageButton  source={{uri:"notification_green"}}
+                            <ImageButton  source={{icon:"bell"}}
+                              IOptions={{color: '#FFF'}}
                               CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:30}}
                               IStyle={{flex:0, width:20, height:20}}
                               onPress={()=>{EventRegister.emit("openNotifications")}} />

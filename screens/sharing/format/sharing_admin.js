@@ -164,7 +164,8 @@ class Header extends Component{
         },
         select:{
           flex:0,
-          height: 25,
+          height: 30,
+          marginTop:5,
           width:'100%'
         },
         filterbox:{
@@ -203,8 +204,8 @@ class Header extends Component{
                             title="Filtre"
                             dismiss={()=>this.closeFilter("none")}
                             inputs={[
-                              { label:'Dossier :', name: 'account', value: GLOB.dataFilter.account },
-                              { label:'Client ou contact :', name: 'collaborator', value: GLOB.dataFilter.collaborator }
+                              { label:'Dossier', name: 'account', value: GLOB.dataFilter.account },
+                              { label:'Client ou contact', name: 'collaborator', value: GLOB.dataFilter.collaborator }
                             ]}
                             buttons={[
                               {title: "Filtrer", withDismiss: true, action: ()=>this.closeFilter("filter")},
@@ -234,7 +235,7 @@ class Header extends Component{
                 </View>
               </View>
               <View style={this.styles.right}> 
-                <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} />
+                <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{icon: "filter"}} />
               </View>
             </View> 
   }
@@ -321,8 +322,8 @@ class BoxStat extends Component{
       },
       image:{
         flex:0,
-        width:15,
-        height:15
+        width:19,
+        height:19
       },
       champ:{
         flex:1,
@@ -344,7 +345,7 @@ class BoxStat extends Component{
   }
 
   render(){
-    const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"
+    const arrow = (this.state.showDetails)? "caret-down" : "caret-right"
 
     const styleApproved = {
                             opacity: this.props.data.approval? 0.3 : 1
@@ -354,13 +355,13 @@ class BoxStat extends Component{
 
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={this.styles.container}>
-                <XImage source={{uri:arrow}} style={[{flex:0, width:20, marginRight:8}, this.styles.image]} />
+                <XImage source={{icon: arrow}} style={[{flex:0, width:20, marginRight:8}, this.styles.image]} />
                 <View style={{flex:1}}>
                   <XText style={{fontWeight:'bold'}}>{this.props.data.document.toString()}</XText>
                 </View>
                 <View style={{flex:0, width:70, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                  <ImageButton source={{uri:'validate'}} CStyle={{padding:8}} IStyle={[this.styles.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
-                  <ImageButton source={{uri:'delete'}} CStyle={{padding:8}} IStyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
+                  <ImageButton source={{icon:'check'}} CStyle={{padding:8}} IStyle={[this.styles.image, styleApproved]} onPress={()=>this.handleValidate(this.props.data.id_idocus)}/>
+                  <ImageButton source={{icon:'close'}} CStyle={{padding:8}} IStyle={this.styles.image} onPress={()=>this.handleDelete(this.props.data.id_idocus)}/>
                 </View>
               </View>
               {

@@ -140,9 +140,6 @@ class ModalSelect extends Component{
         width:30,
         marginVertical:2,
         marginRight:5,
-        paddingHorizontal:5,
-        borderWidth:1,
-        borderColor:'#707070',
       }
     })
   }
@@ -150,7 +147,7 @@ class ModalSelect extends Component{
   renderSearch(){
     const CStyle = {
       flex: 1,
-      height:40,
+      height:30,
       paddingLeft:11
     }
     const TStyle = {
@@ -166,7 +163,7 @@ class ModalSelect extends Component{
     const icon = this.state.loading? 'loader' : 'zoom_x'
     return <View style={{flex:1, flexDirection:'row', paddingTop: 3, maxWidth:200}}>
               <XTextInput CStyle={CStyle} TStyle={TStyle} placeholder="Filtre" autoCorrect={false} liveChange={liveChange} onChangeText={(value) => this.handleFilterChange(value)}/>
-              <XImage source={{uri:icon}} style={{flex:0, marginLeft:5, marginTop:5, width:20, height:20}} />
+              <XImage source={{uri:icon}} style={{flex:0, marginLeft:5, marginTop:5, width:16, height:16}} />
             </View>
   }
 
@@ -228,7 +225,7 @@ class ModalSelect extends Component{
                       {this.props.filterSearch && this.renderSearch()}
                     </View>
                     <View style={{flex:1, alignItems: 'flex-end'}}>
-                      <ImageButton source={{uri:'validate'}} onPress={()=>this.dismiss()} CStyle={this.modal.touchable} IStyle={{flex:1, width:20}} />
+                      <ImageButton source={{icon:'check-square-o'}} IOptions={{size: 25}} onPress={()=>this.dismiss()} CStyle={this.modal.touchable} IStyle={{flex:1, width:25}} />
                     </View>
                   </View>
                   
@@ -264,6 +261,7 @@ export class SelectInput extends Component{
                   }
     this.layoutWidth = 0
     this.invisible = this.props.invisible || false
+    this.label = this.props.label || this.props.placeholder || null
 
     this.showModal = this.showModal.bind(this)
     this.hideModal = this.hideModal.bind(this)
@@ -379,23 +377,38 @@ export class SelectInput extends Component{
   render(){
     const styles = {
       flex:1,
-      borderColor:'#909090', 
-      borderBottomWidth:1,
-      marginHorizontal:3,
+      minHeight:30,
+    }
+
+    const labelBox = {
+      flex: 0,
+      width: '40%',
+      justifyContent: 'center',
+      height: '98%',
+      borderColor: Theme.inputs.shape.borderColor || '#999',
+      borderRightWidth: 2,
+      borderTopLeftRadius: Theme.inputs.shape.borderRadius,
+      borderBottomLeftRadius: Theme.inputs.shape.borderRadius,
+      backgroundColor: '#FFF',
+      marginRight: 2,
+      paddingTop: 1,
+      paddingLeft: 3,
+      overflow: 'hidden'
     }
 
     const selectStyle = {
       flex:1,
       paddingLeft:5,
       marginRight:5,
-      maxHeight:20,
+      minHeight:30,
+      justifyContent: 'center',
       overflow:'hidden'
     }
 
     const stylePlus = this.props.style || {}
     const CStyle = this.props.CStyle || {}
 
-    const parentStyle = (this.invisible)? {flex:0,width:0,height:0} : [styles].concat(CStyle)
+    const parentStyle = (this.invisible)? {flex:0,width:0,height:0} : [styles, Theme.inputs.shape].concat(CStyle)
 
     return  <View style={parentStyle}>
               {
@@ -403,7 +416,7 @@ export class SelectInput extends Component{
                                                       filterSearch={this.props.filterSearch || false} 
                                                       filterCallback={this.props.filterCallback || null}
                                                       selectedItem={this.state.selectedItem}
-                                                      textInfo={this.props.textInfo || null} 
+                                                      textInfo={this.props.textInfo || this.props.placeholder || null} 
                                                       changeItem={this.changeItem}
                                                       onFilter={this.props.onFilter || null}
                                                       dismiss={this.hideModal} />
@@ -412,7 +425,8 @@ export class SelectInput extends Component{
                 this.invisible == false &&
                 <View style={{flex:1}}>
                   <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center'}} onPress={this.showModal}>
-                    <View style={selectStyle} onLayout={this.getWidthLayout}> 
+                    { this.label && <View style={labelBox}><XText style={{flex: 0}}>{this.label}</XText></View>}
+                    <View style={selectStyle} onLayout={this.getWidthLayout}>
                       <AnimatedBox  ref='animatedText'
                                     style={{width: 500}} 
                                     type="HorizontalGliss"
@@ -422,13 +436,13 @@ export class SelectInput extends Component{
                                     endAnim={this.state.endTextAnim}
                                     startOnLoad={false}
                                     >
-                        <XText style={[{color:'#606060'}, stylePlus]}>{this.state.valueText}</XText>
+                        <XText style={[Theme.inputs.label, stylePlus]}>{this.state.valueText}</XText>
                       </AnimatedBox>
                     </View>
-                    <XText style={{flex:0, fontSize:10, fontWeight:'bold', padding: 2}}>V</XText>
+                    <XText style={{flex:0, fontSize:10, fontWeight:'bold', padding: 2, paddingRight: 4}}>V</XText>
                   </TouchableOpacity>
                 </View>          
-              }   
+              }
             </View>
   }
 }

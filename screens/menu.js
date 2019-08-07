@@ -132,22 +132,25 @@ class Body extends Component{
             },
       linkI:{
         flex: 0,
-        width: 15,
-        height: 15
+        width: 17,
+        height: 17
       }
     })
   }
 
   render(){
+    const iconColor = '#C0D838'
+    const iconSize = 15
+
     return  <View style={this.styles.container}>
               <ScrollView>
-                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Home')? 'Home' : null)}} source={{uri:'ico_home'}} resizeMode='contain' title='Accueil' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
-                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Send')? 'Send' : null)}} source={{uri:'ico_send'}} resizeMode='contain' title='Envoi documents' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
-                <LinkButton onPress={()=>{}} source={{uri:'ico_docs'}} resizeMode='contain' title='Mes factures' IStyle={this.styles.linkI} TStyle={[Theme.menu.body.links, {textDecorationLine: 'underline'}]} CStyle={this.styles.linkP} />
-                  <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Invoices')? 'Invoices' : null)}} source={{uri:'arrow_doc_green'}} resizeMode='contain' title='Pièces/Pré-affectations' IStyle={[this.styles.linkI, {width: 8, height:8, marginRight: 7}]} TStyle={[Theme.menu.body.links, {fontSize: 10}]} CStyle={[this.styles.linkP, {marginLeft: 40}]} />
-                  <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Operations')? 'Operations' : null)}} source={{uri:'arrow_doc_green'}} resizeMode='contain' title='Mes opérations' IStyle={[this.styles.linkI, {width: 8, height:8, marginRight: 7}]} TStyle={[Theme.menu.body.links, {fontSize: 10}]} CStyle={[this.styles.linkP, {marginLeft: 40}]} />
-                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Stats')? 'Stats' : null)}} source={{uri:'ico_suiv'}} resizeMode='contain' title='Suivi' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
-                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Sharing')? 'Sharing' : null)}} source={{uri:'ico_sharing'}} resizeMode='contain' title='Partage dossier' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Home')? 'Home' : null)}} source={{icon:'home'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Accueil' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Send')? 'Send' : null)}} source={{icon:'send'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Envoi documents' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+                <LinkButton onPress={()=>{}} source={{icon:'file-o'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Mes factures' IStyle={this.styles.linkI} TStyle={[Theme.menu.body.links, {textDecorationLine: 'underline'}]} CStyle={this.styles.linkP} />
+                  <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Invoices')? 'Invoices' : null)}} source={{icon:'caret-right'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Pièces/Pré-affectations' IStyle={[this.styles.linkI, {width: 8, height:8, marginRight: 7}]} TStyle={[Theme.menu.body.links, {fontSize: 10}]} CStyle={[this.styles.linkP, {marginLeft: 40}]} />
+                  <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Operations')? 'Operations' : null)}} source={{icon:'caret-right'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Mes opérations' IStyle={[this.styles.linkI, {width: 8, height:8, marginRight: 7}]} TStyle={[Theme.menu.body.links, {fontSize: 10}]} CStyle={[this.styles.linkP, {marginLeft: 40}]} />
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Stats')? 'Stats' : null)}} source={{icon:'dashboard'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Suivi' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Sharing')? 'Sharing' : null)}} source={{icon:'share-square-o'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Partage dossier' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
               </ScrollView>
             </View>
   }
@@ -307,11 +310,11 @@ export class Menu extends Component{
           this.toggleMenu(false)
 
         if(this.state.visible)
-          this.refs.modalMenu.panHanlder(evt, gestureState)
+          try{this.refs.modalMenu.panHanlder(evt, gestureState)}catch(e){}
       }
       else if((type == 'release' || type == 'terminate') && this.locked_capture)
       {
-        setTimeout(()=>{this.refs.modalMenu.releaseCapture()}, 3)
+        setTimeout(()=>{try{this.refs.modalMenu.releaseCapture()}catch(e){}}, 3)
         this.locked_capture = false
       }
 

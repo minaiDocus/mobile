@@ -38,13 +38,13 @@ class Inputs extends Component{
 
     const type = this.props.type || 'input';
     return  <View style={[this.styles.container, stylePlus]}>
-              <XText style={[{flex: 1}, Theme.modal.label, labelStyle]}>{this.props.label}</XText>
+              { type == 'radio' && <XText style={[{flex: 1}, Theme.modal.label, labelStyle]}>{this.props.label}</XText> }
               <View style={{flex: 1.3}}>
-                {type == 'input' && <XTextInput {...this.props} editable={this.props.editable} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} CStyle={[{flex:1}, inputStyle]} />}
-                {type == 'select' && <SelectInput selectedItem={this.state.value} CStyle={{flex:1}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
-                {type == 'date' && <DatePicker value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1}} minDate={this.props.options.minDate} maxDate={this.props.options.maxDate} allowBlank={this.props.options.allowBlank || false} />}
+                {type == 'input' && <XTextInput {...this.props} placeholder={this.props.label} editable={this.props.editable} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} CStyle={[{flex:1}, inputStyle]} />}
+                {type == 'select' && <SelectInput placeholder={this.props.label} selectedItem={this.state.value} CStyle={{flex:1}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
+                {type == 'date' && <DatePicker placeholder={this.props.label} value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1}} minDate={this.props.options.minDate} maxDate={this.props.options.maxDate} allowBlank={this.props.options.allowBlank || false} />}
                 {type == 'radio' && <RadioButton value={this.state.value} dataOptions={this.props.dataOptions} onChange={(value)=>this.changeValue(value)} CStyle={{flex:1}} />}
-                {isPresent(this.props.hint) && <XText style={[{flex: 1, paddingVertical: 3, color: '#A6A6A6'}, Theme.textItalic]}>{this.props.hint}</XText>}
+                {isPresent(this.props.hint) && <XText style={[{flex: 1, paddingTop: 3, color: '#A6A6A6'}, Theme.textItalic]}>{this.props.hint}</XText>}
               </View>
             </View>
   }
@@ -182,9 +182,9 @@ export class ModalForm extends Component{
                 <View style={[this.styles.box, Theme.modal.shape]}>
                   <View style={[this.styles.head, Theme.modal.head]}>
                     <XText style={[{flex:1}, Theme.modal.title]}>{this.props.title}</XText>
-                    <ImageButton  source={{uri:"delete"}}
+                    <ImageButton  source={{icon: "window-close"}}
                       CStyle={{flex:0, flexDirection:'column', alignItems:'center',width:30}}
-                      IStyle={{width:15, height:15}}
+                      IStyle={{width:19, height:19}}
                       onPress={()=>{this.dismiss()}} />
                   </View>
                   <ScrollView style={{flex: 1}} keyboardShouldPersistTaps={'always'}>

@@ -76,20 +76,22 @@ export class SimpleButton extends Component{
             },
       images: {
                 flex:0,
-                width:15,
-                height:15
+                width:19,
+                height:19
               }
     })
   }
 
   render(){
-    let leftImage = null
+    const IOptions = this.props.IOptions || {size: 10}
+    let leftImage  = null
     let rightImage = null
+
     if(this.props.LImage != "" && this.props.LImage != null)
-      leftImage = <XImage style={[this.styles.images, {marginRight:7}]} source={this.props.LImage} local={true} />
+      leftImage = <XImage style={[this.styles.images, {marginRight:7}]} size={IOptions.size} color={IOptions.color} source={this.props.LImage} local={true} />
 
     if(this.props.RImage != "" && this.props.RImage != null)
-      rightImage = <XImage style={[this.styles.images, {marginLeft:7}]} source={this.props.RImage} local={true} />
+      rightImage = <XImage style={[this.styles.images, {marginLeft:7}]} size={IOptions.size} color={IOptions.color} source={this.props.RImage} local={true} />
 
     return  <LinearGradient onLayout={this.getLayoutSize} colors={this.linearColors || ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']} style={[this.styles.content, this.CStyle_plus, this.state.padding]}>
               <TouchableOpacity style={[this.styles.touchable, { minWidth: this.state.width, minHeight: this.state.height }]} onPress={this.props.onPress}>
@@ -103,12 +105,12 @@ export class SimpleButton extends Component{
 
 export class ImageButton extends Component{
   render(){
-    const flex = {flex:1}
+    const IOptions    = this.props.IOptions || {}
     const CStyle = this.props.CStyle || ""
     const IStyle = this.props.IStyle || ""
 
-    return <TouchableOpacity style={[flex, CStyle]} onPress={()=>{this.props.onPress()}}>
-              <XImage style={[flex, IStyle]} source={this.props.source} local={this.props.local || true} />
+    return <TouchableOpacity style={[{flex: 1}, CStyle]} onPress={()=>{this.props.onPress()}}>
+              <XImage style={[{flex: 1}, IStyle]} size={IOptions.size} color={IOptions.color} source={this.props.source} local={this.props.local || true} />
             </TouchableOpacity>
   }
 }
@@ -196,9 +198,11 @@ export class BoxButton extends Component{
   }
 
   render(){
+    const IOptions = this.props.IOptions || {}
+
     return  <TouchableOpacity onPress={this.props.onPress} style={this.styles.touchable}>
               <LinearGradient colors={Theme.box_button.shape.linearColors || this.linearColors || ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']} style={[this.styles.boxControl, Theme.box_button.shape, this.CStyle_plus]}>
-                <XImage source={this.props.source} style={this.styles.icons} local={this.props.local || true} />
+                <XImage source={this.props.source} size={IOptions.size} color={IOptions.color} style={this.styles.icons} local={this.props.local || true} />
               </LinearGradient>
               <View style={[this.styles.boxText, Theme.box_button.box_text]}>
                 {
@@ -244,12 +248,13 @@ export class LinkButton extends Component{
   }
   
   render(){
+    const IOptions    = this.props.IOptions || {}
     const TStyle_plus = this.props.TStyle || ""
     const CStyle_plus = this.props.CStyle || ""
     const IStyle_plus = this.props.IStyle || ""
 
     return <TouchableOpacity style={[this.styles.content, CStyle_plus]} onPress={this.props.onPress}>
-              {this.props.source && <XImage source={this.props.source} resizeMode={this.props.resizeMode} style={[this.styles.image, IStyle_plus]} local={this.props.local || true}/>}
+              {this.props.source && <XImage source={this.props.source} size={IOptions.size} color={IOptions.color} resizeMode={this.props.resizeMode} style={[this.styles.image, IStyle_plus]} local={this.props.local || true}/>}
               <XText style={[this.styles.text, TStyle_plus]}>{this.props.title}</XText>
            </TouchableOpacity>
   }

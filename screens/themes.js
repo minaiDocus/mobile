@@ -31,12 +31,12 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   },
 
   primary_button: {
-    shape: { borderRadius: 2, backgroundColor: '#007bff' },
+    shape: { borderRadius: 2, backgroundColor: '#4C5A65' },
     text: { color: '#FFF' },
   },
 
   secondary_button: {
-    shape: { borderRadius: 2, backgroundColor: '#2F4F4F' },
+    shape: { borderRadius: 2, backgroundColor: '#696969' },
     text: { color: '#FFF' },
   },
 
@@ -79,6 +79,11 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
       margin: 5
     },
     title: { textAlign:'center',fontSize:14, fontWeight:'bold' },
+  },
+
+  inputs:{
+    shape: { borderWidth:1, borderRadius: 7, borderColor:'#909090', backgroundColor: 'rgba(224,224,224,0.6)' },
+    label: { color: '#606060' },
   },
 
   table:{

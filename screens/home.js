@@ -61,8 +61,8 @@ class Header extends Component{
   render(){
     return (
               <View style={[this.styles.minicontainer, Theme.head.shape]}>
-                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Send')}} source={{uri:"plane"}} title='Envoi documents' />
-                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Invoices')}} source={{uri:"documents"}} title='Mes factures' />
+                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Send')}} source={{icon:"send"}} IOptions={{size: 20}} title='Envoi documents' />
+                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Invoices')}} source={{icon:"file-o"}} IOptions={{size: 20}} title='Mes factures' />
               </View>
             );
   }
@@ -161,7 +161,7 @@ class ViewState extends Component{
 
   renderDetails(data, index){
     const colorStriped = ((index % 2) == 0)? Theme.color_striped.pair : Theme.color_striped.impair
-    const arrow = (this.state.infos == index)? "arrow_down" : "arrow_up";
+    const arrow = (this.state.infos == index)? "caret-down" : "caret-right";
     var infos = this.props.infos
 
     infos = infos.map((info, index) => {
@@ -185,7 +185,7 @@ class ViewState extends Component{
 
     return    <TouchableOpacity key={index} style={{flex:1}} onPress={()=>this.handleClickDocument(index)}>
                 <View style={[this.stylesDetails.details, {backgroundColor:colorStriped}]}>
-                  <XImage source={{uri: arrow}} style={this.stylesDetails.image} />
+                  <XImage source={{icon: arrow}} size={16} color={Theme.global_text.color} style={this.stylesDetails.image} />
                   <XText>{data.name}</XText>
                 </View>
                 {
@@ -272,7 +272,7 @@ class AppInfos extends Component{
                               </View>
                               <XText>www.idocus.com</XText>
                               <XText>version : {Config.version.toString()}</XText>
-                              <XText>IDOCUS © Copyright 2019</XText>
+                              <XText>IDOCUS © Copyright {Config.cp_year.toString()}</XText>
                             </View>
                         </View>
                       </TouchableWithoutFeedback>
@@ -280,7 +280,8 @@ class AppInfos extends Component{
   }
 
   render(){
-    return <ImageButton   source={{uri:"infos"}} 
+    return <ImageButton   source={{icon: "info-circle"}}
+                          IOptions={{size: 20}}
                           CStyle={{flex:0, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:40 }}
                           IStyle={{flex:0, width:20, height:20}}
                           onPress={()=>this.showInfos()} />

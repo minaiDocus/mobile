@@ -102,13 +102,13 @@ class Header extends Component{
                             title="Filtre"
                             dismiss={()=>this.closeFilter("none")}
                             inputs={[
-                              {label:'Date de début :', name: 'created_at_start', type:'date', allowBlank: true, value: GLOB.dataFilter.created_at_start},
-                              {label:'Date de fin :', name: 'created_at_end', type:'date', allowBlank: true, value: GLOB.dataFilter.created_at_end},
-                              {label:'Type :', name: 'type', type:'select', dataOptions: GLOB.types, value: GLOB.dataFilter.type},
-                              {label:'Code client :', name: 'customer_code', value: GLOB.dataFilter.customer_code},
-                              {label:'Nom de la société :', name: 'customer_company', value: GLOB.dataFilter.customer_company},
-                              {label:'N° de suivi :', name: 'tracking_number', keyboardType:'numeric', value: GLOB.dataFilter.tracking_number},
-                              {label:'Nom du lot :', name: 'pack_name', value: GLOB.dataFilter.pack_name},
+                              {label:'Date de début', name: 'created_at_start', type:'date', allowBlank: true, value: GLOB.dataFilter.created_at_start},
+                              {label:'Date de fin', name: 'created_at_end', type:'date', allowBlank: true, value: GLOB.dataFilter.created_at_end},
+                              {label:'Type', name: 'type', type:'select', dataOptions: GLOB.types, value: GLOB.dataFilter.type},
+                              {label:'Code client', name: 'customer_code', value: GLOB.dataFilter.customer_code},
+                              {label:'Nom de la société', name: 'customer_company', value: GLOB.dataFilter.customer_company},
+                              {label:'N° de suivi', name: 'tracking_number', keyboardType:'numeric', value: GLOB.dataFilter.tracking_number},
+                              {label:'Nom du lot', name: 'pack_name', value: GLOB.dataFilter.pack_name},
                             ]}
                             buttons={[
                               {title: "Filtrer", withDismiss: true, action: ()=>this.closeFilter("filter")},
@@ -117,11 +117,11 @@ class Header extends Component{
                 />
               }
               <View style={this.styles.left}>
-                <XImage source={{uri:"ico_suiv"}} style={this.styles.image} />
+                <XImage source={{icon:"dashboard"}} color='#C0D838' size={30} style={this.styles.image} />
                 <XText style={[{flex:2, fontSize:16,fontWeight:'bold'}, Theme.head.text]}>Suivi : {this.props.dataCount}</XText>
               </View>
               <View style={this.styles.right}> 
-                <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}}/>
+                <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{icon: "filter"}}/>
               </View>
             </View>
   }
@@ -173,11 +173,11 @@ class BoxStat extends Component{
   }
 
   render(){
-    const arrow = (this.state.showDetails)? "arrow_down" : "arrow_up"
+    const arrow = (this.state.showDetails)? "caret-down" : "caret-right"
 
     return  <TouchableOpacity style={{flex:1, paddingVertical:10}} onPress={()=>this.toggleDetails()} >
               <View style={this.styles.container}>
-                <XImage source={{uri:arrow}} style={this.styles.image} />
+                <XImage source={{icon: arrow}} size={16} color={Theme.global_text.color} style={this.styles.image} />
                 <XText style={{fontSize:12, fontWeight:'bold', flex:1}}>{this.props.data.company}
                   {' ('} 
                     <XText style={{fontSize:9}}>{formatDate(this.props.data.date, "DD-MM-YYYY HH:ii") 

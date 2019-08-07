@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, View, TouchableOpacity, TouchableHighlight, Alert } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
-import { AnimatedBox, XText } from './index'
+import { AnimatedBox, XText, XImage } from './index'
 
 export class Notice {
   static _noticeMessages = [];
@@ -124,7 +124,7 @@ class Message extends React.Component{
   }
 
   generateStyles(){
-    const colorText = (this.options.type == 'danger')? '#EC5656' : '#C0D838'
+    this.colorText = (this.options.type == 'danger')? '#EC5656' : '#C0D838'
     this.styles = StyleSheet.create({
       messageView:{
                     backgroundColor:'rgba(48,48,48,0.8)',
@@ -143,14 +143,11 @@ class Message extends React.Component{
       text:{
              flex:1,
              textAlign:'left',
-             color:colorText,
+             color:this.colorText,
              paddingHorizontal:20
            },
       close:{
               flex:0,
-              textAlign:'right',
-              fontSize:18,
-              color:colorText,
               paddingHorizontal:10
             }
       })
@@ -163,7 +160,7 @@ class Message extends React.Component{
       return  <AnimatedBox ref="animatedMessage" style={this.styles.messageView}>
                 <XText style={this.styles.text}>{message}</XText>
                 <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                  <XText style={[this.styles.close, Theme.textBold]}>X</XText>
+                  <XImage source={{icon: 'window-close'}} size={20} color={this.colorText} style={this.styles.close} />
                 </TouchableHighlight>
               </AnimatedBox>
     }
@@ -187,7 +184,7 @@ class Message extends React.Component{
                 {
                   this.options.noClose == false &&
                   <TouchableHighlight style={{flex:0}} onPress={()=>this.closeMessage()}>
-                    <XText style={[this.styles.close, Theme.textBold]}>X</XText>
+                    <XImage source={{icon: 'window-close'}} size={20} color={this.colorText} style={this.styles.close} />
                   </TouchableHighlight>
                 }
               </AnimatedBox>

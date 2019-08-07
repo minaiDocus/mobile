@@ -144,13 +144,13 @@ class Header extends Component{
     try{ pre_assigned = GLOB.dataFilter.pre_assigned }catch(e){}
 
     const inputs =  [
-                      { label:'Date début >= :', name: 'start_date', type: "date", allowBlank: true, maxDate: max_date, value: start_date },
-                      { label:'Date fin <= :', name: 'end_date', type: "date", allowBlank: true, maxDate: max_date, value: end_date },
-                      { label:'Sevice :', name: 'bank_name', value: service },
-                      { label:'Compte :', name: 'number', value: account },
-                      { label:'Catégorie :', name: 'category', value: category },
-                      { label:'Libellé :', name: 'label', value: label },
-                      { label:'Pré-affectation :', name: 'pre_assigned', type: 'select', dataOptions:[{label: '', value: ''}, {label: 'Oui', value: 'pre_assigned'}, {label: 'Non', value: 'not_pre_assigned'}, {label: 'En attente', value: 'is_waiting'}], value: pre_assigned },
+                      { label:'Date début >=', name: 'start_date', type: "date", allowBlank: true, maxDate: max_date, value: start_date },
+                      { label:'Date fin <=', name: 'end_date', type: "date", allowBlank: true, maxDate: max_date, value: end_date },
+                      { label:'Sevice', name: 'bank_name', value: service },
+                      { label:'Compte', name: 'number', value: account },
+                      { label:'Catégorie', name: 'category', value: category },
+                      { label:'Libellé', name: 'label', value: label },
+                      { label:'Pré-affectation', name: 'pre_assigned', type: 'select', dataOptions:[{label: '', value: ''}, {label: 'Oui', value: 'pre_assigned'}, {label: 'Non', value: 'not_pre_assigned'}, {label: 'En attente', value: 'is_waiting'}], value: pre_assigned },
                     ]
 
     return inputs
@@ -244,7 +244,7 @@ class Header extends Component{
               </View>
               <View style={this.styles.right}>
                 <View style={{flex:1, flexDirection:'row', marginLeft: 3, padding: 5}}>
-                  <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{uri:"zoom_x"}} />
+                  <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{icon: "filter"}} />
                 </View>
               </View>
             </View>
@@ -348,8 +348,8 @@ class BoxOperations extends Component {
                     },
         image:{
                 flex:0,
-                width:15,
-                height:15,
+                width:19,
+                height:19,
                 marginRight:20
               }
     })
@@ -370,12 +370,12 @@ class BoxOperations extends Component {
   render(){
     // test
     this.generateStyles()
-    const arrow = this.state.showDetails ? 'arrow_down' : 'arrow_up'
+    const arrow = this.state.showDetails ? 'caret-down' : 'caret-right'
     const title = this.state.showDetails ? this.props.data.label.toString() : truncate(this.props.data.label.toString(), 30)
 
     return  <TouchableOpacity style={{flex:1}} onPress={()=>this.handleClick()} >
               <View style={this.styles.container}>
-                <XImage source={{uri: arrow}} style={this.styles.image} />
+                <XImage source={{icon: arrow}} style={this.styles.image} />
                 <XText style={{flex: 0}}>{title}</XText>
               </View>
               { this.state.showDetails && this.renderDetails() }

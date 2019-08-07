@@ -85,11 +85,6 @@ class AnalysisView extends Component{
       input:{
               flex:1.3
             },
-      label:{
-              flex:1,
-              fontSize:14,
-              color:'#463119'
-            },
       axis_group: {
                     flex:0,
                     marginVertical:5,
@@ -161,25 +156,21 @@ class AnalysisView extends Component{
   renderAxisGroup(index, analysis_name, analytics_data, axis1_options, axis2_options, axis3_options){
     return  <View key={index} style={this.styles.axis_group}>
               <View style={[this.styles.container, {flex:0, height:35}]}>
-                <XText style={this.styles.label}>Ventilation</XText>
-                <XTextInput selectTextOnFocus={true} defaultValue={RESULT_ANALYTIC[this.props.index].references[index].ventilation.toString()} keyboardType='numeric' onChangeText={(value)=>{this.handleChangeVentilation(index, value)}} CStyle={[this.styles.input, {height:35}]} />
+                <XTextInput label='Ventilation' selectTextOnFocus={true} defaultValue={RESULT_ANALYTIC[this.props.index].references[index].ventilation.toString()} keyboardType='numeric' onChangeText={(value)=>{this.handleChangeVentilation(index, value)}} CStyle={[this.styles.input, {height:35}]} />
               </View>
               {axis1_options.length > 0 &&
                 <View style={[this.styles.container, {flex:0, height:35}]}>
-                  <XText style={this.styles.label}>Axe 1</XText>
-                  <SelectInput textInfo={`Axe 1 (${analytics_data.axis1.name})`} selectedItem={RESULT_ANALYTIC[this.props.index].references[index].axis1} dataOptions={axis1_options} CStyle={this.styles.input} style={{color:'#707070'}} onChange={(value)=>this.handleChangeAxis(0, index, value)}/>
+                  <SelectInput label='Axe 1' textInfo={`Axe 1 (${analytics_data.axis1.name})`} selectedItem={RESULT_ANALYTIC[this.props.index].references[index].axis1} dataOptions={axis1_options} CStyle={this.styles.input} style={{color:'#707070'}} onChange={(value)=>this.handleChangeAxis(0, index, value)}/>
                 </View>
               }
               {axis2_options.length > 0 &&
                 <View style={[this.styles.container, {flex:0, height:35}]}>
-                  <XText style={this.styles.label}>Axe 2</XText>
-                  <SelectInput textInfo={`Axe 2 (${analytics_data.axis2.name})`} selectedItem={RESULT_ANALYTIC[this.props.index].references[index].axis2} dataOptions={axis2_options} CStyle={this.styles.input} style={{color:'#707070'}} onChange={(value)=>this.handleChangeAxis(1, index, value)}/>
+                  <SelectInput label='Axe 2' textInfo={`Axe 2 (${analytics_data.axis2.name})`} selectedItem={RESULT_ANALYTIC[this.props.index].references[index].axis2} dataOptions={axis2_options} CStyle={this.styles.input} style={{color:'#707070'}} onChange={(value)=>this.handleChangeAxis(1, index, value)}/>
                 </View>
               }
               {axis3_options.length > 0 &&
                 <View style={[this.styles.container, {flex:0, height:35}]}>
-                  <XText style={this.styles.label}>Axe 3</XText>
-                  <SelectInput textInfo={`Axe 3 (${analytics_data.axis3.name})`} selectedItem={RESULT_ANALYTIC[this.props.index].references[index].axis3} dataOptions={axis3_options} CStyle={this.styles.input} style={{color:'#707070'}} onChange={(value)=>this.handleChangeAxis(2, index, value)}/>
+                  <SelectInput label='Axe 3' textInfo={`Axe 3 (${analytics_data.axis3.name})`} selectedItem={RESULT_ANALYTIC[this.props.index].references[index].axis3} dataOptions={axis3_options} CStyle={this.styles.input} style={{color:'#707070'}} onChange={(value)=>this.handleChangeAxis(2, index, value)}/>
                 </View>
               }
             </View>
@@ -224,8 +215,7 @@ class AnalysisView extends Component{
     return  <ScrollView style={{flex:1}}>
               <XText style={{flex:0, color:ventilStyle}}>(Total ventilation actuelle : {this.state.total_ventilation}%)</XText>
               <View style={this.styles.container}>
-                <XText style={this.styles.label}>Analyse</XText>
-                <SelectInput textInfo='Analyse' selectedItem={RESULT_ANALYTIC[this.props.index].analysis} dataOptions={analysis_options} CStyle={this.styles.input} style={{color:'#707070'}} onChange={(value)=>this.handleChangeAnalysis(value)}/>
+                <SelectInput label='Analyse' textInfo='Analyse' selectedItem={RESULT_ANALYTIC[this.props.index].analysis} dataOptions={analysis_options} CStyle={this.styles.input} style={{color:'#707070'}} onChange={(value)=>this.handleChangeAnalysis(value)}/>
               </View>
               {this.state.ready && this.renderAxis()}
             </ScrollView>

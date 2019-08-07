@@ -258,8 +258,8 @@ class ImgBox extends Component{
                   { this.state.options == true &&
                     <View style={this.styles.options}>   
                       <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
-                      <ImageButton source={{uri:'img_crop'}} onPress={()=>this.crop()} CStyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} IStyle={{width:18,height:18}} />
-                      <ImageButton source={{uri:'delete'}} onPress={()=>this.delete()} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
+                      <ImageButton source={{icon:'crop'}} IOptions={{size: 18}} onPress={()=>this.crop()} CStyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} IStyle={{width:18,height:18}} />
+                      <ImageButton source={{icon:'close'}} IOptions={{size: 18}} onPress={()=>this.delete()} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
                     </View>
                   }
                 </XImage>
@@ -286,8 +286,8 @@ class Header extends Component{
 
   render(){
     return  <View style={[this.styles.minicontainer, Theme.head.shape]}>
-                <BoxButton onPress={this.props.takePicture} source={{uri:"camera_icon"}} title="Prendre photo" />
-                <BoxButton onPress={this.props.openRoll} source={{uri:"folder"}} title="Galerie photos" />
+                <BoxButton onPress={this.props.takePicture} source={{icon:"camera-retro"}} IOptions={{size: 20}} title="Prendre photo" />
+                <BoxButton onPress={this.props.openRoll} source={{icon:"picture-o"}} IOptions={{size: 20}} title="Galerie photos" />
             </View>
   }
 }
