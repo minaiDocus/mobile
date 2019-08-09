@@ -43,7 +43,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   box_button: {
     shape: { linearColors: ['#D1E949', '#C0D838', '#9DA505'] },
     marker: { fontSize: 12, fontWeight: 'bold', color: '#F7230C'},
-    box_text: { backgroundColor: 'rgba(47,79,79, 0.4)', borderWidth: 1, borderColor: '#9DA505' },
+    box_text: { backgroundColor: 'rgba(47,79,79, 0.4)', borderWidth: 1, borderColor: '#C0D838' },
     text: { color: '#FFF', fontWeight: 'bold' }
   },
 
@@ -54,14 +54,14 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
     shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
     shadowOpacity: 0.8,                   //===
     shadowRadius: 2,                      //===
-    backgroundColor:"#E9E9E7",
+    backgroundColor:"rgba(241,241,241,0.6)",
     borderWidth: 2,
     borderColor: '#fff'
   },
 
   color_striped: {
-    pair: '#FFF',
-    impair: '#F2F2F2',
+    pair: 'rgba(200,200,200,0.5)',
+    impair: 'rgba(255,255,255,0.5)',
   },
 
   lists:{
@@ -72,7 +72,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
       shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
       shadowOpacity: 0.8,                   //===
       shadowRadius: 2,                      //===
-      backgroundColor:"#E9E9E7",
+      backgroundColor:"rgba(241,241,241,0.6)",
       borderWidth: 2,
       borderColor: '#fff',
       padding: 5,
@@ -110,16 +110,16 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   },
 
   tabs:{
-    head_container: { height:30 },
-    shape: { backgroundColor:"#AEAEAE", borderWidth:1, borderColor: '#808080', borderTopRightRadius:10, marginHorizontal: 0 },
-    title: { fontSize: 12, textAlign: 'center', fontWeight: 'bold', color: '#DDD' },
+    head_container: { height:27, marginBottom: 5 },
+    shape: { backgroundColor:"transparent", borderBottomWidth:1, borderColor: '#808080', marginHorizontal: 0 },
+    title: { fontSize: 12, textAlign: 'center', fontWeight: 'bold', color: '#888' },
     icons: { width: 25, height: 25 },
     selected: { 
-      shape: { backgroundColor:"rgba(255,255,255,0.5)", borderWidth: 0, borderBottomWidth: 1, borderTopRightRadius: 0, borderTopLeftRadius: 10 },
-      text: { color: '#3E2F24', fontSize: 14 },
+      shape: { backgroundColor:"rgba(0,0,0,0.3)", borderWidth: 0, borderBottomWidth: 1 },
+      text: { textShadowColor:'#3E2F24', textShadowOffset:{width: 1, height: 1}, textShadowRadius:1, color: '#EEE', fontSize: 14 },
       icon: { width:40, height:40, },
     },
-    body_container: { backgroundColor: 'rgba(119,136,153, 0.3)' }
+    body_container: { backgroundColor: 'transparent' }
   },
 
   menu:{

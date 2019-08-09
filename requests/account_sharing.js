@@ -30,12 +30,12 @@ class account_sharing extends Requester{
     return this.requestURI("api/mobile/account_sharing/load_shared_docs_customers", {method: 'POST'})
   }
 
-  addSharedDocCustomers(params){
-    return this.requestURI("api/mobile/account_sharing/add_shared_docs_customers", {user: params})
+  addSharedDocCustomers(params={}){
+    return this.requestURI("api/mobile/account_sharing/add_shared_docs_customers", {method: 'POST', params: {user: params}})
   }
 
-  addSharingRequestCustomers(params){
-    return this.requestURI("api/mobile/account_sharing/add_sharing_request_customers", {account_sharing_request: params})
+  addSharingRequestCustomers(params={}){
+    return this.requestURI("api/mobile/account_sharing/add_sharing_request_customers", {method: 'POST', params: {account_sharing_request: params}})
   }
 
   getSharedContacts(dataFilters={}, page=1, order={}){

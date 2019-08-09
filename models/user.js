@@ -67,7 +67,7 @@ class user extends ActiveRecord {
   }
 
   getMaster(){
-    return this.find("master = true")[0] || ""
+    return this.find("master = true")[0] || {}
   }
 
   getCustomers(){

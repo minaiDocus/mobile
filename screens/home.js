@@ -292,7 +292,6 @@ class HomeScreen extends Component {
   constructor(props){
     super(props)
 
-    this.master = User.getMaster()
     GLOB.datas = []
     this.state = {showInfos: false, updated: false}
 
@@ -310,7 +309,7 @@ class HomeScreen extends Component {
   componentDidMount(){
     this.refreshDatas()
     if(CurrentScreen.getNavigator().getParams("welcome"))
-      setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(this.master)}`), 1000)
+      setTimeout(()=>Notice.info(`Bienvenue ${User.fullNameOf(Master)}`), 1000)
   }
 
   refreshDatas(){

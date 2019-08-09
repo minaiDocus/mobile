@@ -13,7 +13,7 @@ import { RemoteAuthentication } from '../requests'
 class Header extends Component{
   constructor(props){
     super(props)
-    this.master = User.getMaster()
+
     this.generateStyles()
   }
 
@@ -54,7 +54,7 @@ class Header extends Component{
   }
 
   render(){
-    const userName = User.fullNameOf(this.master) || ""
+    const userName = User.fullNameOf(Master) || ""
     return  <View style={[this.styles.container, Theme.menu.head.shape]} >
               <View style={this.styles.left} >
                 <View style={this.styles.logobox} />
@@ -63,7 +63,7 @@ class Header extends Component{
               <View style={this.styles.right}>
                 <XText style={Theme.menu.head.text_1}>Bienvenue</XText>
                 {userName != "" && <XText style={Theme.menu.head.text_2}>{userName}</XText>}
-                <XText style={[Theme.menu.head.text_2, { fontSize:10 }]}>{this.master.email}</XText>
+                <XText style={[Theme.menu.head.text_2, { fontSize:10 }]}>{Master.email}</XText>
               </View>
             </View>
   }
@@ -77,12 +77,11 @@ class Footer extends Component{
 
   logOut(){
     this.props.navigate(null)
+    renderToFrontView(  <View style={{flex:1, backgroundColor:'rgba(255,255,255,0.7)', alignItems:'center', justifyContent:'center'}}>
+                          <XImage loader={true} width={40} height={40} />
+                        </View>)
 
     setTimeout(()=>{
-      renderToFrontView(  <View style={{flex:1, backgroundColor:'rgba(255,255,255,0.7)', alignItems:'center', justifyContent:'center'}}>
-                            <XImage loader={true} width={40} height={40} />
-                          </View>)
-
       //remove data cache (REALM)
       RemoteAuthentication.logOut()
 
@@ -91,7 +90,7 @@ class Footer extends Component{
       
       //go back to Login
       CurrentScreen.dismissTo('Login', { goodbye: true })
-    }, 1)
+    }, 500)
   }
 
   generateStyles(){
@@ -109,7 +108,7 @@ class Footer extends Component{
     //test
     this.generateStyles()
     return  <View style={[this.styles.container, Theme.menu.footer.shape]}>
-              <SimpleButton CStyle={Theme.primary_button.shape} TStyle={Theme.primary_button.text} title='Deconnexion' onPress={()=>{this.logOut()}}/>
+              <SimpleButton CStyle={Theme.primary_button.shape, {backgroundColor: '#f2f2f2'}} TStyle={{color: '#4C5A65'}} title='Deconnexion' onPress={()=>{this.logOut()}}/>
             </View>
   }
 }

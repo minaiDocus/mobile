@@ -50,7 +50,7 @@ class Header extends Component{
               return usr
           })
 
-          this.customers = [{value:0, label:"Selectionnez un client"}].concat( User.createSelection(arrayCompact(filterUsers, true)) )
+          this.customers = [{value:0, label:"Selectionnez un dossier"}].concat( User.createSelection(arrayCompact(filterUsers, true)) )
 
           if(this.customers.length == 2){
             GLOB.clientId = this.customers[1].value

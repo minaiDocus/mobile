@@ -58,6 +58,10 @@ export class OrganizationSwitcher extends Component{
       Organization.activate(OrganizationSwitcher.organization.id)
       EventRegister.emit("OrganizationSwitched")
     }
+    else if(this.state.showList)
+    {
+      this.setState({ showList: false })
+    }
   }
 
   openSelection(){

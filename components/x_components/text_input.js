@@ -334,13 +334,15 @@ export class XTextInput extends Component{
                   },
       textStyle:  {
                     flex:1,
+                    paddingHorizontal: 4,
                     color: this.editable? Theme.inputs.label.color : '#A6A6A6',
                   },
       boxText:  {
                   flex:1,
                   flexDirection: 'row',
                   alignItems: 'center',
-                  paddingHorizontal: 5
+                  paddingHorizontal: 5,
+                  overflow: 'hidden'
                 },
       labelBox:{
         flex: 0,
@@ -351,7 +353,7 @@ export class XTextInput extends Component{
         borderRightWidth: 2,
         borderTopLeftRadius: Theme.inputs.shape.borderRadius,
         borderBottomLeftRadius: Theme.inputs.shape.borderRadius,
-        backgroundColor: '#FFF',
+        backgroundColor: '#F9F9F9',
         marginRight: 5,
         marginLeft: -5,
         paddingTop: 1,
@@ -362,6 +364,7 @@ export class XTextInput extends Component{
   }
 
   render(){
+    const IOptions = this.props.IOptions || {}
     const CStyle = this.props.CStyle
     const TStyle = this.props.TStyle
     let value = this.state.value || this.label || ""
@@ -391,10 +394,10 @@ export class XTextInput extends Component{
             }  
             <TouchableOpacity style={{flex: 1}} onPress={()=>this.openKeyboard()} >
               <View ref='mainView' style={[this.styles.boxText, Theme.inputs.shape]} onLayout={this.onLayoutOnce} >
-                {this.props.LImage && <XImage size={17} color={Theme.primary_button.shape.backgroundColor} source={this.props.LImage} />}
+                {this.props.LImage && <XImage size={IOptions.size || 17} color={IOptions.color || Theme.primary_button.shape.backgroundColor } source={this.props.LImage} style={{marginLeft: 5}}/>}
                 {this.state.value.length > 0 && this.label && <View style={this.styles.labelBox}><XText style={{flex: 0}}>{this.label}</XText></View>}
                 <XText style={[this.styles.textStyle, TStyle]}>{value}</XText>
-                {this.props.RImage && <XImage size={17} color={Theme.primary_button.shape.backgroundColor} source={this.props.RImage} />}
+                {this.props.RImage && <XImage size={IOptions.size || 17} color={IOptions.color || Theme.primary_button.shape.backgroundColor } source={this.props.RImage} style={{marginRight: 5}}/>}
               </View>
             </TouchableOpacity>
           </View>

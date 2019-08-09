@@ -1,5 +1,4 @@
 import base64 from 'base-64'
-import { User } from '../../models'
 
 export class XFetcher {
   request_retry = 2
@@ -48,6 +47,7 @@ export class XFetcher {
 
   fetch(uri, options={}, with_retry = true, callback = null, progress_callback = null, abort_time = 60){
     this.url = Config.http_host + uri
+
     this.abort_time = abort_time
     this.options = options
     const method = this.options.method || 'GET'
@@ -78,7 +78,7 @@ export class XFetcher {
       }
       else
       {
-        const auth_token = {auth_token: User.getMaster().auth_token}
+        const auth_token = {auth_token: Master.auth_token}
         Object.assign(this.body, auth_token, options.params)
         this.body = JSON.stringify(this.body)
       }

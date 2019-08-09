@@ -147,8 +147,6 @@ export class UINotification extends Component{
 
       this.visible = (this.props.visible === false)? false : true
 
-      this.master = User.getMaster()
-
       this.listNotifView = null
 
       this.toggleListNotifications = this.toggleListNotifications.bind(this)
@@ -249,7 +247,7 @@ export class UINotification extends Component{
               			height:20,
                     margin:2,
               			borderRadius:100,
-              			backgroundColor:'rgba(139,0,0, 0.6)',
+              			backgroundColor:'rgba(139,0,0, 0.8)',
               			justifyContent:'center',
               			alignItems:'center'
               		},
@@ -310,7 +308,7 @@ export class UINotification extends Component{
                     {
                       this.state.newNotifCount > 0 &&
                       <View style={this.styles.bellText}>
-                        <XText style={{textAlign:'center', fontSize:9, color:"#FFF"}}>{this.state.newNotifCount}</XText>
+                        <XText style={{textAlign:'center', fontSize:9, color:"#FFF", textShadowColor:'#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius:1}}>{this.state.newNotifCount}</XText>
                       </View>
                     }
                   </TouchableOpacity>
@@ -322,8 +320,6 @@ export class UINotification extends Component{
 export class FCMinit extends Component{
     constructor(props){
       super(props)
-
-      this.master = User.getMaster()
 
       this.notifTimer = null
 
@@ -349,8 +345,8 @@ export class FCMinit extends Component{
 
       this.refreshToken = AppFcm.on(FCMEvent.RefreshToken, (token) => {
         // fcm token may not be available on first load, catch it here
-        // if(isPresent(this.master.firebase_token))
-        //   FireBaseNotification.registerFirebaseToken(this.master.firebase_token) //resend token to server
+        // if(isPresent(Master.firebase_token))
+        //   FireBaseNotification.registerFirebaseToken(Master.firebase_token) //resend token to server
         // else
         this.handleToken(token)
       })
@@ -376,11 +372,11 @@ export class FCMinit extends Component{
             Notice.info({ title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment" }, { permanent: false, name: "notif_block", delay: 10000 })
           });
 
-      if(!isPresent(this.master.firebase_token)){
+      if(!isPresent(Master.firebase_token)){
         AppFcm.getFCMToken().then((token) => { /*getting firebase notifications token */ this.handleToken(token) })
       }
       else{
-        this.handleToken(this.master.firebase_token)
+        this.handleToken(Master.firebase_token)
       }
       // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
       // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
@@ -429,10 +425,11 @@ export class FCMinit extends Component{
       if(isPresent(token))
       {
         //send token to server
-        let _tmp_master = realmToJson(this.master)
-        _tmp_master.authentication_token = this.master.auth_token
+        let _tmp_master = Master
+        _tmp_master.authentication_token = Master.auth_token
         _tmp_master.firebase_token = token
         User.createOrUpdate(_tmp_master.id, _tmp_master, true)
+        Master = realmToJson(User.getMaster()) //reload master
 
         FireBaseNotification.registerFirebaseToken(token)
       }

@@ -83,15 +83,15 @@ export class SimpleButton extends Component{
   }
 
   render(){
-    const IOptions = this.props.IOptions || {size: 10}
+    const IOptions = this.props.IOptions || {}
     let leftImage  = null
     let rightImage = null
 
     if(this.props.LImage != "" && this.props.LImage != null)
-      leftImage = <XImage style={[this.styles.images, {marginRight:7}]} size={IOptions.size} color={IOptions.color} source={this.props.LImage} local={true} />
+      leftImage = <XImage style={[this.styles.images, {marginRight:7}]} size={IOptions.size || 13} color={IOptions.color || Theme.global_text.color} source={this.props.LImage} local={true} />
 
     if(this.props.RImage != "" && this.props.RImage != null)
-      rightImage = <XImage style={[this.styles.images, {marginLeft:7}]} size={IOptions.size} color={IOptions.color} source={this.props.RImage} local={true} />
+      rightImage = <XImage style={[this.styles.images, {marginLeft:7}]} size={IOptions.size || 13} color={IOptions.color || Theme.global_text.color} source={this.props.RImage} local={true} />
 
     return  <LinearGradient onLayout={this.getLayoutSize} colors={this.linearColors || ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']} style={[this.styles.content, this.CStyle_plus, this.state.padding]}>
               <TouchableOpacity style={[this.styles.touchable, { minWidth: this.state.width, minHeight: this.state.height }]} onPress={this.props.onPress}>
@@ -159,7 +159,6 @@ export class BoxButton extends Component{
                 },
       boxControl: {
                     alignItems:'center',
-                    justifyContent:'center',
                     flex:0,
                     width:45,
                     height:45,
@@ -169,13 +168,17 @@ export class BoxButton extends Component{
                   },
       icons:{
               flex:0,
+              top: 4,
+              position: 'absolute',
+              zIndex: 2,
               width:"50%",
               height:"50%"
             },
       boxText:{
                 flex:0,
+                zIndex: 1,
                 position: 'absolute',
-                top: 10,
+                top: 16,
                 minWidth: 90,
                 justifyContent:'center',
                 alignItems: 'center',
@@ -200,21 +203,21 @@ export class BoxButton extends Component{
   render(){
     const IOptions = this.props.IOptions || {}
 
-    return  <TouchableOpacity onPress={this.props.onPress} style={this.styles.touchable}>
+    return  <TouchableOpacity onPress={()=>this.props.onPress()} style={this.styles.touchable}>
               <LinearGradient colors={Theme.box_button.shape.linearColors || this.linearColors || ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']} style={[this.styles.boxControl, Theme.box_button.shape, this.CStyle_plus]}>
-                <XImage source={this.props.source} size={IOptions.size} color={IOptions.color} style={this.styles.icons} local={this.props.local || true} />
+                <XImage source={this.props.source} size={IOptions.size || 16} color={IOptions.color || Theme.global_text.color} style={this.styles.icons} local={this.props.local || true} />
               </LinearGradient>
               <View style={[this.styles.boxText, Theme.box_button.box_text]}>
-                {
-                  this.props.blink &&
-                  <AnimatedBox type="blink" durationIn={600} durationOut={600}>
-                    <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus, this.styles.blinkedText]}>{this.props.title}</XText>
-                  </AnimatedBox>
-                }
-                {
-                  !this.props.blink &&
-                  <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus]}>{this.props.title}</XText>
-                }
+              {
+                this.props.blink &&
+                <AnimatedBox type="blink" durationIn={600} durationOut={600}>
+                  <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus, this.styles.blinkedText]}>{this.props.title}</XText>
+                </AnimatedBox>
+              }
+              {
+                !this.props.blink &&
+                <XText style={[this.styles.text, Theme.box_button.text, this.TStyle_plus]}>{this.props.title}</XText>
+              }
               </View>
             </TouchableOpacity>
   }

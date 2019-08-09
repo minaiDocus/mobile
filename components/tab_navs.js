@@ -58,12 +58,12 @@ export class TabNav extends Component{
             indexSelectedIcon = (index == this.state.index)? (barStylePlus.selectedIcon || Theme.tabs.selected.icon) : (barStylePlus.icon || {});
 
             return (
-             <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
-              <View style={[this.stylesTabBar.box, Theme.tabs.shape, indexSelectedShape]}>
-                { isPresent(tb.icon) && <XImage source={{uri:tb.icon}} style={[this.stylesTabBar.icons, Theme.tabs.icons, indexSelectedIcon]} /> }
-                <XText style={[{flex: 1}, Theme.tabs.title, indexSelectedText]}>{tb.title}</XText>
-              </View>
-            </TouchableOpacity>
+               <TouchableOpacity key={index} onPress={()=>{this.handleIndexChange(index)}} style={{flex:1}}>
+                <View style={[this.stylesTabBar.box, Theme.tabs.shape, indexSelectedShape]}>
+                  { isPresent(tb.icon) && <XImage source={{uri:tb.icon}} style={[this.stylesTabBar.icons, Theme.tabs.icons, indexSelectedIcon]} /> }
+                  <XText style={[{flex: 1}, Theme.tabs.title, indexSelectedText]}>{tb.title}</XText>
+                </View>
+              </TouchableOpacity>
         )})
 
       return <View style={[this.stylesTabBar.container, Theme.tabs.head_container, barStylePlus.shape]}>

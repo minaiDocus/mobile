@@ -60,13 +60,11 @@ export class ProgressUpload extends Component{
     this.styles = StyleSheet.create({
       box:{
             flex:0,
-            borderRadius:100,
             alignItems:'center',
             justifyContent:'center',
-            borderColor:'#422D14',
-            borderWidth:2,
-            marginRight:3,
+            marginRight:5,
             marginTop:3,
+            right: 0,
             position:'absolute'
           },
       gradient: {
@@ -80,7 +78,10 @@ export class ProgressUpload extends Component{
       text: {
               color:"#C0D838",
               fontSize:12,
-              fontWeight:'bold'
+              fontWeight:'bold',
+              textShadowColor:'#000',
+              textShadowOffset:{width: 1, height: 1},
+              textShadowRadius:1
             }
     })
   }
@@ -90,7 +91,8 @@ export class ProgressUpload extends Component{
     if(this.state.show && this.state.value < 99 && UploadingFiles)
     {
       return <View style={this.styles.box}>
-              <AnimatedBox ref="progressUpload" type="RightSlide" style={{flex: 0}}>
+              <AnimatedBox ref="progressUpload" type="RightSlide" style={{flex: 0, borderColor:'#422D14',
+            borderWidth:2, borderRadius:100,}}>
                 <LinearGradient colors={colorGrad} style={this.styles.gradient}>
                   <TouchableOpacity onPress={this.showState}>
                     <XText style={this.styles.text}>{this.state.value} %</XText>

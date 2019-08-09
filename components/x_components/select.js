@@ -346,10 +346,12 @@ export class SelectInput extends Component{
   }
 
   showModal(){
+    KeyboardShow = true
     this.setState({openModal: true})
   }
 
   hideModal(){
+    KeyboardShow = false
     if(this.props.onClose) this.props.onClose()
     this.setState({openModal: false})
   }

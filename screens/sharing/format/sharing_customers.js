@@ -23,26 +23,18 @@ class ModalSharing extends Component{
     if(this.type == "sharing")
     {
       message = "Partage en cours d'envoi ..."
-      if(form.values.email == '' || form.values.company == '')
-      {
+      if(!isPresent(form.values.email) || !isPresent(form.values.company))
         Notice.alert("Erreur", "Veuillez remplir les champs obligatoires (*) svp!")
-      }
       else
-      {
         url = `addSharedDocCustomers(${JSON.stringify(form.values)})`
-      }
     }
     else
     {
       message = "Demande en cours d'envoi ..."
-      if(form.values.code_or_email == '')
-      {
+      if(!isPresent(form.values.code_or_email))
         Notice.alert("Erreur", "Veuillez remplir les champs obligatoires (*) svp!")
-      }
       else
-      {
         url = `addSharingRequestCustomers(${JSON.stringify(form.values)})`
-      }
     }
 
     if(url != '')
@@ -50,16 +42,16 @@ class ModalSharing extends Component{
       const call = ()=>{
                           Notice.info(message)
                           AccountSharing.waitFor([url], responses=>{
-                              if(responses[0].error)
-                              {
-                                Notice.danger(responses[0].message, { name: responses[0].message })
-                              }
-                              else
-                              {
-                                Notice.info(responses[0].message)
-                                EventRegister.emit('refreshPage')
-                              }
-                            })
+                            if(responses[0].error)
+                            {
+                              Notice.danger(responses[0].message, { name: responses[0].message })
+                            }
+                            else
+                            {
+                              Notice.info(responses[0].message)
+                              EventRegister.emit('refreshPage')
+                            }
+                          })
                         }
       actionLocker(call)
 
@@ -173,18 +165,8 @@ class ViewState extends Component{
       container: {
         flex:1,
         flexDirection:'column',
-        borderRadius:10,
-        
-        elevation: 7, //Android shadow
-
-        shadowColor: '#000',                  //===
-        shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
-        shadowOpacity: 0.8,                   //===
-        shadowRadius: 2,                      //===
-
         margin:10,
-        padding:10,
-        backgroundColor:"#E9E9E7"
+        padding:10
       }
     });
   }
@@ -197,7 +179,7 @@ class ViewState extends Component{
     const details = this.props.datas.map((dt, index) => {return this.renderDetails(dt, index)});
 
     return  <ScrollView>
-              <View style={this.styles.container}>
+              <View style={[this.styles.container, Theme.box]}>
                 <View style={{flex:1, flexDirection:'row'}}>
                   <View style={{flex:4}}>
                     <XText style={{fontSize:16,color:'#463119'}}>{title} <XText style={{color:'#EC5656',fontWeight:'bold'}}>({counts})</XText></XText>
@@ -247,7 +229,7 @@ class Header extends Component{
   }
 
   render(){
-    return  <View style={[this.styles.container, Theme.head.shape]}>
+    return  <View style={[this.styles.container, Theme.head.shape, {paddingBottom: 15}]}>
               {this.state.openModal && <ModalSharing type={this.state.typeModal} dismiss={this.closeModalSharing} />}
               <BoxButton title="Partage avec un compte" onPress={()=>{this.openModalSharing('sharing')}} source={{uri:"sharing_account"}} rayon={60}/>
               <BoxButton title="Demande accès dossier" onPress={()=>{this.openModalSharing('access')}} source={{uri:"request_access"}} rayon={60}/>

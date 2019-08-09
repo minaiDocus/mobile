@@ -4,6 +4,7 @@ export class Requester {
   requestURI(uri, options={}, callback={}){
     return new Promise((resolve, reject) => {
       const Fetcher = new XFetcher()
+
       Fetcher.fetch(uri, options, true, (r)=>{
         if(r.error)
         {

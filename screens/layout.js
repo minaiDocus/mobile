@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { View, BackHandler, PanResponder} from 'react-native'
+import LinearGradient from 'react-native-linear-gradient'
 import { EventRegister } from 'react-native-event-listeners'
 import PropTypes from 'prop-types'
 import { NoticeBox, XImage, XText, AnimatedBox, ImageButton, Navigator, XModal, UINotification, FCMinit as FCM } from '../components'
@@ -350,15 +351,19 @@ export class Screen extends Component{
 
   render(){
     const CStyle = this.props.style
-    const back = require('../images/bg_body.png')
 
     return <View {...this.props} style={CStyle} onLayout={(event)=>{this.handleLayout(event)}} {...this.boxPanResponder.panHandlers}>
-              <XImage type='container' source={back} resizeMode='cover' style={{width: '100%', height: '100%'}} CStyle={{width: '100%', height: '100%'}}>
+              <LinearGradient colors={['#D8E0D1', '#71969E', '#FFF']}
+                              style={{flex: 1}}
+                              start={{x: 0, y: -0.1}}
+                              end={{x: 1, y: 1}}
+                              locations={[0.5,0.6,0]}
+              >
                 { !this.noHeader && <Header ref="header" closeScreen={(callback)=>this.closeScreen(callback)} title={this.props.title} options={this.props.options} withMenu={this.props.withMenu} /> }
                 <AnimatedBox ref='main_page' startOnLoad={false} hideTillStart={true} style={{flex: 1}} type='fade' durationIn={600} durationOut={300}>
                   { this.props.children }
                 </AnimatedBox>
-              </XImage>
+              </LinearGradient>
               <FrontView ref='main_front_view' />
               <NoticeBox />
               { !this.noFCM && <FCM /> }

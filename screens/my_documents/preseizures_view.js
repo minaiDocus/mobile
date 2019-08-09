@@ -10,7 +10,7 @@ import { ModalComptaAnalysis } from '../modals/compta_analytics'
 
 import { DocumentsFetcher, FileUploader } from "../../requests"
 
-let GLOB = { pack_or_report:{}, preseizures:[], source: '', idZoom:"", dataFilter: {}, selectedItems:[], press_action: 'zoom', currPresPage: 1, currPresTab: 0 }
+let GLOB = { master: null, pack_or_report:{}, preseizures:[], source: '', idZoom:"", dataFilter: {}, selectedItems:[], press_action: 'zoom', currPresPage: 1, currPresTab: 0 }
 
 function getImgStampOf(state=''){
   let stamp_img = 'none'
@@ -165,46 +165,55 @@ class BoxZoom extends Component{
   }
 
   editAccount(account){
-    this.edition['type'] = 'account'
-    this.edition['id'] = account.id
+    if(Master.is_prescriber || Master.is_admin)
+    {
+      this.edition['type'] = 'account'
+      this.edition['id'] = account.id
 
-    this.form_inputs =  [
-                          { label: "Numéro", name: "number", value: account.number },
-                          { label: "Lettrage", name: "lettering", value: account.lettering },
-                        ]
+      this.form_inputs =  [
+                            { label: "Numéro", name: "number", value: account.number },
+                            { label: "Lettrage", name: "lettering", value: account.lettering },
+                          ]
 
-    this.setState({ showForm: true })
+      this.setState({ showForm: true })
+    }
   }
 
   editEntry(entry){
-    this.edition['type'] = 'entry'
-    this.edition['id'] = entry.id
+    if(Master.is_prescriber || Master.is_admin)
+    {
+      this.edition['type'] = 'entry'
+      this.edition['id'] = entry.id
 
-    this.form_inputs =  [
-                          { label: "* Type", name: "type", type:'radio', dataOptions:[{label: 'Débit', value: '1'}, {label: 'Crédit', value: '2'}], value: entry.type },
-                          { label: "* Montant", name: "amount", keyboardType: 'decimal-pad', value: entry.amount || 0 },
-                        ]
+      this.form_inputs =  [
+                            { label: "* Type", name: "type", type:'radio', dataOptions:[{label: 'Débit', value: '1'}, {label: 'Crédit', value: '2'}], value: entry.type },
+                            { label: "* Montant", name: "amount", keyboardType: 'decimal-pad', value: entry.amount || 0 },
+                          ]
 
-    this.setState({ showForm: true })
+      this.setState({ showForm: true })
+    }
   }
 
   validateProcess(){
     this.dismissForm()
 
-    let url = ''
-    let datas = this.refs.form_1.values
-    if(this.edition['type'] == 'account')
-      url = `setPreseizureAccount(${this.edition.id}, ${JSON.stringify(datas)})`
-    else if(this.edition['type'] == 'entry')
-      url = `setPreseizureEntry(${this.edition.id}, ${JSON.stringify(datas)})`
+    if(Master.is_prescriber || Master.is_admin)
+    {
+      let url = ''
+      let datas = this.refs.form_1.values
+      if(this.edition['type'] == 'account')
+        url = `setPreseizureAccount(${this.edition.id}, ${JSON.stringify(datas)})`
+      else if(this.edition['type'] == 'entry')
+        url = `setPreseizureEntry(${this.edition.id}, ${JSON.stringify(datas)})`
 
-    if(isPresent(url)){
-      DocumentsFetcher.waitFor([url], responses=>{
-        if(responses[0].error)
-          Notice.alert('Erreur', responses[0].message)
-        else
-          this.refreshData()
-      })
+      if(isPresent(url)){
+        DocumentsFetcher.waitFor([url], responses=>{
+          if(responses[0].error)
+            Notice.alert('Erreur', responses[0].message)
+          else
+            this.refreshData()
+        })
+      }
     }
   }
 
@@ -452,7 +461,7 @@ class BoxZoom extends Component{
               {
                 GLOB.source == 'pack' &&
                 <TabNav headers={[{title: "Pré-affectation"}, {title: "Pièce"}]}
-                        BStyle={ {shape: {marginTop: 0}} }
+                        BStyle={ {shape: {marginTop: 0}, text:{color: '#888'}} }
                 >
                   { this.renderEntries() }
                   { this.renderPreview() }
@@ -550,7 +559,7 @@ class BoxInfos extends Component{
               <LineList datas={infos}
                         renderItems={(data) => this.renderItems(data)} />
               { 
-                this.state.delivery &&
+                (Master.is_prescriber || Master.is_admin) && this.state.delivery &&
                 <SimpleButton CStyle={[{position: 'absolute', top:0, right:0, zIndex: 200, elevation: 8 /**Elevate because of line list elevation**/}, Theme.primary_button.shape]}
                               TStyle={Theme.primary_button.text}
                               title='Livraison écritures'
@@ -769,10 +778,13 @@ class PreseizureBox extends Component{
                     <XText style={{flex: 1}}><XText style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>Date envoi:</XText> {formatDate(this.props.data.delivery_tried_at)}</XText>
                     <XText style={{flex: 1}}>{truncate(this.props.data.error_message, 30)}</XText>
                   </View>
-                  <View style={{flex: 0, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                    { !this.state.is_delivered && <ImageButton source={{icon: 'refresh'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.deliver()}}/> }
-                    <ImageButton source={{icon: 'edit'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.edit()}}/>
-                  </View>
+                  {
+                    (Master.is_prescriber || Master.is_admin) &&
+                    <View style={{flex: 0, flexDirection: 'row', justifyContent: 'flex-end'}}>
+                      { !this.state.is_delivered && <ImageButton source={{icon: 'refresh'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.deliver()}}/> }
+                      <ImageButton source={{icon: 'edit'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.edit()}}/>
+                    </View>
+                  }
                 </View>
               </View>
             </TouchableOpacity>
@@ -874,7 +886,8 @@ class BoxPublish extends Component{
   }
 
   validateProcess(){
-    if(isPresent(this.ids_edition))
+    if((Master.is_prescriber || Master.is_admin) && isPresent(this.ids_edition))
+    {
       Notice.info('Edition en cours ...', {name: 'preseizure_edition'})
 
       let values = this.refs.form_1.values
@@ -889,7 +902,8 @@ class BoxPublish extends Component{
           Notice.info('Edition terminer.', {name: 'preseizure_edition'})
           EventRegister.emit('refreshPreseizure', false)
         }
-    })
+      })
+    }
 
     this.dismissForm()
   }
@@ -1049,42 +1063,45 @@ export class PreseizuresView extends Component{
   }
 
   multiDelivery(type='selection', callback=null){
-    if(type == 'selection' && isPresent(GLOB.selectedItems))
+    if(Master.is_prescriber || Master.is_admin)
     {
-      const call = ()=>{
-        DocumentsFetcher.deliverPreseizure(GLOB.selectedItems)
-        Notice.info('Livraison en cours ...')
-        setTimeout(() => EventRegister.emit('refreshPreseizure', false), 2000)
-        try{ callback() }catch(e){}
-      }
-
-      Notice.alert('Livraison écriture', `Voulez vous vraiment livrer ${GLOB.selectedItems.length} écriture(s) comptable(s), seulles les écritures non livrées seront affectées`, 
-        [
-          {text: 'Oui', onPress: () => call() },
-          {text: 'Non', style: 'cancel'}
-        ]
-      )
-    }
-    else if(type == 'all' && isPresent(GLOB.pack_or_report.id))
-    {
-      const call = ()=>{
-          DocumentsFetcher.deliverPreseizure(null, GLOB.pack_or_report.id, GLOB.source)
+      if(type == 'selection' && isPresent(GLOB.selectedItems))
+      {
+        const call = ()=>{
+          DocumentsFetcher.deliverPreseizure(GLOB.selectedItems)
           Notice.info('Livraison en cours ...')
           setTimeout(() => EventRegister.emit('refreshPreseizure', false), 2000)
           try{ callback() }catch(e){}
         }
 
-        Notice.alert('Livraison écriture', `Voulez vous vraiment livrer tout les écritures comptables non livrées du lot vers ${GLOB.pack_or_report.software_human_name}?`, 
+        Notice.alert('Livraison écriture', `Voulez vous vraiment livrer ${GLOB.selectedItems.length} écriture(s) comptable(s), seulles les écritures non livrées seront affectées`, 
           [
             {text: 'Oui', onPress: () => call() },
             {text: 'Non', style: 'cancel'}
           ]
         )
+      }
+      else if(type == 'all' && isPresent(GLOB.pack_or_report.id))
+      {
+        const call = ()=>{
+            DocumentsFetcher.deliverPreseizure(null, GLOB.pack_or_report.id, GLOB.source)
+            Notice.info('Livraison en cours ...')
+            setTimeout(() => EventRegister.emit('refreshPreseizure', false), 2000)
+            try{ callback() }catch(e){}
+          }
+
+          Notice.alert('Livraison écriture', `Voulez vous vraiment livrer tout les écritures comptables non livrées du lot vers ${GLOB.pack_or_report.software_human_name}?`, 
+            [
+              {text: 'Oui', onPress: () => call() },
+              {text: 'Non', style: 'cancel'}
+            ]
+          )
+      }
     }
   }
 
   multiEdition(){
-    if(isPresent(GLOB.selectedItems))
+    if((Master.is_prescriber || Master.is_admin) && isPresent(GLOB.selectedItems))
       EventRegister.emit('showPreseizureEdition', {ids: GLOB.selectedItems, type: 'multi'})
   }
 
@@ -1112,18 +1129,21 @@ export class PreseizuresView extends Component{
                               IStyle={{flex:0, width:17, height:17}}
                               onPress={()=>{ Notice.remove('selection_items_notification', true) }} />
                           </View>
-                          <View style={{flex:1, flexDirection:'row', height: 35, justifyContent:'flex-end',  marginTop:7}}>
-                            <ImageButton  source={{icon:"refresh"}}
-                              IOptions={{size: 17, color: '#FFF'}}
-                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
-                              IStyle={{flex:0, width:17, height:17}}
-                              onPress={()=>{this.multiDelivery()}} />
-                            <ImageButton  source={{icon:"edit"}} 
-                              IOptions={{size: 17, color: '#FFF'}}
-                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
-                              IStyle={{flex:0, width:17, height:17}}
-                              onPress={()=>{this.multiEdition()}} />
-                          </View>
+                          {
+                            (Master.is_prescriber || Master.is_admin) &&
+                            <View style={{flex:1, flexDirection:'row', height: 35, justifyContent:'flex-end',  marginTop:7}}>
+                              <ImageButton  source={{icon:"refresh"}}
+                                IOptions={{size: 17, color: '#FFF'}}
+                                CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
+                                IStyle={{flex:0, width:17, height:17}}
+                                onPress={()=>{this.multiDelivery()}} />
+                              <ImageButton  source={{icon:"edit"}} 
+                                IOptions={{size: 17, color: '#FFF'}}
+                                CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
+                                IStyle={{flex:0, width:17, height:17}}
+                                onPress={()=>{this.multiEdition()}} />
+                            </View>
+                          }
                         </View>
                       </View>
     Notice.info(mess_obj, { permanent: true, name: "selection_items_notification", noClose: true })

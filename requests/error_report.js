@@ -1,15 +1,12 @@
 import {XFetcher} from '../components'
 
-import {User} from '../models'
-
 class error_report {
   sendErrorReport(title="", error="", report={}){
-    const master = User.getMaster()
     const params =  {
                       title: title, 
                       error: error, 
-                      user_id: master.id || "not connected",
-                      user_token: master.auth_token || "not connected",
+                      user_id: Master.id || "not connected",
+                      user_token: Master.auth_token || "not connected",
                       platform: Config.platform,
                       version: Config.version,
                       report: report

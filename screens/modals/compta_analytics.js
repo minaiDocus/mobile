@@ -416,6 +416,7 @@ export class ModalComptaAnalysis extends Component{
                       {this.state.ready &&
                         <TabNav headers={[{title: "Analyse 1"}, {title: "Analyse 2"}, {title: "Analyse 3"}]}
                                 CStyle={{ backgroundColor: 'transparent' }}
+                                BStyle={{text: {color: '#999'}, selectedHead: {backgroundColor: '#DDD'} }}
                         >
                           <AnalysisView index={0}/>
                           <AnalysisView index={1}/>

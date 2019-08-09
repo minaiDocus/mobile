@@ -64,7 +64,14 @@ export class Pagination extends Component{
       activeText = {}
       if(this.state.page == i)
       {
-        activeText = {fontSize:16, color:'#C0D838', fontWeight:'bold'}
+        activeText = {
+                      fontSize:16,
+                      color:'#FFF',
+                      fontWeight:'bold',
+                      textShadowColor:'#000',
+                      textShadowOffset:{width: 1, height: 1},
+                      textShadowRadius:1
+                     }
       }
 
       const page_number = i

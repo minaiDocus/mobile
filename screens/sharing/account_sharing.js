@@ -12,11 +12,10 @@ import SharingCustomers from './format/sharing_customers'
 class HeaderOptions extends Component{
   constructor(props){
     super(props)
-    this.current_user = User.getMaster()
   }
 
   render() {
-    if(this.current_user.is_prescriber || this.current_user.is_admin)
+    if(Master.is_prescriber || Master.is_admin)
     {
       return <ImageButton source={{uri:"options"}} 
                           CStyle={{flex:0, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:40}}
@@ -33,7 +32,7 @@ class HeaderOptions extends Component{
 class SharingScreen extends Component {
   constructor(props){
     super(props)
-    this.current_user = User.getMaster()
+    Master = User.getMaster()
   }
 
   renderOptions(){
@@ -44,7 +43,7 @@ class SharingScreen extends Component {
   }
 
   render() {
-    if(this.current_user.is_prescriber || this.current_user.is_admin)
+    if(Master.is_prescriber || Master.is_admin)
     {
       return <SharingAdmin navigation={this.props.navigation} title='Partage dossier' options={ this.renderOptions() } />
     }

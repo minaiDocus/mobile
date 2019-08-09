@@ -38,7 +38,7 @@ function sendDatas(){
     let alreadySent = false
     let img_sent = null
     
-    const auth_token = User.getMaster().auth_token
+    const auth_token = Master.auth_token
     const file_code = User.find(`id_idocus = ${GLOB.customer}`)[0].code
     const form = new FormData()
     
@@ -181,7 +181,6 @@ class Body extends Component{
 
     this.state = {period_start: "", period_expired: "", ready: false, paramsReady: false, journalsOptions: [], periodsOptions: [], comptaAnalysisActivated: false, analysisOpen: false, comptaAnalysisResume: false}
 
-    this.master = User.getMaster()
     this.customers = []
     GLOB.journal = GLOB.periods = GLOB.customer = ""
 

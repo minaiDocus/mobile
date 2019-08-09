@@ -52,10 +52,8 @@ class LoginScreen extends Component {
           GLOB.system_reject = true
         }
       }
-      
-      const user = User.getMaster()
 
-      if(user.id && responses[0].code != 500)
+      if(User.getMaster().id && responses[0].code != 500)
       {
         this.goToHome()
         setTimeout(()=>{ this.hideSplash() }, 1000)
@@ -89,6 +87,8 @@ class LoginScreen extends Component {
   }
 
   goToHome(){
+    Master = realmToJson(User.getMaster())
+
     try{
       this.refs.animated_copyright.leave(()=>{
         this.refs.animated_logo.leave(()=>{
@@ -220,8 +220,8 @@ class LoginScreen extends Component {
               >
         <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
           <View style={[this.styles.container, Theme.container]}>   
-            <AnimatedBox ref='animated_logo' type='DownSlide' startOnLoad={false} hideTillStart={true} durationIn={300} durationOut={300} style={{flex:0,flexDirection:'row',alignItems:'center', paddingVertical: 20, marginTop:3, backgroundColor: 'rgba(0,0,0,0.4)'}}>
-              <XImage style={{flex:0, width: '100%', height:70}} source={{uri:"charge"}} />
+            <AnimatedBox ref='animated_logo' type='DownSlide' startOnLoad={false} hideTillStart={true} durationIn={300} durationOut={300} style={{flex: 0,flexDirection: 'row',alignItems: 'center',paddingVertical: 10,marginTop: 3,backgroundColor: 'rgba(13,13,13,0.3)'}}>
+              <XImage style={{flex:0, width: '100%', height:40}} source={{uri:"charge"}} />
             </AnimatedBox>
             {
               !this.state.ready && <XText style={this.styles.textCharging}>Communication au serveur en cours ..., Veuillez patienter svp</XText>
@@ -233,13 +233,15 @@ class LoginScreen extends Component {
                               editable={!this.state.loading}
                               autoCorrect={false}
                               selectTextOnFocus={true}
-                              CStyle={this.styles.inputs} 
-                              placeholder="Identifiant (Email)"
+                              CStyle={this.styles.inputs}
+                              TStyle={{color: '#FFF'}}
+                              placeholder="Identifiant (Email | Code)"
                               keyboardType="email-address"
                               next={{action: this.actionPassword}}
                               returnKeyType='next'
                               onSubmitEditing={this.actionPassword}
                               RImage={{icon: "user"}}
+                              IOptions={{color: '#FFF'}}
                               onChangeText={(text) => this.handleLogin(text)}/>
                 </View>
                 <View style={this.styles.boxInput}>
@@ -249,12 +251,14 @@ class LoginScreen extends Component {
                               selectTextOnFocus={true}
                               secureTextEntry={true} 
                               CStyle={this.styles.inputs}
+                              TStyle={{color: '#FFF'}}
                               returnKeyType='go'
                               onSubmitEditing={this.submitForm}
                               placeholder="Mot de passe"
                               next={{title: "Connexion", action: this.submitForm}}
                               previous={{action: this.actionLogin}}
                               RImage={{icon: "lock"}}
+                              IOptions={{color: '#FFF'}}
                               onChangeText={(text) => this.handlePass(text)}/>
                 </View>
                 {!this.state.loading && <SimpleButton onPress={() => this.submitForm()} CStyle={[this.styles.submit, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} title="Connexion" />}

@@ -1,6 +1,5 @@
 import {Requester} from './index'
 import base64 from 'base-64'
-import {User} from '../models'
 
 class documents_fetcher extends Requester{
 
@@ -9,7 +8,7 @@ class documents_fetcher extends Requester{
     if(forcing_temp)
       forcing="&force_temp_document=true"
 
-    const uri = encodeURI(`${Config.http_host}api/mobile/data_loader/render_image_documents/?auth_token=${User.getMaster().auth_token}&id=${data.id}&style=${data.style}&${data.filter}${forcing}`)
+    const uri = encodeURI(`${Config.http_host}api/mobile/data_loader/render_image_documents/?auth_token=${Master.auth_token}&id=${data.id}&style=${data.style}&${data.filter}${forcing}`)
     let src = ''
     if(Config.server == "staging") //if accessing staging server
     {

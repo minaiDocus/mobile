@@ -31,6 +31,8 @@ global.PreviousScreen = null
 global.CurrentScreen = null
 global.ScreenList = []
 
+global.Master = {}
+
 global.MonthsData =   [
                         {label: 'Jan', value: '01'},
                         {label: 'Fev', value: '02'},

@@ -365,6 +365,7 @@ class StatsScreen extends Component {
                     </TouchableOpacity>
                   </View>
                 }
+                <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
                 <LineList datas={this.state.dataList}
                           waitingData={!this.state.ready}
                           renderItems={(data) => <BoxStat data={data} /> } />

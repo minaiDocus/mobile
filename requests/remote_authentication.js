@@ -22,6 +22,7 @@ class remote_auhtentication extends Requester{
 
     User.deleteAll()
     User.resetUpdatedAt()
+    Master = {}
   }
 }
 
