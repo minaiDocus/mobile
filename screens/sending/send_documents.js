@@ -270,6 +270,15 @@ class ImgBox extends Component{
 class Header extends Component{
   constructor(props){
     super(props)
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'column', width: 100 }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'row' }
+                                }
+
     this.generateStyles() //style generation
   }
 
@@ -285,7 +294,7 @@ class Header extends Component{
   }
 
   render(){
-    return  <View style={[this.styles.minicontainer, Theme.head.shape]}>
+    return  <View style={[this.styles.minicontainer, Theme.head.shape, this.ORstyle[this.props.orientation].body]}>
                 <BoxButton onPress={this.props.takePicture} source={{icon:"camera-retro"}} IOptions={{size: 20}} title="Prendre photo" />
                 <BoxButton onPress={this.props.openRoll} source={{icon:"picture-o"}} IOptions={{size: 20}} title="Galerie photos" />
             </View>
@@ -296,7 +305,15 @@ class SendScreen extends Component {
   constructor(props){
     super(props)
 
-    this.state = { ready: false, dataList: [], zoomActive: false }
+    this.state = { orientation: 'portrait', ready: false, dataList: [], zoomActive: false }
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'row' }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'column' }
+                                }
 
     this.renderImg = this.renderImg.bind(this)
     this.renderError = this.renderError.bind(this)
@@ -309,6 +326,10 @@ class SendScreen extends Component {
     }
 
     this.generateStyles()
+  }
+
+  handleOrientation(orientation){
+    this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
   componentWillReceiveProps(nextProps){
@@ -491,30 +512,35 @@ class SendScreen extends Component {
   render() {
       return (
         <Screen style={[{flex:1}, Theme.body]}
+                onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
                 title='Envoi documents'
                 name='Send'
                 withMenu={true}
                 options={ this.renderOptions() }
                 navigation={this.props.navigation}>
-          <Header takePicture={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
-          {
-            this.state.zoomActive &&
-            <BoxZoom  datas={this.state.dataList} 
-                      cropElement={(index)=>this.openCrop(index)}
-                      deleteElement={this.deleteElement} 
-                      hide={this.toggleZoom} />
-          }
-          <ScrollView style={{flex:1, padding:3}}>
-              <BoxList datas={this.state.dataList}
-                       title={`${this.state.dataList.length} : Document(s)`}
-                       waitingData={!this.state.ready}
-                       elementWidth={130 - 20}
-                       noItemText="Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ..."
-                       renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> }
-                       />
-          </ScrollView>
-          <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
-            <SimpleButton CStyle={[this.styles.button, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>this.sendList()} title="Suivant >>" />
+          <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
+            <Header orientation={this.state.orientation} takePicture={()=>this.openCamera()} openRoll={()=>this.openRoll()} />
+            <View style={{flex: 1}}>
+              {
+                this.state.zoomActive &&
+                <BoxZoom  datas={this.state.dataList} 
+                          cropElement={(index)=>this.openCrop(index)}
+                          deleteElement={this.deleteElement} 
+                          hide={this.toggleZoom} />
+              }
+              <ScrollView style={{flex:1, padding:3}}>
+                  <BoxList datas={this.state.dataList}
+                           title={`${this.state.dataList.length} : Document(s)`}
+                           waitingData={!this.state.ready}
+                           elementWidth={130 - 20}
+                           noItemText="Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ..."
+                           renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> }
+                           />
+              </ScrollView>
+              <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
+                <SimpleButton CStyle={[this.styles.button, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>this.sendList()} title="Suivant >>" />
+              </View>
+            </View>
           </View>
           <CropperView />
         </Screen>

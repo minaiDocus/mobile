@@ -21,6 +21,18 @@ class Header extends Component{
     GLOB.dataFilter = {}
     GLOB.clientOptions = []
 
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'column', width: '25%' },
+                                  left: { marginLeft: 0, alignSelf: 'flex-start', marginTop: 0 },
+                                  form: { height: 45 }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'row' },
+                                  left: {},
+                                  form: { height: '100%' }
+                                }
+
     this.filterLocked = false
     this.filterCount = 0
     this.filterClock = null
@@ -160,7 +172,6 @@ class Header extends Component{
     this.styles = StyleSheet.create({
       container:{
                   flex:0,
-                  flexDirection:'row',
                   backgroundColor:'#E1E2DD',
                   width:'100%'
                 },
@@ -223,7 +234,7 @@ class Header extends Component{
   }
 
   render(){
-    return  <View style={[this.styles.container, Theme.head.shape, { padding: 0 }]}>
+    return  <View style={[this.styles.container, Theme.head.shape, { padding: 0 }, this.ORstyle[this.props.orientation].body]}>
               { this.state.filter && 
                 <ModalForm  ref='form_1'
                             title="Filtre"
@@ -235,8 +246,8 @@ class Header extends Component{
                             ]}
                 />
               }
-              <View style={this.styles.left}>
-                <View style={this.styles.form}>
+              <View style={[this.styles.left, this.ORstyle[this.props.orientation].left]}>
+                <View style={[this.styles.form, this.ORstyle[this.props.orientation].form]}>
                   { this.state.ready && this.renderCustomerSelection() }
                   { !this.state.ready && <XImage loader={true} width={40} height={40} /> }
                   { this.state.force_pre_assignment && this.props.waitingOperations > 0 && <SimpleButton CStyle={[Theme.secondary_button.shape, {flex:0, marginVertical: 5, height: 25, width:'98%'}]} TStyle={Theme.secondary_button.text} title='Forcer la pré-affectation' onPress={()=>{this.props.forcePreAssignment()}}/> }
@@ -393,7 +404,15 @@ class OperationsScreen extends Component {
 
     super(props)
 
-    this.state = { ready: false, datas: [], limitPage: 1, total: 0, waiting_operations_count: 0, orderBox: false, orderText: null, orderBy: "", direction: "" }
+    this.state = { orientation: 'portrait', ready: false, datas: [], limitPage: 1, total: 0, waiting_operations_count: 0, orderBox: false, orderText: null, orderBy: "", direction: "" }
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'row' },
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'column' },
+                                }
 
     this.order = {}
     this.page = 1
@@ -404,6 +423,10 @@ class OperationsScreen extends Component {
     this.toggleOrderBox = this.toggleOrderBox.bind(this)
     this.handleOrder = this.handleOrder.bind(this)
     this.forcePreAssignment = this.forcePreAssignment.bind(this)
+  }
+
+  handleOrientation(orientation){
+    this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
   componentWillMount(){
@@ -512,29 +535,32 @@ class OperationsScreen extends Component {
 
       return (
         <Screen style={{flex: 1, flexDirection: 'column'}}
+                onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
                 title='Mes opérations'
                 name='Operations'
                 withMenu={true}
                 options={ this.renderOptions() }
                 navigation={this.props.navigation}>
-          <Header onFilter={()=>this.refreshDatas()} waitingOperations={this.state.waiting_operations_count} forcePreAssignment={()=>{this.forcePreAssignment()}} />
-          <ScrollView style={{flex:1, padding:3}}>
-            {this.state.orderText && this.state.datas.length > 0 && 
-              <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
-                <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>
-                <TouchableOpacity style={{flex:0,width:30,alignItems:'center'}} onPress={()=>this.changeDirectionSort()}>
-                  <XText style={{fontSize:14, fontWeight:'bold'}}>{arrow_direction}</XText>
-                </TouchableOpacity>
-              </View>
-            }
-            <XText style={[{flex:0, textAlign:'center', fontSize:16, fontWeight:'bold'}, Theme.lists.title]}>{`${this.state.total} : Opérations`}</XText>
-            <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} CStyle={{marginBottom: 0}} />
-            <LineList datas={this.state.datas}
-                      waitingData={!this.state.ready}
-                      renderItems={(data) => <BoxOperations data={data} /> } />
+          <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
+            <Header orientation={this.state.orientation} onFilter={()=>this.refreshDatas()} waitingOperations={this.state.waiting_operations_count} forcePreAssignment={()=>{this.forcePreAssignment()}} />
+            <ScrollView style={{flex:1, padding:3}}>
+              {this.state.orderText && this.state.datas.length > 0 && 
+                <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
+                  <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>
+                  <TouchableOpacity style={{flex:0,width:30,alignItems:'center'}} onPress={()=>this.changeDirectionSort()}>
+                    <XText style={{fontSize:14, fontWeight:'bold'}}>{arrow_direction}</XText>
+                  </TouchableOpacity>
+                </View>
+              }
+              <XText style={[{flex:0, textAlign:'center', fontSize:16, fontWeight:'bold'}, Theme.lists.title]}>{`${this.state.total} : Opérations`}</XText>
+              <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} CStyle={{marginBottom: 0}} />
+              <LineList datas={this.state.datas}
+                        waitingData={!this.state.ready}
+                        renderItems={(data) => <BoxOperations data={data} /> } />
 
-            <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} />
-          </ScrollView>
+              <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} />
+            </ScrollView>
+          </View>
           <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
         </Screen>
       )

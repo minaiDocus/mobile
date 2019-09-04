@@ -21,7 +21,7 @@ class Header extends Component{
     this.styles = StyleSheet.create({
       container:{
                   flex:0,
-                  paddingVertical:5,
+                  paddingVertical:15,
                   flexDirection:'row',
                   alignItems:'center',
                 },
@@ -42,7 +42,7 @@ class Header extends Component{
                 height:40,
                 width:80,
                 borderTopLeftRadius:100,
-                backgroundColor:'#fff',
+                backgroundColor:'#F0F0F0',
               },
       logo: {
               position:'absolute',
@@ -61,8 +61,7 @@ class Header extends Component{
                 <XImage style={this.styles.logo} source={{uri:'logo'}} />
               </View>
               <View style={this.styles.right}>
-                <XText style={Theme.menu.head.text_1}>Bienvenue</XText>
-                {userName != "" && <XText style={Theme.menu.head.text_2}>{userName}</XText>}
+                {userName != "" && <XText style={Theme.menu.head.text_1}>{userName}</XText>}
                 <XText style={[Theme.menu.head.text_2, { fontSize:10 }]}>{Master.email}</XText>
               </View>
             </View>
@@ -108,7 +107,7 @@ class Footer extends Component{
     //test
     this.generateStyles()
     return  <View style={[this.styles.container, Theme.menu.footer.shape]}>
-              <SimpleButton CStyle={Theme.primary_button.shape, {backgroundColor: '#f2f2f2'}} TStyle={{color: '#4C5A65'}} title='Deconnexion' onPress={()=>{this.logOut()}}/>
+              <SimpleButton CStyle={Theme.primary_button.shape, {backgroundColor: '#F0F0F0'}} LImage={{icon:'sign-out'}} IOptions={{size:16, color:'#4C5A65'}} TStyle={{color: '#4C5A65'}} title='Deconnexion' onPress={()=>{this.logOut()}}/>
             </View>
   }
 }
@@ -126,6 +125,7 @@ class Body extends Component{
                   paddingVertical:20
                 },
       linkP:{
+              flex:1,
               marginVertical:5,
               marginHorizontal:25
             },
@@ -139,18 +139,18 @@ class Body extends Component{
 
   render(){
     const iconColor = '#C0D838'
-    const iconSize = 15
+    const iconSize = 17
 
     return  <View style={this.styles.container}>
-              <ScrollView>
-                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Home')? 'Home' : null)}} source={{icon:'home'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Accueil' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
+              <View style={{flex: 1}}>
+                <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Home')? 'Home' : null)}} source={{icon:'home'}} IOptions={{size: 19, color: iconColor}} resizeMode='contain' title='Accueil' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
                 <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Send')? 'Send' : null)}} source={{icon:'send'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Envoi documents' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
                 <LinkButton onPress={()=>{}} source={{icon:'file-o'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Mes factures' IStyle={this.styles.linkI} TStyle={[Theme.menu.body.links, {textDecorationLine: 'underline'}]} CStyle={this.styles.linkP} />
-                  <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Invoices')? 'Invoices' : null)}} source={{icon:'caret-right'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Pièces/Pré-affectations' IStyle={[this.styles.linkI, {width: 8, height:8, marginRight: 7}]} TStyle={[Theme.menu.body.links, {fontSize: 10}]} CStyle={[this.styles.linkP, {marginLeft: 40}]} />
-                  <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Operations')? 'Operations' : null)}} source={{icon:'caret-right'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Mes opérations' IStyle={[this.styles.linkI, {width: 8, height:8, marginRight: 7}]} TStyle={[Theme.menu.body.links, {fontSize: 10}]} CStyle={[this.styles.linkP, {marginLeft: 40}]} />
+                  <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Invoices')? 'Invoices' : null)}} source={{icon:'caret-right'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Pièces/Pré-affectations' IStyle={[this.styles.linkI, {width: 8, height:8, marginRight: 7}]} TStyle={[Theme.menu.body.links, {fontSize: 10}]} CStyle={[this.styles.linkP, {marginLeft: 50}]} />
+                  <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Operations')? 'Operations' : null)}} source={{icon:'caret-right'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Mes opérations' IStyle={[this.styles.linkI, {width: 8, height:8, marginRight: 7}]} TStyle={[Theme.menu.body.links, {fontSize: 10}]} CStyle={[this.styles.linkP, {marginLeft: 50}]} />
                 <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Stats')? 'Stats' : null)}} source={{icon:'dashboard'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Suivi' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
                 <LinkButton onPress={()=>{this.props.navigate((CurrentScreen.screen_name != 'Sharing')? 'Sharing' : null)}} source={{icon:'share-square-o'}} IOptions={{size: iconSize, color: iconColor}} resizeMode='contain' title='Partage dossier' IStyle={this.styles.linkI} TStyle={Theme.menu.body.links} CStyle={this.styles.linkP} />
-              </ScrollView>
+              </View>
             </View>
   }
 }

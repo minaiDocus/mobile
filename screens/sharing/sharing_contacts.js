@@ -107,6 +107,14 @@ class Header extends Component{
 
     this.state =  {openFilter: false, openForm: false, dataForm: {}}
 
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'column', width: 100 }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'row' }
+                                }
+
     this.closeFilter = this.closeFilter.bind(this)
     this.closeForm = this.closeForm.bind(this)
 
@@ -161,7 +169,6 @@ class Header extends Component{
     this.styles = StyleSheet.create({
       container:{
         flex:0, 
-        flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
       }
@@ -169,7 +176,7 @@ class Header extends Component{
   }
 
   render(){ 
-    return  <View style={[this.styles.container, Theme.head.shape]}>
+    return  <View style={[this.styles.container, Theme.head.shape, this.ORstyle[this.props.orientation].body]}>
               { this.state.openForm && <ContactForm data={this.state.dataForm} dismiss={this.closeForm} />}
               { this.state.openFilter && 
                   <ModalForm  ref="form_1"
@@ -187,7 +194,7 @@ class Header extends Component{
                               ]}
                   />
               }
-              <BoxButton title="Ajout" onPress={()=>{this.openForm()}} source={{uri:"add_contact"}}/>
+              <BoxButton title="Ajout" onPress={()=>{this.openForm()}} source={{icon:"user-plus"}}/>
               <BoxButton title="Filtre" blink={!this.state.openFilter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{icon: "filter"}}/>
             </View>
   }
@@ -370,7 +377,15 @@ class SharingScreen extends Component {
     super(props)
 
     this.dontRefreshForm = false
-    this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+    this.state = {orientation: 'portrait', ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'row' }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'column' }
+                                }
 
     this.page = this.limit_page = 1
     this.order = {}
@@ -381,6 +396,10 @@ class SharingScreen extends Component {
     this.toggleOrderBox = this.toggleOrderBox.bind(this)
     this.handleOrder = this.handleOrder.bind(this)
     this.changePage = this.changePage.bind(this)
+  }
+
+  handleOrientation(orientation){
+    this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
   componentWillMount(){
@@ -488,15 +507,20 @@ class SharingScreen extends Component {
   render() {
       return (
           <Screen style={[{flex:1}, Theme.body]}
+                  onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
                   title="Contacts"
                   name='SharingContacts'
                   options={ this.renderOptions() }
                   navigation={this.props.navigation}
                   >
-            <Header onFilter={()=>this.refreshDatas(true)}/>
-              { this.renderStats() }
-            <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
-              <SimpleButton title='<< Dossiers partagés' CStyle={[{flex: 0, margin: 3}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>CurrentScreen.goBack()} />
+            <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
+              <Header orientation={this.state.orientation} onFilter={()=>this.refreshDatas(true)}/>
+              <View style={{flex: 1}}>
+                { this.renderStats() }
+                <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
+                  <SimpleButton title='<< Dossiers partagés' CStyle={[{flex: 0, margin: 3}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>CurrentScreen.goBack()} />
+                </View>
+              </View>
             </View>
             <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>

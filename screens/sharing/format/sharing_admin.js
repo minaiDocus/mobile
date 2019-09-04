@@ -26,6 +26,18 @@ class Header extends Component{
                     loading_add: false
                   }
 
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'column', width: '25%' },
+                                  left: { marginLeft: 0, alignSelf: 'flex-start', marginTop: 0 },
+                                  form: { height: 120 }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'row' },
+                                  left: {},
+                                  form: { height: '100%' }
+                                }
+
     this.closeFilter = this.closeFilter.bind(this)
     this.filterAccount = this.filterAccount.bind(this)
     this.filterCollaborator = this.filterCollaborator.bind(this)
@@ -138,7 +150,6 @@ class Header extends Component{
     this.styles = StyleSheet.create({
         container:{
           flex:0,
-          flexDirection:'row',
           backgroundColor:'#E1E2DD',
           width:'100%',
         },
@@ -198,7 +209,7 @@ class Header extends Component{
       loading_add = {uri:"img_loader"}
     }  
 
-    return  <View style={[this.styles.container, Theme.head.shape, { padding: 0 }]}>
+    return  <View style={[this.styles.container, Theme.head.shape, { padding: 0 }, this.ORstyle[this.props.orientation].body]}>
               { this.state.filter && 
                 <ModalForm  ref='form_1'
                             title="Filtre"
@@ -213,8 +224,8 @@ class Header extends Component{
                             ]}
                 />
               }
-              <View style={this.styles.left}>
-                <View style={this.styles.form}>
+              <View style={[this.styles.left, this.ORstyle[this.props.orientation].left]}>
+                <View style={[this.styles.form, this.ORstyle[this.props.orientation].form]}>
                   <SelectInput  filterSearch={true}
                                 filterCallback={this.filterCollaborator} 
                                 dataOptions={this.state.optionsCollaborator}
@@ -450,7 +461,15 @@ class SharingScreen extends Component {
   constructor(props){
     super(props)
 
-    this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+    this.state = {orientation: 'portrait', ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'row' },
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'column' },
+                                }
 
     this.page = this.limit_page = 1
     this.order = {}
@@ -461,6 +480,10 @@ class SharingScreen extends Component {
     this.toggleOrderBox = this.toggleOrderBox.bind(this)
     this.handleOrder = this.handleOrder.bind(this)
     this.changePage = this.changePage.bind(this)
+  }
+
+  handleOrientation(orientation){
+    this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
   componentWillMount(){
@@ -560,15 +583,20 @@ class SharingScreen extends Component {
   render() {
       return (
           <Screen style={[{flex:1}, Theme.body]}
+                  onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
                   title={this.props.title}
                   name='Sharing'
                   withMenu={true}
                   options={this.props.options}
                   navigation={this.props.navigation}>
-            <Header onFilter={()=>this.refreshDatas(true)}/>
-              { this.renderStats() }
-            <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
-              <SimpleButton title='Contacts >>' CStyle={[{flex: 0, margin: 3}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>CurrentScreen.goTo("SharingContacts")} />
+            <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
+              <Header orientation={this.state.orientation} onFilter={()=>this.refreshDatas(true)}/>
+              <View style={{flex: 1}}>
+                { this.renderStats() }
+                <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
+                  <SimpleButton title='Contacts >>' CStyle={[{flex: 0, margin: 3}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>CurrentScreen.goTo("SharingContacts")} />
+                </View>
+              </View>
             </View>
             <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>

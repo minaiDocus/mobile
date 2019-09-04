@@ -19,6 +19,18 @@ class Header extends Component{
     GLOB.clientId = 0
     GLOB.dataFilter = {}
 
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'column', width: '25%' },
+                                  left: { marginLeft: 0, alignSelf: 'flex-start', marginTop: 0 },
+                                  form: { height: 45 }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'row' },
+                                  left: {},
+                                  form: { height: '100%' }
+                                }
+
     this.filterLocked = false
     this.filterCount = 0
     this.filterClock = null
@@ -153,7 +165,6 @@ class Header extends Component{
     this.styles = StyleSheet.create({
       container:{
                   flex:0,
-                  flexDirection:'row',
                   backgroundColor:'#E1E2DD',
                   width:'100%'
                 },
@@ -216,11 +227,11 @@ class Header extends Component{
   }
 
   render(){
-    return  <View style={[this.styles.container, Theme.head.shape, { padding: 0 }]}>
+    return  <View style={[this.styles.container, Theme.head.shape, { padding: 0 }, this.ORstyle[this.props.orientation].body]}>
               { this.state.filter && 
                 <ModalForm  ref='form_1'
                             title="Filtre"
-                            dismiss={()=>this.closeFilter("none")}
+                            dismiss={()=>this.closeFilter("filter")}
                             inputs={this.formInputs()}
                             buttons={[
                               {title: "Filtrer", withDismiss: true, action: ()=>this.closeFilter("filter")},
@@ -228,8 +239,8 @@ class Header extends Component{
                             ]}
                 />
               }
-              <View style={this.styles.left}>
-                <View style={this.styles.form}>
+              <View style={[this.styles.left, this.ORstyle[this.props.orientation].left]}>
+                <View style={[this.styles.form, this.ORstyle[this.props.orientation].form]}>
                   { this.state.ready && this.renderCustomerSelection() }
                   { !this.state.ready && <XImage loader={true} width={40} height={40} /> }
                 </View>
@@ -355,10 +366,24 @@ class InvoicesScreen extends Component {
   constructor(props){
     super(props)
 
+    this.state = {orientation: 'portrait'}
+
     GLOB.dataFilter = {}
     GLOB.clientId = 0
 
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'row' },
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'column' },
+                                }
+
     this.refreshDatas = this.refreshDatas.bind(this)
+  }
+
+  handleOrientation(orientation){
+    this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
   refreshDatas(renew = true){
@@ -371,22 +396,25 @@ class InvoicesScreen extends Component {
   render() {
       return (
         <Screen style={{flex: 1, flexDirection: 'column'}}
+                onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
                 title='Pièces / Pré-affectations'
                 name='Invoices'
                 withMenu={true}
                 navigation={this.props.navigation}>
-          <Header onFilter={()=>this.refreshDatas()} />
-          <TabNav 
-            headers={ 
-                      [
-                        {title: "Documents"},
-                        {title: "Opérations"},
-                      ]
-                    }
-          >
-            <DataBloc ref='documents' type='documents' />
-            <DataBloc ref='operations' type='operations' />
-          </TabNav>
+          <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
+            <Header orientation={this.state.orientation} onFilter={()=>this.refreshDatas()} />
+            <TabNav 
+              headers={ 
+                        [
+                          {title: "Documents"},
+                          {title: "Opérations"},
+                        ]
+                      }
+            >
+              <DataBloc ref='documents' type='documents' />
+              <DataBloc ref='operations' type='operations' />
+            </TabNav>
+          </View>
         </Screen>
       )
     }

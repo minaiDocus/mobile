@@ -24,6 +24,16 @@ class Header extends Component{
     super(props)
     this.state = {filter: false}
 
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'column', width: 100 },
+                                  left: { flexDirection: 'column', paddingLeft:0 }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'row' },
+                                  left: { flexDirection: 'row' }
+                                }
+
     this.closeFilter = this.closeFilter.bind(this)
 
     this.generateStyles()
@@ -96,7 +106,7 @@ class Header extends Component{
   }
 
   render(){
-    return  <View style={[this.styles.container, Theme.head.shape]}>
+    return  <View style={[this.styles.container, Theme.head.shape, this.ORstyle[this.props.orientation].body]}>
               { this.state.filter && 
                 <ModalForm  ref="form_1"
                             title="Filtre"
@@ -116,9 +126,9 @@ class Header extends Component{
                             ]}
                 />
               }
-              <View style={this.styles.left}>
+              <View style={[this.styles.left, this.ORstyle[this.props.orientation].left]}>
                 <XImage source={{icon:"dashboard"}} color='#C0D838' size={30} style={this.styles.image} />
-                <XText style={[{flex:2, fontSize:16,fontWeight:'bold'}, Theme.head.text]}>Suivi : {this.props.dataCount}</XText>
+                <XText style={[{flex:2, fontSize:16,fontWeight:'bold', paddingHorizontal: 5}, Theme.head.text]}>Suivi : {this.props.dataCount}</XText>
               </View>
               <View style={this.styles.right}> 
                 <BoxButton title="Filtre" blink={!this.state.filter && this.checkFilterActive()} onPress={()=>{this.openFilter()}} source={{icon: "filter"}}/>
@@ -273,7 +283,15 @@ class StatsScreen extends Component {
   constructor(props){
     super(props)
 
-    this.state = {ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+    this.state = {orientation: 'portrait', ready: false, dataList: [], orderBox: false, orderText: null, orderBy: "", direction: ""}
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'row' }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'column' }
+                                }
 
     this.page = this.limit_page = 1
     this.order = {}
@@ -284,6 +302,10 @@ class StatsScreen extends Component {
     this.toggleOrderBox = this.toggleOrderBox.bind(this)
     this.handleOrder = this.handleOrder.bind(this)
     this.changePage = this.changePage.bind(this)
+  }
+
+  handleOrientation(orientation){
+    this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
   componentWillMount(){
@@ -383,14 +405,17 @@ class StatsScreen extends Component {
   render() {
       return (
           <Screen style={[{flex:1}, Theme.body]}
+                  onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
                   navigation={this.props.navigation}
                   title="Suivi"
                   name='Stats'
                   withMenu={true}
                   options={ this.renderOptions() }
           >
-            <Header dataCount={this.total} onFilter={()=>this.refreshDatas()}/>
-            { this.renderStats() }
+            <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
+              <Header orientation={this.state.orientation} dataCount={this.total} onFilter={()=>this.refreshDatas()}/>
+              { this.renderStats() }
+            </View>
             <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
           </Screen>
       );

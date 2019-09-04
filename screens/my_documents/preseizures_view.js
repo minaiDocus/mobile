@@ -500,12 +500,6 @@ class Header extends Component{
   render(){
     return  <View style={[this.styles.minicontainer, Theme.head.shape]}>
               <XText style={[this.styles.text, Theme.head.text]}>{GLOB.pack_or_report.name || "test"}</XText>
-              {
-                isPresent(GLOB.dataFilter) > 0 &&
-                <AnimatedBox type='blink'>
-                  <XText style={[this.styles.filter, Theme.head.text], {color:"#F7230C", marginLeft: 5}}>Filtre active</XText>
-                </AnimatedBox>
-              }
             </View>
   }
 }
@@ -753,7 +747,7 @@ class PreseizureBox extends Component{
   render(){
     let stamp_img = getImgStampOf(this.props.data.state)
 
-    let src = {uri: "charge"}
+    let src = {uri: "logo"}
     let local = true
     if(this.props.data.thumb)
     {
@@ -776,7 +770,7 @@ class PreseizureBox extends Component{
                     <XText style={{flex: 1}}><XText style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>Date ajout:</XText> {formatDate(this.props.data.created_at)}</XText>
                     <XText style={{flex: 1}}><XText style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>Date modif:</XText> {formatDate(this.props.data.updated_at)}</XText>
                     <XText style={{flex: 1}}><XText style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>Date envoi:</XText> {formatDate(this.props.data.delivery_tried_at)}</XText>
-                    <XText style={{flex: 1}}>{truncate(this.props.data.error_message, 30)}</XText>
+                    <XText style={{flex: 0, color:"#F7230C"}}>{truncate(this.props.data.error_message, 100)}</XText>
                   </View>
                   {
                     (Master.is_prescriber || Master.is_admin) &&
@@ -1090,7 +1084,7 @@ export class PreseizuresView extends Component{
             try{ callback() }catch(e){}
           }
 
-          Notice.alert('Livraison écriture', `Voulez vous vraiment livrer tout les écritures comptables non livrées du lot vers ${GLOB.pack_or_report.software_human_name}?`, 
+          Notice.alert('Livraison écriture', `Voulez vous vraiment livrer toutes les écritures comptables non livrées du lot vers ${GLOB.pack_or_report.software_human_name}?`, 
             [
               {text: 'Oui', onPress: () => call() },
               {text: 'Non', style: 'cancel'}

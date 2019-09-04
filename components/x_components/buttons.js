@@ -168,7 +168,7 @@ export class BoxButton extends Component{
                   },
       icons:{
               flex:0,
-              top: 4,
+              top: 3,
               position: 'absolute',
               zIndex: 2,
               width:"50%",
@@ -178,7 +178,7 @@ export class BoxButton extends Component{
                 flex:0,
                 zIndex: 1,
                 position: 'absolute',
-                top: 16,
+                top: 18,
                 minWidth: 90,
                 justifyContent:'center',
                 alignItems: 'center',
@@ -191,21 +191,17 @@ export class BoxButton extends Component{
             flex:0,
             textAlign:'center',
             },
-      blinkedText:  {
-                      color: '#990000',
-                      textShadowColor:'#fff',
-                      textShadowOffset:{width: 2, height: 1},
-                      textShadowRadius:1
-                    }
+      blinkedText:  { color: '#fff' }
     })
   }
 
   render(){
     const IOptions = this.props.IOptions || {}
+    const IStyle = this.props.IStyle || {}
 
     return  <TouchableOpacity onPress={()=>this.props.onPress()} style={this.styles.touchable}>
               <LinearGradient colors={Theme.box_button.shape.linearColors || this.linearColors || ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']} style={[this.styles.boxControl, Theme.box_button.shape, this.CStyle_plus]}>
-                <XImage source={this.props.source} size={IOptions.size || 16} color={IOptions.color || Theme.global_text.color} style={this.styles.icons} local={this.props.local || true} />
+                <XImage source={this.props.source} size={IOptions.size || 16} color={IOptions.color || Theme.global_text.color} XStyle={{textShadowColor:'#BBB', textShadowOffset:{width: 1, height: 1}, textShadowRadius:1}} style={[this.styles.icons, IStyle]} local={this.props.local || true} />
               </LinearGradient>
               <View style={[this.styles.boxText, Theme.box_button.box_text]}>
               {

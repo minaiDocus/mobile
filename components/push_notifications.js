@@ -304,6 +304,7 @@ export class UINotification extends Component{
                     <ImageButton  source={{icon: "bell"}}
                                   CStyle={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:30}}
                                   IStyle={{flex:0, width:20, height:20}}
+                                  IOptions={{color: '#000'}}
                                   onPress={()=>{this.toggleListNotifications()}} />
                     {
                       this.state.newNotifCount > 0 &&

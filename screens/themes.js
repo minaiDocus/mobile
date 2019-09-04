@@ -43,7 +43,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   box_button: {
     shape: { linearColors: ['#D1E949', '#C0D838', '#9DA505'] },
     marker: { fontSize: 12, fontWeight: 'bold', color: '#F7230C'},
-    box_text: { backgroundColor: 'rgba(47,79,79, 0.4)', borderWidth: 1, borderColor: '#C0D838' },
+    box_text: { backgroundColor: 'rgba(47,79,79, 0.6)', borderWidth: 1, borderTopWidth:0, borderColor: 'rgba(47,79,79, 1)' },
     text: { color: '#FFF', fontWeight: 'bold' }
   },
 
@@ -83,7 +83,8 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
 
   inputs:{
     shape: { borderWidth:1, borderRadius: 7, borderColor:'#909090', backgroundColor: 'rgba(224,224,224,0.6)' },
-    label: { color: '#606060' },
+    text: { color: '#606060' },
+    label: { color: '#3E2F24', fontSize: 10}
   },
 
   table:{
@@ -124,22 +125,22 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
 
   menu:{
     bg: { //the background menu is a linear gradient with 3 color
-          color_1 : '#A9A9A9',
-          color_2 : '#696969',
-          color_3 : '#2F4F4F',
+          color_1 : '#FFF',
+          color_2 : '#FFF',
+          color_3 : '#FFF',
         },
-    shape: { borderWidth: 1, borderColor: '#151515', borderTopRightRadius:5, borderBottomRightRadius:5 },
+    shape: { borderWidth: 1, borderColor: '#151515', borderTopRightRadius:3, borderBottomRightRadius:3 },
     head: {
-      shape: { borderColor:'#151515', borderBottomWidth:2 },
-      text_1: { fontSize: 14, color: '#2F4F4F' },
-      text_2: { fontSize: 12, color: '#fff' },
+      shape: { borderColor:'#151515', borderBottomWidth:1 },
+      text_1: { fontSize: 12, color: '#2F4F4F', marginBottom: 10 },
+      text_2: { fontSize: 12, color: '#3E2F24' },
     },
     body: {
-      links: { fontSize: 14, color: '#DCDCDC' },
+      links: { fontSize: 14, color: '#3E2F24' },
     },
     footer: {
       links: { },
-      shape: { borderColor:'#151515', borderTopWidth:2 },
+      shape: { borderColor:'#3E2F24', borderTopWidth:1 },
     }
   },
 

@@ -303,21 +303,35 @@ export class SelectInput extends Component{
   getCoordAnimation(){
     if(this.layoutWidth > 0)
     {
-      const textWidth = (this.state.valueText.length * 8)
-      const layout = this.layoutWidth
+      const animate = async (width)=> {
+        const textWidth = width
 
-      if(layout > textWidth)
-      {
-        this.setState({startTextAnim:0, endTextAnim:0})
-      }
-      else
-      {
-        const start = -1 * (textWidth / 3)
-        const duration = Math.abs(start * 100) / 2
+        if(this.layoutWidth < textWidth)
+        {
+          const end = -1 * (textWidth - this.layoutWidth + 10)
+          const duration = Math.abs(end * 100) / 2
 
-        this.setState({startTextAnim:start, endTextAnim:0, durationAnim: duration})
-        this.refs.animatedText.start()
+          setTimeout(async ()=>{
+            await this.setState({startTextAnim: 0, endTextAnim: end, durationAnim: duration})
+            if(!this.refs.animatedText.isAnimated && !this.refs.animatedText.isStarting && !this.refs.animatedText.isLeaving)
+              this.refs.animatedText.start()
+          }, 200)
+        }
+        else
+        {
+          this.refs.animatedText.stop()
+        }
       }
+
+      setTimeout(async ()=>{
+        await this.setState({startTextAnim:0, endTextAnim:0})
+        await this.refs.animatedText.reset()
+
+        if(this.refs.textZone)
+          this.refs.textZone.measure( async (fx, fy, width, height, px, py) => { animate(width) })
+        else
+          animate(this.state.valueText.length * 8)
+      }, 200)
     }
   }
 
@@ -388,13 +402,13 @@ export class SelectInput extends Component{
       justifyContent: 'center',
       height: '98%',
       borderColor: Theme.inputs.shape.borderColor || '#999',
-      borderRightWidth: 2,
+      borderRightWidth: 1,
       borderTopLeftRadius: Theme.inputs.shape.borderRadius,
       borderBottomLeftRadius: Theme.inputs.shape.borderRadius,
       backgroundColor: '#FFF',
       marginRight: 2,
       paddingTop: 1,
-      paddingLeft: 3,
+      paddingLeft: 5,
       overflow: 'hidden'
     }
 
@@ -427,10 +441,10 @@ export class SelectInput extends Component{
                 this.invisible == false &&
                 <View style={{flex:1}}>
                   <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center'}} onPress={this.showModal}>
-                    { this.label && <View style={labelBox}><XText style={{flex: 0}}>{this.label}</XText></View>}
+                    { this.label && <View style={labelBox}><XText style={[{flex: 0}, Theme.inputs.label]}>{this.label}</XText></View>}
                     <View style={selectStyle} onLayout={this.getWidthLayout}>
                       <AnimatedBox  ref='animatedText'
-                                    style={{width: 500}} 
+                                    style={{width: 500, flexDirection: 'row'}} 
                                     type="HorizontalGliss"
                                     durationIn={this.state.durationAnim}
                                     durationOut={this.state.durationAnim}
@@ -438,7 +452,9 @@ export class SelectInput extends Component{
                                     endAnim={this.state.endTextAnim}
                                     startOnLoad={false}
                                     >
-                        <XText style={[Theme.inputs.label, stylePlus]}>{this.state.valueText}</XText>
+                        <View ref='textZone' style={{flex: 0, flexDirection: 'row', backgroundColor: 'transparent'}}>
+                          <XText style={[Theme.inputs.text, stylePlus, {flex: 0}]}>{this.state.valueText}</XText>
+                        </View>
                       </AnimatedBox>
                     </View>
                     <XText style={{flex:0, fontSize:10, fontWeight:'bold', padding: 2, paddingRight: 4}}>V</XText>

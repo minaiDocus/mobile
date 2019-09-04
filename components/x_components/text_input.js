@@ -335,7 +335,7 @@ export class XTextInput extends Component{
       textStyle:  {
                     flex:1,
                     paddingHorizontal: 4,
-                    color: this.editable? Theme.inputs.label.color : '#A6A6A6',
+                    color: this.editable? Theme.inputs.text.color : '#A6A6A6',
                   },
       boxText:  {
                   flex:1,
@@ -350,7 +350,7 @@ export class XTextInput extends Component{
         width: '41%',
         height: '98%',
         borderColor: Theme.inputs.shape.borderColor || '#999',
-        borderRightWidth: 2,
+        borderRightWidth: 1,
         borderTopLeftRadius: Theme.inputs.shape.borderRadius,
         borderBottomLeftRadius: Theme.inputs.shape.borderRadius,
         backgroundColor: '#F9F9F9',
@@ -395,7 +395,7 @@ export class XTextInput extends Component{
             <TouchableOpacity style={{flex: 1}} onPress={()=>this.openKeyboard()} >
               <View ref='mainView' style={[this.styles.boxText, Theme.inputs.shape]} onLayout={this.onLayoutOnce} >
                 {this.props.LImage && <XImage size={IOptions.size || 17} color={IOptions.color || Theme.primary_button.shape.backgroundColor } source={this.props.LImage} style={{marginLeft: 5}}/>}
-                {this.state.value.length > 0 && this.label && <View style={this.styles.labelBox}><XText style={{flex: 0}}>{this.label}</XText></View>}
+                {this.state.value.length > 0 && this.label && <View style={this.styles.labelBox}><XText style={[{flex: 0}, Theme.inputs.label]}>{this.label}</XText></View>}
                 <XText style={[this.styles.textStyle, TStyle]}>{value}</XText>
                 {this.props.RImage && <XImage size={IOptions.size || 17} color={IOptions.color || Theme.primary_button.shape.backgroundColor } source={this.props.RImage} style={{marginRight: 5}}/>}
               </View>

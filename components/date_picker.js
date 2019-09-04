@@ -39,6 +39,7 @@ export class DatePicker extends Component {
                         overflow: 'hidden',
                         borderColor: Theme.inputs.shape.borderColor || '#999',
                         borderWidth: 1,
+                        borderRightWidth: 0,
                         borderTopLeftRadius: Theme.inputs.shape.borderRadius,
                         borderBottomLeftRadius: Theme.inputs.shape.borderRadius,
                         paddingLeft: 5,
@@ -53,12 +54,12 @@ export class DatePicker extends Component {
                       dateInput: date_input,
                       dateText: {
                         paddingLeft: 36,
-                        color: Theme.inputs.label.color,
+                        color: Theme.inputs.text.color,
                         fontSize: Theme.global_text.fontSize || 12
                       },
                       placeholderText:{
                         paddingLeft: 36,
-                        color: Theme.inputs.label.color,
+                        color: Theme.inputs.text.color,
                         fontSize: Theme.global_text.fontSize || 12
                       }
                   }
@@ -66,7 +67,7 @@ export class DatePicker extends Component {
 
   render(){
     return <View style={{flex: 1, flexDirection: 'row', alignItems:'center', justifyContent:'center'}}>
-            { this.label && <View style={this.styles.labelBox}><XText style={{flex: 0}}>{this.label}</XText></View> }
+            { this.label && <View style={this.styles.labelBox}><XText style={[{flex: 0}, Theme.inputs.label]}>{this.label}</XText></View> }
             <DatePic
               date={this.state.date}
               mode="date"

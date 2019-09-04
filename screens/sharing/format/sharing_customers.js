@@ -202,6 +202,14 @@ class Header extends Component{
                     typeModal: ""
                   }
 
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'column', width: 100 }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'row', paddingBottom: 15 }
+                                }
+
     this.openModalSharing = this.openModalSharing.bind(this)
     this.closeModalSharing = this.closeModalSharing.bind(this)
 
@@ -229,7 +237,7 @@ class Header extends Component{
   }
 
   render(){
-    return  <View style={[this.styles.container, Theme.head.shape, {paddingBottom: 15}]}>
+    return  <View style={[this.styles.container, Theme.head.shape, this.ORstyle[this.props.orientation].body]}>
               {this.state.openModal && <ModalSharing type={this.state.typeModal} dismiss={this.closeModalSharing} />}
               <BoxButton title="Partage avec un compte" onPress={()=>{this.openModalSharing('sharing')}} source={{uri:"sharing_account"}} rayon={60}/>
               <BoxButton title="Demande accès dossier" onPress={()=>{this.openModalSharing('access')}} source={{uri:"request_access"}} rayon={60}/>
@@ -241,13 +249,25 @@ class SharingScreen extends Component {
   constructor(props){
     super(props)
 
-    this.state = {ready: false}
+    this.state = {orientation: 'portrait', ready: false}
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'row' }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'column' }
+                                }
 
     this.datas_shared = []
     this.contacts = []
     this.access = []
     
     this.refreshDatas = this.refreshDatas.bind(this)
+  }
+
+  handleOrientation(orientation){
+    this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
   componentWillMount(){
@@ -282,24 +302,27 @@ class SharingScreen extends Component {
   render() {
       return (
           <Screen style={{flex: 1, flexDirection: 'column',}}
+                  onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
                   title={this.props.title}
                   name='Sharing'
                   withMenu={true}
                   options={this.props.options}
                   navigation={this.props.navigation}>
-            <Header />
-            { 
-              this.state.ready &&
-              <TabNav headers={[{title: "Partages"},
-                              {title: "Contacts"},
-                              {title: "Demandes"}]}
-              >
-                <ViewState type={"datas_shared"} title="Liste des dossiers qui me sont partagés" datas={this.datas_shared} />
-                <ViewState type={"contacts"} title="Liste des contacts avec qui je partage mon compte" datas={this.contacts} />
-                <ViewState type={"access"} title="Liste des mes demandes d'accès" datas={this.access} />
-              </TabNav>
-            }
-            {!this.state.ready && <XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} />}
+            <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
+              <Header orientation={this.state.orientation} />
+              { 
+                this.state.ready &&
+                <TabNav headers={[{title: "Partages"},
+                                {title: "Contacts"},
+                                {title: "Demandes"}]}
+                >
+                  <ViewState type={"datas_shared"} title="Liste des dossiers qui me sont partagés" datas={this.datas_shared} />
+                  <ViewState type={"contacts"} title="Liste des contacts avec qui je partage mon compte" datas={this.contacts} />
+                  <ViewState type={"access"} title="Liste des mes demandes d'accès" datas={this.access} />
+                </TabNav>
+              }
+              {!this.state.ready && <XImage loader={true} width={70} height={70} style={{alignSelf:'center', marginTop:10}} />}
+            </View>
           </Screen>
       )
     }

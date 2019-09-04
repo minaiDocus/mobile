@@ -44,14 +44,22 @@ function docs_errors(){
 class Header extends Component{
   constructor(props){
     super(props)
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'column', width: 100 }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'row' }
+                                }
+
     this.generateStyles() //style generation
   }
 
   generateStyles(){
     this.styles = {
                     minicontainer:{
-                                    flex:0, 
-                                    flexDirection:'row',
+                                    flex:0,
                                     alignItems:'center',
                                     justifyContent:'center',
                                   },
@@ -60,9 +68,9 @@ class Header extends Component{
 
   render(){
     return (
-              <View style={[this.styles.minicontainer, Theme.head.shape]}>
-                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Send')}} source={{icon:"send"}} IOptions={{size: 20}} title='Envoi documents' />
-                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Invoices')}} source={{icon:"file-o"}} IOptions={{size: 20}} title='Mes factures' />
+              <View style={[this.styles.minicontainer, Theme.head.shape, this.ORstyle[this.props.orientation].body]}>
+                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Send')}} source={{icon:"send"}} IStyle={{left: '20%'}} IOptions={{size: 20}} title='Envoi documents' />
+                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Invoices')}} source={{icon:"file-o"}} IStyle={{left: '27%'}} IOptions={{size: 20}} title='Mes factures' />
               </View>
             );
   }
@@ -281,7 +289,7 @@ class AppInfos extends Component{
 
   render(){
     return <ImageButton   source={{icon: "info-circle"}}
-                          IOptions={{size: 20}}
+                          IOptions={{size: 20, color: '#000'}}
                           CStyle={{flex:0, flexDirection:'column', justifyContent:'center', alignItems:'center', minWidth:40 }}
                           IStyle={{flex:0, width:20, height:20}}
                           onPress={()=>this.showInfos()} />
@@ -293,9 +301,21 @@ class HomeScreen extends Component {
     super(props)
 
     GLOB.datas = []
-    this.state = {showInfos: false, updated: false}
+    this.state = {orientation: 'portrait', showInfos: false, updated: false}
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'row' }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'column' }
+                                }
 
     this.refreshDatas = this.refreshDatas.bind(this)
+  }
+
+  handleOrientation(orientation){
+    this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
   componentWillReceiveProps(nextProps){
@@ -336,26 +356,29 @@ class HomeScreen extends Component {
     return (
       <Screen style={[{flex:1}, Theme.body]}
               navigation={this.props.navigation}
+              onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
               title='Accueil'
               name='Home'
               withMenu={true}
               noFCMUi={true}
               options={this.renderOptions()}
       >
-        <Header />
-        <TabNav 
-          headers={ 
-                    [
-                      {title: "Traités", icon:"doc_trait"},
-                      {title: "En cours", icon:"doc_curr"},
-                      {title: "Erreurs", icon:"doc_view"},
-                    ]
-                  }
-        >
-          <ViewState updated={this.state.updated} type={"processed"} icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[]} />
-          <ViewState updated={this.state.updated} type={"processing"} icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
-          <ViewState updated={this.state.updated} type={"errors"} icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"message"}]}/>
-        </TabNav>
+        <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
+          <Header orientation={this.state.orientation} />
+          <TabNav 
+            headers={ 
+                      [
+                        {title: "Traités", icon:"doc_trait"},
+                        {title: "En cours", icon:"doc_curr"},
+                        {title: "Erreurs", icon:"doc_view"},
+                      ]
+                    }
+          >
+            <ViewState updated={this.state.updated} type={"processed"} icon="doc_trait" title="Dernier documents traités" datas={docs_processed()} infos={[]} />
+            <ViewState updated={this.state.updated} type={"processing"} icon="doc_curr" title="Dernier documents en cours de traitement" datas={docs_processing()} infos={[{label:"Date", value:"updated_at"}, {label:"Nb pages", value:"page_number"}]} />
+            <ViewState updated={this.state.updated} type={"errors"} icon="doc_view" title="Dernières erreurs rencontrées à la livraison de la pré-affectation" datas={docs_errors()} infos={[{label:"Date", value:"updated_at"},  {label:"Nb", value:"page_number"},  {label:"Erreur", value:"message"}]}/>
+          </TabNav>
+        </View>
       </Screen>
     )
   }

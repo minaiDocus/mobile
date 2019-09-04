@@ -63,26 +63,26 @@ class documents_fetcher extends Requester{
   }
 
   getPreseizureDetails(id){
-    return this.requestURI("api/mobile/data_loader/get_preseizure_details", {method: 'POST', params: {id: id}})
+    return this.requestURI("api/mobile/preseizures/get_details", {method: 'POST', params: {id: id}})
   }
 
   // ids = must be preseizure ids array (can be null if id is set)
   // id  = must be pack or report id (for multiple sending by pack or report) 
   // type = pack (preseizures from pieces) or report (preseizures from operations)
   deliverPreseizure(ids=null, id=null, type='report'){
-    return this.requestURI("api/mobile/data_loader/deliver", {method: 'POST', params: {ids: ids, id: id, type: type}})
+    return this.requestURI("api/mobile/preseizures/deliver", {method: 'POST', params: {ids: ids, id: id, type: type}})
   }
 
   editPreseizures(ids, datas={}){
-    return this.requestURI("api/mobile/data_loader/edit_preseizures", {method: 'POST', params: {ids: ids, datas: datas}})
+    return this.requestURI("api/mobile/preseizures/edit_preseizures", {method: 'POST', params: {ids: ids, datas: datas}})
   }
 
   setPreseizureEntry(id, params={}){
-    return this.requestURI("api/mobile/data_loader/edit_entry", {method: 'POST', params: {id: id, datas: params}})
+    return this.requestURI("api/mobile/preseizures/edit_entry", {method: 'POST', params: {id: id, datas: params}})
   }
 
   setPreseizureAccount(id, params={}){
-    return this.requestURI("api/mobile/data_loader/edit_account", {method: 'POST', params: {id: id, datas: params}})
+    return this.requestURI("api/mobile/preseizures/edit_account", {method: 'POST', params: {id: id, datas: params}})
   }
 }
 

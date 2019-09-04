@@ -5,7 +5,6 @@ import {Image, View, StyleSheet} from 'react-native'
 //Function for declaring image to React
 function require_images(name){
   const images = {
-    charge:require('../../images/charge.png'),
     compta_analytics:require('../../images/compta_analytics.png'),
     doc_curr:require('../../images/doc_curr.png'),
     doc_trait:require('../../images/doc_trait.png'),
@@ -20,7 +19,6 @@ function require_images(name){
     preaff_pending:require('../../images/preaff_pending.png'),
     preaff_dupl:require('../../images/preaff_dupl.png'),
     preaff_ignored:require('../../images/preaff_ignored.png'),
-    add_contact:require('../../images/add_contact.png'),
     sharing_account:require('../../images/sharing_account.png'),
     request_access:require('../../images/request_access.png'),
     back:require('../../images/back.png'),
@@ -67,8 +65,9 @@ export class XImage extends Component{
     {
       const size = this.props.size || 19
       const color = this.props.color || Theme.global_text.color
+      const style = this.props.XStyle || {}
 
-      return <View style={[{flex: 0, justifyContent: 'center', alignItems: 'center'}, this.img_style]}><Icon name={this.img_source.icon} size={size} color={color} /></View>
+      return <View style={[{flex: 0, justifyContent: 'center', alignItems: 'center'}, this.img_style]}><Icon name={this.img_source.icon} size={size} color={color} style={style} /></View>
     }
     else
     {

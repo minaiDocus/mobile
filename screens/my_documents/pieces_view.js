@@ -292,22 +292,12 @@ class Header extends Component{
                 fontSize:18,
                 fontWeight:"bold"
               },
-        filter: {
-                  fontSize:10,
-                  fontWeight:"bold"
-                }
       })
   }
 
   render(){
     return  <View style={[this.styles.minicontainer, Theme.head.shape]}>
               <XText style={[this.styles.text, Theme.head.text]}>{GLOB.Pack.name || "test"}</XText>
-              {
-                isPresent(GLOB.dataFilter) > 0 &&
-                <AnimatedBox type='blink'>
-                  <XText style={[this.styles.filter, Theme.head.text], {color:"#F7230C", marginLeft: 5}}>Filtre active</XText>
-                </AnimatedBox>
-              }
             </View>
   }
 }
@@ -518,7 +508,7 @@ class ImgBox extends Component{
   render(){
     let stamp_img = getImgStampOf(this.props.data.state)
 
-    let src = {uri: "charge"}
+    let src = {uri: "logo"}
     let local = true
     if(this.props.data.thumb)
     {

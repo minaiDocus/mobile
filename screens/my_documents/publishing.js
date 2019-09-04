@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View } from 'react-native'
-import { SimpleButton, AnimatedBox, Navigator } from '../../components'
+import { SimpleButton, AnimatedBox, Navigator, XText } from '../../components'
 
 import { Screen } from '../layout'
 import { PiecesView } from './pieces_view'
@@ -12,6 +12,7 @@ class PublishScreen extends Component{
 
     const navigation = new Navigator(this.props.navigation)
     this.type =  navigation.getParams('type') || 'pack'
+    this.filter = navigation.getParams('filter') || {}
     this.views = { 
                     pieces: { currentView: 'pieces', nextView: 'preseizures', nextTitle: '<< Pré-affectation >>' },
                     preseizures: { currentView: 'preseizures', nextView: 'pieces', nextTitle: '<< Pièces >>' }
@@ -64,11 +65,21 @@ class PublishScreen extends Component{
     actionLocker(action)
   }
 
+  renderFilter(){
+    if(isPresent(this.filter))
+      return  <AnimatedBox type='blink' style={{flex:1, paddingRight: 10, alignItem: 'center', justifyContent: 'center'}}>
+                <XText style={[{fontSize:10, fontWeight:"bold"}, Theme.head.text], {color:"#F7230C", marginLeft: 5, textAlign: 'center'}}>Filtre active</XText>
+              </AnimatedBox>
+    else
+      return null
+  }
+
   render(){
     return (
       <Screen style={{flex: 1, flexDirection: 'column'}}
               title='Mes documents'
               name='Publish'
+              options={this.renderFilter()}
               navigation={this.props.navigation}>
         <AnimatedBox ref='main_animated' startOnLoad={false} hideTillStart={true} style={{flex: 1}} type='UpSlide' durationIn={300} durationOut={200}>
           { this.state.currentView == 'pieces' && <PiecesView ref='pieces' initView={this.state.initView} navigation={ this.props.navigation }/> }

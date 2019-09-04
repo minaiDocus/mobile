@@ -156,6 +156,14 @@ class ImgBox extends Component{
 class Header extends Component{
   constructor(props){
     super(props)
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'column', width: 100 }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'row' }
+                                }
   }
 
   renderItems(){
@@ -165,9 +173,9 @@ class Header extends Component{
   }
 
   render(){
-    return  <View style={[{flex: 0, flexDirection: 'row'}, Theme.head.shape, {padding: 0, paddingHorizontal: 1}]}>
-              <ScrollView style={{flex:1}} horizontal={true}>
-                <View style={{flex: 0, flexDirection: 'row'}}>
+    return  <View style={[{flex: 0}, Theme.head.shape, {padding: 0, paddingHorizontal: 1}, this.ORstyle[this.props.orientation].body]}>
+              <ScrollView style={{flex:1}} horizontal={(this.props.orientation == 'portrait')? true : false}>
+                <View style={{flex: 0, flexDirection: this.ORstyle[this.props.orientation].body.flexDirection}}>
                   { this.renderItems() }
                 </View>
               </ScrollView>
@@ -447,11 +455,23 @@ class SendScreen extends Component {
     GLOB.sending_finished = false
     GLOB.analysis = ModalComptaAnalysis.reset()
 
-    this.state = {progress: 0, sending: false}
+    this.state = {orientation: 'portrait', progress: 0, sending: false}
+
+    this.ORstyle = []
+    this.ORstyle["landscape"] = {
+                                  body: { flexDirection: 'row' }
+                                }
+    this.ORstyle["portrait"] =  {
+                                  body: { flexDirection: 'column' }
+                                }
 
     this.uploadProgress = this.uploadProgress.bind(this)
     this.uploadComplete = this.uploadComplete.bind(this)
     this.uploadError = this.uploadError.bind(this)
+  }
+
+  handleOrientation(orientation){
+    this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
   componentWillMount(){
@@ -486,14 +506,19 @@ class SendScreen extends Component {
 
   render() {
       return  <Screen style={{flex: 1, flexDirection: 'column'}}
+                      onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
                       title="Envoi documents"
                       name='Sending'
                       navigation={this.props.navigation}>
-                <Header />
-                <ScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}}>
-                  <Body progress={this.state.progress} />
-                </ScrollView>
-                <Footer sending={this.state.sending} />
+                <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
+                  <Header orientation={this.state.orientation}/>
+                  <View style={{flex: 1}}>
+                    <ScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}}>
+                      <Body progress={this.state.progress} />
+                    </ScrollView>
+                    <Footer sending={this.state.sending} />
+                    </View>
+                </View>
               </Screen>
     }
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import SplashScreen from 'react-native-splash-screen'
 import { StyleSheet, View } from 'react-native'
 
-import { XImage, XText, XTextInput, Navigator, SimpleButton, AnimatedBox } from '../components'
+import { XImage, XText, XTextInput, Navigator, SimpleButton, AnimatedBox, SelectInput } from '../components'
 
 import { Screen } from './layout'
 
@@ -221,7 +221,7 @@ class LoginScreen extends Component {
         <View style={{flex:1, elevation:0}}>{/*For fixing bug Android elevation notification*/}
           <View style={[this.styles.container, Theme.container]}>   
             <AnimatedBox ref='animated_logo' type='DownSlide' startOnLoad={false} hideTillStart={true} durationIn={300} durationOut={300} style={{flex: 0,flexDirection: 'row',alignItems: 'center',paddingVertical: 10,marginTop: 3,backgroundColor: 'rgba(13,13,13,0.3)'}}>
-              <XImage style={{flex:0, width: '100%', height:40}} source={{uri:"charge"}} />
+              <XImage style={{flex:0, width: '100%', height:40}} source={{uri:"logo"}} />
             </AnimatedBox>
             {
               !this.state.ready && <XText style={this.styles.textCharging}>Communication au serveur en cours ..., Veuillez patienter svp</XText>
@@ -267,9 +267,9 @@ class LoginScreen extends Component {
             }
           </View>
         </View>
-        <View style={{flex:0, position:'absolute', bottom: 0, right: 0, width: '70%'}}>
+        <View style={{flex:0, position:'absolute', bottom: 0, right: 0, width: '40%'}}>
           <AnimatedBox ref='animated_copyright' type='RightSlide' startOnLoad={false} hideTillStart={true} durationIn={300} durationOut={300} style={{flex:1, flexDirection:'row', alignItems:'center', padding: 2, backgroundColor: '#4C5A65', borderTopLeftRadius: 5}}>
-            <XText style={{flex:1, textAlign: 'right', paddingHorizontal: 10, fontSize: 10, color: '#FFF'}}>IDOCUS © Copyright {Config.cp_year.toString()}</XText>
+            <XText style={{flex:1, textAlign: 'center', fontSize: 10, color: '#FFF'}}>IDOCUS © Copyright {Config.cp_year.toString()}</XText>
           </AnimatedBox>
         </View>
       </Screen>

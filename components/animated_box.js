@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {View, Animated} from 'react-native'
+import {XText} from './index'
 
 export class AnimatedBox extends Component{
   static currentAnimationNumbers=0
@@ -15,12 +16,17 @@ export class AnimatedBox extends Component{
 
     this.lastDx = this.lastDy = 0
     this.moveGotParams = false
+    this.isAnimated = false
+    this.isLoopAnimation = false
     this.isStarting = false
     this.isLeaving = false
     this.animateOpacity = this.props.animateOpacity || false
     this.isLeaved = true
+    this.abortLoop = false
 
     this.getLayout = false
+
+    this.animations = []
 
     this.animationIn = this.animationIn.bind(this)
     this.animationOut = this.animationOut.bind(this)
@@ -30,8 +36,8 @@ export class AnimatedBox extends Component{
     this.onLayoutOnce = this.onLayoutOnce.bind(this)
     this.forceAnimation = this.props.forceAnimation || false
 
-    this.startAnim = null
-    this.endAnim = null
+    this.startAnim = this.props.startAnim || null
+    this.endAnim = this.props.endAnim || null
 
     //parameters
     this.current_position = { x: 0, y: 0 }
@@ -54,6 +60,7 @@ export class AnimatedBox extends Component{
   initAnimation(){
     this.lastDx = this.lastDy = 0
     this.moveGotParams = false
+    this.isLoopAnimation = false
 
     if(this.type == 'LeftSlide') // animation from left to the right
     {
@@ -91,6 +98,7 @@ export class AnimatedBox extends Component{
       this.endAnim = 1
       this.css = 'opacity'
       this.forceAnimation = true
+      this.isLoopAnimation = true
       this.callbackIn = ()=>{this.animationOut(this.animationIn)}
     }
     else if(this.type == 'HorizontalGliss') //loop animation from left to right 
@@ -99,6 +107,7 @@ export class AnimatedBox extends Component{
       this.endAnim = (this.endAnim !== null)? this.endAnim : this.props.endAnim
       this.css = 'left'
       this.forceAnimation = true
+      this.isLoopAnimation = true
       this.callbackIn = ()=>{this.animationOut(this.animationIn)}
     }
     else if(this.type == 'VerticalGliss') //loop animation from Top to Bottom 
@@ -107,6 +116,7 @@ export class AnimatedBox extends Component{
       this.endAnim = (this.endAnim !== null)? this.endAnim : this.props.endAnim
       this.css = 'top'
       this.forceAnimation = true
+      this.isLoopAnimation = true
       this.callbackIn = ()=>{this.animationOut(this.animationIn)}
     }
     else if(this.type == 'transform') //move the element to porition { x: A, y: B } OR/AND scale to { w: A, h: B}
@@ -153,6 +163,7 @@ export class AnimatedBox extends Component{
         if(!this.isStarting)
         {
           this.isStarting = true
+          this.abortLoop = false
 
           if(AnimatedBox.currentAnimationNumbers > AnimatedBox.maxAnimationNumbers && !this.forceAnimation)
           {
@@ -168,33 +179,38 @@ export class AnimatedBox extends Component{
           }
           else
           {
-            this.initAnimation()
-
-            if(this.type == 'transform'){
-              await this.setState({
-                translateX: new Animated.Value(this.startX),
-                translateY: new Animated.Value(this.startY),
-                scaleW: new Animated.Value(this.startW),
-                scaleH: new Animated.Value(this.startH),
-                manualMove: false, ready: true
-              })
-            }
-            else{
-              let sValue = this.startAnim
-              if(this.state.manualMove)
-              {
-                if(this.css == 'left')
-                  sValue = this.current_position.x || this.startAnim
-                else if(this.css == 'top')
-                  sValue = this.current_position.y || this.startAnim
-              }
-              await this.setState({cssAnim: new Animated.Value(sValue), manualMove: false, ready: true})
-            }
-
+            await this.reset()
             this.animationIn(callbackIn)
           }
         }
      }, 10)
+    }
+  }
+
+  async reset(){
+    this.initAnimation()
+
+    if(this.type == 'transform')
+    {
+      await this.setState({
+        translateX: new Animated.Value(this.startX),
+        translateY: new Animated.Value(this.startY),
+        scaleW: new Animated.Value(this.startW),
+        scaleH: new Animated.Value(this.startH),
+        manualMove: false, ready: true
+      })
+    }
+    else
+    {
+      let sValue = this.startAnim
+      if(this.state.manualMove)
+      {
+        if(this.css == 'left')
+          sValue = this.current_position.x || this.startAnim
+        else if(this.css == 'top')
+          sValue = this.current_position.y || this.startAnim
+      }
+      await this.setState({cssAnim: new Animated.Value(sValue), manualMove: false, ready: true})
     }
   }
 
@@ -207,6 +223,7 @@ export class AnimatedBox extends Component{
         if(!this.isLeaving)
         {
           this.isLeaving = true
+          this.abortLoop = false
 
           if(AnimatedBox.currentAnimationNumbers > AnimatedBox.maxAnimationNumbers && !this.forceAnimation)
           {
@@ -249,6 +266,17 @@ export class AnimatedBox extends Component{
           }
         }
       }, 10)
+    }
+  }
+
+  stop(){
+    if(this.isLoopAnimation)
+    {
+      // Animated.timing(this.state.cssAnim).stop()
+      this.abortLoop = true
+      this.isStarting = false
+      this.isLeaving = false
+      this.isLeaved = true
     }
   }
 
@@ -325,64 +353,72 @@ export class AnimatedBox extends Component{
   }
 
   animationIn(callbackIn=null){
-    if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers += 1
+    if(!this.isAnimated){
+      this.isAnimated = true
+      if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers += 1
 
-    const final_callback = () => {
-      if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers -= 1
-      this.isStarting = false
-      this.isLeaved = false
+      const final_callback = () => {
+        if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers -= 1
+        this.isStarting = false
+        this.isLeaved = false
+        this.isAnimated = false
 
-      try
-      {
-        callbackIn() 
-      }
-      catch(e)
-      { 
-        try
-        { 
-          this.callbackIn() 
+        if(!this.isLoopAnimation || (!this.abortLoop && this.isLoopAnimation))
+        {
+          try
+          {
+            callbackIn()
+          }
+          catch(e)
+          { 
+            try{ this.callbackIn() }
+            catch(e){} 
+          }
         }
-        catch(e){} 
       }
-    }
 
-    let animations = this.simpleAnimationIn()
-    if(this.type == 'transform')
-      animations = this.transformAnimationIn()
+      this.animations = this.simpleAnimationIn()
 
-    try{
-      Animated.parallel(animations, { stopTogether: false }).start(()=>{ final_callback() })
-    }
-    catch(e){
-      final_callback()
+      if(this.type == 'transform')
+        this.animations = this.transformAnimationIn()
+
+      try{
+        Animated.parallel(this.animations, { stopTogether: false }).start(()=>{ final_callback() })
+      }
+      catch(e){
+        final_callback()
+      }
     }
   }
 
   animationOut(callbackOut=null){
-    if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers += 1
+    if(!this.isAnimated){
+      this.isAnimated = true
+      if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers += 1
 
-    const final_callback = () => {
-      if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers -= 1
-      this.isLeaving = false
-      this.isLeaved = true
+      const final_callback = () => {
+        if(!this.forceAnimation) AnimatedBox.currentAnimationNumbers -= 1
+        this.isLeaving = false
+        this.isLeaved = true
+        this.isAnimated = false
 
-      try
-      {
-        callbackOut()
+        if(!this.isLoopAnimation || (!this.abortLoop && this.isLoopAnimation))
+        {
+          try{ callbackOut() }
+          catch(e){}
+        }
       }
-      catch(e)
-      {}
-    }
 
-    let animations = this.simpleAnimationOut()
-    if(this.type == 'transform')
-      animations = this.transformAnimationOut()
+      this.animations = this.simpleAnimationOut()
+      if(this.type == 'transform')
+        this.animations = this.transformAnimationOut()
 
-    try{
-      Animated.parallel(animations, { stopTogether: false }).start(()=>{ final_callback() })
-    }
-    catch(e){
-      final_callback()
+      try{
+        Animated.parallel(this.animations, { stopTogether: false }).start(()=>{ final_callback() })
+      }
+      catch(e){
+        final_callback()
+      }
     }
   }
 

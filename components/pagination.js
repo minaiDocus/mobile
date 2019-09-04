@@ -70,7 +70,8 @@ export class Pagination extends Component{
                       fontWeight:'bold',
                       textShadowColor:'#000',
                       textShadowOffset:{width: 1, height: 1},
-                      textShadowRadius:1
+                      textShadowRadius:1,
+                      top:-1
                      }
       }
 
