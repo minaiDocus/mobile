@@ -54,7 +54,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
     shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
     shadowOpacity: 0.8,                   //===
     shadowRadius: 2,                      //===
-    backgroundColor:"rgba(241,241,241,0.6)",
+    backgroundColor: "rgba(241,241,241,0.6)",
     borderWidth: 2,
     borderColor: '#fff'
   },
@@ -112,7 +112,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
 
   tabs:{
     head_container: { height:27, marginBottom: 5 },
-    shape: { backgroundColor:"transparent", borderBottomWidth:1, borderColor: '#808080', marginHorizontal: 0 },
+    shape: { backgroundColor: "transparent", borderBottomWidth:1, borderColor: '#808080', marginHorizontal: 0 },
     title: { fontSize: 12, textAlign: 'center', fontWeight: 'bold', color: '#888' },
     icons: { width: 25, height: 25 },
     selected: { 

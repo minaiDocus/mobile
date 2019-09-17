@@ -1,0 +1,65 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '8.0'
+
+target 'iDocus' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for iDocus
+  pod 'Firebase'
+  pod 'Firebase/Messaging'
+  pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
+  pod 'RSKImageCropper'
+  pod 'QBImagePickerController'
+  pod 'React', :path => '../node_modules/react-native'
+  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga/yoga.podspec'
+  # pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
+
+  target 'iDocus-tvOSTests' do
+    inherit! :search_paths
+    # Pods for testing
+
+    # pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
+    pod 'react-native-pdf', :path => '../node_modules/react-native-pdf'
+    pod 'RNImageCropPicker', :path =>  '../node_modules/react-native-image-crop-picker'
+    pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
+    pod 'react-native-exif', :path => '../node_modules/react-native-exif'
+
+    pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
+    # pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+  end
+
+  target 'iDocusTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
+
+target 'iDocus-tvOS' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for iDocus-tvOS
+
+  #target 'iDocus-tvOSTests' do
+  #inherit! :search_paths
+      # Pods for testing
+  #end
+
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == 'yoga'
+      target.build_configurations.each do |config|
+        config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+        config.build_settings['GCC_WARN_64_TO_32_BIT_CONVERSION'] = 'NO'
+      end
+    end
+    if target.name == "React"
+      target.remove_from_project
+    end
+  end
+end

@@ -160,7 +160,8 @@ class Header extends Component {
       },
       headMiddle:{
         flex: 1,
-        paddingHorizontal: 5
+        paddingHorizontal: 5,
+        justifyContent: 'center'
       },
       headRight:{
         flex: 0,
@@ -187,7 +188,7 @@ class Header extends Component {
                 }
               </View>
               <View style={[this.styles.headMiddle, Theme.header.middle.shape]}>
-                <XText style={[{textAlignVertical: 'center', height:'100%'}, Theme.header.middle.text]}>{ this.title }</XText>
+                <XText style={[{ flex: 0} , Theme.header.middle.text]}>{ this.title }</XText>
               </View>
               <View style={[this.styles.headRight, Theme.header.right]}>
                 { this.options }

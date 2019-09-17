@@ -158,13 +158,7 @@ class ModalInput extends Component{
     this.generateStyles()
 
     let iosStyle = androidStyle = {}
-    if(Platform.OS == 'ios')
-    {
-      iosStyle={
-        marginTop: 20,
-      }
-    }
-    else if(Platform.OS == 'android')
+    if(Platform.OS == 'android')
     {
       androidStyle={
         borderBottomWidth:0,

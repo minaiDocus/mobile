@@ -1,0 +1,1 @@
+../../../../../node_modules/react-native-exif/ios/ReactNativeExif/ReactNativeExif.h

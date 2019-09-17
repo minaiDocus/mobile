@@ -178,7 +178,7 @@ export class BoxButton extends Component{
                 flex:0,
                 zIndex: 1,
                 position: 'absolute',
-                top: 18,
+                bottom: 0,
                 minWidth: 90,
                 justifyContent:'center',
                 alignItems: 'center',
