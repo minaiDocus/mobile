@@ -252,7 +252,7 @@ class BoxZoom extends Component{
               flexDirection:'row',
               alignItems:'center',
               justifyContent:'center',
-              padding:"3%",
+              padding:"1%",
             },
       body: {
               flex:1,

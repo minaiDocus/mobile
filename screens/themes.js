@@ -84,7 +84,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   inputs:{
     shape: { borderWidth:1, borderRadius: 7, borderColor:'#909090', backgroundColor: 'rgba(224,224,224,0.6)' },
     text: { color: '#606060' },
-    label: { color: '#3E2F24', fontSize: 10}
+    label: { color: '#3E2F24', fontSize: 10, paddingRight: 2 }
   },
 
   table:{

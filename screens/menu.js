@@ -294,7 +294,7 @@ export class Menu extends Component{
       if(type == 'shouldMoveCapture')
       {
         this.locked_capture = false
-        if(!this.state.visible && gestureState.moveX <= 40 && gestureState.moveY >= 40)
+        if(!this.state.visible && gestureState.moveX <= 20 && gestureState.moveY >= 40)
         {
           this.locked_capture = true
         }

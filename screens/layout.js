@@ -356,9 +356,9 @@ export class Screen extends Component{
     return <View {...this.props} style={CStyle} onLayout={(event)=>{this.handleLayout(event)}} {...this.boxPanResponder.panHandlers}>
               <LinearGradient colors={['#D8E0D1', '#71969E', '#FFF']}
                               style={{flex: 1}}
-                              start={{x: 0, y: -0.1}}
-                              end={{x: 1, y: 1}}
-                              locations={[0.5,0.7,0]}
+                              start={{ x: 0, y: -0.1 }}
+                              end={{ x: 1, y: 1 }}
+                              locations={[0.5, 0.7, 0.7]}
               >
                 { !this.noHeader && <Header ref="header" closeScreen={(callback)=>this.closeScreen(callback)} title={this.props.title} options={this.props.options} withMenu={this.props.withMenu} /> }
                 <AnimatedBox ref='main_page' startOnLoad={false} hideTillStart={true} style={{flex: 1}} type='fade' durationIn={600} durationOut={300}>
