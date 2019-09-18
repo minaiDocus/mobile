@@ -104,8 +104,6 @@ class Footer extends Component{
   }
 
   render(){
-    //test
-    this.generateStyles()
     return  <View style={[this.styles.container, Theme.menu.footer.shape]}>
               <SimpleButton CStyle={Theme.primary_button.shape, {backgroundColor: '#F0F0F0'}} LImage={{icon:'sign-out'}} IOptions={{size:16, color:'#4C5A65'}} TStyle={{color: '#4C5A65'}} title='Deconnexion' onPress={()=>{this.logOut()}}/>
             </View>
@@ -195,7 +193,7 @@ class ModalMenu extends Component{
   }
 
   panHanlder(evt, gestureState){
-    let startX = 0
+    let startX = -230
     if(gestureState.dx >= 0){
       startX = -230
       this.moveDirection = 'left'

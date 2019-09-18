@@ -145,7 +145,9 @@ export class AnimatedBox extends Component{
       let {x, y, width, height} = event.nativeEvent.layout
       this.width = width
       this.height = height
-      this.current_position = { x: x, y: y }
+
+      if(this.current_position === undefined)
+        this.current_position = { x: x, y: y }
 
       if(this.startOnLoad)
         this.start()
