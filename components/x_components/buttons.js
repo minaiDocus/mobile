@@ -155,14 +155,14 @@ export class BoxButton extends Component{
       touchable:{
                   flex:1,
                   margin:3,
-                  alignItems:'center'
+                  alignItems:'center',
+                  maxHeight: 45
                 },
       boxControl: {
                     alignItems:'center',
                     flex:0,
                     width:45,
                     height:45,
-                    marginBottom:-1,
                     borderRadius:100,
                     borderRadius:100
                   },

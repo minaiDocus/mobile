@@ -109,7 +109,7 @@ class Header extends Component{
 
     this.ORstyle = []
     this.ORstyle["landscape"] = {
-                                  body: { flexDirection: 'column', width: 100 }
+                                  body: { flexDirection: 'column', width: 100, justifyContent: 'space-around' }
                                 }
     this.ORstyle["portrait"] =  {
                                   body: { flexDirection: 'row' }

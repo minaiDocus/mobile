@@ -577,6 +577,8 @@ class PreseizureBox extends Component{
     this.selectItem = this.selectItem.bind(this)
     this.initWith = this.initWith.bind(this)
     this.deliver = this.deliver.bind(this)
+    this.edit = this.edit.bind(this)
+    this.pressAction = this.pressAction.bind(this)
 
     this.generateStyles()
   }
@@ -767,10 +769,10 @@ class PreseizureBox extends Component{
                 </XImage>
                 <View style={{flex: 1, flexDirection: 'column', marginLeft: 5}}>
                   <View style={{flex: 1}}>
-                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>Date ajout:</XText> {formatDate(this.props.data.created_at)}</XText>
-                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>Date modif:</XText> {formatDate(this.props.data.updated_at)}</XText>
-                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>Date envoi:</XText> {formatDate(this.props.data.delivery_tried_at)}</XText>
-                    <XText style={{flex: 0, color:"#F7230C"}}>{truncate(this.props.data.error_message, 100)}</XText>
+                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date ajout:</XText> {formatDate(this.props.data.created_at)}</XText>
+                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date modif:</XText> {formatDate(this.props.data.updated_at)}</XText>
+                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date envoi:</XText> {formatDate(this.props.data.delivery_tried_at)}</XText>
+                    <XText style={{flex: 0, marginTop: 3, color:"#F7230C"}}>{truncate(this.props.data.error_message, 100)}</XText>
                   </View>
                   {
                     (Master.is_prescriber || Master.is_admin) &&
@@ -860,21 +862,21 @@ class BoxPublish extends Component{
       if(this.editionType == 'simple')
       {
         DocumentsFetcher.waitFor([`getPreseizureDetails(${this.ids_edition[0]})`], responses => {
+          clearFrontView()
           if(responses[0].error){
             Notice.danger(responses[0].message, { name: responses[0].message })
           }
           else{
             setFormInputs(responses[0].preseizure)
-            this.setState({ showForm: true })
+            setTimeout(()=>{this.setState({ showForm: true })}, 500)
           }
-          clearFrontView()
         })
       }
       else
       {
         clearFrontView()
         setFormInputs()
-        this.setState({ showForm: true })
+        setTimeout(()=>{this.setState({ showForm: true })}, 500)
       }
     }, 1000)
   }
