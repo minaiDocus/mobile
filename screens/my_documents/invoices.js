@@ -184,7 +184,6 @@ class Header extends Component{
             },
       select: {
                 flex:0,
-                marginTop: 7,
                 height: 25,
                 width:'100%'
               },

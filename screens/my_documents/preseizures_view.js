@@ -541,7 +541,7 @@ class BoxInfos extends Component{
 
   render(){
     const infos = [
-                    {label: "Nom du documents :", value: GLOB.pack_or_report.name},
+                    {label: "Nom du lot :", value: GLOB.pack_or_report.name},
                     {label: "Date première écriture :", value: formatDate(GLOB.pack_or_report.first_preseizure_created_at)},
                     {label: "Date dernière écriture :", value: formatDate(GLOB.pack_or_report.last_preseizure_created_at)},
                     {label: "Logiciel compta :", value: GLOB.pack_or_report.software_human_name},
@@ -1004,7 +1004,7 @@ class CustomTabNav extends Component{
                           datas={GLOB.preseizures}
                           totalCount={this.total || 0}
                           ready={this.state.ready}
-                          title="Ecritures comptables"
+                          title="Ecriture(s) comptable(s)"
                           onChangePage={(page)=>{this.changePage(page)}}
                           nb_pages={this.limit_page}
                           page={this.page} />

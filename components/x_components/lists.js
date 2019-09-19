@@ -283,7 +283,7 @@ export class Table extends Component{
                   let view = null
                   if(typeof(h) === 'string' || !isNaN(h))
                     view =  <View key={i} style={[{flex: 1}, Theme.table.head.th_shape, borderStyle]}>
-                              <XText key={i} style={[{flex: 1}, Theme.table.head.th_text]}>{h}</XText>
+                              <XText style={[{flex: 0}, Theme.table.head.th_text]}>{h}</XText>
                             </View>
                   else
                     view =  <View key={i} style={[{flex: 1}, Theme.table.head.th_shape, borderStyle]}>
@@ -305,7 +305,7 @@ export class Table extends Component{
 
                                 if(typeof(row) === 'string' || !isNaN(row))
                                   view =  <View key={j} style={[{flex: 1}, Theme.table.body.td_shape, borderStyle]}>
-                                            <XText key={j} style={[{flex: 1}, Theme.table.body.td_text]}>{row}</XText>
+                                            <XText style={[{flex: 0}, Theme.table.body.td_text]}>{row}</XText>
                                           </View>
                                 else
                                   view =  <View key={j} style={[{flex: 1}, Theme.table.body.td_shape, borderStyle]}>

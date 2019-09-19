@@ -77,7 +77,7 @@ class PublishScreen extends Component{
   render(){
     return (
       <Screen style={{flex: 1, flexDirection: 'column'}}
-              title='Mes documents'
+              title='Pièces / Pré-affectations'
               name='Publish'
               options={this.renderFilter()}
               navigation={this.props.navigation}>
