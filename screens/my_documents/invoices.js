@@ -193,7 +193,6 @@ class Header extends Component{
               color:'#707070',
               fontSize:12,
               fontWeight:'bold',
-              marginTop:5,
               width:'100%',
               backgroundColor: '#FFF'
             },
@@ -210,6 +209,8 @@ class Header extends Component{
             shadowRadius: 2,                      //===
 
             height: '100%',
+            maxHeight: '100%',
+            justifyContent: 'center',
             alignItems:'center'
           }
     })
