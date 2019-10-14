@@ -297,7 +297,7 @@ class Header extends Component{
 
   render(){
     return  <View style={[this.styles.minicontainer, Theme.head.shape]}>
-              <XText style={[this.styles.text, Theme.head.text]}>{GLOB.Pack.name || "test"}</XText>
+              <XText style={[this.styles.text, Theme.head.text]}>{GLOB.Pack.name}</XText>
             </View>
   }
 }
