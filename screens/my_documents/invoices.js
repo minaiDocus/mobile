@@ -407,7 +407,7 @@ class InvoicesScreen extends Component {
               headers={ 
                         [
                           {title: "Documents"},
-                          {title: "Opérations"},
+                          {title: "Opé. Bancaires"},
                         ]
                       }
             >

@@ -70,7 +70,7 @@ class Header extends Component{
     return (
               <View style={[this.styles.minicontainer, Theme.head.shape, this.ORstyle[this.props.orientation].body]}>
                 <BoxButton onPress={()=>{CurrentScreen.dismissTo('Send')}} source={{icon:"send"}} IStyle={{left: '20%'}} IOptions={{size: 20}} title='Envoi documents' />
-                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Invoices')}} source={{icon:"file-o"}} IStyle={{left: '27%'}} IOptions={{size: 20}} title='Mes factures' />
+                <BoxButton onPress={()=>{CurrentScreen.dismissTo('Invoices')}} source={{icon:"file-o"}} IStyle={{left: '27%'}} IOptions={{size: 20}} title='Mes documents' />
               </View>
             );
   }

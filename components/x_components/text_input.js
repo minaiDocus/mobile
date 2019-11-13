@@ -268,6 +268,21 @@ export class XTextInput extends Component{
     {
       this.editable = (nextProps.editable == false)? false : true
     }
+
+    if(typeof(nextProps.previous) !== "undefined")
+    {
+      this.previous_action = nextProps.previous
+    }
+
+    if(typeof(nextProps.next) !== "undefined")
+    {
+      this.next_action = nextProps.next
+    }
+
+    if(typeof(nextProps.label) !== "undefined" || typeof(nextProps.placeholder) !== "undefined")
+    {
+      this.label = nextProps.label || nextProps.placeholder || null
+    }
   }
 
   async onLayoutOnce(event){
@@ -278,6 +293,10 @@ export class XTextInput extends Component{
         await this.setState({ ready: true })
       })
     }
+  }
+
+  getValue(){
+    return this.state.value.trim()
   }
 
   openKeyboard(){
@@ -298,11 +317,11 @@ export class XTextInput extends Component{
       {this.props.onChangeText(final_val)}
       catch(e){}
     }
+
+    this.initValue = final_val
     
     try{this.props.onBlur()}
     catch(e){}
-
-    this.initValue = final_val
 
     if(callback_action != null)
     {
