@@ -4,7 +4,7 @@ import { NavigationActions } from 'react-navigation'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { XModal,ModalForm,Navigator,XImage,XText,PDFView,SimpleButton,LinkButton,ImageButton,BoxList,AnimatedBox,LineList,Table,Pagination,TabNav, Swiper } from '../../components'
+import { XModal,ModalForm,Navigator,XImage,XText,XTextInput,PDFView,SimpleButton,LinkButton,ImageButton,BoxList,AnimatedBox,LineList,Table,Pagination,TabNav, Swiper } from '../../components'
 
 import { ModalComptaAnalysis } from '../modals/compta_analytics'
 
@@ -118,13 +118,19 @@ class BoxZoom extends Component{
     this.preseizure = null
     this.pre_tax_amount = 0
     this.edition = {}
-    this.state = { ready: false, showForm: false, nb_pages: 0, current_page: 1, is_selected: exist? true : false }
+    this.state = {
+                    ready: false,
+                    nb_pages: 0,
+                    current_page: 1,
+                    is_selected: exist? true : false,
+                    hiddenNextAction: null,
+                    hiddenKeyboard: null
+                  }
 
     this.refreshData = this.refreshData.bind(this)
     this.editAccount = this.editAccount.bind(this)
     this.editEntry = this.editEntry.bind(this)
     this.validateProcess = this.validateProcess.bind(this)
-    this.dismissForm = this.dismissForm.bind(this)
 
     this.generateStyles()
   }
@@ -164,63 +170,69 @@ class BoxZoom extends Component{
     this.setState({ is_selected: !this.state.is_selected })
   }
 
-  editAccount(account){
+  async editAccount(account){
     if(Master.is_prescriber || Master.is_admin)
     {
       this.edition['type'] = 'account'
-      this.edition['id'] = account.id
+      this.edition['obj'] = account
 
-      this.form_inputs =  [
-                            { label: "Numéro", name: "number", value: account.number },
-                            { label: "Lettrage", name: "lettering", value: account.lettering },
-                          ]
-
-      this.setState({ showForm: true })
+      this.refs.hiddeninput.changeText(account.number)
+      await this.setState({ hiddenKeyboard: null, hiddenNextAction: null })
+      this.refs.hiddeninput.openKeyboard()
     }
   }
 
-  editEntry(entry){
+  async editEntry(entry){
     if(Master.is_prescriber || Master.is_admin)
     {
       this.edition['type'] = 'entry'
-      this.edition['id'] = entry.id
+      this.edition['obj'] = entry
 
-      this.form_inputs =  [
-                            { label: "* Type", name: "type", type:'radio', dataOptions:[{label: 'Débit', value: '1'}, {label: 'Crédit', value: '2'}], value: entry.type },
-                            { label: "* Montant", name: "amount", keyboardType: 'decimal-pad', value: entry.amount || 0 },
-                          ]
+      this.new_type = entry.type
+      let next_title = '-> Débit'
+      let next_value = '1'
+      if(entry.type == '1'){ next_title = '-> Crédit'; next_value = '2' }
 
-      this.setState({ showForm: true })
+      const next_action = () => {
+        this.new_type = next_value
+        this.validateProcess(true)
+      }
+
+      this.refs.hiddeninput.changeText(entry.amount || 0)
+      await this.setState({ hiddenKeyboard: 'decimal-pad', hiddenNextAction: {title: next_title, action: next_action} })
+      this.refs.hiddeninput.openKeyboard()
     }
   }
 
-  validateProcess(){
-    this.dismissForm()
+  validateProcess(force_edit = false){
+    let new_value = this.refs.hiddeninput.getValue().toString()
+    let init_value = (this.edition['type'] == 'account')? this.edition['obj'].number : (this.edition['obj'].amount || 0)
 
-    if(Master.is_prescriber || Master.is_admin)
+    if(init_value != new_value || force_edit)
     {
-      let url = ''
-      let datas = this.refs.form_1.values
-      if(this.edition['type'] == 'account')
-        url = `setPreseizureAccount(${this.edition.id}, ${JSON.stringify(datas)})`
-      else if(this.edition['type'] == 'entry')
-        url = `setPreseizureEntry(${this.edition.id}, ${JSON.stringify(datas)})`
+      if(Master.is_prescriber || Master.is_admin)
+      {
+        let url = ''
+        let datas = null
+        if(this.edition['type'] == 'account'){
+          datas = { number: new_value }
+          url = `setPreseizureAccount(${this.edition['obj'].id}, ${JSON.stringify(datas)})`
+        }
+        else if(this.edition['type'] == 'entry'){
+          datas = { amount: new_value, type: this.new_type }
+          url = `setPreseizureEntry(${this.edition['obj'].id}, ${JSON.stringify(datas)})`
+        }
 
-      if(isPresent(url)){
-        DocumentsFetcher.waitFor([url], responses=>{
-          if(responses[0].error)
-            Notice.alert('Erreur', responses[0].message)
-          else
-            this.refreshData()
-        })
+        if(isPresent(url)){
+          DocumentsFetcher.waitFor([url], responses=>{
+            if(responses[0].error)
+              Notice.alert('Erreur', responses[0].message)
+            else
+              this.refreshData()
+          })
+        }
       }
     }
-  }
-
-  dismissForm(){
-    this.refs.form_1.close(()=>{
-      this.setState({ showForm: false })
-    })
   }
 
   indicator(){
@@ -413,6 +425,18 @@ class BoxZoom extends Component{
            </View>
   }
 
+  renderHiddenInput(){
+    return  <XTextInput ref="hiddeninput"
+                        autoCorrect={false}
+                        selectTextOnFocus={true}
+                        keyboardType={this.state.hiddenKeyboard}
+                        CStyle={{flex: 0, position: 'absolute', opacity: 0, zIndex: -10}}
+                        defaultValue={0}
+                        next={this.state.hiddenNextAction}
+                        onBlur={()=>this.validateProcess()}
+                        />
+  }
+
   render(){
     const selection_img = this.state.is_selected ? 'ban' : 'check'
 
@@ -425,18 +449,7 @@ class BoxZoom extends Component{
     }
 
     return  <View style={this.styles.boxZoom}>
-              {
-                this.state.showForm &&
-                <ModalForm  ref = 'form_1'
-                            title="Edition écriture"
-                            dismiss={()=>{ this.dismissForm() } }
-                            inputs={this.form_inputs}
-                            buttons={[
-                              {title: "Valider", action: ()=>this.validateProcess()},
-                            ]}
-                />
-
-              }
+              { this.renderHiddenInput() }
               <View style={[this.styles.head, Theme.modal.head]}>
                 <SimpleButton CStyle={[{flex:0, width: 50, height: 20}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.props.hide()} title="Retour" />
                 {
@@ -851,11 +864,11 @@ class BoxPublish extends Component{
         {
           this.form_inputs.push({ label: "Libelé opération", name: "operation_label", value: preseizure.operation_label })
           this.form_inputs.push({ label: "Numéro de pièces", name: "piece_number", value: preseizure.piece_number })
-          this.form_inputs.push({ label: "Montant d'origine", name: "amount", keyboardType: 'decimal-pad', value: preseizure.amount })
+          this.form_inputs.push({ label: "Montant d'origine", name: "amount", keyboardType: 'decimal-pad', value: preseizure.amount.toString() })
         }
 
         this.form_inputs.push({ label: "Devise", name: "currency", value: preseizure.currency })
-        this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", keyboardType: 'decimal-pad', value: preseizure.conversion_rate })
+        this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", keyboardType: 'decimal-pad', value: preseizure.conversion_rate.toString() })
         this.form_inputs.push({ label: "Remarque", name: "observation", multiline: true, value: preseizure.observation })
       }
 
@@ -905,7 +918,7 @@ class BoxPublish extends Component{
   }
 
   render(){
-    return <ScrollView style={{flex:0, padding:3}}>
+    return <ScrollView style={{flex:0, padding:3}} keyboardShouldPersistTaps={'always'}>
               {
                 this.state.showForm &&
                 <ModalForm  ref = 'form_1'

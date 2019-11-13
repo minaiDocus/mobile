@@ -86,13 +86,13 @@ function sendDatas(){
         })
 
         prepare_sending(img, new_path)
-        iteration += 1
       }
       else
       {
         prepare_sending(img)
-        iteration += 1
       }
+
+      iteration += 1
     });
 
     const finalize_sending = ()=>{

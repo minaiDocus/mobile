@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, BackHandler, PanResponder} from 'react-native'
+import { View, BackHandler, PanResponder, SafeAreaView} from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { EventRegister } from 'react-native-event-listeners'
 import PropTypes from 'prop-types'
@@ -353,7 +353,7 @@ export class Screen extends Component{
   render(){
     const CStyle = this.props.style
 
-    return <View {...this.props} style={CStyle} onLayout={(event)=>{this.handleLayout(event)}} {...this.boxPanResponder.panHandlers}>
+    return <SafeAreaView {...this.props} style={CStyle} onLayout={(event)=>{this.handleLayout(event)}} {...this.boxPanResponder.panHandlers}>
               <LinearGradient colors={['#D8E0D1', '#71969E', '#FFF']}
                               style={{flex: 1}}
                               start={{ x: 0, y: -0.1 }}
@@ -369,6 +369,6 @@ export class Screen extends Component{
               <NoticeBox />
               { !this.noFCM && <FCM /> }
               { !this.noFCMUi && !this.noFCM && <UINotification visible={false} /> }
-           </View>
+           </SafeAreaView>
   }
 }

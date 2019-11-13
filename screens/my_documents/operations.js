@@ -536,7 +536,7 @@ class OperationsScreen extends Component {
       return (
         <Screen style={{flex: 1, flexDirection: 'column'}}
                 onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
-                title='Mes opérations'
+                title='Mes opé. bancaires'
                 name='Operations'
                 withMenu={true}
                 options={ this.renderOptions() }
