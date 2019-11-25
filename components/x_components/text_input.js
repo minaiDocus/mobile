@@ -1,21 +1,25 @@
 import React, { Component } from 'react'
-import {View, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Keyboard, Dimensions} from 'react-native'
+import {View, ScrollView, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Keyboard, Dimensions} from 'react-native'
 import {XModal, XImage, XText, SimpleButton, AnimatedBox, LinkButton} from '../index'
 
 class ModalInput extends Component{
   constructor(props){
     super(props)
 
+    this.dataCompletions = this.props.dataCompletions || []
+
     this.closing = false
 
     this.keyboardShow = false
 
-    this.state = { secureText: ((this.props.secureTextEntry)? 'Afficher mot de passe' : 'Cache mot de passe'), animated: (this.props.withAnimation || false), opacity: {display: 'flex'} }
+    this.state = { dataCompletions: this.dataCompletions, secureText: ((this.props.secureTextEntry)? 'Afficher mot de passe' : 'Cache mot de passe'), animated: (this.props.withAnimation || false), opacity: {display: 'flex'} }
 
     const x = (Dimensions.get('window').width / 2) - (this.props.offset.w / 2)
     this.endPosition = { x: x, y: 0 }
 
     this.closeKeyboard = this.closeKeyboard.bind(this)
+    this.fillValue = this.fillValue.bind(this)
+    this.handleChangeText = this.handleChangeText.bind(this)
     this._keyboardDidShow = this._keyboardDidShow.bind(this)
     this._keyboardDidHide = this._keyboardDidHide.bind(this)
 
@@ -84,6 +88,26 @@ class ModalInput extends Component{
     }
   }
 
+  fillValue(value=''){
+    this.refs.input.value = value
+    this.handleChangeText(value)
+  }
+
+  handleChangeText(value=''){
+    let dataC = this.dataCompletions
+
+    if(isPresent(value)){
+      let matcher = new RegExp(value, "i")
+      dataC = dataC.filter(d => matcher.test(d))
+
+      try{this.refs.autoCompletionScroll.scrollTo({x: 0, y: 0, animated: false})}catch(e){}
+    }
+
+    this.setState({ dataCompletions: dataC })
+    this.cValue = value
+    this.props.changeText(value)
+  }
+
   toggleSecurityText(){
     if(this.state.secureText == 'Afficher mot de passe')
       this.setState({ secureText: 'Cacher mot de passe' })
@@ -106,12 +130,17 @@ class ModalInput extends Component{
               },
       box:{
             flex:0,
-            height: height,
             width:'100%',
             alignItems:'center',
             justifyContent:'center',
             backgroundColor:'#F1F1F1' 
           },
+      box_2:{
+                  flex: 0,
+                  width: '100%',
+                  flexDirection: 'row',
+                  height: height,
+               },
       label:{
               flex:0,
               fontSize:14,
@@ -153,10 +182,32 @@ class ModalInput extends Component{
     })
   }
 
+  renderCompletionList(){
+    let dataC = arrayCompact(this.state.dataCompletions, true)
+
+    if(isPresent(dataC))
+    {
+      return  <ScrollView ref='autoCompletionScroll' style={{flex: 0, width: '100%', flexDirection: 'row', backgroundColor: '#FFF'}} horizontal={true} keyboardShouldPersistTaps={'always'}>
+                { dataC.map((text, index) => {
+                    if(isPresent(text)){
+                      return <LinkButton  key={index}
+                                          CStyle={{marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 5, flex: 0, backgroundColor: '#F2F2F2'}}
+                                          TStyle={{flex:0, color:'#003366', paddingLeft:0, textDecorationLine:'underline', textAlign:'center'}}
+                                          title={text}
+                                          onPress={()=>{ this.fillValue(text) }}
+                                          />
+                    }
+                  })
+                }
+              </ScrollView>
+    }
+    else
+    {
+      return null
+    }
+  }
+
   render(){
-
-    this.generateStyles()
-
     let iosStyle = androidStyle = {}
     if(Platform.OS == 'android')
     {
@@ -184,7 +235,7 @@ class ModalInput extends Component{
               { !this.state.animated &&
                 <View style={[this.styles.content, iosStyle]}>
                   <AnimatedBox ref="animatedInput" style={[this.styles.box]} type='DownSlide' durationIn={300} durationOut={150}>
-                    <View style={{flex:1, flexDirection:'row'}}>
+                    <View style={this.styles.box_2}>
                       <View style={{flex:1, alignItems:'flex-end', justifyContent:'center'}}>
                       {
                         this.props.previous_action != null && 
@@ -207,7 +258,7 @@ class ModalInput extends Component{
                                      selectTextOnFocus={this.props.selectTextOnFocus || false}
                                      secureTextEntry={(this.state.secureText == 'Afficher mot de passe') ? true : false}
                                      defaultValue={this.props.currValue}
-                                     onChangeText={(value)=>{this.cValue = value; this.props.changeText(value)}}
+                                     onChangeText={(value)=>{this.handleChangeText(value)}}
                                      editable={this.props.editable}
                                      onBlur={()=>{this.closeKeyboard()}}
                                      keyboardType={this.props.keyboardType}
@@ -225,6 +276,7 @@ class ModalInput extends Component{
                       }
                       </View>
                     </View>
+                    { this.renderCompletionList() }
                   </AnimatedBox>
                   <TouchableWithoutFeedback onPress={()=>{this.closeKeyboard()}}>
                     <View style={{flex:1, width:'100%'}} />
@@ -250,7 +302,8 @@ export class XTextInput extends Component{
     this.offset = {}
 
     this.previous_action = this.props.previous || null
-    this.next_action = this.props.next || null      
+    this.next_action = this.props.next || null
+    this.dataCompletions = this.props.dataCompletions || []
 
     this.liveChange = this.props.liveChange || false
     this.label = this.props.label || this.props.placeholder || null
@@ -265,24 +318,19 @@ export class XTextInput extends Component{
 
   componentWillReceiveProps(nextProps){
     if(typeof(nextProps.editable) !== "undefined")
-    {
       this.editable = (nextProps.editable == false)? false : true
-    }
 
     if(typeof(nextProps.previous) !== "undefined")
-    {
       this.previous_action = nextProps.previous
-    }
 
     if(typeof(nextProps.next) !== "undefined")
-    {
       this.next_action = nextProps.next
-    }
 
     if(typeof(nextProps.label) !== "undefined" || typeof(nextProps.placeholder) !== "undefined")
-    {
       this.label = nextProps.label || nextProps.placeholder || null
-    }
+
+    if(typeof(nextProps.dataCompletions) !== "undefined")
+      this.dataCompletions = nextProps.dataCompletions || []
   }
 
   async onLayoutOnce(event){
@@ -395,6 +443,7 @@ export class XTextInput extends Component{
               <ModalInput 
                 {...this.props}
                 label={this.label}
+                dataCompletions={this.dataCompletions}
                 currValue={this.state.value}
                 closeKeyboard={this.closeKeyboard}
                 changeText={this.changeText}

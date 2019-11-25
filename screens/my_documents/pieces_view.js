@@ -655,21 +655,9 @@ class CustomTabNav extends Component{
   }
 
   render(){
-    return  <TabNav headers={[{title: "Infos", icon:"information"}, {title: "En cours", icon:"doc_curr"}, {title: "Publiés", icon:"doc_trait"}]}
+    return  <TabNav headers={[{title: "Publiés", icon:"doc_trait"}, {title: "En cours", icon:"doc_curr"}, {title: "Infos", icon:"information"}]}
                     initialPage={GLOB.currPieceTab}
                     handleIndexChange={(ind)=>{GLOB.currPieceTab = ind}}>
-              <BoxInfos key={0}
-                        nb_published={this.totalPublished}
-                        nb_publishing={this.totalPublishing}/>
-              <BoxPublish key={1}
-                          type='publishing' 
-                          datas={GLOB.pagesPublishing}
-                          totalCount={this.totalPublishing || 0}
-                          ready={this.state.publishing_ready}
-                          title="piece(s) en cours de traitement"
-                          onChangePage={(page)=>{this.changePagePublishing(page)}}
-                          nb_pages={this.limit_pagePublishing}
-                          page={this.pagePublishing} />
               <BoxPublish key={2}
                           type='published'
                           datas={GLOB.pagesPublished}
@@ -679,6 +667,18 @@ class CustomTabNav extends Component{
                           onChangePage={(page)=>this.changePagePublished(page)}
                           nb_pages={this.limit_pagePublished}
                           page={this.pagePublished} />
+             <BoxPublish key={1}
+                          type='publishing'
+                          datas={GLOB.pagesPublishing}
+                          totalCount={this.totalPublishing || 0}
+                          ready={this.state.publishing_ready}
+                          title="piece(s) en cours de traitement"
+                          onChangePage={(page)=>{this.changePagePublishing(page)}}
+                          nb_pages={this.limit_pagePublishing}
+                          page={this.pagePublishing} />
+              <BoxInfos key={0}
+                        nb_published={this.totalPublished}
+                        nb_publishing={this.totalPublishing}/>
             </TabNav>
   }
 }

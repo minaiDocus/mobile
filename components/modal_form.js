@@ -54,6 +54,8 @@ export class ModalForm extends Component{
   constructor(props){
     super(props)
 
+    this.flatMode = this.props.flatMode || false
+
     this.values = {}
 
     this.dismiss = this.dismiss.bind(this)
@@ -171,30 +173,49 @@ export class ModalForm extends Component{
     return buttons
   }
 
-  render(){
-    return  <XModal ref='main_modal'
-                    transparent={true}
-                    animationType="DownSlide"
-                    visible={true}
-                    onRequestClose={()=>{ this.dismiss() }}
-            >
-              <View style={this.styles.container} >
-                <View style={[this.styles.box, Theme.modal.shape]}>
-                  <View style={[this.styles.head, Theme.modal.head]}>
-                    <XText style={[{flex:1}, Theme.modal.title]}>{this.props.title}</XText>
-                    <ImageButton  source={{icon: "window-close"}}
-                      CStyle={{flex:0, flexDirection:'column', alignItems:'center',width:30}}
-                      IStyle={{width:19, height:19}}
-                      onPress={()=>{this.dismiss()}} />
-                  </View>
-                  <ScrollView style={{flex: 1}} keyboardShouldPersistTaps={'always'}>
-                    {this.renderInputs()}
-                  </ScrollView>
-                  <View style={[this.styles.foot, Theme.modal.foot]}>
-                    {this.renderButtons()}
-                  </View>
-                </View>
+  renderForm(){
+    let c_style = this.props.CStyle || {}
+    let s_style = this.props.SStyle || {}
+    let h_style = this.props.HStyle || {}
+    let f_style = this.props.FStyle || {}
+
+    return <View style={[this.styles.container, c_style]} >
+            <View style={[this.styles.box, Theme.modal.shape, s_style]}>
+              <View style={[this.styles.head, Theme.modal.head, h_style]}>
+                { isPresent(this.props.title) && <XText style={[{flex:1}, Theme.modal.title]}>{this.props.title}</XText> }
+                {
+                  !this.flatMode &&
+                  <ImageButton  source={{icon: "window-close"}}
+                                CStyle={{flex:0, flexDirection:'column', alignItems:'center',width:30}}
+                                IStyle={{width:19, height:19}}
+                                onPress={()=>{this.dismiss()}} />
+                }
               </View>
-            </XModal>
+              <ScrollView style={{flex: 1}} keyboardShouldPersistTaps={'always'}>
+                {this.renderInputs()}
+              </ScrollView>
+              <View style={[this.styles.foot, Theme.modal.foot, f_style]}>
+                {this.renderButtons()}
+              </View>
+            </View>
+          </View>
+  }
+
+  render(){
+    if(this.flatMode)
+    {
+      return this.renderForm()
+    }
+    else
+    {
+      return  <XModal ref='main_modal'
+                      transparent={true}
+                      animationType="DownSlide"
+                      visible={true}
+                      onRequestClose={()=>{ this.dismiss() }}
+              >
+                { this.renderForm() }
+              </XModal>
+    }
   }
 }

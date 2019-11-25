@@ -10,7 +10,7 @@ import { ModalComptaAnalysis } from '../modals/compta_analytics'
 
 import { DocumentsFetcher, FileUploader } from "../../requests"
 
-let GLOB = { master: null, pack_or_report:{}, preseizures:[], source: '', idZoom:"", dataFilter: {}, selectedItems:[], press_action: 'zoom', currPresPage: 1, currPresTab: 0 }
+let GLOB = { master: null, pack_or_report:{}, preseizures:[], source: '', idZoom:"", dataFilter: {}, selectedItems:[], press_action: 'zoom', currPresPage: 1, currPresTab: 0, needRefresh: false }
 
 function getImgStampOf(state=''){
   let stamp_img = 'none'
@@ -118,6 +118,10 @@ class BoxZoom extends Component{
     this.preseizure = null
     this.pre_tax_amount = 0
     this.edition = {}
+    this.id_edition = 0
+    this.current_info_page = 0
+    this.accountCompletion = {}
+
     this.state = {
                     ready: false,
                     nb_pages: 0,
@@ -125,13 +129,15 @@ class BoxZoom extends Component{
                     is_selected: exist? true : false,
                     hiddenNextAction: null,
                     hiddenPrevAction: null,
-                    hiddenKeyboard: null
+                    hiddenKeyboard: null,
+                    dataCompletions: []
                   }
 
     this.refreshData = this.refreshData.bind(this)
     this.editAccount = this.editAccount.bind(this)
     this.editEntry = this.editEntry.bind(this)
     this.validateProcess = this.validateProcess.bind(this)
+    this.validateEdition = this.validateEdition.bind(this)
 
     this.generateStyles()
   }
@@ -142,18 +148,45 @@ class BoxZoom extends Component{
 
   refreshData(){
     this.setState({ ready: false })
+    const setFormInputs = (preseizure={})=>{
+      this.form_inputs = []
+
+      let year = formatDate(new Date(), 'YYYY')
+      let month = formatDate(new Date(), 'MM')
+      let day = formatDate(new Date(), 'DD')
+      month = parseInt(month) + 4
+      if(month > 12){
+        month = 1
+        year = parseInt(year) + 1
+      }
+      const max_date = `${year}-${formatNumber(month, '00')}-${day}`
+
+      this.form_inputs.push({ label: "Date", name: "date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.date })
+      this.form_inputs.push({ label: "Date d'échéance", name: "deadline_date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.deadline_date })
+      this.form_inputs.push({ label: "Nom de tiers", name: "third_party", value: preseizure.third_party })
+      this.form_inputs.push({ label: "Libelé opération", name: "operation_label", value: preseizure.operation_label })
+      this.form_inputs.push({ label: "Numéro de pièces", name: "piece_number", value: preseizure.piece_number })
+      this.form_inputs.push({ label: "Montant d'origine", name: "amount", keyboardType: 'decimal-pad', value: preseizure.amount })
+      this.form_inputs.push({ label: "Devise", name: "currency", value: preseizure.currency })
+      this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", keyboardType: 'decimal-pad', value: preseizure.conversion_rate })
+      this.form_inputs.push({ label: "Remarque", name: "observation", multiline: true, value: preseizure.observation })
+    }
 
     DocumentsFetcher.waitFor([`getPreseizureDetails(${this.props.data.id})`], responses => {
       if(responses[0].error){
         Notice.danger(responses[0].message, { name: responses[0].message })
       }
       else{
+        setFormInputs(responses[0].preseizure)
         this.preseizure_entries = responses[0].preseizure_entries
         this.preseizure_accounts = responses[0].preseizure_accounts
         this.preseizure = responses[0].preseizure
+        this.id_edition = responses[0].preseizure.id
         this.analytics = responses[0].analytics
+        this.accountCompletion = responses[0].accountCompletion || {}
         this.pre_tax_amount = responses[0].pre_tax_amount
       }
+
       this.setState({ ready: true })
     })
   }
@@ -178,7 +211,7 @@ class BoxZoom extends Component{
       this.edition['obj'] = account
 
       this.refs.hiddeninput.changeText(account.number)
-      await this.setState({ hiddenKeyboard: null, hiddenNextAction: null, hiddenPrevAction: null })
+      await this.setState({ hiddenKeyboard: null, hiddenNextAction: null, hiddenPrevAction: null, dataCompletions: this.accountCompletion[account.id.toString()] })
       this.refs.hiddeninput.openKeyboard()
     }
   }
@@ -206,7 +239,7 @@ class BoxZoom extends Component{
       }
 
       this.refs.hiddeninput.changeText(entry.amount || 0)
-      await this.setState({ hiddenKeyboard: 'decimal-pad', hiddenPrevAction: prev_act, hiddenNextAction: next_act })
+      await this.setState({ hiddenKeyboard: 'decimal-pad', hiddenPrevAction: prev_act, hiddenNextAction: next_act, dataCompletions: [] })
       this.refs.hiddeninput.openKeyboard()
     }
   }
@@ -215,10 +248,12 @@ class BoxZoom extends Component{
     let new_value = this.refs.hiddeninput.getValue().toString()
     let init_value = (this.edition['type'] == 'account')? this.edition['obj'].number : (this.edition['obj'].amount || 0)
 
-    if(init_value != new_value || force_edit)
+    if((init_value != new_value || force_edit) && isPresent(new_value))
     {
       if(Master.is_prescriber || Master.is_admin)
       {
+        Notice.info('Edition en cours ...', {name: 'preseizure_edition'})
+
         let url = ''
         let datas = null
         if(this.edition['type'] == 'account'){
@@ -239,6 +274,25 @@ class BoxZoom extends Component{
           })
         }
       }
+    }
+  }
+
+  validateEdition(){
+    if((Master.is_prescriber || Master.is_admin) && isPresent(this.id_edition))
+    {
+      Notice.info('Edition en cours ...', {name: 'preseizure_edition'})
+
+      let values = this.refs.form_1.values
+
+      DocumentsFetcher.waitFor([`editPreseizures(${JSON.stringify([this.id_edition])}, ${JSON.stringify(values)})`], responses => {
+        if(responses[0].error){
+          Notice.alert('Erreur', responses[0].message)
+        }
+        else{
+          GLOB.needRefresh = true
+          this.refreshData()
+        }
+      })
     }
   }
 
@@ -365,21 +419,28 @@ class BoxZoom extends Component{
             </View>
   }
 
-  renderEntries(){
+  renderPreseizure(){
     let stamp_img = getImgStampOf(this.props.data.state)
 
     const renderDetails = () =>{
       let entries = []
-      this.preseizure_entries.forEach(entry=>{
+      let debit_amount = 0
+      let credit_amount = 0
+
+      this.preseizure_entries.forEach((entry, index)=>{
         const account = this.preseizure_accounts.find((a)=>{ return a.id == entry.account_id })
 
         const account_number_link = <LinkButton TStyle={{textDecorationLine: 'underline'}} title={account.number} onPress={()=>{this.editAccount(account)}} />
 
         let entry_debit_link = entry_credit_link = '-'
-        if(entry.type == 1)
+        if(entry.type == 1){
+          debit_amount += parseFloat(entry.amount)
           entry_debit_link = <LinkButton TStyle={{textDecorationLine: 'underline'}} title={entry.amount} onPress={()=>{this.editEntry(entry)}} />
-        else
+        }
+        else{
+          credit_amount += parseFloat(entry.amount)
           entry_credit_link = <LinkButton TStyle={{textDecorationLine: 'underline'}} title={entry.amount} onPress={()=>{this.editEntry(entry)}} />
+        }
 
         entries.push([account_number_link, entry_debit_link, entry_credit_link])
       })
@@ -393,9 +454,7 @@ class BoxZoom extends Component{
         analytics.push([analytic.name, axis, `${analytic.ventilation} %`, amount])
       })
 
-      let tab_headers = [{title: "Ecritures"}]
-      if(analytics.length > 0)
-        tab_headers.push({title: "Analyse compta."})
+      let tab_headers = [{title: "Infos."}, {title: "Ecritures"}]
 
       const barStyle =  {
                           shape: { marginTop: 0, padding: 3 },
@@ -405,35 +464,61 @@ class BoxZoom extends Component{
                           selectedText: { color: '#fff' }
                         }
 
-      return  <TabNav CStyle={{flex: 1}}
-                      BStyle={ barStyle }
-                      headers={tab_headers} 
-              >
-                <View ref='entries' style={{flex: 1}}>
-                <XText style={{flex: 0, paddingBottom: 5, marginLeft: 3}}>Unité monétaire: <XText style={{fontWeight: 'bold'}}>{ this.preseizure.currency || 'EUR' }</XText></XText>
-                  <Table  headers={["Num. compte", "Débit", "Crédit"]}
-                          body={entries}/>
-                </View>
-                {
-                  analytics.length > 0 &&
-                  <View ref='analytics' style={{flex: 1}}>
+      return  <View style={{width: '100%', flex: 1}} >
+                <TabNav CStyle={{flex: 1}}
+                        BStyle={ barStyle }
+                        initialPage={this.current_info_page}
+                        handleIndexChange={(index)=>{ this.current_info_page = index }}
+                        headers={tab_headers}
+                >
+                  <ModalForm  ref = 'form_1'
+                              CStyle={{paddingVertical: 0, backgroundColor: 'transparent', flex: 1, marginBottom: 5}}
+                              SStyle={{width: '100%'}}
+                              HStyle={{maxHeight: 0, minHeight: 0}}
+                              FStyle={{backgroundColor: '#FFF'}}
+                              flatMode = {true}
+                              dismiss={()=>{}}
+                              inputs={this.form_inputs}
+                              buttons={[
+                                {title: "Valider", action: ()=>this.validateEdition()},
+                              ]} />
+                  <View style={{flex: 1}}>
                     <XText style={{flex: 0, paddingBottom: 5, marginLeft: 3}}>Unité monétaire: <XText style={{fontWeight: 'bold'}}>{ this.preseizure.currency || 'EUR' }</XText></XText>
-                    <Table  headers={["Analyse", "Axe", "Ventilation", "Montant ventilé"]}
-                            body={analytics}/>
+                    <View ref='entries' style={{flex: 1}}>
+                      <View style={{flexDirection: 'row', flex: 0}}>
+                        <XText style={{flex: 0, paddingBottom: 5, marginLeft: 7, fontStyle: 'italic'}}>Ecritures</XText>
+                        {
+                          debit_amount != credit_amount &&
+                          <AnimatedBox type='blink' style={{flex:0, alignItem: 'center', justifyContent: 'center'}}>
+                            <XText style={{flex: 0, paddingBottom: 5, marginLeft: 5, color: '#900604'}}>( Balance non équilibrée )</XText>
+                          </AnimatedBox>
+                        }
+                      </View>
+                      <Table  headers={["Num. compte", "Débit", "Crédit"]}
+                              body={entries}/>
+                    </View>
+                    {
+                      analytics.length > 0 &&
+                      <View ref='analytics' style={{flex: 1}}>
+                        <XText style={{flex: 0, paddingBottom: 5, marginLeft: 7, fontStyle: 'italic'}}>Analyse compta.</XText>
+                        <Table  headers={["Analyse", "Axe", "Ventilation", "Montant ventilé"]}
+                                body={analytics}/>
+                      </View>
+                    }
                   </View>
-                }
-              </TabNav>
+                </TabNav>
+              </View>
     }
 
     return <View style={{flex: 1.3, alignItems: 'center', justifyContent: 'center', paddingHorizontal: '3%'}}>
             { !this.state.ready && <XImage loader={true} width={40} height={40} /> }
             { this.state.ready && renderDetails() }
-            { stamp_img != 'none' && <XImage source={{uri:stamp_img}} style={this.styles.stamp_absolute} /> }
            </View>
   }
 
   renderHiddenInput(){
     return  <XTextInput ref="hiddeninput"
+                        dataCompletions={this.state.dataCompletions}
                         autoCorrect={false}
                         selectTextOnFocus={true}
                         keyboardType={this.state.hiddenKeyboard}
@@ -484,11 +569,11 @@ class BoxZoom extends Component{
                 <TabNav headers={[{title: "Pré-affectation"}, {title: "Pièce"}]}
                         BStyle={ {shape: {marginTop: 0}, text:{color: '#888'}} }
                 >
-                  { this.renderEntries() }
+                  { this.renderPreseizure() }
                   { this.renderPreview() }
                 </TabNav>
               }
-              { GLOB.source != 'pack' && this.renderEntries() }
+              { GLOB.source != 'pack' && this.renderPreseizure() }
             </View>
   }
 }
@@ -598,7 +683,6 @@ class PreseizureBox extends Component{
     this.selectItem = this.selectItem.bind(this)
     this.initWith = this.initWith.bind(this)
     this.deliver = this.deliver.bind(this)
-    this.edit = this.edit.bind(this)
     this.pressAction = this.pressAction.bind(this)
 
     this.generateStyles()
@@ -648,10 +732,6 @@ class PreseizureBox extends Component{
         {text: 'Non', style: 'cancel'}
       ]
     )
-  }
-
-  edit(){
-    this.props.edit(this.props.data.id)
   }
 
   pressAction(){
@@ -790,16 +870,15 @@ class PreseizureBox extends Component{
                 </XImage>
                 <View style={{flex: 1, flexDirection: 'column', marginLeft: 5}}>
                   <View style={{flex: 1}}>
-                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date ajout:</XText> {formatDate(this.props.data.created_at)}</XText>
-                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date modif:</XText> {formatDate(this.props.data.updated_at)}</XText>
-                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date envoi:</XText> {formatDate(this.props.data.delivery_tried_at)}</XText>
-                    <XText style={{flex: 0, marginTop: 3, color:"#F7230C"}}>{truncate(this.props.data.error_message, 100)}</XText>
+                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date:</XText> {formatDate(this.props.data.date)}</XText>
+                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date échéance:</XText> {formatDate(this.props.data.deadline_date)}</XText>
+                    { isPresent(this.props.data.delivery_tried_at) && <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Livrée le :</XText> {formatDate(this.props.data.delivery_tried_at)}</XText> }
+                    { isPresent(this.props.data.error_message) && <XText style={{flex: 0, marginTop: 3, color:"#F7230C"}}>{truncate(this.props.data.error_message, 100)}</XText> }
                   </View>
                   {
                     (Master.is_prescriber || Master.is_admin) &&
                     <View style={{flex: 0, flexDirection: 'row', justifyContent: 'flex-end'}}>
                       { !this.state.is_delivered && <ImageButton source={{icon: 'refresh'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.deliver()}}/> }
-                      <ImageButton source={{icon: 'edit'}} CStyle={{flex:0, width:25, padding:15, alignItems:'center', justifyContent:'center'}} IStyle={this.styles.image} onPress={()=>{this.edit()}}/>
                     </View>
                   }
                 </View>
@@ -814,7 +893,6 @@ class BoxPublish extends Component{
     this.state = { zoomActive: false, showForm: false }
 
     this.ids_edition = []
-    this.editionType = 'simple'
     this.form_inputs = []
 
     this.toggleZoom = this.toggleZoom.bind(this)
@@ -833,6 +911,9 @@ class BoxPublish extends Component{
   }
 
   async toggleZoom(){
+    if(GLOB.needRefresh)
+      EventRegister.emit('refreshPreseizure', false)
+
     await this.setState({zoomActive: !this.state.zoomActive})
   }
 
@@ -842,9 +923,8 @@ class BoxPublish extends Component{
     })
   }
 
-  async showForm(ids, type='simple'){
+  async showForm(ids){
     this.ids_edition = ids
-    this.editionType = type
 
     renderToFrontView(<View style={{flex:1, backgroundColor:'rgba(255,255,255,0.7)', alignItems:'center', justifyContent:'center'}}>
                         <XImage loader={true} width={40} height={40} />
@@ -867,38 +947,14 @@ class BoxPublish extends Component{
         this.form_inputs.push({ label: "Date", name: "date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.date })
         this.form_inputs.push({ label: "Date d'échéance", name: "deadline_date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.deadline_date })
         this.form_inputs.push({ label: "Nom de tiers", name: "third_party", value: preseizure.third_party })
-
-        if(this.editionType == 'simple')
-        {
-          this.form_inputs.push({ label: "Libelé opération", name: "operation_label", value: preseizure.operation_label })
-          this.form_inputs.push({ label: "Numéro de pièces", name: "piece_number", value: preseizure.piece_number })
-          this.form_inputs.push({ label: "Montant d'origine", name: "amount", keyboardType: 'decimal-pad', value: preseizure.amount.toString() })
-        }
-
         this.form_inputs.push({ label: "Devise", name: "currency", value: preseizure.currency })
-        this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", keyboardType: 'decimal-pad', value: preseizure.conversion_rate.toString() })
+        this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", keyboardType: 'decimal-pad', value: preseizure.conversion_rate })
         this.form_inputs.push({ label: "Remarque", name: "observation", multiline: true, value: preseizure.observation })
       }
 
-      if(this.editionType == 'simple')
-      {
-        DocumentsFetcher.waitFor([`getPreseizureDetails(${this.ids_edition[0]})`], responses => {
-          clearFrontView()
-          if(responses[0].error){
-            Notice.danger(responses[0].message, { name: responses[0].message })
-          }
-          else{
-            setFormInputs(responses[0].preseizure)
-            setTimeout(()=>{this.setState({ showForm: true })}, 500)
-          }
-        })
-      }
-      else
-      {
-        clearFrontView()
-        setFormInputs()
-        setTimeout(()=>{this.setState({ showForm: true })}, 500)
-      }
+      clearFrontView()
+      setFormInputs()
+      setTimeout(()=>{this.setState({ showForm: true })}, 500)
     }, 1000)
   }
 
@@ -908,8 +964,7 @@ class BoxPublish extends Component{
       Notice.info('Edition en cours ...', {name: 'preseizure_edition'})
 
       let values = this.refs.form_1.values
-      if(this.editionType == 'multi')
-        values = jsonCompact(values, true)
+      values = jsonCompact(values, true)
 
       DocumentsFetcher.waitFor([`editPreseizures(${JSON.stringify(this.ids_edition)}, ${JSON.stringify(values)})`], responses => {
         if(responses[0].error){
@@ -946,7 +1001,7 @@ class BoxPublish extends Component{
                         title={`${this.props.totalCount} ${this.props.title}`}
                         waitingData={!this.props.ready}
                         noItemText='Aucun résultat'
-                        renderItems={(data, index) => <PreseizureBox edit={(id)=>{ this.showForm([id], 'simple') }} withSelection={true} data={data} index={index} toggleZoom={()=>this.toggleZoom()}/> } />
+                        renderItems={(data, index) => <PreseizureBox withSelection={true} data={data} index={index} toggleZoom={()=>this.toggleZoom()}/> } />
               <Pagination onPageChanged={(page)=>this.props.onChangePage(page)} nb_pages={this.props.nb_pages || 1} page={this.props.page || 1} />
           </ScrollView>
   }
@@ -993,6 +1048,7 @@ class CustomTabNav extends Component{
     if(renew)
       this.page = 1
 
+    GLOB.needRefresh = false
     GLOB.currPresPage = this.page
     this.setState({ready: false})
     const s_id = GLOB.pack_or_report.pack_id || GLOB.pack_or_report.id
@@ -1014,13 +1070,9 @@ class CustomTabNav extends Component{
   }
 
   render(){
-    return  <TabNav headers={[{title: "Infos", icon:"information"}, {title: "Ecritures Compta.", icon:"doc_curr"}]}
+    return  <TabNav headers={[{title: "Ecritures Compta.", icon:"doc_curr"}, {title: "Infos", icon:"information"}]}
                     initialPage={GLOB.currPresTab}
                     handleIndexChange={(ind)=>{GLOB.currPresTab = ind}}>
-              <BoxInfos key={0}
-                        nb_published={this.totalPublished}
-                        nb_publishing={this.totalPublishing}
-                        multiDelivery={(callback)=>{this.props.multiDelivery(callback)}}/>
               <BoxPublish key={1} 
                           datas={GLOB.preseizures}
                           totalCount={this.total || 0}
@@ -1029,6 +1081,10 @@ class CustomTabNav extends Component{
                           onChangePage={(page)=>{this.changePage(page)}}
                           nb_pages={this.limit_page}
                           page={this.page} />
+              <BoxInfos key={0}
+                        nb_published={this.totalPublished}
+                        nb_publishing={this.totalPublishing}
+                        multiDelivery={(callback)=>{this.props.multiDelivery(callback)}}/>
             </TabNav>
   }
 }
@@ -1043,6 +1099,8 @@ export class PreseizuresView extends Component{
       GLOB.currPresPage = 1
       GLOB.currPresTab  = 0
     }
+
+    GLOB.needRefresh = false
 
     this.handleSelection = this.handleSelection.bind(this)
     this.selectAllItem = this.selectAllItem.bind(this)
