@@ -213,7 +213,7 @@ class ViewState extends Component{
 
     const details = this.props.datas.map((dt, index) => {return this.renderDetails(dt, index)});
 
-    return  <ScrollView>
+    return  <ScrollView keyboardShouldPersistTaps='always' >
               <View style={[this.styles.container, Theme.box]}>
                 <View style={{flex:1, flexDirection:'row'}}>
                   <View style={this.styles.boxIco}>

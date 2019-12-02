@@ -543,7 +543,7 @@ class OperationsScreen extends Component {
                 navigation={this.props.navigation}>
           <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
             <Header orientation={this.state.orientation} onFilter={()=>this.refreshDatas()} waitingOperations={this.state.waiting_operations_count} forcePreAssignment={()=>{this.forcePreAssignment()}} />
-            <ScrollView style={{flex:1, padding:3}}>
+            <ScrollView style={{flex:1, padding:3}} keyboardShouldPersistTaps='always' >
               {this.state.orderText && this.state.datas.length > 0 && 
                 <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
                   <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>

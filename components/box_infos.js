@@ -49,7 +49,7 @@ export class BoxInfos extends Component{
                       IStyle={{width:19, height:19}}
                       onPress={()=>{this.props.dismiss()}} />
                   </View>
-                  <ScrollView style={this.styles.body}>
+                  <ScrollView style={this.styles.body} keyboardShouldPersistTaps='always' >
                     {this.props.children}
                   </ScrollView>
                 </View>

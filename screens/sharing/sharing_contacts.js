@@ -477,7 +477,7 @@ class SharingScreen extends Component {
   renderStats(){
     const arrow_direction = this.state.direction? 'V' : 'Λ'
 
-     return  <ScrollView style={{flex:1, padding:3}}>
+     return  <ScrollView style={{flex:1, padding:3}} keyboardShouldPersistTaps='always' >
                 {this.state.orderText && this.state.dataList.length > 0 &&
                   <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
                     <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>

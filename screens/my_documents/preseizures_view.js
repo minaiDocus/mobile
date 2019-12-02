@@ -655,7 +655,7 @@ class BoxInfos extends Component{
                     {label: "Message d'erreur d'envoi :", value: GLOB.pack_or_report.last_delivery_message},
                   ]
 
-    return  <ScrollView style={{flex:0, padding:3}}>
+    return  <ScrollView style={{flex:0, padding:3}} keyboardShouldPersistTaps={'always'}>
               <LineList datas={infos}
                         renderItems={(data) => this.renderItems(data)} />
               { 
@@ -871,7 +871,7 @@ class PreseizureBox extends Component{
                 <View style={{flex: 1, flexDirection: 'column', marginLeft: 5}}>
                   <View style={{flex: 1}}>
                     <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date:</XText> {formatDate(this.props.data.date)}</XText>
-                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date échéance:</XText> {formatDate(this.props.data.deadline_date)}</XText>
+                    { isPresent(this.props.data.deadline_date) && <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date échéance:</XText> {formatDate(this.props.data.deadline_date)}</XText> }
                     { isPresent(this.props.data.delivery_tried_at) && <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Livrée le :</XText> {formatDate(this.props.data.delivery_tried_at)}</XText> }
                     { isPresent(this.props.data.error_message) && <XText style={{flex: 0, marginTop: 3, color:"#F7230C"}}>{truncate(this.props.data.error_message, 100)}</XText> }
                   </View>
@@ -981,7 +981,7 @@ class BoxPublish extends Component{
   }
 
   render(){
-    return <ScrollView style={{flex:0, padding:3}} keyboardShouldPersistTaps={'always'}>
+    return <ScrollView style={{flex:0, padding:3}} keyboardShouldPersistTaps='always' >
               {
                 this.state.showForm &&
                 <ModalForm  ref = 'form_1'

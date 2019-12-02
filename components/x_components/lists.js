@@ -322,7 +322,7 @@ export class Table extends Component{
   render(){
     return  <View style={{flex: 1}}>
               { this.renderHeader() }
-              <ScrollView>
+              <ScrollView keyboardShouldPersistTaps='always' >
                 { this.renderBody() }
               </ScrollView>
             </View>

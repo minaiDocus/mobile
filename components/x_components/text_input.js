@@ -96,9 +96,11 @@ class ModalInput extends Component{
   handleChangeText(value=''){
     let dataC = this.dataCompletions
 
-    if(isPresent(value)){
-      let matcher = new RegExp(value, "i")
-      dataC = dataC.filter(d => matcher.test(d))
+    if(isPresent(value) && isPresent(dataC)){
+      try{
+        let matcher = new RegExp(value, "i")
+        dataC = dataC.filter(d => matcher.test(d))
+      }catch(e){}
 
       try{this.refs.autoCompletionScroll.scrollTo({x: 0, y: 0, animated: false})}catch(e){}
     }
@@ -187,7 +189,7 @@ class ModalInput extends Component{
 
     if(isPresent(dataC))
     {
-      return  <ScrollView ref='autoCompletionScroll' style={{flex: 0, width: '100%', flexDirection: 'row', backgroundColor: '#FFF'}} horizontal={true} keyboardShouldPersistTaps={'always'}>
+      return  <ScrollView ref='autoCompletionScroll' style={{flex: 0, width: '100%', flexDirection: 'row', backgroundColor: '#FFF'}} horizontal={true} keyboardShouldPersistTaps='always' >
                 { dataC.map((text, index) => {
                     if(isPresent(text)){
                       return <LinkButton  key={index}

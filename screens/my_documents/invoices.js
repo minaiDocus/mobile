@@ -351,7 +351,7 @@ class DataBloc extends Component {
   }
 
   render(){
-    return  <ScrollView style={{flex:1, padding:3}}>
+    return  <ScrollView style={{flex:1, padding:3}} keyboardShouldPersistTaps='always' >
               <XText style={[{flex:0, textAlign:'center', fontSize:16, fontWeight:'bold'}, Theme.lists.title]}>{`${this.state.total} : ${this.title}`}</XText>
               <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} CStyle={{marginBottom: 0}} />
               <LineList datas={this.state.datas}

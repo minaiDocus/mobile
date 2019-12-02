@@ -190,7 +190,7 @@ export class ModalForm extends Component{
                                 onPress={()=>{this.dismiss()}} />
                 }
               </View>
-              <ScrollView style={{flex: 1}} keyboardShouldPersistTaps={'always'}>
+              <ScrollView style={{flex: 1}} keyboardShouldPersistTaps='always' >
                 {this.renderInputs()}
               </ScrollView>
               <View style={[this.styles.foot, Theme.modal.foot, f_style]}>

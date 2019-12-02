@@ -528,7 +528,7 @@ class SendScreen extends Component {
                           deleteElement={this.deleteElement} 
                           hide={this.toggleZoom} />
               }
-              <ScrollView style={{flex:1, padding:3}}>
+              <ScrollView style={{flex:1, padding:3}} keyboardShouldPersistTaps='always' >
                   <BoxList datas={this.state.dataList}
                            title={`${this.state.dataList.length} : Document(s)`}
                            waitingData={!this.state.ready}

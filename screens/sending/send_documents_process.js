@@ -174,7 +174,7 @@ class Header extends Component{
 
   render(){
     return  <View style={[{flex: 0}, Theme.head.shape, {padding: 0, paddingHorizontal: 1}, this.ORstyle[this.props.orientation].body]}>
-              <ScrollView style={{flex:1}} horizontal={(this.props.orientation == 'portrait')? true : false}>
+              <ScrollView keyboardShouldPersistTaps='always'  style={{flex:1}} horizontal={(this.props.orientation == 'portrait')? true : false}>
                 <View style={{flex: 0, flexDirection: this.ORstyle[this.props.orientation].body.flexDirection}}>
                   { this.renderItems() }
                 </View>
@@ -513,7 +513,7 @@ class SendScreen extends Component {
                 <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
                   <Header orientation={this.state.orientation}/>
                   <View style={{flex: 1}}>
-                    <ScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}}>
+                    <ScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}} keyboardShouldPersistTaps='always' >
                       <Body progress={this.state.progress} />
                     </ScrollView>
                     <Footer sending={this.state.sending} />

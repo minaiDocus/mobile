@@ -339,7 +339,7 @@ class BoxInfos extends Component{
                     {label: "Nombre de pièce en cours de traitement :", value: this.props.nb_publishing || 0},
                   ]
 
-    return  <ScrollView style={{flex:0, padding:3}}>
+    return  <ScrollView style={{flex:0, padding:3}} keyboardShouldPersistTaps='always' >
               <LineList datas={infos}
                         renderItems={(data) => this.renderItems(data)} />
             </ScrollView>
@@ -543,7 +543,7 @@ class BoxPublish extends Component{
   }
 
   render(){
-    return <ScrollView style={{flex:0, padding:3}}>
+    return <ScrollView style={{flex:0, padding:3}} keyboardShouldPersistTaps='always' >
               {this.state.zoomActive && <SwiperPdf  hide={this.toggleZoom} 
                                                     datas={this.props.datas}
                                         />

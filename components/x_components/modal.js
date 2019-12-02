@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, View } from 'react-native'
+import { Modal, View, SafeAreaView } from 'react-native'
 
 import { AnimatedBox, XImage } from '../index'
 
@@ -79,8 +79,10 @@ export class XModal extends Component{
                     onRequestClose = {() =>{ if(this.onClose) this.onClose() }}
                     { ...this.other_props }
             >
-              {!this.state.view && this.indication && <View style={{flex:0, alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}}><XImage loader={true} width={40} height={40} /></View>}
-              {this.state.view}
+              <SafeAreaView style={{flex: 1}}>
+                {!this.state.view && this.indication && <View style={{flex:0, alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}}><XImage loader={true} width={40} height={40} /></View>}
+                {this.state.view}
+              </SafeAreaView>
             </Modal>
   }
 }
