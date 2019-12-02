@@ -7,7 +7,7 @@ export class XScrollView extends Component{
   }
 
   render(){
-    return  <ScrollView { ...this.props } keyboardShouldPersistTaps='handled'>
+    return  <ScrollView { ...this.props } keyboardShouldPersistTaps='always'>
               { this.props.children }
             </ScrollView>
   }
