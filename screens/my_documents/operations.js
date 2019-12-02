@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { StyleSheet,View,ScrollView,TouchableOpacity } from 'react-native'
+import { StyleSheet,View,TouchableOpacity } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import { XImage,XText,TabNav,XTextInput,Navigator,SelectInput,Pagination,LineList,BoxButton,ImageButton,LinkButton,SimpleButton,ModalForm,AnimatedBox } from '../../components'
+import { XImage,XText,TabNav,XTextInput,Navigator,SelectInput,Pagination,LineList,BoxButton,ImageButton,LinkButton,SimpleButton,ModalForm,AnimatedBox,XScrollView } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -543,7 +543,7 @@ class OperationsScreen extends Component {
                 navigation={this.props.navigation}>
           <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
             <Header orientation={this.state.orientation} onFilter={()=>this.refreshDatas()} waitingOperations={this.state.waiting_operations_count} forcePreAssignment={()=>{this.forcePreAssignment()}} />
-            <ScrollView style={{flex:1, padding:3}} keyboardShouldPersistTaps='always' >
+            <XScrollView style={{flex:1, padding:3}} >
               {this.state.orderText && this.state.datas.length > 0 && 
                 <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
                   <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>
@@ -559,7 +559,7 @@ class OperationsScreen extends Component {
                         renderItems={(data) => <BoxOperations data={data} /> } />
 
               <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} />
-            </ScrollView>
+            </XScrollView>
           </View>
           <OrderBox visible={this.state.orderBox} handleOrder={this.handleOrder}/>
         </Screen>

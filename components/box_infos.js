@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, ScrollView } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 
-import { ImageButton, XText } from './index'
+import { ImageButton, XText, XScrollView } from './index'
 
 export class BoxInfos extends Component{
   constructor(props){
@@ -49,9 +49,9 @@ export class BoxInfos extends Component{
                       IStyle={{width:19, height:19}}
                       onPress={()=>{this.props.dismiss()}} />
                   </View>
-                  <ScrollView style={this.styles.body} keyboardShouldPersistTaps='always' >
+                  <XScrollView style={this.styles.body} >
                     {this.props.children}
-                  </ScrollView>
+                  </XScrollView>
                 </View>
               </View>
   }

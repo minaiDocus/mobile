@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import {View, ScrollView, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Keyboard, Dimensions} from 'react-native'
-import {XModal, XImage, XText, SimpleButton, AnimatedBox, LinkButton} from '../index'
+import {View, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Keyboard, Dimensions} from 'react-native'
+import {XModal, XImage, XText, SimpleButton, AnimatedBox, LinkButton, XScrollView} from '../index'
 
 class ModalInput extends Component{
   constructor(props){
@@ -189,7 +189,7 @@ class ModalInput extends Component{
 
     if(isPresent(dataC))
     {
-      return  <ScrollView ref='autoCompletionScroll' style={{flex: 0, width: '100%', flexDirection: 'row', backgroundColor: '#FFF'}} horizontal={true} keyboardShouldPersistTaps='always' >
+      return  <XScrollView ref='autoCompletionScroll' style={{flex: 0, width: '100%', flexDirection: 'row', backgroundColor: '#FFF'}} horizontal={true} >
                 { dataC.map((text, index) => {
                     if(isPresent(text)){
                       return <LinkButton  key={index}
@@ -201,7 +201,7 @@ class ModalInput extends Component{
                     }
                   })
                 }
-              </ScrollView>
+              </XScrollView>
     }
     else
     {

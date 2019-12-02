@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { StyleSheet,View,ScrollView,TouchableOpacity } from 'react-native'
+import { StyleSheet,View,TouchableOpacity } from 'react-native'
 
-import { XImage,XText,TabNav,XTextInput,Navigator,SelectInput,Pagination,LineList,BoxButton,ModalForm } from '../../components'
+import { XImage,XText,TabNav,XTextInput,Navigator,SelectInput,Pagination,LineList,BoxButton,ModalForm,XScrollView } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -351,14 +351,14 @@ class DataBloc extends Component {
   }
 
   render(){
-    return  <ScrollView style={{flex:1, padding:3}} keyboardShouldPersistTaps='always' >
+    return  <XScrollView style={{flex:1, padding:3}} >
               <XText style={[{flex:0, textAlign:'center', fontSize:16, fontWeight:'bold'}, Theme.lists.title]}>{`${this.state.total} : ${this.title}`}</XText>
               <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} CStyle={{marginBottom: 0}} />
               <LineList datas={this.state.datas}
                         waitingData={!this.state.ready}
                         renderItems={(data) => <BoxDocs data={data} /> } />
               <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.state.limitPage} page={this.page} />
-            </ScrollView>
+            </XScrollView>
   }
 }
 

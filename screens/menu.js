@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Slider, ScrollView, findNodeHandle, Animated } from 'react-native'
+import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Slider, findNodeHandle, Animated } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { NavigationActions } from 'react-navigation'
 
-import { XModal, XImage, XText, AnimatedBox, SimpleButton, LinkButton, ImageButton, ModalForm } from '../components'
+import { XModal, XImage, XText, AnimatedBox, SimpleButton, LinkButton, ImageButton, ModalForm, XScrollView } from '../components'
 
 import { User } from '../models'
 

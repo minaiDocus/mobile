@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
+import {StyleSheet,View,TouchableOpacity} from 'react-native'
 import { NavigationActions } from 'react-navigation'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { XModal,ModalForm,Navigator,XImage,XText,XTextInput,PDFView,SimpleButton,LinkButton,ImageButton,BoxList,AnimatedBox,LineList,Table,Pagination,TabNav, Swiper } from '../../components'
+import { XModal,ModalForm,Navigator,XImage,XText,XTextInput,PDFView,SimpleButton,LinkButton,ImageButton,BoxList,AnimatedBox,LineList,Table,Pagination,TabNav,Swiper,XScrollView } from '../../components'
 
 import { ModalComptaAnalysis } from '../modals/compta_analytics'
 
@@ -655,7 +655,7 @@ class BoxInfos extends Component{
                     {label: "Message d'erreur d'envoi :", value: GLOB.pack_or_report.last_delivery_message},
                   ]
 
-    return  <ScrollView style={{flex:0, padding:3}} keyboardShouldPersistTaps={'always'}>
+    return  <XScrollView style={{flex:0, padding:3}}>
               <LineList datas={infos}
                         renderItems={(data) => this.renderItems(data)} />
               { 
@@ -667,7 +667,7 @@ class BoxInfos extends Component{
                               IOptions={{color:Theme.primary_button.text.color}}
                               onPress={()=>{this.multiDelivery()}}/>
               }
-            </ScrollView>
+            </XScrollView>
   }
 }
 
@@ -981,7 +981,7 @@ class BoxPublish extends Component{
   }
 
   render(){
-    return <ScrollView style={{flex:0, padding:3}} keyboardShouldPersistTaps='always' >
+    return <XScrollView style={{flex:0, padding:3}} >
               {
                 this.state.showForm &&
                 <ModalForm  ref = 'form_1'
@@ -1003,7 +1003,7 @@ class BoxPublish extends Component{
                         noItemText='Aucun résultat'
                         renderItems={(data, index) => <PreseizureBox withSelection={true} data={data} index={index} toggleZoom={()=>this.toggleZoom()}/> } />
               <Pagination onPageChanged={(page)=>this.props.onChangePage(page)} nb_pages={this.props.nb_pages || 1} page={this.props.page || 1} />
-          </ScrollView>
+          </XScrollView>
   }
 }
 

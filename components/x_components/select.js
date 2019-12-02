@@ -194,7 +194,6 @@ class ModalSelect extends Component{
       }
 
       return  <FlatList style={boxstyle.container}
-                        keyboardShouldPersistTaps={'always'}
                         data={this.state.datas}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({item})=> renderItems(item)}

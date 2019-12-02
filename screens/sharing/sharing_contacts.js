@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
+import {StyleSheet,View,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import { AnimatedBox,Navigator,XImage,XText,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton,OrganizationSwitcher } from '../../components'
+import { AnimatedBox,Navigator,XScrollView,XImage,XText,LineList,Pagination,ModalForm,SimpleButton,BoxButton,ImageButton,LinkButton,OrganizationSwitcher } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -477,7 +477,7 @@ class SharingScreen extends Component {
   renderStats(){
     const arrow_direction = this.state.direction? 'V' : 'Λ'
 
-     return  <ScrollView style={{flex:1, padding:3}} keyboardShouldPersistTaps='always' >
+     return  <XScrollView style={{flex:1, padding:3}} >
                 {this.state.orderText && this.state.dataList.length > 0 &&
                   <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
                     <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>
@@ -491,7 +491,7 @@ class SharingScreen extends Component {
                           title={`Contacts (${this.total})`}
                           renderItems={(data) => <BoxStat data={data} deleteSharedDoc={this.deleteSharedDoc}/> } />
                 <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
-             </ScrollView>
+             </XScrollView>
   }
 
   renderOptions(){

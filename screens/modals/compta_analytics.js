@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
 
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { XModal, SimpleButton, XImage, XText, XTextInput, SelectInput, TabNav } from '../../components'
+import { XModal, SimpleButton, XImage, XText, XTextInput, SelectInput, TabNav, XScrollView } from '../../components'
 
 import { FileUploader } from "../../requests"
 
@@ -212,13 +212,13 @@ class AnalysisView extends Component{
     const ventilStyle = (this.state.total_ventilation != 100)? '#ff0921' : '#22780f'
     let analysis_options = [{label: 'Selectionnez une analyse', value: ''}].concat( ANALYTICS.map( a => { return { label: a.name, value: a.name } } ) )
 
-    return  <ScrollView style={{flex:1}} keyboardShouldPersistTaps='always' >
+    return  <XScrollView style={{flex:1}} >
               <XText style={{flex:0, color:ventilStyle}}>(Total ventilation actuelle : {this.state.total_ventilation}%)</XText>
               <View style={this.styles.container}>
                 <SelectInput label='Analyse' textInfo='Analyse' selectedItem={RESULT_ANALYTIC[this.props.index].analysis} dataOptions={analysis_options} CStyle={this.styles.input} style={{color:'#707070'}} onChange={(value)=>this.handleChangeAnalysis(value)}/>
               </View>
               {this.state.ready && this.renderAxis()}
-            </ScrollView>
+            </XScrollView>
   }
 }
 

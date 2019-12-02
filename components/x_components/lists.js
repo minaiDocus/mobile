@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, View, ScrollView } from 'react-native'
-import { XText, XImage } from '../index'
+import { StyleSheet, View } from 'react-native'
+import { XText, XImage, XScrollView } from '../index'
 
 class Loader extends Component{
   constructor(props){
@@ -322,9 +322,9 @@ export class Table extends Component{
   render(){
     return  <View style={{flex: 1}}>
               { this.renderHeader() }
-              <ScrollView keyboardShouldPersistTaps='always' >
+              <XScrollView >
                 { this.renderBody() }
-              </ScrollView>
+              </XScrollView>
             </View>
   }
 }

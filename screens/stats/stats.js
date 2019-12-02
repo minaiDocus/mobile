@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
+import {StyleSheet,View,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 
-import { AnimatedBox,XImage,XText,Navigator,LineList,Pagination,ModalForm,BoxButton,LinkButton,ImageButton} from '../../components'
+import { AnimatedBox,XImage,XText,XScrollView,Navigator,LineList,Pagination,ModalForm,BoxButton,LinkButton,ImageButton} from '../../components'
 
 import { Screen } from '../layout'
 
@@ -378,7 +378,7 @@ class StatsScreen extends Component {
   renderStats(){
     const arrow_direction = this.state.direction? 'V' : 'Λ'
 
-    return  <ScrollView style={{flex:1, padding:3}} keyboardShouldPersistTaps='always' >
+    return  <XScrollView style={{flex:1, padding:3}} >
                 {this.state.orderText && this.state.dataList.length > 0 && 
                   <View style={{flex:1,flexDirection:'row',paddingVertical:5,alignItems:'center'}}>
                     <XText style={{flex:0}}>Trie par: <XText style={{fontWeight:'bold'}}>{this.state.orderText}</XText></XText>
@@ -392,7 +392,7 @@ class StatsScreen extends Component {
                           waitingData={!this.state.ready}
                           renderItems={(data) => <BoxStat data={data} /> } />
                 <Pagination onPageChanged={(page)=>this.changePage(page)} nb_pages={this.limit_page} page={this.page} />
-             </ScrollView>
+             </XScrollView>
   }
 
   renderOptions(){

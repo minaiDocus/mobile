@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
-import { StyleSheet, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification} from '../components'
+import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,XScrollView} from '../components'
 
 import { Menu } from './menu'
 import { Screen } from './layout'
@@ -213,7 +213,7 @@ class ViewState extends Component{
 
     const details = this.props.datas.map((dt, index) => {return this.renderDetails(dt, index)});
 
-    return  <ScrollView keyboardShouldPersistTaps='always' >
+    return  <XScrollView >
               <View style={[this.styles.container, Theme.box]}>
                 <View style={{flex:1, flexDirection:'row'}}>
                   <View style={this.styles.boxIco}>
@@ -228,7 +228,7 @@ class ViewState extends Component{
                   {details}
                 </View>
              </View>
-           </ScrollView>
+           </XScrollView>
   }
 }
 

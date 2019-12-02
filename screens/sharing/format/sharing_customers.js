@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import {StyleSheet,View,ScrollView,TouchableOpacity} from 'react-native'
+import {StyleSheet,View,TouchableOpacity} from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { AnimatedBox,XImage,XText,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm,TabNav } from '../../../components'
+import { AnimatedBox,XImage,XScrollView,XText,SimpleButton,BoxButton,ImageButton,LinkButton,ModalForm,TabNav } from '../../../components'
 
 import { Screen } from '../../layout'
 
@@ -178,7 +178,7 @@ class ViewState extends Component{
 
     const details = this.props.datas.map((dt, index) => {return this.renderDetails(dt, index)});
 
-    return  <ScrollView keyboardShouldPersistTaps='always' >
+    return  <XScrollView >
               <View style={[this.styles.container, Theme.box]}>
                 <View style={{flex:1, flexDirection:'row'}}>
                   <View style={{flex:4}}>
@@ -189,7 +189,7 @@ class ViewState extends Component{
                   {details}
                 </View>
              </View>
-           </ScrollView>
+           </XScrollView>
   }
 }
 

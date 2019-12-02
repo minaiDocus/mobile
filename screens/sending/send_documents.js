@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, ScrollView, TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button } from 'react-native'
 import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import { NavigationActions } from 'react-navigation'
 
-import { XModal, Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload } from '../../components'
+import { XModal,XScrollView,Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -528,7 +528,7 @@ class SendScreen extends Component {
                           deleteElement={this.deleteElement} 
                           hide={this.toggleZoom} />
               }
-              <ScrollView style={{flex:1, padding:3}} keyboardShouldPersistTaps='always' >
+              <XScrollView style={{flex:1, padding:3}} >
                   <BoxList datas={this.state.dataList}
                            title={`${this.state.dataList.length} : Document(s)`}
                            waitingData={!this.state.ready}
@@ -536,7 +536,7 @@ class SendScreen extends Component {
                            noItemText="Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ..."
                            renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> }
                            />
-              </ScrollView>
+              </XScrollView>
               <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
                 <SimpleButton CStyle={[this.styles.button, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>this.sendList()} title="Suivant >>" />
               </View>

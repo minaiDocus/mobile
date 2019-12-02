@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {View, StyleSheet, ScrollView} from 'react-native'
+import {View, StyleSheet} from 'react-native'
 
-import {XModal, SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton, RadioButton } from './index'
+import {XModal, SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton, RadioButton, XScrollView } from './index'
 
 class Inputs extends Component{
   constructor(props){
@@ -190,9 +190,9 @@ export class ModalForm extends Component{
                                 onPress={()=>{this.dismiss()}} />
                 }
               </View>
-              <ScrollView style={{flex: 1}} keyboardShouldPersistTaps='always' >
+              <XScrollView style={{flex: 1}} >
                 {this.renderInputs()}
-              </ScrollView>
+              </XScrollView>
               <View style={[this.styles.foot, Theme.modal.foot, f_style]}>
                 {this.renderButtons()}
               </View>

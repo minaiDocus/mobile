@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, ScrollView, ListView, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, ListView, TouchableOpacity } from 'react-native'
 import ImageResizer from 'react-native-image-resizer'
 
 import { EventRegister } from 'react-native-event-listeners'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import { NavigationActions } from 'react-navigation'
 
-import { Navigator, XImage, XText, LinkButton, SimpleButton, SelectInput, XTextInput, UploderFiles, ProgressBar } from '../../components'
+import { Navigator, XImage, XScrollView, XText, LinkButton, SimpleButton, SelectInput, XTextInput, UploderFiles, ProgressBar } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -174,11 +174,11 @@ class Header extends Component{
 
   render(){
     return  <View style={[{flex: 0}, Theme.head.shape, {padding: 0, paddingHorizontal: 1}, this.ORstyle[this.props.orientation].body]}>
-              <ScrollView keyboardShouldPersistTaps='always'  style={{flex:1}} horizontal={(this.props.orientation == 'portrait')? true : false}>
+              <XScrollView  style={{flex:1}} horizontal={(this.props.orientation == 'portrait')? true : false}>
                 <View style={{flex: 0, flexDirection: this.ORstyle[this.props.orientation].body.flexDirection}}>
                   { this.renderItems() }
                 </View>
-              </ScrollView>
+              </XScrollView>
             </View>
   }
 }
@@ -513,9 +513,9 @@ class SendScreen extends Component {
                 <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
                   <Header orientation={this.state.orientation}/>
                   <View style={{flex: 1}}>
-                    <ScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}} keyboardShouldPersistTaps='always' >
+                    <XScrollView ref="_baseScroll" style={{flex:1, flexDirection:'column'}} >
                       <Body progress={this.state.progress} />
-                    </ScrollView>
+                    </XScrollView>
                     <Footer sending={this.state.sending} />
                     </View>
                 </View>

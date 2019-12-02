@@ -7,6 +7,7 @@ export * from './x_components/swiper'
 export * from './x_components/text'
 export * from './x_components/text_input'
 export * from './x_components/buttons_input'
+export * from './x_components/scroll_view'
 export * from './x_components/modal'
 
 export * from './animated_box'
