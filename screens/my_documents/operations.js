@@ -226,7 +226,7 @@ class Header extends Component{
     let inputSelection = null
 
     if(this.customers.length == 2)
-      inputSelection = <XText style={this.styles.label}>{truncate(this.customers[1].label, 40)}</XText>
+      inputSelection = <XText style={this.styles.label} numberOfLines={1}>{this.customers[1].label}</XText>
     else
       inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={this.styles.select} onChange={(value) => this.handleClientChange(value)}/>
 
@@ -379,15 +379,13 @@ class BoxOperations extends Component {
   }
 
   render(){
-    // test
-    this.generateStyles()
     const arrow = this.state.showDetails ? 'caret-down' : 'caret-right'
-    const title = this.state.showDetails ? this.props.data.label.toString() : truncate(this.props.data.label.toString(), 30)
+    const titleCut = this.state.showDetails ? 10 : 1
 
     return  <TouchableOpacity style={{flex:1}} onPress={()=>this.handleClick()} >
               <View style={this.styles.container}>
                 <XImage source={{icon: arrow}} style={this.styles.image} />
-                <XText style={{flex: 0}}>{title}</XText>
+                <XText style={{flex: 0}} numberOfLines={titleCut}>{this.props.data.label.toString()}</XText>
               </View>
               { this.state.showDetails && this.renderDetails() }
             </TouchableOpacity>

@@ -4,7 +4,7 @@ import { Text } from 'react-native'
 export class XText extends Component{
   constructor(props){
     super(props)
-    
+
     this.class = this.props.class || ''
 
     this.generateStyle()
@@ -20,6 +20,6 @@ export class XText extends Component{
 
   render(){
     const style_extended = this.props.style || {}
-    return <Text style={[this.styles, (Theme.global_text || {}), style_extended]} >{this.props.children}</Text>
+    return <Text {...this.props} style={[this.styles, (Theme.global_text || {}), style_extended]} >{this.props.children}</Text>
   }
 }

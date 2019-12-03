@@ -250,9 +250,9 @@ class ImgBox extends Component{
     return  <TouchableOpacity style={this.styles.styleTouch} onLongPress={()=>{this.zoom()}} onPress={()=>this.toggleOpt()}>
                 <XImage type='container' CStyle={this.styles.styleContainer} source={{uri:this.element.path.toString()}} style={this.styles.styleImg} local={false}>
                   {
-                    this.state.options == false && message != '' &&
+                    this.state.options == false && isPresent(message) &&
                     <View style={this.styles.options}>
-                      <XText style={this.styles.textInfo}>{truncate(message, 20)}</XText>
+                      <XText style={this.styles.textInfo} numberOfLines={2}>{message}</XText>
                     </View>
                   }
                   { this.state.options == true &&

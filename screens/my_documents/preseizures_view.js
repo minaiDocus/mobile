@@ -873,7 +873,7 @@ class PreseizureBox extends Component{
                     <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date:</XText> {formatDate(this.props.data.date)}</XText>
                     { isPresent(this.props.data.deadline_date) && <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date échéance:</XText> {formatDate(this.props.data.deadline_date)}</XText> }
                     { isPresent(this.props.data.delivery_tried_at) && <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Livrée le :</XText> {formatDate(this.props.data.delivery_tried_at)}</XText> }
-                    { isPresent(this.props.data.error_message) && <XText style={{flex: 0, marginTop: 3, color:"#F7230C"}}>{truncate(this.props.data.error_message, 100)}</XText> }
+                    { isPresent(this.props.data.error_message) && <XText style={{flex: 0, marginTop: 3, color:"#F7230C"}} numberOfLines={3}>{this.props.data.error_message}</XText> }
                   </View>
                   {
                     (Master.is_prescriber || Master.is_admin) &&
