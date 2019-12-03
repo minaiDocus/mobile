@@ -186,12 +186,10 @@ class ImgBox extends Component{
   zoom(){
     GLOB.idZoom = this.element.id_64
     this.props.toggleZoom()
-    this.toggleOpt()
   }
 
   crop(){
     this.props.cropElement(this.props.index)
-    this.toggleOpt() 
   }
 
   generateStyles(){
@@ -247,7 +245,7 @@ class ImgBox extends Component{
     let message = ''
     if(doc)
       message = doc.error || ''
-    return  <TouchableOpacity style={this.styles.styleTouch} onLongPress={()=>{this.zoom()}} onPress={()=>this.toggleOpt()}>
+    return  <TouchableOpacity style={this.styles.styleTouch} onLongPress={()=>this.toggleOpt()} onPress={()=>this.zoom()}>
                 <XImage type='container' CStyle={this.styles.styleContainer} source={{uri:this.element.path.toString()}} style={this.styles.styleImg} local={false}>
                   {
                     this.state.options == false && isPresent(message) &&
@@ -257,8 +255,8 @@ class ImgBox extends Component{
                   }
                   { this.state.options == true &&
                     <View style={this.styles.options}>   
-                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom()}} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
-                      <ImageButton source={{icon:'crop'}} IOptions={{size: 18}} onPress={()=>this.crop()} CStyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} IStyle={{width:18,height:18}} />
+                      <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom(); this.toggleOpt();}} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
+                      <ImageButton source={{icon:'crop'}} IOptions={{size: 18}} onPress={()=>{this.crop(); this.toggleOpt();}} CStyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} IStyle={{width:18,height:18}} />
                       <ImageButton source={{icon:'close'}} IOptions={{size: 18}} onPress={()=>this.delete()} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
                     </View>
                   }

@@ -219,7 +219,7 @@ class Header extends Component{
     let inputSelection = null
 
     if(this.customers.length == 2)
-      inputSelection = <XText style={this.styles.label} numberOfLines={1}>{this.customers[1].label}</XText>
+      inputSelection = <XText style={this.styles.label} numberOfLines={2}>{this.customers[1].label}</XText>
     else
       inputSelection = <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={this.styles.select} onChange={(value) => this.handleClientChange(value)}/>
 

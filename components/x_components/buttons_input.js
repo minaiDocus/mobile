@@ -10,6 +10,7 @@ export class RadioButton extends Component{
     this.state = { value: this.props.defaultValue || this.props.value || '' }
 
     this.options = this.props.dataOptions
+    this.editable = (this.props.editable == false)? false : true
 
     this.generateStyles()
   }
@@ -53,8 +54,10 @@ export class RadioButton extends Component{
   }
 
   changeValue(value){
-    this.setState({ value: value })
-    this.props.onChange(value)
+    if(this.editable){
+      this.setState({ value: value })
+      this.props.onChange(value)
+    }
   }
 
   renderLists(){

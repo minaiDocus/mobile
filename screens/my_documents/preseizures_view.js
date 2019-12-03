@@ -160,16 +160,17 @@ class BoxZoom extends Component{
         year = parseInt(year) + 1
       }
       const max_date = `${year}-${formatNumber(month, '00')}-${day}`
+      const is_editable = (Master.is_prescriber || Master.is_admin)
 
-      this.form_inputs.push({ label: "Date", name: "date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.date })
-      this.form_inputs.push({ label: "Date d'échéance", name: "deadline_date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.deadline_date })
-      this.form_inputs.push({ label: "Nom de tiers", name: "third_party", value: preseizure.third_party })
-      this.form_inputs.push({ label: "Libelé opération", name: "operation_label", value: preseizure.operation_label })
-      this.form_inputs.push({ label: "Numéro de pièces", name: "piece_number", value: preseizure.piece_number })
-      this.form_inputs.push({ label: "Montant d'origine", name: "amount", keyboardType: 'decimal-pad', value: preseizure.amount })
-      this.form_inputs.push({ label: "Devise", name: "currency", value: preseizure.currency })
-      this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", keyboardType: 'decimal-pad', value: preseizure.conversion_rate })
-      this.form_inputs.push({ label: "Remarque", name: "observation", multiline: true, value: preseizure.observation })
+      this.form_inputs.push({ label: "Date", name: "date", editable: is_editable, type: "date", allowBlank: true, maxDate: max_date, value: preseizure.date })
+      this.form_inputs.push({ label: "Date d'échéance", name: "deadline_date", editable: is_editable, type: "date", allowBlank: true, maxDate: max_date, value: preseizure.deadline_date })
+      this.form_inputs.push({ label: "Nom de tiers", name: "third_party", editable: is_editable, value: preseizure.third_party })
+      this.form_inputs.push({ label: "Libelé opération", name: "operation_label", editable: is_editable, value: preseizure.operation_label })
+      this.form_inputs.push({ label: "Numéro de pièces", name: "piece_number", editable: is_editable, value: preseizure.piece_number })
+      this.form_inputs.push({ label: "Montant d'origine", name: "amount", editable: is_editable, keyboardType: 'decimal-pad', value: isPresent(preseizure.amount)? preseizure.amount.toString() : '' })
+      this.form_inputs.push({ label: "Devise", name: "currency", editable: is_editable, value: preseizure.currency })
+      this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", editable: is_editable, keyboardType: 'decimal-pad', value: isPresent(preseizure.conversion_rate) ? preseizure.conversion_rate.toString() : '' })
+      this.form_inputs.push({ label: "Remarque", name: "observation", editable: is_editable, multiline: true, value: preseizure.observation })
     }
 
     DocumentsFetcher.waitFor([`getPreseizureDetails(${this.props.data.id})`], responses => {
@@ -365,12 +366,9 @@ class BoxZoom extends Component{
                 height:40
               },
       stamp_absolute: {
-                        flex: 0,
-                        position: 'absolute',
+                        flex: 1,
                         height:40,
-                        zIndex: 100,
-                        bottom: 0,
-                        left: 0
+                        zIndex: 100
                       },
       control:{
                 flex:1,
@@ -479,12 +477,15 @@ class BoxZoom extends Component{
                               flatMode = {true}
                               dismiss={()=>{}}
                               inputs={this.form_inputs}
-                              buttons={[
-                                {title: "Valider", action: ()=>this.validateEdition()},
-                              ]} />
-                  <View style={{flex: 1}}>
-                    <XText style={{flex: 0, paddingBottom: 5, marginLeft: 3}}>Unité monétaire: <XText style={{fontWeight: 'bold'}}>{ this.preseizure.currency || 'EUR' }</XText></XText>
-                    <View ref='entries' style={{flex: 1}}>
+                              buttons={
+                                (Master.is_prescriber || Master.is_admin) ? [{title: "Valider", action: ()=>this.validateEdition()}] : []
+                              } />
+                  <XScrollView style={{flex: 1}}>
+                    <View style={{flex: 0, flexDirection: 'row', width: '100%', maxHeight: 20, overflow: 'visible'}}>
+                      <XText style={{flex: 2, paddingBottom: 5, marginLeft: 3}}>Unité monétaire: <XText style={{fontWeight: 'bold'}}>{ this.preseizure.currency || 'EUR' }</XText></XText>
+                      { stamp_img != 'none' && <XImage source={{uri:stamp_img}} style={this.styles.stamp_absolute} /> }
+                    </View>
+                    <View ref='entries' style={{flex: 0, marginBottom: 10}}>
                       <View style={{flexDirection: 'row', flex: 0}}>
                         <XText style={{flex: 0, paddingBottom: 5, marginLeft: 7, fontStyle: 'italic'}}>Ecritures</XText>
                         {
@@ -496,16 +497,17 @@ class BoxZoom extends Component{
                       </View>
                       <Table  headers={["Num. compte", "Débit", "Crédit"]}
                               body={entries}/>
+                      { isPresent(this.props.data.error_message) && <XText style={{flex: 0, marginTop: 3, color:"#F7230C"}}>{this.props.data.error_message}</XText> }
                     </View>
                     {
                       analytics.length > 0 &&
-                      <View ref='analytics' style={{flex: 1}}>
+                      <View ref='analytics' style={{flex: 0}}>
                         <XText style={{flex: 0, paddingBottom: 5, marginLeft: 7, fontStyle: 'italic'}}>Analyse compta.</XText>
                         <Table  headers={["Analyse", "Axe", "Ventilation", "Montant ventilé"]}
                                 body={analytics}/>
                       </View>
                     }
-                  </View>
+                  </XScrollView>
                 </TabNav>
               </View>
     }
@@ -870,10 +872,10 @@ class PreseizureBox extends Component{
                 </XImage>
                 <View style={{flex: 1, flexDirection: 'column', marginLeft: 5}}>
                   <View style={{flex: 1}}>
-                    <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date:</XText> {formatDate(this.props.data.date)}</XText>
-                    { isPresent(this.props.data.deadline_date) && <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Date échéance:</XText> {formatDate(this.props.data.deadline_date)}</XText> }
-                    { isPresent(this.props.data.delivery_tried_at) && <XText style={{flex: 1}}><XText style={{fontWeight: 'bold'}}>Livrée le :</XText> {formatDate(this.props.data.delivery_tried_at)}</XText> }
-                    { isPresent(this.props.data.error_message) && <XText style={{flex: 0, marginTop: 3, color:"#F7230C"}} numberOfLines={3}>{this.props.data.error_message}</XText> }
+                    <XText style={{flex: 0}}><XText style={{fontWeight: 'bold'}}>Date:</XText> {formatDate(this.props.data.date)}</XText>
+                    { isPresent(this.props.data.deadline_date) && <XText style={{flex: 0, marginTop: 2}}><XText style={{fontWeight: 'bold'}}>Date échéance:</XText> {formatDate(this.props.data.deadline_date)}</XText> }
+                    { isPresent(this.props.data.delivery_tried_at) && <XText style={{flex: 0, marginTop: 2}}><XText style={{fontWeight: 'bold', color: '#468847'}}>Livrée le :</XText> {formatDate(this.props.data.delivery_tried_at)}</XText> }
+                    { isPresent(this.props.data.error_message) && <XText style={{flex: 0, marginTop: 4, color:"#F7230C"}} numberOfLines={3}>{this.props.data.error_message}</XText> }
                   </View>
                   {
                     (Master.is_prescriber || Master.is_admin) &&
@@ -948,7 +950,7 @@ class BoxPublish extends Component{
         this.form_inputs.push({ label: "Date d'échéance", name: "deadline_date", type: "date", allowBlank: true, maxDate: max_date, value: preseizure.deadline_date })
         this.form_inputs.push({ label: "Nom de tiers", name: "third_party", value: preseizure.third_party })
         this.form_inputs.push({ label: "Devise", name: "currency", value: preseizure.currency })
-        this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", keyboardType: 'decimal-pad', value: preseizure.conversion_rate })
+        this.form_inputs.push({ label: "Taux de conversion", name: "conversion_rate", keyboardType: 'decimal-pad', value: isPresent(preseizure.conversion_rate) ? preseizure.conversion_rate.toString() : '' })
         this.form_inputs.push({ label: "Remarque", name: "observation", multiline: true, value: preseizure.observation })
       }
 

@@ -6,8 +6,16 @@ export class XScrollView extends Component{
     super(props)
   }
 
+  scrollToEnd(options){
+    this.refs.main_scroll.scrollToEnd(options)
+  }
+
+  scrollTo(options){
+    this.refs.main_scroll.scrollTo(options)
+  }
+
   render(){
-    return  <ScrollView { ...this.props } keyboardShouldPersistTaps='always'>
+    return  <ScrollView { ...this.props } ref='main_scroll' keyboardShouldPersistTaps='always'>
               { this.props.children }
             </ScrollView>
   }

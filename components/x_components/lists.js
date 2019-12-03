@@ -270,8 +270,9 @@ export class Table extends Component{
   constructor(props){
     super(props)
 
-    this.headers = this.props.headers
-    this.body    = this.props.body
+    this.headers        = this.props.headers
+    this.body           = this.props.body
+    this.scrollableBody = this.props.scrollableBody || false
   }
 
   renderHeader(){
@@ -322,9 +323,18 @@ export class Table extends Component{
   render(){
     return  <View style={{flex: 1}}>
               { this.renderHeader() }
-              <XScrollView >
-                { this.renderBody() }
-              </XScrollView>
+              {
+                !this.scrollableBody &&
+                <View>
+                  { this.renderBody() }
+                </View>
+              }
+              {
+                this.scrollableBody &&
+                <XScrollView >
+                  { this.renderBody() }
+                </XScrollView>
+              }
             </View>
   }
 }

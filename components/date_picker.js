@@ -17,14 +17,17 @@ export class DatePicker extends Component {
       this.props.onChange(c_date)
 
     this.label = this.props.label || this.props.placeholder || null
+    this.editable = (this.props.editable == false)? false : true
 
     this.generateStyles()
   }
 
   handleChangeDate(date){
-    this.setState({date: date})
-    if(this.props.onChange)
-      this.props.onChange(date)
+    if(this.editable){
+      this.setState({date: date})
+      if(this.props.onChange)
+        this.props.onChange(date)
+    }
   }
 
   generateStyles(){

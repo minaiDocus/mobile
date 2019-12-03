@@ -262,6 +262,7 @@ export class SelectInput extends Component{
     this.layoutWidth = 0
     this.invisible = this.props.invisible || false
     this.label = this.props.label || this.props.placeholder || null
+    this.editable = (this.props.editable == false) ? false : true
 
     this.showModal = this.showModal.bind(this)
     this.hideModal = this.hideModal.bind(this)
@@ -360,8 +361,10 @@ export class SelectInput extends Component{
   }
 
   showModal(){
-    KeyboardShow = true
-    this.setState({openModal: true})
+    if(this.editable){
+      KeyboardShow = true
+      this.setState({openModal: true})
+    }
   }
 
   hideModal(){
