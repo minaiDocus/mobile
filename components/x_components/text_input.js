@@ -107,7 +107,11 @@ class ModalInput extends Component{
 
     this.setState({ dataCompletions: dataC })
     this.cValue = value
-    this.props.changeText(value)
+
+    if(['decimal-pad', 'numeric'].includes(this.props.keyboardType))
+      this.cValue = this.cValue.replace(',', '.')
+
+    this.props.changeText(this.cValue)
   }
 
   toggleSecurityText(){
