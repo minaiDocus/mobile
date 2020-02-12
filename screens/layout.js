@@ -315,7 +315,7 @@ export class Screen extends Component{
     if(isPresent(this.navigation.prevScreen))
     {
       this.closeScreen(()=>{
-        this.navigation.goBack()
+        this.navigation.goBack(params)
       })
     }
   }

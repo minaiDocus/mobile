@@ -83,9 +83,8 @@ export class Navigator {
     actionLocker(call)
   }
 
-  goBack(params=null){
+  goBack(params={}){
     this.last_params = params
-
     actionLocker(this.navigation.goBack)
   }
 

@@ -101,7 +101,7 @@ function sendDatas(){
         iteration = -1 //for multiple sending instance security
 
         if(alreadySent)
-          Notice.info({title: "Envoi", body: "Certains fichiers ont déjà été envoyés!!"})
+          Notice.info({ title: "Envoi", body: "Certains fichiers ont déjà été envoyés!!" })
 
         if(!nothingToSend)
           new UploderFiles().launchUpload(form)
@@ -190,7 +190,6 @@ class Body extends Component{
     this.state = {period_start: "", period_expired: "", ready: false, paramsReady: false, journalsOptions: [], periodsOptions: [], comptaAnalysisActivated: false, analysisOpen: false, comptaAnalysisResume: false}
 
     this.customers = []
-    GLOB.journal = GLOB.periods = GLOB.customer = ""
 
     this.renderForm = this.renderForm.bind(this)
     this.renderLoading = this.renderLoading.bind(this)
@@ -218,7 +217,7 @@ class Body extends Component{
             users = User.findByListOf("code", responses[0].userList)
 
             this.customers = [{value:"", label:"Choisir un client"}].concat(User.createSelection(users))
-            GLOB.journal = GLOB.period = GLOB.customer = ""
+            this.handleChangeCustomer(GLOB.customer, true)
           }
           this.setState({ready: true, paramsReady: true, period_start: "", period_expired: ""})
         })
@@ -247,32 +246,38 @@ class Body extends Component{
     this.toggleComptaAnalysis(false)
   }
 
-  handleChangeCustomer(value){
-    this.setState({ paramsReady: false, comptaAnalysisActivated: false, comptaAnalysisResume: false })
-    GLOB.journal = GLOB.period = ""
-    GLOB.analysis = ModalComptaAnalysis.reset()
+  handleChangeCustomer(value, init=false){
+    if(!init){ this.setState({ paramsReady: false, comptaAnalysisActivated: false, comptaAnalysisResume: false }) }
+
     let opt_period = []
     let opt_journal = []
-    let compta_analysis = false
+    let compta_analysis = ModalComptaAnalysis.exist()
     let message = ''
 
     const refreshParams = ()=>{
         this.refreshWarning(message)
-        if(opt_journal.length > 0) GLOB.journal = opt_journal[0].value || ""
-        if(opt_period.length > 0) GLOB.period =  opt_period[0].value || ""
+        if(opt_journal.length > 0) GLOB.journal = GLOB.journal || opt_journal[0].value || ''
+        if(opt_period.length > 0) GLOB.period =  GLOB.period || opt_period[0].value || ''
+
         GLOB.customer = value.toString()
-        this.setState({ paramsReady: true, journalsOptions: opt_journal, periodsOptions: opt_period, comptaAnalysisActivated: compta_analysis })
+        this.setState({ paramsReady: true, journalsOptions: opt_journal, periodsOptions: opt_period, comptaAnalysisActivated: compta_analysis, comptaAnalysisResume: ModalComptaAnalysis.exist() })
     }
 
-    if(value != "")
+    if(isPresent(value) && this.customers.find(e=>{ return e.value == value }))
     {
+      if(GLOB.customer != value){
+        GLOB.journal = GLOB.period = ''
+        GLOB.analysis = ModalComptaAnalysis.reset()
+      }
+
       FileUploader.waitFor([`refreshFormParams(${value})`], responses => {
         const file_upload_params = responses[0].data
         if(isPresent(file_upload_params))
         {
-          opt_journal = [].concat(file_upload_params.journals.map((journal, index) => { return {value: journal.split(" ")[0].toString(), label: journal.toString()}}))
-          opt_period = [].concat(file_upload_params.periods.map((prd, index) => { return {value: prd[1].toString(), label: prd[0].toString()}}))
+          opt_journal = [].concat(file_upload_params.journals.map((journal, index) => { return {value: journal.split(" ")[0].toString(), label: journal.toString()} }))
+          opt_period = [].concat(file_upload_params.periods.map((prd, index) => { return {value: prd[1].toString(), label: prd[0].toString()} }))
           compta_analysis = file_upload_params.compta_analysis
+          if(!compta_anaysis){ GLOB.analysis = ModalComptaAnalysis.reset() }
           message = file_upload_params.message
         }
         refreshParams()
@@ -280,7 +285,12 @@ class Body extends Component{
     }
     else
     {
-      refreshParams()
+      if(init){
+        GLOB.journal = GLOB.period = GLOB.customer = ''
+        GLOB.analysis = ModalComptaAnalysis.reset()
+      }else{
+        refreshParams()
+      }
     }
   }
 
@@ -362,11 +372,11 @@ class Body extends Component{
   const analysis_message = (ModalComptaAnalysis.exist()) ? 'Compta analytique (modifier)' : 'Compta analytique (ajouter)'
 
   return  <View style={{flex:1}}>
-            <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} dataOptions={this.customers} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>
+            <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} selectedItem={GLOB.customer} dataOptions={this.customers} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>
             {this.state.paramsReady &&
               <View style={{flex:1}}>
-                <SelectInput textInfo='Journal comptable' dataOptions={this.state.journalsOptions} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
-                <SelectInput textInfo='Période comptable' dataOptions={this.state.periodsOptions} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
+                <SelectInput textInfo='Journal comptable' selectedItem={GLOB.journal} dataOptions={this.state.journalsOptions} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeJournal(value)}/>
+                <SelectInput textInfo='Période comptable' selectedItem={GLOB.period} dataOptions={this.state.periodsOptions} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangePeriod(value)}/>
                 {this.state.comptaAnalysisActivated && <SimpleButton CStyle={Theme.primary_button.shape} TStyle={Theme.primary_button.text} onPress={()=>{this.toggleComptaAnalysis(true)}} title={analysis_message} />}
                 {this.state.comptaAnalysisActivated && this.state.comptaAnalysisResume && this.renderAnalyticResume()}
                 {this.state.period_start != "" &&
@@ -449,11 +459,7 @@ class SendScreen extends Component {
     const navigation = new Navigator(this.props.navigation)
 
     GLOB.dataList = navigation.getParams('images')
-    GLOB.customer = ''
-    GLOB.period = ''
-    GLOB.journal = ''
     GLOB.sending_finished = false
-    GLOB.analysis = ModalComptaAnalysis.reset()
 
     this.state = {orientation: 'portrait', progress: 0, sending: false}
 
