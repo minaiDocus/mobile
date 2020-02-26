@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button, CameraRoll } from 'react-native'
 import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
+import RNFS from 'rn-fetch-blob'
 import { NavigationActions } from 'react-navigation'
 
 import { XModal,XScrollView,Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload } from '../../components'
@@ -317,6 +318,7 @@ class SendScreen extends Component {
     this.renderError = this.renderError.bind(this)
     this.deleteElement = this.deleteElement.bind(this)
     this.toggleZoom = this.toggleZoom.bind(this)
+    this.saveFileToRoll = this.saveFileToRoll.bind(this)
 
     if(UploadingFiles)
     {
@@ -363,7 +365,11 @@ class SendScreen extends Component {
                         ImagePicker.openCamera({
                           cropping: false,
                         }).then(image => {
-                          this.renderImg([image], null, true)
+                          this.saveFileToRoll(image).then(img=>{
+                            this.renderImg([img], null, true)
+                          }).catch(error=>{
+                            this.renderImg([image], null, true)
+                          })
                         }).catch(error => {
                           this.renderError(error)
                         })
@@ -410,7 +416,7 @@ class SendScreen extends Component {
         
         Object.assign(i, {id_64: id_64.toString()}, i)
         img.push(i)
-      })
+    })
 
     if(index != null)
     {
@@ -447,6 +453,115 @@ class SendScreen extends Component {
 
     if(launch_crop)
       setTimeout(()=>this.openCrop(index), 200)
+  }
+
+  async saveFileToRoll(image){
+    return new Promise(async (resolve, reject) => {
+      await this.setState({ ready: false })
+
+      const getChecksum = async (path) => {
+        return await RNFS.fs.hash(path.replace('file://', ''), "md5").catch(e=>{})
+      }
+
+      const getFileInfo = (path) => {
+        const splited_path = path.split('/')
+
+        let filename  = splited_path[splited_path.length-1]
+        let dirname   = path.replace(filename, '')
+        let extension = filename.split('.')[1]
+
+        return { filename: filename, dirname: dirname, extension: extension }
+      }
+
+      const finish = async (image) => {
+        await this.setState({ ready: true })
+        resolve(image)
+      }
+
+      CameraRoll.getPhotos(
+      {
+        first: 5,
+        assetType: 'Photos'
+      }).then(async (r) => {
+        try{
+          const contentChecksum = await getChecksum(image.path)
+          let final_path        = image.path
+          let img_to_del        = false
+          let found             = false
+
+          const check_pictures = new Promise((success, error) => {
+            const pictures = r.edges
+            let resolve = false
+            let count = pictures.length
+
+            if(pictures.length > 0){
+              pictures.forEach(async(p) => {
+                let img_path = p.node.image.uri
+                const tempChecksum = await getChecksum(img_path)
+
+                if(img_path == image.path)
+                {
+                  final_path = image.path
+                  img_to_del = false
+                  found = true
+                }
+                else if(isPresent(contentChecksum) && isPresent(tempChecksum) && tempChecksum == contentChecksum)
+                {
+                  final_path = img_path
+                  img_to_del = true
+                  found = true
+                }
+
+                count--
+                if((count <= 0 || found) && !resolve){
+                  resolve = true
+                  success(found)
+                }
+              })
+            }else{
+              success(found)
+            }
+          })
+
+          check_pictures.then(async(f) => {
+            if(!found)
+            {
+              await CameraRoll.saveToCameraRoll(image.path, 'photo').catch(e=>{})
+              const object = await CameraRoll.getPhotos({ first: 1, assetType: 'Photos' })
+              const obj_uri = object.edges[0].node.image.uri
+
+              const lastChecksum = await getChecksum(obj_uri)
+              if(isPresent(contentChecksum) && isPresent(lastChecksum) && lastChecksum == contentChecksum)
+              {
+                final_path = obj_uri
+                img_to_del = true
+              }
+              else
+              {
+                let picture_dir = RNFS.fs.dirs.DocumentDir
+                if(Config.platform == 'android')
+                  picture_dir = RNFS.fs.dirs.PictureDir
+
+                const img_info = getFileInfo(image.path)
+                const file_dest = `${picture_dir}/idocus-${contentChecksum.substr(0, 16)}.${img_info.extension}`
+                await RNFS.fs.cp(image.path, file_dest)
+                             .then(e => { final_path = `file://${file_dest}`; img_to_del = true; })
+                             .catch(e=>{})
+              }
+            }
+
+            RNFS.fs.exists(final_path)
+                   .then(i => {
+                      if(img_to_del){ RNFS.fs.unlink(image.path) }
+                      image.path = final_path
+
+                      finish(image)
+                    })
+                   .catch(e => { finish(image) })
+          })
+        }catch(e){ finish(image) }
+      })
+    })
   }
 
   deleteElement(){

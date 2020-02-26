@@ -277,7 +277,7 @@ class Body extends Component{
           opt_journal = [].concat(file_upload_params.journals.map((journal, index) => { return {value: journal.split(" ")[0].toString(), label: journal.toString()} }))
           opt_period = [].concat(file_upload_params.periods.map((prd, index) => { return {value: prd[1].toString(), label: prd[0].toString()} }))
           compta_analysis = file_upload_params.compta_analysis
-          if(!compta_anaysis){ GLOB.analysis = ModalComptaAnalysis.reset() }
+          if(!compta_analysis){ GLOB.analysis = ModalComptaAnalysis.reset() }
           message = file_upload_params.message
         }
         refreshParams()
