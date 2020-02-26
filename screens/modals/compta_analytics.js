@@ -9,7 +9,7 @@ import { FileUploader } from "../../requests"
 
 function setNoResult(){
   return  [
-            {analysis: '', references: [{ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
+            {analysis: '', references: [{ventilation: 100, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
             {analysis: '', references: [{ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
             {analysis: '', references: [{ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
           ]
@@ -28,7 +28,14 @@ class AnalysisView extends Component{
   constructor(props){
     super(props)
 
-    this.state = {ready: false, total_ventilation: 0, axis_index: 0}
+    this.state = {  ready: false,
+                    total_ventilation: 0,
+                    axis_index: 0,
+                    ventilation:  [
+                                    RESULT_ANALYTIC[this.props.index].references[0].ventilation.toString(),
+                                    RESULT_ANALYTIC[this.props.index].references[1].ventilation.toString(),
+                                    RESULT_ANALYTIC[this.props.index].references[2].ventilation.toString()
+                                  ]}
 
     this.handleChangeAnalysis = this.handleChangeAnalysis.bind(this)
     this.handleChangeVentilation = this.handleChangeVentilation.bind(this)
@@ -54,7 +61,32 @@ class AnalysisView extends Component{
   handleChangeVentilation(group_index, value){
     RESULT_ANALYTIC[this.props.index].references[group_index].ventilation = value
 
-    this.setState({total_ventilation: this.totalVentilation()})
+    let ventilation_0 = parseFloat(RESULT_ANALYTIC[this.props.index].references[0].ventilation)
+    let ventilation_1 = parseFloat(RESULT_ANALYTIC[this.props.index].references[1].ventilation)
+    let ventilation_2 = parseFloat(RESULT_ANALYTIC[this.props.index].references[2].ventilation)
+
+    let next_ventilation = 0
+
+    if(group_index == 0)
+    {
+      next_ventilation = 100 - (ventilation_0 + ventilation_2)
+      if(next_ventilation < 0){ next_ventilation = 0 }
+      RESULT_ANALYTIC[this.props.index].references[1].ventilation = next_ventilation
+    }
+    else if(group_index == 1)
+    {
+      next_ventilation = 100 - (ventilation_0 + ventilation_1)
+      if(next_ventilation < 0){ next_ventilation = 0 }
+      RESULT_ANALYTIC[this.props.index].references[2].ventilation = next_ventilation
+    }
+
+    this.setState({ total_ventilation: this.totalVentilation(),
+                    ventilation:  [
+                                    RESULT_ANALYTIC[this.props.index].references[0].ventilation.toString(),
+                                    RESULT_ANALYTIC[this.props.index].references[1].ventilation.toString(),
+                                    RESULT_ANALYTIC[this.props.index].references[2].ventilation.toString()
+                                  ]
+                  })
   }
 
   handleChangeAxis(index, group_index, value){
@@ -156,7 +188,7 @@ class AnalysisView extends Component{
   renderAxisGroup(index, analysis_name, analytics_data, axis1_options, axis2_options, axis3_options){
     return  <View key={index} style={this.styles.axis_group}>
               <View style={[this.styles.container, {flex:0, height:35}]}>
-                <XTextInput label='Ventilation' selectTextOnFocus={true} defaultValue={RESULT_ANALYTIC[this.props.index].references[index].ventilation.toString()} keyboardType='numeric' onChangeText={(value)=>{this.handleChangeVentilation(index, value)}} CStyle={[this.styles.input, {height:35}]} />
+                <XTextInput label='Ventilation' selectTextOnFocus={true} value={this.state.ventilation[index]} keyboardType='numeric' onChangeText={(value)=>{this.handleChangeVentilation(index, value)}} CStyle={[this.styles.input, {height:35}]} />
               </View>
               {axis1_options.length > 0 &&
                 <View style={[this.styles.container, {flex:0, height:35}]}>
@@ -362,20 +394,21 @@ export class ModalComptaAnalysis extends Component{
           let counter = a.references.length
           let total_ventilation = 0
           a.references.map( r => {
-            total_ventilation += parseInt(r.ventilation)
             if(!isPresent(r.axis1) && !isPresent(r.axis2) && !isPresent(r.axis3))
               counter--
+            else
+              total_ventilation += parseInt(r.ventilation)
           })
           if(counter <= 0)
             error_message = `Vous devez choisir au moin une section pour l'analyse ${i+1}`
 
           if(total_ventilation != 100)
-            error_message = `La ventilation analytique doit être égale à 100% pour l'analyse ${i+1}`
+            error_message = `La ventilation analytique doit être égale à 100% pour tous les sections de l'analyse ${i+1}`
         }
       })
 
       if(error_message != '')
-        Notice.alert(error_message)
+        Notice.alert('Attention', error_message)
       else
         this.refs.main_modal.closeModal(()=>this.props.hide(RESULT_ANALYTIC))
     }

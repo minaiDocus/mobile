@@ -323,6 +323,11 @@ export class XTextInput extends Component{
   }
 
   componentWillReceiveProps(nextProps){
+    if(typeof(nextProps.value) !== "undefined" && nextProps.value != this.initValue && !this.state.openKeyboard){
+      this.initValue = nextProps.value
+      this.changeText(nextProps.value)
+    }
+
     if(typeof(nextProps.editable) !== "undefined")
       this.editable = (nextProps.editable == false)? false : true
 
@@ -361,8 +366,6 @@ export class XTextInput extends Component{
   }
 
   closeKeyboard(callback_action=null){
-    this.setState({openKeyboard: false})
-
     let final_val = this.state.value.trim()
 
     if(final_val != this.initValue && this.liveChange == false)
@@ -381,6 +384,8 @@ export class XTextInput extends Component{
     {
       callback_action()
     }
+
+    this.setState({openKeyboard: false})
   }
 
   async changeText(value=""){
