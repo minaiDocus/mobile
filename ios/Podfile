@@ -28,6 +28,9 @@ target 'iDocus' do
     pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
     # pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+
+    pod 'RNViewShot', :path => '../node_modules/react-native-view-shot'
+
   end
 
   target 'iDocusTests' do

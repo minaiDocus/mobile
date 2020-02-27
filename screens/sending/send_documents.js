@@ -150,11 +150,13 @@ class BoxZoom extends Component{
                                          </View>
                   }
                 </View>
-                <View style={{flex:0,flexDirection:'row'}}>
-                  <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.hideModal()} title="Retour" />
-                  <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.cropElement()} title="Recadrer" />
-                  <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.deleteElement()} title="Enlever" />
-                </View>
+                { this.state.ready &&
+                  <View style={{flex:0,flexDirection:'row'}}>
+                    <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.hideModal()} title="Retour" />
+                    <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.cropElement()} title="Recadrer" />
+                    <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.deleteElement()} title="Enlever" />
+                  </View>
+                }
               </View>
             </XModal>
   }
@@ -365,10 +367,10 @@ class SendScreen extends Component {
                         ImagePicker.openCamera({
                           cropping: false,
                         }).then(image => {
-                          this.saveFileToRoll(image).then(img=>{
-                            this.renderImg([img], null, true)
+                          this.saveFileToRoll(image).then(img => {
+                            this.renderImg([img])
                           }).catch(error=>{
-                            this.renderImg([image], null, true)
+                            this.renderImg([image])
                           })
                         }).catch(error => {
                           this.renderError(error)

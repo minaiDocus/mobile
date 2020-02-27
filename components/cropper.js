@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { View, PanResponder, Animated, Image, StyleSheet, Platform, ImageEditor, ImageStore, Dimensions } from 'react-native'
+import ViewShot from "react-native-view-shot"
 
 import { SimpleButton, ImageButton, XImage, XText, XModal } from './index'
 
 import { EventRegister } from 'react-native-event-listeners'
 import RNFetchBlob from 'rn-fetch-blob'
-import Exif from 'react-native-exif'
+// import Exif from 'react-native-exif'
 
 export class Cropper {
   static cropListener = null;
@@ -88,12 +89,12 @@ export class CropperView extends Component{
   constructor(props){
     super(props)
 
-    this.minWidthCrop = 150
+    this.minWidthCrop  = 150
     this.minHeightCrop = 150
 
-    this.state = {open: false, ready: false, widthCrop: this.minWidthCrop, heightCrop: this.minHeightCrop, url_output: null, processing: false}
+    this.state = {captured_image: {}, open: false, ready: false, widthCrop: this.minWidthCrop, heightCrop: this.minHeightCrop, url_output: null, processing: false}
 
-
+    this.capturePreview = this.capturePreview.bind(this)
     this.createPanResponder = this.createPanResponder.bind(this)
     this.restartResponder = this.restartResponder.bind(this)
     this.initialize = this.initialize.bind(this)
@@ -109,11 +110,15 @@ export class CropperView extends Component{
     this.scaleBottomRight = this.scaleBottomRight.bind(this)
     this.scaleAll = this.scaleAll.bind(this)
     this.updateShape = this.updateShape.bind(this)
+    this.prepareCapture = this.prepareCapture.bind(this)
+    this.getMinSize = this.getMinSize.bind(this)
   }
 
   componentWillMount(){
     this.openCropListener = EventRegister.on("openCropper", (options)=>{
-      this.initialize(options)
+      this.options = options
+
+      this.prepareCapture(options.img.path.toString())
     })
   }
 
@@ -133,7 +138,72 @@ export class CropperView extends Component{
     }
   }
 
+  getMinSize(width, height){
+    let a = width
+    let b = height
+
+    if(height > width)
+    {
+      a = height
+      b = width
+    }
+
+    const ratio = b / a
+
+    let final_b = b
+    let final_a = a
+
+    let new_a   = b
+    let new_b   = Math.ceil(new_a * ratio)
+
+    //if minimum size is not reached (min 700 pixel)
+    if(new_b > 700)
+    {
+      let { w, h } = this.getMinSize(new_b, new_a)
+      final_b = w
+      final_a = h
+    }
+
+    if(height > width) { return { w: final_b, h: final_a } }
+    else { return { w: final_a, h: final_b } }
+  }
+
+  prepareCapture(uri){
+    this.source = null
+    let captured_image = { path: uri, widht: 0, height: 0 }
+
+    Image.getSize(uri,
+                    (width, height)=>{
+                      let { w, h } = this.getMinSize(width, height)
+                      captured_image.width = w
+                      captured_image.height = h
+
+                      this.setState({captured_image: captured_image, ready: false, open: true})
+                    },
+                    (_faillure)=>{
+                      this.closeCropper()
+                      Notice.alert("Erreur", "Erreur lors du chargement de l'image veuillez réessayer!!")
+                    }
+                  )
+  }
+
+  capturePreview(event){
+    setTimeout(()=>{
+      if(!isPresent(this.source)){
+        this.source = 'none';
+        this.refs.viewShot.capture()
+                          .then((uri) => {
+                                            this.source = uri
+                                            this.initialize(this.options)
+                                         }
+                               )
+                          .catch(e => { this.closeCropper(); Notice.alert("Erreur", "Erreur lors du chargement de l'image veuillez réessayer!!") } )
+      }
+    }, 500)
+  }
+
   closeCropper(){
+    RNFetchBlob.fs.unlink(this.source).catch(e=>{})
     this.setState({open: false, ready: false})
   }
 
@@ -144,22 +214,22 @@ export class CropperView extends Component{
   }
 
   initialize(options){
+    this.original_image = options.img
+
     this.contentSize = {width: 0, height: 0}
     this.working_image = {x: 0, y: 0, lx: 0, ly: 0, width: 0, height: 0}
     this.final_image = {width: 0, height: 0, path: null, filename: null, mime: null}
 
-    this.withPreview = options.preview || false
+    // this.withPreview = options.preview || false
+    this.withPreview = true
 
     this.moveType = null
     this.borderGrill = 0.5
     this.remake = false
 
-    this.original_image = options.img
     this.image_orientation = 0
 
     this.optionH = 40
-    
-    this.source = this.original_image.path.toString()
     
     this.pointA = {x:0, y:0}
     this.lastPointA = {x:0, y:0}
@@ -178,18 +248,14 @@ export class CropperView extends Component{
     this.animatedTranslateY = new Animated.Value(this.pointA.y)
 
     this.initializePAN()
-    
-    this.setState({open: true, ready: false})
 
     this.first_result = this.second_result = ''
 
     Image.getSize(this.source,
-      (width, height)=>{
+      async(width, height)=>{
         this.original_image.width = width
         this.original_image.height = height
-        Exif.getExif(this.source).then(exif=>{
-          this.image_orientation = exif.Orientation
-        }).catch(e=>{})
+
         this.setState({ready: true, url_output: null, remake: false})
       },
       (_faillure)=>{
@@ -265,16 +331,16 @@ export class CropperView extends Component{
     this.minWidthCrop = this.working_image.width * 0.3
     this.minHeightCrop = this.working_image.height * 0.3
 
-    if(typeof(this.original_image.cropWithRotation) !== "undefined")
-    {
-      this.cropWithRotation = this.original_image.cropWithRotation
-      this.checkRotation = false
-    }
-    else
-    {
-      this.cropWithRotation = false
-      this.checkRotation = true
-    }
+    // if(typeof(this.original_image.cropWithRotation) !== "undefined")
+    // {
+    //   this.cropWithRotation = this.original_image.cropWithRotation
+    //   this.checkRotation = false
+    // }
+    // else
+    // {
+    //   this.cropWithRotation = false
+    //   this.checkRotation = true
+    // }
   }
 
   setWorkingImageDimension(){
@@ -524,14 +590,14 @@ export class CropperView extends Component{
   }
 
   rotatePlan(Xorg, Yorg, widthOrg, heightOrg){
-    const Xend = Xorg + widthOrg
-    return {x: Yorg, y: (this.original_image.width - Xend), w: heightOrg, h: widthOrg}
+    // const Xend = Xorg + widthOrg
+    // return {x: Yorg, y: (this.original_image.width - Xend), w: heightOrg, h: widthOrg}
   }
 
   translatePlan(Xorg, Yorg, widthOrg, heightOrg){
-    const Xend = Xorg + widthOrg
-    const Yend = Yorg + heightOrg
-    return {x: (this.original_image.width - Xend), y: (this.original_image.height - Yend), w: widthOrg, h: heightOrg}
+    // const Xend = Xorg + widthOrg
+    // const Yend = Yorg + heightOrg
+    // return {x: (this.original_image.width - Xend), y: (this.original_image.height - Yend), w: widthOrg, h: heightOrg}
   }
 
   remakeCrop(){
@@ -551,23 +617,23 @@ export class CropperView extends Component{
     let cropWidth = Math.round( (this.state.widthCrop * this.original_image.width) / this.working_image.width )
     let cropHeight = Math.round( (this.state.heightCrop * this.original_image.height) / this.working_image.height )
 
-    if(this.first_result != '')
-    {
-      let {x, y , w, h} = this.translatePlan(cropX, cropY, cropWidth, cropHeight)
-      cropX = x
-      cropY= y
-      cropWidth = w
-      cropHeight = h
-    }
+    // if(this.first_result != '')
+    // {
+    //   let {x, y , w, h} = this.translatePlan(cropX, cropY, cropWidth, cropHeight)
+    //   cropX = x
+    //   cropY= y
+    //   cropWidth = w
+    //   cropHeight = h
+    // }
 
-    if(this.cropWithRotation && ![3].includes(this.image_orientation))
-    {
-      let {x, y, w, h} = this.rotatePlan(cropX, cropY, cropWidth, cropHeight)
-      cropX = x
-      cropY= y
-      cropWidth = w
-      cropHeight = h
-    }
+    // if(this.cropWithRotation && ![3].includes(this.image_orientation))
+    // {
+    //   let {x, y, w, h} = this.rotatePlan(cropX, cropY, cropWidth, cropHeight)
+    //   cropX = x
+    //   cropY= y
+    //   cropWidth = w
+    //   cropHeight = h
+    // }
 
     const cropData =  {
                         offset: {x: (cropX - this.borderGrill), y: (cropY - this.borderGrill)},
@@ -576,84 +642,87 @@ export class CropperView extends Component{
 
     ImageEditor.cropImage ( this.source, 
                             cropData,
-                            (_success)=>{this.beforeFinalization(_success, cropWidth, cropHeight)},
+                            (_success)=>{
+                              // this.beforeFinalization(_success, cropWidth, cropHeight)
+                              this.createFinalImage(_success, cropWidth, cropHeight)
+                            },
                             (_faillure)=>{
-                              if(!this.checkRotation)
-                              {
+                              // if(!this.checkRotation)
+                              // {
                                 this.setState({processing: false})
                                 Notice.alert("Erreur", _faillure.toString())
-                              }
-                              else
-                              {
-                                this.cropWithRotation = !this.cropWithRotation
-                                this.checkRotation = false
-                                this.processCropping()
-                              }
+                              // }
+                              // else
+                              // {
+                              //   this.cropWithRotation = !this.cropWithRotation
+                              //   this.checkRotation = false
+                              //   this.processCropping()
+                              // }
                             }
                           )
   }
 
   beforeFinalization(_url, width, height){
-    if(this.checkRotation)
-    {
-      Image.getSize(_url,
-        (w, h)=>{
-          let test1 = w >= h
-          let test2 = this.state.widthCrop >= this.state.heightCrop
-          let test3 = ((width-2) <= w && w <= (width+2)) && ((height-2) <= h && h <= (height+2))
+    // if(this.checkRotation)
+    // {
+    //   Image.getSize(_url,
+    //     (w, h)=>{
+    //       let test1 = w >= h
+    //       let test2 = this.state.widthCrop >= this.state.heightCrop
+    //       let test3 = ((width-2) <= w && w <= (width+2)) && ((height-2) <= h && h <= (height+2))
 
-          if(test1 != test2 || !test3)
-          {
-            //deleting unused image
-            RNFetchBlob.fs.unlink(_url).then(() => {}).catch((err) => {})
+    //       if(test1 != test2 || !test3)
+    //       {
+    //         //deleting unused image
+    //         RNFetchBlob.fs.unlink(_url).then(() => {}).catch((err) => {})
 
-            this.cropWithRotation = !this.cropWithRotation
-            this.checkRotation = false
-            this.processCropping()
-          }
-          else
-          {
-            this.beforeFinalImageCreation(_url, width, height)
-          }
-        },
-        (_faillure)=>{ this.beforeFinalImageCreation(_url, width, height) }
-      )
-    }
-    else
-    {
-      this.beforeFinalImageCreation(_url, width, height)
-    }
+    //         this.cropWithRotation = !this.cropWithRotation
+    //         this.checkRotation = false
+    //         this.processCropping()
+    //       }
+    //       else
+    //       {
+    //         this.beforeFinalImageCreation(_url, width, height)
+    //       }
+    //     },
+    //     (_faillure)=>{ this.beforeFinalImageCreation(_url, width, height) }
+    //   )
+    // }
+    // else
+    // {
+    //   this.beforeFinalImageCreation(_url, width, height)
+    // }
   }
 
   beforeFinalImageCreation(_url, width, height){
-    if(this.first_result == '')
-    {
-      this.first_result = _url
-      this.processCropping()
-    }
-    else
-    {
-      this.second_result = _url
-      if([8,3].includes(this.image_orientation))
-      {
-        //orientation: 8, 3
-        RNFetchBlob.fs.unlink(this.first_result).then(() => {}).catch((err) => {})
-        this.createFinalImage(this.second_result, width, height)
-      }
-      else
-      {
-        //orientation : 0, 6, 1, 7, 4, 5, 2
-        RNFetchBlob.fs.unlink(this.second_result).then(() => {}).catch((err) => {})
-        this.createFinalImage(this.first_result, width, height)
-      }
-    }
+    // if(this.first_result == '')
+    // {
+    //   this.first_result = _url
+    //   this.processCropping()
+    // }
+    // else
+    // {
+    //   this.second_result = _url
+    //   if([8,3].includes(this.image_orientation))
+    //   {
+    //     //orientation: 8, 3
+    //     RNFetchBlob.fs.unlink(this.first_result).then(() => {}).catch((err) => {})
+    //     this.createFinalImage(this.second_result, width, height)
+    //   }
+    //   else
+    //   {
+    //     //orientation : 6, 1, 7, 4, 5, 2
+    //     RNFetchBlob.fs.unlink(this.second_result).then(() => {}).catch((err) => {})
+    //     this.createFinalImage(this.first_result, width, height)
+    //   }
+    // }
   }
 
   createFinalImage(_url, width, height){
     this.setState({processing: false})
     const filename = `cr_${this.original_image.path.split("/").slice(-1)[0]}`
 
-    this.final_image = {width: width, height: height, path: _url, filename: filename, mime: this.original_image.mime, cropWithRotation: this.cropWithRotation}
+    this.final_image = {width: width, height: height, path: _url, filename: filename, mime: 'image/jpeg', cropWithRotation: this.cropWithRotation}
     this.setState({url_output: _url})
 
     if(!this.withPreview)
@@ -732,7 +801,14 @@ export class CropperView extends Component{
                 {
                   !this.state.ready && 
                   <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
-                    <XImage loader={true} width={50} height={50} />
+                    <ViewShot ref="viewShot" options={{ format: "jpg", quality: 1 }} >
+                      <Image onLoad={(event)=> this.capturePreview(event)}
+                             style={{flex:0, width: this.state.captured_image.width, height: this.state.captured_image.height}}
+                             source={{uri: this.state.captured_image.path.toString()}}
+                             resizeMode='contain'
+                      />
+                    </ViewShot>
+                    <XImage loader={true} style={{position: 'absolute', zIndex: 10}} width={50} height={50} />
                   </View>
                 }
                 {this.state.ready && this.state.url_output == null && this.renderCropper()}
