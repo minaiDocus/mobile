@@ -55,8 +55,8 @@ export class XImage extends Component{
     if(this.props.loader == true)
     {
       const loader_img = require('../../images/loader.gif')
-      const width = this.props.width || 60
-      const height = this.props.height || 60
+      const width = this.props.width || 50
+      const height = this.props.height || 50
       const style = this.props.style || {}
 
       return  <Image source={loader_img} resizeMode="contain" style={[{flex:0,width:width,height:height}, style]} />

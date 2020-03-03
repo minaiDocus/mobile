@@ -3,7 +3,7 @@ import { EventRegister } from 'react-native-event-listeners'
 import { StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,XScrollView} from '../components'
+import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,XScrollView,AnimatedBox} from '../components'
 
 import { Menu } from './menu'
 import { Screen } from './layout'
@@ -191,7 +191,8 @@ class ViewState extends Component{
       return <XText key={index} style={{fontSize:14}}><XText style={{fontWeight:"bold"}}>{info.label} : </XText>{value}</XText>
     })
 
-    return    <TouchableOpacity key={index} style={{flex:1}} onPress={()=>this.handleClickDocument(index)}>
+    return  <AnimatedBox key={index} startOnLoad={true} startTimer={1000} hideTillStart={true} style={{flex: 0}} type='fade' durationIn={800} durationOut={100}>  
+              <TouchableOpacity  style={{flex:1}} onPress={()=>this.handleClickDocument(index)}>
                 <View style={[this.stylesDetails.details, {backgroundColor:colorStriped}]}>
                   <XImage source={{icon: arrow}} size={16} color={Theme.global_text.color} style={this.stylesDetails.image} />
                   <XText>{data.name}</XText>
@@ -204,6 +205,7 @@ class ViewState extends Component{
                     </View>
                 }
               </TouchableOpacity>
+            </AnimatedBox>
   }
 
   render(){

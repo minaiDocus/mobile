@@ -1,24 +1,28 @@
 import React, { Component } from 'react'
 import { View, PanResponder, Animated, Image, StyleSheet, Platform, ImageEditor, ImageStore, Dimensions } from 'react-native'
-import ViewShot from "react-native-view-shot"
 
 import { SimpleButton, ImageButton, XImage, XText, XModal } from './index'
 
 import { EventRegister } from 'react-native-event-listeners'
 import RNFetchBlob from 'rn-fetch-blob'
+import ImageSize from 'react-native-image-size'
+import ViewShot from "react-native-view-shot"
 // import Exif from 'react-native-exif'
 
 export class Cropper {
   static cropListener = null;
 
   static openCrop(options={}){
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
             if(Cropper.cropListener == null)
             {
-              Cropper.cropListener = EventRegister.on("validateCrop", (image)=>{
+              Cropper.cropListener = EventRegister.on("validateCrop", (image=null)=>{
                 EventRegister.rm(Cropper.cropListener)
                 Cropper.cropListener = null
-                resolve(image)
+                if(image)
+                  resolve(image)
+                else
+                  reject(null)
               })
             }
             EventRegister.emit("openCropper", options)
@@ -172,19 +176,18 @@ export class CropperView extends Component{
     this.source = null
     let captured_image = { path: uri, widht: 0, height: 0 }
 
-    Image.getSize(uri,
-                    (width, height)=>{
-                      let { w, h } = this.getMinSize(width, height)
+    ImageSize.getSize(uri)
+              .then((size)=>{
+                      let { w, h } = this.getMinSize(size.width, size.height)
                       captured_image.width = w
                       captured_image.height = h
 
                       this.setState({captured_image: captured_image, ready: false, open: true})
-                    },
-                    (_faillure)=>{
+              })
+              .catch((_faillure)=>{
                       this.closeCropper()
                       Notice.alert("Erreur", "Erreur lors du chargement de l'image veuillez réessayer!!")
-                    }
-                  )
+              })
   }
 
   capturePreview(event){
@@ -204,6 +207,7 @@ export class CropperView extends Component{
 
   closeCropper(){
     RNFetchBlob.fs.unlink(this.source).catch(e=>{})
+    EventRegister.emit("validateCrop", null)
     this.setState({open: false, ready: false})
   }
 
@@ -220,8 +224,7 @@ export class CropperView extends Component{
     this.working_image = {x: 0, y: 0, lx: 0, ly: 0, width: 0, height: 0}
     this.final_image = {width: 0, height: 0, path: null, filename: null, mime: null}
 
-    // this.withPreview = options.preview || false
-    this.withPreview = true
+    this.withPreview = options.preview || false
 
     this.moveType = null
     this.borderGrill = 0.5
@@ -251,17 +254,16 @@ export class CropperView extends Component{
 
     this.first_result = this.second_result = ''
 
-    Image.getSize(this.source,
-      async(width, height)=>{
-        this.original_image.width = width
-        this.original_image.height = height
+    ImageSize.getSize(this.source)
+              .then((size)=>{
+                this.original_image.width = size.width
+                this.original_image.height = size.height
 
-        this.setState({ready: true, url_output: null, remake: false})
-      },
-      (_faillure)=>{
-        Notice.alert("Erreur", "Erreur lors du chargement de l'image veuillez réessayer!!")
-      }
-    )
+                this.setState({ready: true, url_output: null, remake: false})
+              })
+              .catch((_faillure)=>{
+                Notice.alert("Erreur", "Erreur lors du chargement de l'image veuillez réessayer!!")
+              })
   }
 
   createPanResponder(_move_function){

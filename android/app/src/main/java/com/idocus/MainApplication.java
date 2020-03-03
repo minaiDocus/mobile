@@ -3,6 +3,7 @@ package com.idocus;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.existfragger.rnimagesize.RNImageSizePackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
@@ -34,6 +35,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNImageSizePackage(),
             new RNViewShotPackage(),
             new VectorIconsPackage(),
             new ImageResizerPackage(),

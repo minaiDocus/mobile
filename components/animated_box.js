@@ -12,7 +12,11 @@ export class AnimatedBox extends Component{
     this.state = { ready: false, manualMove: false, cssAnim: 0, translateX: 0, translateY: 0, scaleW:0, scaleH: 0, size:{ width:0, height: 0 }, positionXY: { left: 0, top:0 }, transOpacity: (this.props.animateOpacity ? new Animated.Value(0) : new Animated.Value(1)) }
 
     this.startOnLoad = (this.props.startOnLoad === false)? false : true
+    this.startTimer  = this.props.startTimer || 1
     this.hideTillStart = (this.props.hideTillStart)? true : false
+
+    this.onStartAnimation = this.props.onStartAnimation || null
+    this.onEndAnimation   = this.props.onEndAnimation   || null
 
     this.lastDx = this.lastDy = 0
     this.moveGotParams = false
@@ -150,7 +154,7 @@ export class AnimatedBox extends Component{
         this.current_position = { x: x, y: y }
 
       if(this.startOnLoad)
-        this.start()
+        setTimeout(()=>{this.start()}, this.startTimer)
       else if(!this.hideTillStart)
         this.setState({ ready: true })
     }
@@ -182,6 +186,7 @@ export class AnimatedBox extends Component{
           else
           {
             await this.reset()
+            if(this.onStartAnimation){ try{ this.onStartAnimation() }catch(e){} }
             this.animationIn(callbackIn)
           }
         }
@@ -264,6 +269,7 @@ export class AnimatedBox extends Component{
               await this.setState({cssAnim: new Animated.Value(sValue), manualMove: false, ready: true})
             }
 
+            if(this.onStartAnimation){ try{ this.onStartAnimation() }catch(e){} }
             this.animationOut(callbackOut)
           }
         }
@@ -367,6 +373,7 @@ export class AnimatedBox extends Component{
 
         if(!this.isLoopAnimation || (!this.abortLoop && this.isLoopAnimation))
         {
+          if(this.onEndAnimation){ try{ this.onEndAnimation() }catch(e){} }
           try
           {
             callbackIn()
@@ -406,6 +413,7 @@ export class AnimatedBox extends Component{
 
         if(!this.isLoopAnimation || (!this.abortLoop && this.isLoopAnimation))
         {
+          if(this.onEndAnimation){ try{ this.onEndAnimation() }catch(e){} }
           try{ callbackOut() }
           catch(e){}
         }

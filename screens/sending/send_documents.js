@@ -4,6 +4,7 @@ import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import RNFS from 'rn-fetch-blob'
 import { NavigationActions } from 'react-navigation'
+import { EventRegister } from 'react-native-event-listeners'
 
 import { XModal,XScrollView,Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload } from '../../components'
 
@@ -45,7 +46,7 @@ class BoxZoom extends Component{
     const call = ()=>{
                       GLOB.imgToDel = GLOB.idZoom
                       this.hideModal()
-                      this.props.deleteElement()
+                      setTimeout(()=>{this.props.deleteElement()}, 1000)
                      }
     actionLocker(call)
   }
@@ -168,22 +169,46 @@ class ImgBox extends Component{
     this.state = {options: false}
 
     this.element = this.props.element
+    this.selectedElements = []
+
+    this.selectionListener = null
+    this.selectItem = this.selectItem.bind(this)
 
     this.generateStyles()
   }
 
+  componentWillMount(){
+    this.selectionListener = EventRegister.on('select_elements', (event)=>{
+      if(isPresent(event.id) && event.id == this.element.id_64)
+        this.selectItem(event.type)
+    })
+  }
+
+  componentWillUnmount(){
+    EventRegister.rm(this.selectionListener)
+    this.selectionListener = null
+  }
+
   componentWillReceiveProps(nextProps){
-    this.element = nextProps.element
+    if(this.element.id_64 != nextProps.element.id_64){
+      this.selectItem('out')
+      this.element = nextProps.element
+    }
+  }
+
+  selectItem(type='in'){
+    this.setState({options: (type == 'in')? true : false})
+    this.props.selection(type)
   }
 
   toggleOpt(){
-    this.setState({options: !this.state.options})
+    this.selectItem((this.state.options)? 'out' : 'in')
   }
 
   delete(){
     GLOB.imgToDel = this.element.id_64
     this.props.deleteElement()
-    this.toggleOpt()
+    this.selectItem('out')
   }
 
   zoom(){
@@ -192,6 +217,7 @@ class ImgBox extends Component{
   }
 
   crop(){
+    this.selectItem('out')
     this.props.cropElement(this.props.index)
   }
 
@@ -214,8 +240,8 @@ class ImgBox extends Component{
         styleContainer:{
                           backgroundColor:'#fff',
                           borderRadius:5,
-                          width: imgWidth + 3,
-                          height: imgHeight + 3,
+                          width: imgWidth + 4,
+                          height: imgHeight + 4,
                           justifyContent:'center',
                           alignItems:'center',
                         },
@@ -248,8 +274,13 @@ class ImgBox extends Component{
     let message = ''
     if(doc)
       message = doc.error || ''
-    return  <TouchableOpacity style={this.styles.styleTouch} onLongPress={()=>this.toggleOpt()} onPress={()=>this.zoom()}>
-                <XImage type='container' CStyle={this.styles.styleContainer} source={{uri:this.element.path.toString()}} style={this.styles.styleImg} local={false}>
+
+    let selectedStyle = {}
+    if(this.state.options)
+      selectedStyle = { borderColor: '#C9DD03', borderWidth: 2 }
+
+    return  <TouchableOpacity style={this.styles.styleTouch} onPress={()=>this.toggleOpt()} onLongPress={()=>this.zoom()}>
+                <XImage type='container' CStyle={[this.styles.styleContainer, selectedStyle]} source={{uri:this.element.path.toString()}} style={this.styles.styleImg} local={false}>
                   {
                     this.state.options == false && isPresent(message) &&
                     <View style={this.styles.options}>
@@ -257,14 +288,14 @@ class ImgBox extends Component{
                     </View>
                   }
                   { this.state.options == true &&
-                    <View style={this.styles.options}>   
+                    <View style={this.styles.options}>
                       <ImageButton source={{uri:'zoom_x'}} onPress={()=>{this.zoom(); this.toggleOpt();}} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
                       <ImageButton source={{icon:'crop'}} IOptions={{size: 18}} onPress={()=>{this.crop(); this.toggleOpt();}} CStyle={[{borderLeftWidth:1, borderRightWidth: 1}, this.styles.btnText]} IStyle={{width:18,height:18}} />
-                      <ImageButton source={{icon:'close'}} IOptions={{size: 18}} onPress={()=>this.delete()} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
+                      <ImageButton source={{icon:'trash'}} IOptions={{size: 18}} onPress={()=>this.delete()} CStyle={[this.styles.btnText]} IStyle={{width:18,height:18}} />
                     </View>
                   }
                 </XImage>
-            </TouchableOpacity>
+            </TouchableOpacity>       
   }
 }
 
@@ -319,7 +350,11 @@ class SendScreen extends Component {
     this.renderImg = this.renderImg.bind(this)
     this.renderError = this.renderError.bind(this)
     this.deleteElement = this.deleteElement.bind(this)
+    this.deleteMultiElements = this.deleteMultiElements.bind(this)
     this.toggleZoom = this.toggleZoom.bind(this)
+    this.handleSelection = this.handleSelection.bind(this)
+    this.selectAllItem   = this.selectAllItem.bind(this)
+    this.unselectAllItem   = this.unselectAllItem.bind(this)
     this.saveFileToRoll = this.saveFileToRoll.bind(this)
 
     if(UploadingFiles)
@@ -359,7 +394,74 @@ class SendScreen extends Component {
     GLOB.documents = []
     GLOB.imgToDel = ""
     GLOB.idZoom = ""
+    this.selectedItems = []
     this.setState({ dataList: GLOB.documents, zoomActive: false })
+  }
+
+  selectAllItem(){
+    GLOB.documents.forEach(doc=>{
+      EventRegister.emit('select_elements', { id: doc.id_64, type: 'in'})
+    })
+  }
+
+  unselectAllItem(){
+    GLOB.documents.forEach(doc=>{
+      EventRegister.emit('select_elements', { id: doc.id_64, type: 'out'})
+    })
+  }
+
+  handleSelection(state, id_64){
+    if(state == 'in' && !this.selectedItems.find(e=>{ return e == id_64 }))
+      this.selectedItems.push(id_64)
+    else if(state == 'out' && this.selectedItems.find(e=>{ return e == id_64 }))
+      this.selectedItems = this.selectedItems.filter(e=>{ return e != id_64 })
+
+    const removeSelection = ()=>{
+      setTimeout(()=>{
+        this.deleteMultiElements()
+      }, 1000)
+
+      Notice.remove('selection_items', true)
+    }
+
+    const mess_obj =  <View style={{flex:1, flexDirection:'row'}}>
+                        <View style={{ flex:1, paddingHorizontal: 10}}>
+                          <XText style={{flex:0, height: 25, color:'#FFF', fontWeight:"bold"}}>Séléctions</XText>
+                          <XText style={{flex:1, color:'#C0D838', fontSize:10}}>{this.selectedItems.length} image(s) séléctionnée(s)</XText>
+                        </View>
+                        <View style={{flex:1}}>
+                          <View style={{flex:1, flexDirection:'row', height: 20, justifyContent:'flex-end'}}>
+                            <ImageButton  source={{icon:"check"}}
+                              IOptions={{size: 17, color: '#FFF'}}
+                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
+                              IStyle={{flex:0, width:17, height:17}}
+                              onPress={()=>{this.selectAllItem()}} />
+                            <ImageButton  source={{icon:"ban"}}
+                              IOptions={{size: 17, color: '#FFF'}}
+                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
+                              IStyle={{flex:0, width:17, height:17}}
+                              onPress={()=>{this.unselectAllItem()}} />
+                            <ImageButton  source={{icon:"close"}}
+                              IOptions={{size: 17, color: '#FFF'}}
+                              CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:35}}
+                              IStyle={{flex:0, width:17, height:17}}
+                              onPress={()=>{ Notice.remove('selection_items', true) }} />
+                          </View>
+                          <View style={{flex:1, flexDirection:'row', height: 35, justifyContent:'flex-end',  marginTop:7}}>
+                            <SimpleButton LImage={{icon: "trash"}}
+                              IOptions={{size: 16}} 
+                              CStyle={{flex:0, alignItems:'center', justifyContent:'center', backgroundColor:'#C0D838', width:125, height: 35, borderRadius: 2}}
+                              TStyle={{fontSize: 8}}
+                              title = 'Enlever'
+                              onPress={()=>{removeSelection()}} />
+                          </View>
+                        </View>
+                      </View>
+
+    if(this.selectedItems.length > 0)
+      Notice.info(mess_obj, { permanent: true, name: "selection_items", noClose: true })
+    else
+      Notice.remove('selection_items', true)
   }
 
   openCamera(){
@@ -402,7 +504,7 @@ class SendScreen extends Component {
                           preview: false
                         }).then(image=>{
                           this.renderImg([image], index)
-                        })
+                        }).catch(e=>{})
                       }
     actionLocker(call)
   }
@@ -422,7 +524,7 @@ class SendScreen extends Component {
 
     if(index != null)
     {
-      Document.delDocs([GLOB.documents[index].id_64])
+      setTimeout(()=>{ Document.delDocs([GLOB.documents[index].id_64]) }, 100)
       GLOB.documents[index] = img[0]
       Document.addDocs(img)
     }
@@ -545,7 +647,7 @@ class SendScreen extends Component {
                   picture_dir = RNFS.fs.dirs.PictureDir
 
                 const img_info = getFileInfo(image.path)
-                const file_dest = `${picture_dir}/idocus-${contentChecksum.substr(0, 16)}.${img_info.extension}`
+                const file_dest = `${picture_dir}/image-${contentChecksum.substr(0, 16)}.${img_info.extension}`
                 await RNFS.fs.cp(image.path, file_dest)
                              .then(e => { final_path = `file://${file_dest}`; img_to_del = true; })
                              .catch(e=>{})
@@ -566,23 +668,32 @@ class SendScreen extends Component {
     })
   }
 
-  deleteElement(){
-    let imgSave = [] 
+  deleteMultiElements(){
+    this.setState({ready: false})
 
-    GLOB.documents.map((i)=>
-    {
-      if(i.id_64 != GLOB.imgToDel.toString())
-      {
-        imgSave = imgSave.concat(i)
-      }
-      else
-      {
-        Document.delDocs([i.id_64])
-      }
+    let next_elements = GLOB.documents.filter(doc => { return !this.selectedItems.includes(doc.id_64) })
+
+    this.selectedItems.forEach(item => {
+      setTimeout(()=>{ Document.delDocs([item]) }, 300)
     })
 
-    GLOB.documents = imgSave
-    this.setState({dataList: GLOB.documents})
+    this.selectedItems = []
+    GLOB.documents = next_elements
+    this.setState({dataList: next_elements, ready: true})
+  }
+
+  deleteElement(){
+    this.setState({ready: false})
+
+    let next_elements = GLOB.documents.filter(doc => { return GLOB.imgToDel.toString() != doc.id_64 })
+
+    setTimeout(()=>{ Document.delDocs([GLOB.imgToDel.toString()]) }, 300)
+
+    this.selectedItems = this.selectedItems.filter(e=>{ return e != GLOB.imgToDel.toString() })
+    Notice.remove('selection_items', true)
+
+    GLOB.documents = next_elements
+    this.setState({dataList: next_elements, ready: true})
   }
 
   toggleZoom(){
@@ -644,13 +755,13 @@ class SendScreen extends Component {
                           hide={this.toggleZoom} />
               }
               <XScrollView style={{flex:1, padding:3}} >
-                  <BoxList datas={this.state.dataList}
-                           title={`${this.state.dataList.length} : Document(s)`}
-                           waitingData={!this.state.ready}
-                           elementWidth={130 - 20}
-                           noItemText="Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ..."
-                           renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom}/> }
-                           />
+                <BoxList datas={this.state.dataList}
+                         title={`${this.state.dataList.length} : Document(s)`}
+                         waitingData={!this.state.ready}
+                         elementWidth={130 - 20}
+                         noItemText="Veuillez selectionner des photos de votre galerie d'images, ou prendre de nouvelles photos pour l'envoi ..."
+                         renderItems={(img, index) => <ImgBox element={img} index={index} cropElement={(index)=>this.openCrop(index)} deleteElement={this.deleteElement} toggleZoom={this.toggleZoom} selection={(state)=>{ this.handleSelection(state, img.id_64) }}/> }
+                         />
               </XScrollView>
               <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
                 <SimpleButton CStyle={[this.styles.button, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>this.sendList()} title="Suivant >>" />
@@ -660,7 +771,7 @@ class SendScreen extends Component {
           <CropperView />
         </Screen>
       );
-    }
+  }
 }
 
 export default SendScreen;

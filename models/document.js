@@ -42,15 +42,16 @@ class _document extends ActiveRecord {
 
   clearDocsFileCache(){
     this.getAll().map(doc => {
-      this.RNFS.unlink(doc.path.replace("file://", '')).catch(e=>{})
+      this.safeRemoveFile(doc)
     })
   }
 
   loadAll(){
     return new Promise(resolve=>{
-      this.delDocs(this.sent().concat(this.error()))
+      this.delDocs(this.sent())
 
-      let docs = this.find('state = "new" OR state = "not_sent"') || []
+      let docs = this.find('state != "sent"') || []
+
       let counter = 0
       let loadedDocs = []
 
@@ -65,9 +66,15 @@ class _document extends ActiveRecord {
                           mime: doc.mime,
                           width: doc.width,
                           height: doc.height,
-                          filename: doc.name
+                          filename: doc.name,
+                          error: doc.error
                         })
         }
+        else
+        {
+          this.delete(doc)
+        }
+
         counter += 1
         if(counter >= docs.length)
           resolve(loadedDocs)
@@ -194,12 +201,30 @@ class _document extends ActiveRecord {
   delDocs(ids){
     ids.map(doc_id=>{
       const doc = this.find(`id = "${doc_id}"`)[0] || null
-      if(doc)
-      {
-        this.RNFS.unlink(doc.path.replace("file://", '')).catch(e=>{})
+      if(doc){
+        this.safeRemoveFile(doc)
         this.delete(doc)
       }
     })
+  }
+
+  safeRemoveFile(doc){
+    const getFileInfo = (path) => {
+      const splited_path = path.split('/')
+
+      let filename  = splited_path[splited_path.length-1]
+      let dirname   = path.replace(filename, '')
+      let extension = filename.split('.')[1]
+
+      return { filename: filename, dirname: dirname, extension: extension }
+    }
+
+    let cacheDir = this.RNFS.dirs.CacheDir + '/'
+    let doc_path = doc.path.replace("file://", '')
+    let doc_dir  = getFileInfo(doc_path).dirname
+
+    if(doc_dir == cacheDir)
+      this.RNFS.unlink(doc_path).catch(e=>{})
   }
 
   syncDocs(ids, state, message=''){

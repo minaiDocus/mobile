@@ -45,6 +45,7 @@ class FrontView extends Component{
 
     this.state = {children: null, animation: "fade", closeCallback: null}
     this.animation = 'fade'
+    this.backPressCounter = 0
 
     this.handleBackPress = this.handleBackPress.bind(this)
     this.openFrontView = this.openFrontView.bind(this)
@@ -52,7 +53,7 @@ class FrontView extends Component{
   }
 
   componentWillMount(){
-    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', ()=>{ this.handleBackPress(); return true; });
   }
 
   componentWillUnmount(){
@@ -76,9 +77,32 @@ class FrontView extends Component{
     }
   }
 
-  handleBackPress(){
-    if(CurrentScreen.screen_name != 'Login')
-      CurrentScreen.goBack()
+  async handleBackPress(){
+    this.backPressCounter += 1
+
+    const press = new Promise(success => {
+      setTimeout(()=>{
+        if(this.backPressCounter > 1)
+        {
+          this.backPressCounter = 0
+          success('exit')
+        }
+        else
+        {
+          this.backPressCounter = 0
+          if(CurrentScreen.screen_name != 'Login')
+          {
+            CurrentScreen.goBack()
+            success(null)
+          }
+        }
+      }, 500)
+    })
+
+    let return_action = ''
+    await press.then(e => { return_action = e })
+
+    if(return_action == 'exit'){ BackHandler.exitApp() }
     return true
   }
 

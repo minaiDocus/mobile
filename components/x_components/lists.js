@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View } from 'react-native'
-import { XText, XImage, XScrollView } from '../index'
+import { XText, XImage, XScrollView, AnimatedBox } from '../index'
 
 class Loader extends Component{
   constructor(props){
@@ -58,21 +58,28 @@ export class BoxList extends Component{
     this.childStylePlus = this.props.childrenStyle || {}
     this.stylesPlus = this.props.containerStyle || {}
 
-    this.state = {dimensionReady: false}
+    this.refresh = true
+    this.ready = false
+    this.checkDimension = true
     this.newData = true
+
     this.datas = this.props.datas || []
     this.itemCount = 0
-
     this.padding = 2
+
+    this.state = {view: null}
 
     this.renderItems = this.renderItems.bind(this)
     this.onLayout = this.onLayout.bind(this)
     this.removeLoader = this.removeLoader.bind(this)
+    this.prepareView = this.prepareView.bind(this)
 
     this.generateStyles()
   }
 
   componentWillReceiveProps(nextProps){
+    this.newData = false
+
     try
     {
       if(JSON.stringify(this.datas) != JSON.stringify(nextProps.datas))
@@ -81,20 +88,16 @@ export class BoxList extends Component{
     {
       this.newData = true
     }
-    this.datas = nextProps.datas || []
-  }
 
-  componentDidMount(){
-    this.removeLoader()
-  }
-
-  componentDidUpdate(){
-    this.removeLoader()
+    if(this.newData)
+      this.datas = nextProps.datas || []
   }
 
   removeLoader(){
     this.newData = false
     this.itemCount = 0
+    this.ready = true
+
     setTimeout(()=>{
       if(this.refs.loader && !this.props.waitingData)
         this.refs.loader.unmountComponent()
@@ -102,10 +105,12 @@ export class BoxList extends Component{
   }
 
   onLayout(event){
-    let {width, height} = event.nativeEvent.layout
-    this.width = width
-    this.elements = Math.floor(this.width / (this.props.elementWidth))
-    this.setState({dimensionReady: true})
+    if(this.checkDimension){
+      this.checkDimension = false
+      let {width, height} = event.nativeEvent.layout
+      this.width = width
+      this.elements = Math.floor(this.width / (this.props.elementWidth))
+    }
   }
 
   generateStyles(){
@@ -128,22 +133,43 @@ export class BoxList extends Component{
 
   renderItems(item, key){
     const wd = (this.width) / this.elements
-    return <View key={key} style={[this.styles.children, this.childStylePlus, {width: (wd - this.padding), padding: this.padding, margin: 0}]}>{this.props.renderItems(item, key)}</View>
+    return  <View key={key} style={[this.styles.children, this.childStylePlus, {width: (wd - this.padding), padding: this.padding, margin: 0}]}>{this.props.renderItems(item, key)}</View>
+  }
+
+  prepareView(){
+    this.itemCount = this.datas.length
+
+    if(this.refresh){
+      this.refresh = false
+      this.ready = false
+      this.checkDimension = true
+
+      setTimeout(async ()=>{
+        let view  = null
+
+        if(this.itemCount > 0)
+          view = this.datas.map((item, index) => {return this.renderItems(item, index)})
+
+        await this.setState({ view: view })
+        this.removeLoader()
+        this.refresh = true
+      }, 500)
+    }
   }
 
   render(){
-    this.itemCount = this.datas.length
+    this.prepareView()
 
     let content = <View />
-    if(this.props.waitingData || this.newData)
-      content = <Loader ref='loader' />
+    if(this.props.waitingData || !this.ready || this.newData)
+      content = <Loader ref='loader' style={{marginTop: 25}} />
     else if(this.itemCount <= 0 && this.props.noItemText != 'none')
       content = <XText style={{padding: 10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
     return  <View style={{flex: 1}}>
               {this.props.title != '' && <XText style={[{flex:0}, Theme.lists.title]}>{this.props.title}</XText>}
               <View style={[this.styles.container, Theme.lists.shape, {padding: 0}, this.stylesPlus]} onLayout={this.onLayout} >
-                {this.itemCount > 0 && this.state.dimensionReady && this.datas.map((item, index) => {return this.renderItems(item, index)})}
+                { this.state.view }
                 { content }
               </View>
             </View>
@@ -162,6 +188,7 @@ export class LineList extends Component{
 
     this.ready = false
     this.refresh = true
+    this.items = []
 
     this.newData = true
     this.datas = this.props.datas || []
@@ -176,6 +203,8 @@ export class LineList extends Component{
   }
 
   componentWillReceiveProps(nextProps){
+    this.newData = false
+
     try
     {
       if(JSON.stringify(this.datas) != JSON.stringify(nextProps.datas))
@@ -184,18 +213,25 @@ export class LineList extends Component{
     {
       this.newData = true
     }
-    this.datas = nextProps.datas || []
+
+    if(this.newData){
+      this.items.forEach((el)=>{
+        try{ el.leave() }catch(e){}
+      })
+      this.datas = nextProps.datas || []
+    }
   }
 
-  // componentDidMount(){
-  //   this.removeLoader()
-  // }
-
-  // componentDidUpdate(){
-  //   this.removeLoader()
-  // }
-
   removeLoader(){
+    const startAnim = (index) => {
+      if(index < this.items.length){
+        try{
+          this.items[index].start(()=>{ startAnim(index + 1) })
+        }catch(e){ startAnim(index + 1) }
+      }
+    }
+    startAnim(0)
+
     this.newData = false
     this.itemCount = 0
     this.ready = true
@@ -226,7 +262,9 @@ export class LineList extends Component{
 
   renderItems(item, key){
     const colorStriped = ((key % 2) == 0)? Theme.color_striped.pair : Theme.color_striped.impair;
-    return <View key={key} style={[this.childStylePlus, {backgroundColor: colorStriped}]}>{this.props.renderItems(item, key)}</View>
+    return  <AnimatedBox ref={(elem)=>this.items.push(elem)} key={key} startOnLoad={false} hideTillStart={true} style={{flex: 0}} type='fade' durationIn={5} durationOut={100}>
+              <View style={[this.childStylePlus, {backgroundColor: colorStriped}]}>{this.props.renderItems(item, key)}</View>
+            </AnimatedBox>
   }
 
   prepareView(){
@@ -237,6 +275,7 @@ export class LineList extends Component{
       this.ready = false
       setTimeout(async ()=>{
         let view  = null
+        this.items = []
         if(this.itemCount > 0)
           view = this.datas.map((item, index) => {return this.renderItems(item, index)})
 
@@ -252,13 +291,13 @@ export class LineList extends Component{
 
     let content = <View />
     if(this.props.waitingData || !this.ready || this.newData)
-      content = <Loader ref='loader' />
+      content = <Loader ref='loader' style={{marginTop: 25}} />
     else if(this.itemCount <= 0 && this.props.noItemText != 'none')
       content = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
     return <View style={{flex:1}}>
                 {isPresent(this.props.title) && <XText style={[this.styles.title, Theme.lists.title]}>{this.props.title}</XText>}
-                <View style={[this.styles.container, Theme.lists.shape, this.stylesPlus]}>
+                <View ref='container' style={[this.styles.container, Theme.lists.shape, this.stylesPlus]}>
                   { this.state.view }
                   { content }
                </View> 

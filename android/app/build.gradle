@@ -155,6 +155,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-image-size')
     implementation project(':react-native-view-shot')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-image-resizer')
