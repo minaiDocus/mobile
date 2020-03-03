@@ -154,9 +154,9 @@ class _document extends ActiveRecord {
 
     let modificationDate = ''
     if(params.modificationDate)
-      params.modificationDate.toString()
+      modificationDate = params.modificationDate.toString()
     else if(doc.modificationDate)
-      doc.modificationDate.toString()
+      modificationDate = doc.modificationDate.toString()
 
     const data =   {
                       id: id,

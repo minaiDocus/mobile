@@ -268,8 +268,9 @@ class LoginScreen extends Component {
           </View>
         </View>
         <View style={{flex:0, position:'absolute', bottom: 0, right: 0, width: '40%'}}>
-          <AnimatedBox ref='animated_copyright' type='RightSlide' startOnLoad={false} hideTillStart={true} durationIn={300} durationOut={300} style={{flex:1, flexDirection:'row', alignItems:'center', padding: 2, backgroundColor: '#4C5A65', borderTopLeftRadius: 5}}>
+          <AnimatedBox ref='animated_copyright' type='RightSlide' startOnLoad={false} hideTillStart={true} durationIn={300} durationOut={300} style={{flex:1, flexDirection:'column', justifyContent: 'center', alignItems:'center', padding: 2, backgroundColor: '#4C5A65', borderTopLeftRadius: 5}}>
             <XText style={{flex:1, textAlign: 'center', fontSize: 10, color: '#FFF'}}>IDOCUS © Copyright {Config.cp_year.toString()}</XText>
+             { Config.server != 'production' && <XText style={{flex:1, textAlign: 'center', fontSize: 10, color: '#FFF'}}>Host: {Config.http_host.toString()}</XText> }
           </AnimatedBox>
         </View>
       </Screen>

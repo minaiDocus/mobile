@@ -6,7 +6,7 @@ import { NavigationActions } from 'react-navigation'
 
 import { XModal, XImage, XText, AnimatedBox, SimpleButton, LinkButton, ImageButton, ModalForm, XScrollView } from '../components'
 
-import { User } from '../models'
+import { User, SendingParams } from '../models'
 
 import { RemoteAuthentication } from '../requests'
 
@@ -87,6 +87,9 @@ class Footer extends Component{
       //refreshFCMtoken
       EventRegister.emit("revokeFCMtoken")
       
+      //remove sending parameters
+      SendingParams.clearParameters()
+
       //go back to Login
       CurrentScreen.dismissTo('Login', { goodbye: true })
     }, 500)

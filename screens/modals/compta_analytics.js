@@ -10,14 +10,16 @@ import { FileUploader } from "../../requests"
 function setNoResult(){
   return  [
             {analysis: '', references: [{ventilation: 100, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
-            {analysis: '', references: [{ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
-            {analysis: '', references: [{ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
+            {analysis: '', references: [{ventilation: 100, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
+            {analysis: '', references: [{ventilation: 100, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}, {ventilation: 0, axis1: '', axis2: '', axis3: ''}]},
           ]
 }
 
 let ANALYTIC_CURRENT_SCREEN = ''
 
 let RESULT_ANALYTIC = setNoResult()
+
+let HAS_BEEN_SET = false
 
 let ANALYTICS = []
 //exemple
@@ -264,13 +266,16 @@ export class ModalComptaAnalysis extends Component{
     this.journal  = this.props.journal  || ''
     this.pieces   = this.props.pieces   || []
 
-    if(ANALYTIC_CURRENT_SCREEN != this.props.currentScreen)
-      RESULT_ANALYTIC = setNoResult()
+    if(!HAS_BEEN_SET)
+    {
+      if(ANALYTIC_CURRENT_SCREEN != this.props.currentScreen)
+        RESULT_ANALYTIC = setNoResult()
+
+      if(this.props.resetOnOpen)
+        RESULT_ANALYTIC = setNoResult()
+    }
 
     ANALYTIC_CURRENT_SCREEN = this.props.currentScreen
-
-    if(this.props.resetOnOpen)
-      RESULT_ANALYTIC = setNoResult()
 
     this.hideModal = this.hideModal.bind(this)
 
@@ -287,8 +292,16 @@ export class ModalComptaAnalysis extends Component{
   }
 
   static reset(){
+    HAS_BEEN_SET    = false
     RESULT_ANALYTIC = setNoResult()
     return RESULT_ANALYTIC
+  }
+
+  static set(analysis = {}){
+    if(JSON.stringify(analysis) != '{}' && (isPresent(analysis[0].analysis) || isPresent(analysis[1].analysis) || isPresent(analysis[2].analysis))){
+      HAS_BEEN_SET    = true
+      RESULT_ANALYTIC = analysis
+    }
   }
 
   componentDidMount(){
@@ -314,7 +327,7 @@ export class ModalComptaAnalysis extends Component{
   setAnalytics(data={}, defaults={}){
     if(!isPresent(data) || JSON.stringify(data) == '{}' )
     {
-      RESULT_ANALYTIC = setNoResult()
+      ModalComptaAnalysis.reset()
       ANALYTICS = []
     }
     else
@@ -383,7 +396,7 @@ export class ModalComptaAnalysis extends Component{
     if(cancel)
     {
       this.refs.main_modal.closeModal(()=>this.props.hide(''))
-      RESULT_ANALYTIC = setNoResult()
+      ModalComptaAnalysis.reset()
     }
     else
     {
@@ -399,11 +412,11 @@ export class ModalComptaAnalysis extends Component{
             else
               total_ventilation += parseInt(r.ventilation)
           })
-          if(counter <= 0)
-            error_message = `Vous devez choisir au moin une section pour l'analyse ${i+1}`
-
           if(total_ventilation != 100)
             error_message = `La ventilation analytique doit être égale à 100% pour tous les sections de l'analyse ${i+1}`
+
+          if(counter <= 0)
+            error_message = `Vous devez choisir au moin une section pour l'analyse ${i+1}`
         }
       })
 

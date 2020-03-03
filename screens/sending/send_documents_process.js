@@ -12,7 +12,7 @@ import { Screen } from '../layout'
 
 import { ModalComptaAnalysis } from '../modals/compta_analytics'
 
-import { User, Document } from '../../models'
+import { User, Document, SendingParams } from '../../models'
 
 import { FileUploader } from "../../requests"
 
@@ -461,6 +461,8 @@ class SendScreen extends Component {
     GLOB.dataList = navigation.getParams('images')
     GLOB.sending_finished = false
 
+    this.fetchParams()
+
     this.state = {orientation: 'portrait', progress: 0, sending: false}
 
     this.ORstyle = []
@@ -471,9 +473,26 @@ class SendScreen extends Component {
                                   body: { flexDirection: 'column' }
                                 }
 
+    this.fetchParams = this.fetchParams.bind(this)
+    this.saveParams = this.saveParams.bind(this)
     this.uploadProgress = this.uploadProgress.bind(this)
     this.uploadComplete = this.uploadComplete.bind(this)
     this.uploadError = this.uploadError.bind(this)
+  }
+
+  fetchParams(){
+    const params = SendingParams.getParameters()
+
+    GLOB.customer = GLOB.customer || params.customer || ''
+    GLOB.period   = GLOB.period   || params.period   || ''
+    GLOB.journal  = GLOB.journal  || params.journal  || ''
+    GLOB.analysis = isPresent(params.analysis) ? params.analysis : GLOB.analysis
+
+    if(isPresent(GLOB.analysis)) ModalComptaAnalysis.set(GLOB.analysis)
+  }
+
+  saveParams(){
+    SendingParams.setParameters({customer: GLOB.customer, period: GLOB.period, journal: GLOB.journal, analysis: GLOB.analysis})
   }
 
   handleOrientation(orientation){
@@ -486,6 +505,7 @@ class SendScreen extends Component {
   }
 
   componentWillUnmount(){
+    this.saveParams()
     EventRegister.rm('progressUploadFile')
     EventRegister.rm('completeUploadFile')
   }
