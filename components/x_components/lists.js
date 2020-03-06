@@ -149,6 +149,8 @@ export class BoxList extends Component{
 
         if(this.itemCount > 0)
           view = this.datas.map((item, index) => {return this.renderItems(item, index)})
+        else if(this.props.noItemText != 'none')
+          view = <XText style={{padding: 10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
         await this.setState({ view: view })
         this.removeLoader()
@@ -163,8 +165,6 @@ export class BoxList extends Component{
     let content = <View />
     if(this.props.waitingData || !this.ready || this.newData)
       content = <Loader ref='loader' style={{marginTop: 25}} />
-    else if(this.itemCount <= 0 && this.props.noItemText != 'none')
-      content = <XText style={{padding: 10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
     return  <View style={{flex: 1}}>
               {this.props.title != '' && <XText style={[{flex:0}, Theme.lists.title]}>{this.props.title}</XText>}
@@ -224,11 +224,12 @@ export class LineList extends Component{
 
   removeLoader(){
     const startAnim = (index) => {
-      if(index < this.items.length){
-        try{
-          this.items[index].start(()=>{ startAnim(index + 1) })
-        }catch(e){ startAnim(index + 1) }
-      }
+      setTimeout(()=>{
+        if(index < this.items.length){
+          try{
+            this.items[index].start(()=>{ startAnim(index + 1) })
+          }catch(e){ startAnim(index + 1) }
+        }}, 30)
     }
     startAnim(0)
 
@@ -276,8 +277,11 @@ export class LineList extends Component{
       setTimeout(async ()=>{
         let view  = null
         this.items = []
+
         if(this.itemCount > 0)
           view = this.datas.map((item, index) => {return this.renderItems(item, index)})
+        else if(this.props.noItemText != 'none')
+          view = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
         await this.setState({ view: view })
         this.removeLoader()
@@ -292,8 +296,6 @@ export class LineList extends Component{
     let content = <View />
     if(this.props.waitingData || !this.ready || this.newData)
       content = <Loader ref='loader' style={{marginTop: 25}} />
-    else if(this.itemCount <= 0 && this.props.noItemText != 'none')
-      content = <XText style={{padding:10}}>{this.props.noItemText || 'Aucun résultat trouvé'}</XText>
 
     return <View style={{flex:1}}>
                 {isPresent(this.props.title) && <XText style={[this.styles.title, Theme.lists.title]}>{this.props.title}</XText>}

@@ -524,7 +524,9 @@ class SendScreen extends Component {
 
     if(index != null)
     {
-      setTimeout(()=>{ Document.delDocs([GLOB.documents[index].id_64]) }, 100)
+      const idToDel = [GLOB.documents[index].id_64]
+      setTimeout(()=>{ Document.delDocs(idToDel) }, 100)
+
       GLOB.documents[index] = img[0]
       Document.addDocs(img)
     }
@@ -632,9 +634,13 @@ class SendScreen extends Component {
             {
               await CameraRoll.saveToCameraRoll(image.path, 'photo').catch(e=>{})
               const object = await CameraRoll.getPhotos({ first: 1, assetType: 'Photos' })
-              const obj_uri = object.edges[0].node.image.uri
+              let lastChecksum = null
 
-              const lastChecksum = await getChecksum(obj_uri)
+              try{
+                const obj_uri = object.edges[0].node.image.uri
+                lastChecksum = await getChecksum(obj_uri)
+              }catch(e){}
+
               if(isPresent(contentChecksum) && isPresent(lastChecksum) && lastChecksum == contentChecksum)
               {
                 final_path = obj_uri
@@ -662,7 +668,7 @@ class SendScreen extends Component {
                       finish(image)
                     })
                    .catch(e => { finish(image) })
-          })
+          }).catch(e => { finish(image) })
         }catch(e){ finish(image) }
       })
     })

@@ -1,6 +1,6 @@
 {
   "name": "react-native-pdf",
-  "version": "5.1.0",
+  "version": "5.1.7",
   "summary": "A react native PDF view component",
   "description": "A react native PDF view component, support ios and android platform",
   "authors": "Wonday",
@@ -8,7 +8,7 @@
   "homepage": "https://github.com/wonday/react-native-pdf",
   "source": {
     "git": "https://github.com/wonday/react-native-pdf.git",
-    "tag": "v5.1.0"
+    "tag": "v5.1.7"
   },
   "requires_arc": true,
   "platforms": {

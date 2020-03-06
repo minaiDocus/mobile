@@ -9,6 +9,7 @@ target 'iDocus' do
   pod 'Firebase'
   pod 'Firebase/Messaging'
   pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
+  pod 'RNViewShot', :path => '../node_modules/react-native-view-shot'
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
   pod 'React', :path => '../node_modules/react-native'
@@ -30,6 +31,7 @@ target 'iDocus' do
 
 
     pod 'RNViewShot', :path => '../node_modules/react-native-view-shot'
+
 
   end
 
