@@ -579,9 +579,9 @@ class SendScreen extends Component {
         return { filename: filename, dirname: dirname, extension: extension }
       }
 
-      const finish = async (image) => {
+      const finish = async (img) => {
         await this.setState({ ready: true })
-        resolve(image)
+        resolve(img)
       }
 
       CameraRoll.getPhotos(
@@ -662,8 +662,10 @@ class SendScreen extends Component {
 
             RNFS.fs.exists(final_path)
                    .then(i => {
-                      if(img_to_del){ RNFS.fs.unlink(image.path) }
-                      image.path = final_path
+                      if(Config.platform == 'android'){
+                        if(img_to_del){ RNFS.fs.unlink(image.path) }
+                        image.path = final_path
+                      }
 
                       finish(image)
                     })
