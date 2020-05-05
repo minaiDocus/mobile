@@ -469,11 +469,22 @@ class SendScreen extends Component {
                         ImagePicker.openCamera({
                           cropping: false,
                         }).then(image => {
+                          let timeout_reached = true
+
                           this.saveFileToRoll(image).then(img => {
-                            this.renderImg([img])
+                            if(timeout_reached){ timeout_reached=false; this.renderImg([img]) }
                           }).catch(error=>{
-                            this.renderImg([image])
+                            if(timeout_reached){ timeout_reached=false; this.renderImg([image]) }
                           })
+
+                          //create a timeout function if saveFileToRoll never resolve
+                          setTimeout(()=>{
+                            if(timeout_reached){
+                              timeout_reached = false
+                              this.renderImg([image])
+                              this.setState({ ready: true })
+                            }
+                          }, 8000)
                         }).catch(error => {
                           this.renderError(error)
                         })
@@ -672,7 +683,7 @@ class SendScreen extends Component {
                    .catch(e => { finish(image) })
           }).catch(e => { finish(image) })
         }catch(e){ finish(image) }
-      })
+      }).catch((e) => { finish(image) })
     })
   }
 
