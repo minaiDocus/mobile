@@ -4,6 +4,7 @@ import Realm from 'realm'
 export class ActiveRecord {
   constructor(realmName, schema, objectName){
     this.objectName = objectName
+    this.schema = schema
 
     const properties = schema
     const _schema = {   
@@ -15,7 +16,7 @@ export class ActiveRecord {
     this._realm = new Realm({path: realmName + '.realm', schema:[_schema], encryptionKey: Config.keydb})
   }
   
-  deleteAll() {
+  deleteAll(){
     if(this.objectName.length > 0)
     {
       this._realm.write(()=>{
@@ -36,13 +37,22 @@ export class ActiveRecord {
   insert(datas){
     if(datas.length > 0 && this.objectName.length > 0)
     {
+      let max_id = null
+      if(this.schema.id == "int"){
+        let ids = this.find().map(f=>{ return f.id })
+        max_id  = (ids.length > 0)? Math.max(...ids) : 0
+      }
+
       this._realm.write(()=>{
-        datas.map((value, key)=>{ this._realm.create(this.objectName, value, true); })
+        datas.map((value, key)=>{
+          if(this.schema.id == "int" && max_id >= 0 && (value.id === undefined || value.id === null || value.id == '')){ value.id = max_id + 1 }
+          this._realm.create(this.objectName, value, true)
+        })
       })
     }
   }
 
-  find(where=""){    
+  find(where=""){
     if(this.objectName.length > 0)
     {
       if(where.length == 0) {  return this._realm.objects(this.objectName) }

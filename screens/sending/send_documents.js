@@ -484,7 +484,7 @@ class SendScreen extends Component {
                               this.renderImg([image])
                               this.setState({ ready: true })
                             }
-                          }, 8000)
+                          }, 5000)
                         }).catch(error => {
                           this.renderError(error)
                         })

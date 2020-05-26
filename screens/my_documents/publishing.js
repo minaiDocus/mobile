@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { View } from 'react-native'
 import { SimpleButton, AnimatedBox, Navigator, XText } from '../../components'
 
+import { Parameters } from '../../models'
+
 import { Screen } from '../layout'
 import { PiecesView } from './pieces_view'
 import { PreseizuresView } from './preseizures_view'
@@ -12,6 +14,7 @@ class PublishScreen extends Component{
 
     const navigation = new Navigator(this.props.navigation)
     this.type =  navigation.getParams('type') || 'pack'
+    this.show_preseizures = (Parameters.getParameter('show_preseizures') == 'false')? false : true
     this.filter = navigation.getParams('filter') || {}
     this.views = { 
                     pieces: { currentView: 'pieces', nextView: 'preseizures', nextTitle: '<< Pré-affectation >>' },
@@ -86,7 +89,7 @@ class PublishScreen extends Component{
           { this.state.currentView == 'preseizures' && <PreseizuresView ref='preseizures' initView={this.state.initView} navigation={ this.props.navigation }/> }
         </AnimatedBox>
         {
-          this.type == 'pack' &&
+          this.show_preseizures && this.type == 'pack' &&
           <View style={[{flex: 0}, Theme.head.shape, {padding: 1}]}>
             <SimpleButton title={this.state.nextTitle} CStyle={[{flex: 0, margin: 3}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>this.changeView(this.state.nextView)} />
           </View>

@@ -5,7 +5,7 @@ import { XImage,XText,TabNav,XTextInput,Navigator,SelectInput,Pagination,LineLis
 
 import { Screen } from '../layout'
 
-import { User } from '../../models'
+import { User, Parameters } from '../../models'
 
 import { UsersFetcher, DocumentsFetcher } from "../../requests"
 
@@ -367,6 +367,7 @@ class InvoicesScreen extends Component {
     super(props)
 
     this.state = {orientation: 'portrait'}
+    this.show_preseizures = (Parameters.getParameter('show_preseizures') == 'false')? false : true
 
     GLOB.dataFilter = {}
     GLOB.clientId = 0
@@ -394,6 +395,9 @@ class InvoicesScreen extends Component {
   }
 
   render() {
+      let headers = [{title: 'Documents'}]
+      if(this.show_preseizures){ headers = headers.concat([{title: "Opé. Bancaires"}]) }
+
       return (
         <Screen style={{flex: 1, flexDirection: 'column'}}
                 onChangeOrientation={(orientation)=>this.handleOrientation(orientation)}
@@ -404,15 +408,10 @@ class InvoicesScreen extends Component {
           <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
             <Header orientation={this.state.orientation} onFilter={()=>this.refreshDatas()} />
             <TabNav 
-              headers={ 
-                        [
-                          {title: "Documents"},
-                          {title: "Opé. Bancaires"},
-                        ]
-                      }
+              headers={ headers }
             >
               <DataBloc ref='documents' type='documents' />
-              <DataBloc ref='operations' type='operations' />
+              { this.show_preseizures && <DataBloc ref='operations' type='operations' /> }
             </TabNav>
           </View>
         </Screen>

@@ -88,6 +88,7 @@ class LoginScreen extends Component {
 
   goToHome(){
     Master = realmToJson(User.getMaster())
+    RemoteAuthentication.getParameters()
 
     try{
       this.refs.animated_copyright.leave(()=>{
