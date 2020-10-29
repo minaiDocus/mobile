@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { View, PanResponder, Animated, Image, StyleSheet, Platform, ImageEditor, ImageStore, Dimensions } from 'react-native'
+import { View, PanResponder, Animated, Image, StyleSheet, Platform, ImageStore, Dimensions } from 'react-native'
+import ImageEditor from '@react-native-community/image-editor'
 
 import { SimpleButton, ImageButton, XImage, XText, XModal } from './index'
 
@@ -39,7 +40,7 @@ class CropperGrill extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     this.setState({widthGrill: nextProps.width, heightGrill: nextProps.height})
   }
 
@@ -118,7 +119,7 @@ export class CropperView extends Component{
     this.getMinSize = this.getMinSize.bind(this)
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.openCropListener = EventRegister.on("openCropper", (options)=>{
       this.options = options
 
@@ -643,12 +644,11 @@ export class CropperView extends Component{
                       }
 
     ImageEditor.cropImage ( this.source, 
-                            cropData,
-                            (_success)=>{
+                            cropData
+                          ).then(_success => {
                               // this.beforeFinalization(_success, cropWidth, cropHeight)
                               this.createFinalImage(_success, cropWidth, cropHeight)
-                            },
-                            (_faillure)=>{
+                          }).catch(_faillure => {
                               // if(!this.checkRotation)
                               // {
                                 this.setState({processing: false})
@@ -660,8 +660,7 @@ export class CropperView extends Component{
                               //   this.checkRotation = false
                               //   this.processCropping()
                               // }
-                            }
-                          )
+                          })
   }
 
   beforeFinalization(_url, width, height){

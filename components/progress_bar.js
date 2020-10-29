@@ -15,7 +15,7 @@ export class ProgressBar extends Component{
     this.calculateProgress(this.props.progress)
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(isPresent(nextProps.progress) && nextProps.progress > 0)
       this.calculateProgress(nextProps.progress)
   }

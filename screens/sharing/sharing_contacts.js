@@ -121,7 +121,7 @@ class Header extends Component{
     this.generateStyles()
   }
   
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.externalOpenModal = EventRegister.on('externalOpenModal', (data) => {
         this.openForm(data)
     })
@@ -313,7 +313,7 @@ class OrderBox extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(prevProps){
+  UNSAFE_componentWillReceiveProps(prevProps){
     if(prevProps.visible == true)
     {
       this.setState({show: true})
@@ -402,7 +402,7 @@ class SharingScreen extends Component {
     this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.orderBoxListener = EventRegister.on('clickOrderBox_contacts', (data) => {
         this.toggleOrderBox()
     })

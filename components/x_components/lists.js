@@ -77,7 +77,7 @@ export class BoxList extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     this.newData = false
 
     try
@@ -202,7 +202,7 @@ export class LineList extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     this.newData = false
 
     try

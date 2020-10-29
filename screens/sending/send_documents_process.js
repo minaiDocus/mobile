@@ -499,7 +499,7 @@ class SendScreen extends Component {
     this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     EventRegister.on('progressUploadFile', this.uploadProgress)
     EventRegister.on('completeUploadFile', this.uploadComplete)
   }

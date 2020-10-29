@@ -52,7 +52,7 @@ export class AnimatedBox extends Component{
     this.callbackIn = this.props.callbackIn || null
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(typeof(nextProps.type) !== "undefined") this.type = nextProps.type
     if(typeof(nextProps.callbackIn) !== "undefined") this.callbackIn = nextProps.callbackIn
     if(typeof(nextProps.startAnim) !== "undefined") this.startAnim = nextProps.startAnim
@@ -441,6 +441,7 @@ export class AnimatedBox extends Component{
        {
          toValue: this.endX,
          duration: this.durationIn,
+         useNativeDriver: false
        })
     )
     if(this.startY != this.endY)
@@ -450,7 +451,8 @@ export class AnimatedBox extends Component{
          this.state.translateY,
          {
            toValue: this.endY,
-           duration: this.durationIn
+           duration: this.durationIn,
+           useNativeDriver: false
          })
       )
     }
@@ -461,7 +463,8 @@ export class AnimatedBox extends Component{
          this.state.scaleW,
          {
            toValue: this.endW,
-           duration: this.durationIn
+           duration: this.durationIn,
+           useNativeDriver: false
          })
       )
     }
@@ -472,7 +475,8 @@ export class AnimatedBox extends Component{
          this.state.scaleH,
          {
            toValue: this.endH,
-           duration: this.durationIn
+           duration: this.durationIn,
+           useNativeDriver: false
          })
       )
     }
@@ -489,6 +493,7 @@ export class AnimatedBox extends Component{
        {
          toValue: this.startX,
          duration: this.durationIn,
+         useNativeDriver: false
        })
     )
 
@@ -499,7 +504,8 @@ export class AnimatedBox extends Component{
          this.state.translateY,
          {
            toValue: this.startY,
-           duration: this.durationIn
+           duration: this.durationIn,
+           useNativeDriver: false
          })
       )
     }
@@ -510,7 +516,8 @@ export class AnimatedBox extends Component{
          this.state.scaleW,
          {
            toValue: this.startW,
-           duration: this.durationIn
+           duration: this.durationIn,
+           useNativeDriver: false
          })
       )
     }
@@ -521,7 +528,8 @@ export class AnimatedBox extends Component{
          this.state.scaleH,
          {
            toValue: this.startH,
-           duration: this.durationIn
+           duration: this.durationIn,
+           useNativeDriver: false
          })
       )
     }
@@ -536,6 +544,7 @@ export class AnimatedBox extends Component{
                   {
                     toValue: this.endAnim,
                     duration: this.durationIn,              // Make it take a while
+                    useNativeDriver: false
                   }
                   )
                 ]
@@ -547,6 +556,7 @@ export class AnimatedBox extends Component{
                     {
                       toValue: 1,
                       duration: this.durationIn,
+                      useNativeDriver: false
                     })
                 )
     }
@@ -561,6 +571,7 @@ export class AnimatedBox extends Component{
                   {
                     toValue: this.startAnim,
                     duration: this.durationOut,              // Make it take a while
+                    useNativeDriver: false
                   }
                 )
                ]
@@ -572,6 +583,7 @@ export class AnimatedBox extends Component{
                     {
                       toValue: 0,
                       duration: this.durationOut,
+                      useNativeDriver: false
                     })
                 )
     }

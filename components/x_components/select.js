@@ -23,7 +23,7 @@ class ModalSelect extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(nextProps.datas != this.state.datas)
     {
       if(this.filterType == 'advance'){
@@ -275,7 +275,7 @@ export class SelectInput extends Component{
     this.initValue(this.state.dataOptions, this.props.selectedItem)
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(nextProps.dataOptions != this.props.dataOptions || typeof(nextProps.selectedItem) !== "undefined" && nextProps.selectedItem != this.state.selectedItem)
     {
       let initVal = ""

@@ -1,4 +1,6 @@
-import { StackNavigator } from 'react-navigation'
+import { createAppContainer } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
+
 import { Easing, Animated } from 'react-native'
 
 import LoginScreen from './screens/login'
@@ -22,47 +24,47 @@ import './screens/themes'
 const StackNavigatorConfig = {
   initialRoutesName: 'Login',
   headerMode: 'none',
+  animationEnabled: false,
   transitionConfig: () => ({
     transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
+        duration: 0,
+        timing: 0,
     },
-  }),
+  })
 }
 
 
-const StackApp = StackNavigator({
-                                    Login: {
-                                      screen: LoginScreen,
-                                    }, 
-                                    Home: { 
-                                      screen: HomeScreen,
-                                    },
-                                    Send: {
-                                      screen: SendDocScreen
-                                    }, 
-                                    Sending: {
-                                      screen: SendProcessScreen
-                                    },
-                                    Invoices: {
-                                      screen: InvoicesScreen
-                                    },
-                                    Operations: {
-                                      screen: OperationsScreen
-                                    },
-                                    Publish: {
-                                      screen: PublishScreen
-                                    },
-                                    Stats: {
-                                      screen: StatsScreen
-                                    },
-                                    Sharing: {
-                                      screen: SharingScreen
-                                    },                             
-                                    SharingContacts: {
-                                      screen: SharingContactsScreen
-                                    }
-                                }, StackNavigatorConfig)
+const StackApp = createStackNavigator({
+                                          Login: {
+                                            screen: LoginScreen,
+                                          }, 
+                                          Home: { 
+                                            screen: HomeScreen,
+                                          },
+                                          Send: {
+                                            screen: SendDocScreen
+                                          }, 
+                                          Sending: {
+                                            screen: SendProcessScreen
+                                          },
+                                          Invoices: {
+                                            screen: InvoicesScreen
+                                          },
+                                          Operations: {
+                                            screen: OperationsScreen
+                                          },
+                                          Publish: {
+                                            screen: PublishScreen
+                                          },
+                                          Stats: {
+                                            screen: StatsScreen
+                                          },
+                                          Sharing: {
+                                            screen: SharingScreen
+                                          },                             
+                                          SharingContacts: {
+                                            screen: SharingContactsScreen
+                                          }
+                                      }, StackNavigatorConfig)
 
-export default StackApp
+export default createAppContainer(StackApp)

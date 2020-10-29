@@ -270,7 +270,7 @@ class OrderBox extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(prevProps){
+  UNSAFE_componentWillReceiveProps(prevProps){
     if(prevProps.visible === true){
       this.setState({show: true})
     }
@@ -427,7 +427,7 @@ class OperationsScreen extends Component {
     this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.orderBoxListener = EventRegister.on('clickOrderBox', (data) => {
         this.toggleOrderBox()
     })

@@ -18,7 +18,7 @@ export class OrganizationSwitcher extends Component{
     this.openSelection = this.openSelection.bind(this)
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.changingListener = EventRegister.on("OrganizationSwitched", ()=>{this.setState({showList: false, organization_id: OrganizationSwitcher.organization.id})})
   }
 

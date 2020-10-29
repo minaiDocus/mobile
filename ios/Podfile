@@ -33,6 +33,10 @@ target 'iDocus' do
     pod 'RNViewShot', :path => '../node_modules/react-native-view-shot'
 
 
+    pod 'react-native-image-editor', :path => '../node_modules/@react-native-community/image-editor'
+
+    pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
+
   end
 
   target 'iDocusTests' do

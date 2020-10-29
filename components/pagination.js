@@ -12,7 +12,7 @@ export class Pagination extends Component{
     this.changePage = this.changePage.bind(this)
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(nextProps.page >= 1 || nextProps.nb_pages){
       this.setState({page: (isPresent(nextProps.page)? nextProps.page : this.state.page), limit_page: (isPresent(nextProps.nb_pages)? nextProps.nb_pages : this.state.limit_page)})
     }

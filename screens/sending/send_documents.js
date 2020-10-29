@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, TouchableOpacity, Platform, ImageStore, ImageEditor, Image, Button, CameraRoll } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Platform, ImageStore, Image, Button } from 'react-native'
+import CameraRoll from '@react-native-community/cameraroll'
 import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
 import RNFS from 'rn-fetch-blob'
@@ -177,7 +178,7 @@ class ImgBox extends Component{
     this.generateStyles()
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.selectionListener = EventRegister.on('select_elements', (event)=>{
       if(isPresent(event.id) && event.id == this.element.id_64)
         this.selectItem(event.type)
@@ -189,7 +190,7 @@ class ImgBox extends Component{
     this.selectionListener = null
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(this.element.id_64 != nextProps.element.id_64){
       this.selectItem('out')
       this.element = nextProps.element
@@ -369,7 +370,7 @@ class SendScreen extends Component {
     this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(nextProps.navigation.state.params.resetSendScreen)
       this.resetScreen()
   }

@@ -30,7 +30,7 @@ export class XModal extends Component{
     this.prepareView = this.prepareView.bind(this)
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(nextProps.visible === true)
       this.setState({ visible: true })
     else if(nextProps.visible === false)

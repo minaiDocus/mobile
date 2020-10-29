@@ -13,7 +13,7 @@ import { RemoteAuthentication, UsersFetcher } from '../requests'
 let GLOB = { login: '', password: '', system_reject: false }
 
 class LoginScreen extends Component {
-  static navigationOptions = { header: null }
+  static navigationOptions = { headerShown: false }
 
   constructor(props){
     super(props)

@@ -171,7 +171,7 @@ class ModalMenu extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(typeof(nextProps.visible))
       this.setState({ visible: nextProps.visible })
   }

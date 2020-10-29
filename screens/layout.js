@@ -52,7 +52,7 @@ class FrontView extends Component{
     this.closeFrontView = this.closeFrontView.bind(this)
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', ()=>{ this.handleBackPress(); return true; });
   }
 
@@ -255,7 +255,7 @@ export class Screen extends Component{
     this.getFrontView = this.getFrontView.bind(this)
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.boxPanResponder = this.createPanResponder(this.panHandler)
   }
 
@@ -264,7 +264,7 @@ export class Screen extends Component{
     removeScreenKey(this.navigation.navigation.state.key)
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     try{
       if(nextProps.navigation.state.params.initScreen && this.screen_name != 'Login')
         this.dataLoader.fetch_all()

@@ -320,7 +320,7 @@ class HomeScreen extends Component {
     this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(nextProps.navigation.state.params.initScreen)
     {
       this.refreshDatas()

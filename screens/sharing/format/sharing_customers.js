@@ -270,7 +270,7 @@ class SharingScreen extends Component {
     this.setState({orientation: orientation}) // exemple use of Orientation changing
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.refreshPage = EventRegister.on('refreshPage', (data) => {
         this.refreshDatas()
     })

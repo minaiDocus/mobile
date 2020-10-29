@@ -690,7 +690,7 @@ class PreseizureBox extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(this.props.data.id != nextProps.data.id)
       this.initWith(nextProps)
   }
@@ -902,7 +902,7 @@ class BoxPublish extends Component{
     this.dismissForm = this.dismissForm.bind(this)
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.showFormListener = EventRegister.on('showPreseizureEdition', (params)=>{
       this.showForm(params.ids, (params.type || 'multi'))
     })
@@ -1021,7 +1021,7 @@ class CustomTabNav extends Component{
     this.changePage = this.changePage.bind(this)
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.refreshListener = EventRegister.on('refreshPreseizure', (renew = false)=>{
       this.refreshPreseizure(renew)
     })
@@ -1119,7 +1119,7 @@ export class PreseizuresView extends Component{
     GLOB.preseizures = GLOB.selectedItems = []
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.selectionItemsListener = EventRegister.on('selectionPreseizuresItems', this.handleSelection)
   }
 

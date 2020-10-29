@@ -157,7 +157,7 @@ export class UINotification extends Component{
       this.generateStyles() //style generation
     }
 
-    componentWillMount(){
+    UNSAFE_componentWillMount(){
       this.refreshNotificationsListener = EventRegister.on('refreshNotifications', ()=>{
         this.refreshData()
       })
@@ -329,7 +329,7 @@ export class FCMinit extends Component{
       this.addNotification = this.addNotification.bind(this)
     }
 
-    componentWillMount(){
+    UNSAFE_componentWillMount(){
       this.revokeTokenListener = EventRegister.on('revokeFCMtoken', ()=>{
         this.revokeToken()
       })

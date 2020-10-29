@@ -21,7 +21,7 @@ export class ProgressUpload extends Component{
     this.generateStyles()
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     EventRegister.on('progressUploadFile', this.uploadProgress)
   }
 

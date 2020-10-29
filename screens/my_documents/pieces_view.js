@@ -361,7 +361,7 @@ class ImgBox extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(this.props.data.id != nextProps.data.id)
       this.initWith(nextProps)
   }
@@ -708,7 +708,7 @@ export class PiecesView extends Component{
     GLOB.pagesPublished = GLOB.pagesPublishing = GLOB.selectedItems = []
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.selectionItemsListener = EventRegister.on('selectionItems', this.handleSelection)
   }
 

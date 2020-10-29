@@ -46,7 +46,7 @@ class ModalInput extends Component{
     this.timerTest = setInterval(keyboardTest, 200)
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
   }
@@ -322,7 +322,7 @@ export class XTextInput extends Component{
     this.generateStyles()
   }
 
-  componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps){
     if(typeof(nextProps.value) !== "undefined" && nextProps.value != this.initValue && !this.state.openKeyboard){
       this.initValue = nextProps.value
       this.changeText(nextProps.value)
