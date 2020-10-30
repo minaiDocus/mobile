@@ -84,6 +84,7 @@ global.handlingHttpErrors = (request, source="") => {
   }
 
   let errorMessage = ""
+  let notifyBug    = false
 
   switch(request.status){
     case 0 :
@@ -93,13 +94,15 @@ global.handlingHttpErrors = (request, source="") => {
       errorMessage = "Vous n'avez pas l'autorisation necessaire pour effectuer cette action"
       break;
     case 404:
-      errorMessage = "La requette envoyé au serveur n'existe pas"
+      notifyBug = true
+      errorMessage = "La requette envoyé au serveur n'existe pas \n ("+request.responseURL.replace(Config.http_host, '')+")"
       break;
     default:
+      notifyBug = true
       errorMessage = "Une erreur inattendue s'est produite !!(Error: "+request.status+")"
   } 
 
-  if(source != "")
+  if(source != "" || notifyBug)
   {
     const report =  {
                       source: source,

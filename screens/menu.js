@@ -3,6 +3,7 @@ import { EventRegister } from 'react-native-event-listeners'
 import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Slider, findNodeHandle, Animated } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { NavigationActions } from 'react-navigation'
+import { BlurView } from '@react-native-community/blur'
 
 import { XModal, XImage, XText, AnimatedBox, SimpleButton, LinkButton, ImageButton, ModalForm, XScrollView } from '../components'
 
@@ -77,6 +78,12 @@ class Footer extends Component{
   logOut(){
     this.props.navigate(null)
     renderToFrontView(  <View style={{flex:1, backgroundColor:'rgba(255,255,255,0.7)', alignItems:'center', justifyContent:'center'}}>
+                          <BlurView
+                              style={{position:'absolute', top:0, left:0, right:0, bottom:0, backgroundColor: "rgba(0,0,0,0.3)"}}
+                              blurType="light"
+                              blurAmount={1}
+                              blurRadius={2}
+                          />
                           <XImage loader={true} width={40} height={40} />
                         </View>)
 
@@ -215,12 +222,13 @@ class ModalMenu extends Component{
     this.styles = StyleSheet.create({
       container:{
                   flex:1,
-                  flexDirection:'row',
-                  backgroundColor: "rgba(0,0,0,0.5)"
+                  flexDirection:'row'
                 },
       box:{
+            position: 'absolute',
             flex:0,
-            width:230
+            width:230,
+            height: '100%'
           },
       gradient: {
                   flex:1, 
@@ -238,7 +246,16 @@ class ModalMenu extends Component{
                     onRequestClose={()=>{ this.modalDismiss() }}
             >
             <View style={[this.styles.container]}>
-              <AnimatedBox  ref="animatedMenu" 
+              <BlurView
+                  style={{position:'absolute', top:0, left:0, right:0, bottom:0, backgroundColor: "rgba(0,0,0,0.3)"}}
+                  blurType="light"
+                  blurAmount={1}
+                  blurRadius={2}
+              />
+              <TouchableWithoutFeedback style={{flex: 1}}  onPress={()=>this.modalDismiss()}>
+                <View style={{flex:1}} />
+              </TouchableWithoutFeedback>
+              <AnimatedBox  ref="animatedMenu"
                             style={[this.styles.box]}
                             type='LeftSlide'
                             animateOpacity={true}
@@ -252,9 +269,6 @@ class ModalMenu extends Component{
                   <Footer navigate={this.modalDismiss}/>
                 </LinearGradient>
               </AnimatedBox>
-              <TouchableWithoutFeedback style={{flex:1}} onPress={()=>this.modalDismiss()}>
-                <View style={{flex:1}} />
-              </TouchableWithoutFeedback>
             </View>
           </XModal>
   }

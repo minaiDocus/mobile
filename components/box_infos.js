@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { View, StyleSheet } from 'react-native'
+import { BlurView } from '@react-native-community/blur'
 
 import { ImageButton, XText, XScrollView } from './index'
 
@@ -41,6 +42,12 @@ export class BoxInfos extends Component{
 
   render(){
       return  <View style={this.styles.container} >
+                <BlurView
+                  style={{position:'absolute', top:0, left:0, right:0, bottom:0, backgroundColor: "rgba(0,0,0,0.3)"}}
+                  blurType="light"
+                  blurAmount={1}
+                  blurRadius={2}
+                />
                 <View style={[this.styles.box, Theme.modal.shape]}>
                   <View style={[this.styles.head, Theme.modal.head]}>
                      <XText style={[{flex: 1, paddingTop: 5}, Theme.modal.title]}>{this.props.title}</XText>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {View, StyleSheet} from 'react-native'
+import { BlurView } from '@react-native-community/blur'
 
 import {XModal, SimpleButton, XText, XTextInput, SelectInput, DatePicker, ImageButton, RadioButton, XScrollView } from './index'
 
@@ -94,8 +95,10 @@ export class ModalForm extends Component{
         paddingVertical:20
       },
       box:{
+        position: 'absolute',
         flex:0,
         width:'90%',
+        height:'100%',
       },
       head:{
         flex:0,
@@ -179,6 +182,12 @@ export class ModalForm extends Component{
     let f_style = this.props.FStyle || {}
 
     return <View style={[this.styles.container, c_style]} >
+            <BlurView
+                style={{position:'absolute', top:0, left:0, right:0, bottom:0, backgroundColor: "rgba(0,0,0,0.3)"}}
+                blurType="light"
+                blurAmount={1}
+                blurRadius={2}
+            />
             <View style={[this.styles.box, Theme.modal.shape, s_style]}>
               <View style={[this.styles.head, Theme.modal.head, h_style]}>
                 { isPresent(this.props.title) && <XText style={[{flex:1}, Theme.modal.title]}>{this.props.title}</XText> }

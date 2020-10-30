@@ -22,7 +22,7 @@ class ContactForm extends Component{
     this.type = (typeof(this.props.data.id_idocus) !== "undefined" && this.props.data.id_idocus > 0)? 'edit' : 'add'
     this.input_edit = true
 
-    this.dataForm = { email:'', company: '', first_name: '', last_name: '' }
+    this.dataForm = { id_idocus: '', email:'', company: '', first_name: '', last_name: '' }
     if(this.type == "edit")
     {
       this.input_edit = false
@@ -38,7 +38,7 @@ class ContactForm extends Component{
 
   validateProcess(){
     const form = this.refs.form_1
-    this.dataForm = { email: form.values.email, company: form.values.company, first_name: form.values.first_name, last_name: form.values.last_name }
+    this.dataForm = { id_idocus: this.dataForm.id_idocus, email: form.values.email, company: form.values.company, first_name: form.values.first_name, last_name: form.values.last_name }
 
     let url = ""
     let reload = true

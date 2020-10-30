@@ -22,48 +22,58 @@ import './Initializer'
 import './screens/themes'
 
 const StackNavigatorConfig = {
-  initialRoutesName: 'Login',
+  initialRouteName: 'Login',
   headerMode: 'none',
-  animationEnabled: false,
-  transitionConfig: () => ({
-    transitionSpec: {
-        duration: 0,
-        timing: 0,
-    },
-  })
 }
 
+const transitionAnimation = {
+  animationEnabled: true,
+  transitionSpec: {
+    open: { animation: 'timing', config: { duration: 0 } },
+    close: { animation: 'timing', config: { duration: 0 } },
+  }
+}
 
 const StackApp = createStackNavigator({
                                           Login: {
                                             screen: LoginScreen,
+                                            navigationOptions: transitionAnimation
                                           }, 
                                           Home: { 
                                             screen: HomeScreen,
+                                            navigationOptions: transitionAnimation
                                           },
                                           Send: {
-                                            screen: SendDocScreen
+                                            screen: SendDocScreen,
+                                            navigationOptions: transitionAnimation
                                           }, 
                                           Sending: {
-                                            screen: SendProcessScreen
+                                            screen: SendProcessScreen,
+                                            navigationOptions: transitionAnimation
                                           },
                                           Invoices: {
-                                            screen: InvoicesScreen
+                                            screen: InvoicesScreen,
+                                            navigationOptions: transitionAnimation
                                           },
                                           Operations: {
-                                            screen: OperationsScreen
+                                            screen: OperationsScreen,
+                                            navigationOptions: transitionAnimation
                                           },
                                           Publish: {
-                                            screen: PublishScreen
+                                            screen: PublishScreen,
+                                            navigationOptions: transitionAnimation
                                           },
                                           Stats: {
-                                            screen: StatsScreen
+                                            screen: StatsScreen,
+                                            navigationOptions: transitionAnimation
                                           },
                                           Sharing: {
-                                            screen: SharingScreen
+                                            screen: SharingScreen,
+                                            navigationOptions: transitionAnimation
                                           },                             
                                           SharingContacts: {
-                                            screen: SharingContactsScreen
+                                            screen: SharingContactsScreen,
+                                            navigationOptions: transitionAnimation
                                           }
                                       }, StackNavigatorConfig)
 

@@ -37,6 +37,8 @@ target 'iDocus' do
 
     pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
 
+    pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
+
   end
 
   target 'iDocusTests' do

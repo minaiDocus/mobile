@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Modal, View, SafeAreaView } from 'react-native'
+import { BlurView } from '@react-native-community/blur'
 
 import { AnimatedBox, XImage } from '../index'
 
@@ -80,7 +81,17 @@ export class XModal extends Component{
                     { ...this.other_props }
             >
               <SafeAreaView style={{flex: 1}}>
-                {!this.state.view && this.indication && <View style={{flex:0, alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}}><XImage loader={true} width={40} height={40} /></View>}
+                {!this.state.view && this.indication &&
+                  <View style={{flex:0, alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}}>
+                    <BlurView
+                        style={{position:'absolute', top:0, left:0, right:0, bottom:0, backgroundColor: "rgba(0,0,0,0.1)"}}
+                        blurType="light"
+                        blurAmount={1}
+                        blurRadius={2}
+                    />
+                    <XImage loader={true} width={40} height={40} />
+                  </View>
+                }
                 {this.state.view}
               </SafeAreaView>
             </Modal>

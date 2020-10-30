@@ -368,7 +368,6 @@ class Body extends Component{
 
   renderForm(){
   const valueProgress = this.props.progress
-  const colorBar = (valueProgress < 1)? "blue" : "#C0D838"
   const analysis_message = (ModalComptaAnalysis.exist()) ? 'Compta analytique (modifier)' : 'Compta analytique (ajouter)'
 
   return  <View style={{flex:1}}>
@@ -397,7 +396,7 @@ class Body extends Component{
             {valueProgress > 0 &&
               <View style={this.styles.progressBar}>
                 <ProgressBar progress={valueProgress} />
-                <XText style={{flex:1, textAlign:'center', color:colorBar}}>{(valueProgress < 1)? "Téléversement en cours ..." : "Téléversement terminé"}</XText>
+                <XText style={{flex:1, textAlign:'center', color:'#FFF', textShadowColor:'#5f85bf', textShadowOffset:{width: 1, height: 1}, textShadowRadius:0.1}}>{(valueProgress < 1)? "Téléversement en cours ..." : "Téléversement terminé"}</XText>
               </View>
             }
             {this.state.analysisOpen && <ModalComptaAnalysis currentScreen='file_sending' resetOnOpen={false} hide={(data)=>this.comptaAnalysisOnClose(data)} customer={GLOB.customer} journal={GLOB.journal} />}

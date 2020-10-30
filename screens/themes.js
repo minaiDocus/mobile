@@ -49,7 +49,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
 
   box: {
     borderRadius:3,
-    elevation: 7, //Android Shadow
+    // elevation: 7, //Android Shadow
     shadowColor: '#000',                  //===
     shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
     shadowOpacity: 0.8,                   //===
@@ -67,7 +67,7 @@ ThemeLists.push( { code: 'def', name: 'Défault', style: {
   lists:{
     shape: {
       borderRadius:3,
-      elevation: 7, //Android Shadow
+      // elevation: 7, //Android Shadow
       shadowColor: '#000',                  //===
       shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
       shadowOpacity: 0.8,                   //===

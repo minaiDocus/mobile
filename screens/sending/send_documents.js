@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { StyleSheet, View, TouchableOpacity, Platform, ImageStore, Image, Button } from 'react-native'
+import { BlurView } from '@react-native-community/blur'
 import CameraRoll from '@react-native-community/cameraroll'
 import base64 from 'base-64'
 import ImagePicker from 'react-native-image-crop-picker'
@@ -83,7 +84,6 @@ class BoxZoom extends Component{
         boxZoom:{
                   flex:1,
                   padding:"5%",
-                  backgroundColor:'rgba(0,0,0,0.8)',
                   flexDirection:'column',
                 },
         boxSwiper:{
@@ -144,6 +144,12 @@ class BoxZoom extends Component{
                     onRequestClose={()=>{ this.hideModal() }}
             >
               <View style={this.styles.boxZoom}>
+                <BlurView
+                    style={{position:'absolute', top:0, left:0, right:0, bottom:0, backgroundColor: "rgba(0,0,0,0.4)"}}
+                    blurType="light"
+                    blurAmount={1}
+                    blurRadius={2}
+                />
                 <View style={this.styles.boxSwiper}>
                   {this.state.ready && this.renderSwiper()}
                   {

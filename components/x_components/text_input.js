@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {View, TextInput, Platform, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Keyboard, Dimensions} from 'react-native'
+
 import {XModal, XImage, XText, SimpleButton, AnimatedBox, LinkButton, XScrollView} from '../index'
 
 class ModalInput extends Component{
@@ -132,7 +133,7 @@ class ModalInput extends Component{
                 flexDirection:'column',
                 alignItems:'center',
                 justifyContent:'center',
-                backgroundColor:'rgba(0,0,0,0.7)'
+                backgroundColor:'rgba(0,0,0,0.5)'
               },
       box:{
             flex:0,

@@ -150,7 +150,7 @@ class LoginScreen extends Component {
                   paddingHorizontal:3,
                   marginHorizontal:20,
 
-                  elevation: 7, //Android Shadow
+                  // elevation: 3, //Android Shadow
                     
                   shadowColor: '#000',                  //===
                   shadowOffset: {width: 0, height: 2},  //=== iOs shadow    
@@ -158,10 +158,11 @@ class LoginScreen extends Component {
                   shadowRadius: 2,                      //===
                 },
       textCharging: {
-                      fontSize:10,
+                      fontSize:13,
                       color:'#6D071A',
                       textAlign:'center',
-                      flex:1
+                      alignSelf: 'center',
+                      flex:0
                     },
       form: {
               flex:1,

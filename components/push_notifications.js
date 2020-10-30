@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { StyleSheet, View, TouchableOpacity} from 'react-native'
+
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
 import { EventRegister } from 'react-native-event-listeners'
 

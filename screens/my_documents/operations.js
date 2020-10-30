@@ -207,7 +207,7 @@ class Header extends Component{
             backgroundColor:'#FFF',
             paddingHorizontal:8,
 
-            elevation: 7, //Android Shadow
+            // elevation: 7, //Android Shadow
             
             shadowColor: '#000',                  //===
             shadowOffset: {width: 0, height: 0},  //=== iOs shadow    

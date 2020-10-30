@@ -176,7 +176,7 @@ class Header extends Component {
         backgroundColor: '#ddd',
         flexDirection: 'row',
         justifyContent: 'center',
-        elevation: 7, //Android Shadow
+        // elevation: 7, //Android Shadow
       },
       headLeft:{
         flex: 0,

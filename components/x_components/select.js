@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {Picker, View, Platform, TouchableOpacity, StyleSheet, FlatList} from 'react-native'
+import { BlurView } from '@react-native-community/blur'
 import {XModal, ImageButton, AnimatedBox, XImage, XText, XTextInput} from '../index'
 
 class ModalSelect extends Component{
@@ -114,7 +115,7 @@ class ModalSelect extends Component{
         backgroundColor:'#E1E2DD',
         borderColor:'#9E9E9E',
 
-        elevation: 4,
+        // elevation: 4,
 
         shadowColor: '#000',                  //===
         shadowOffset: {width: 0, height: 2},  //=== iOs shadow
@@ -218,6 +219,12 @@ class ModalSelect extends Component{
                     onRequestClose={()=>{ this.dismiss() }}
             >
               <View style={this.modal.container}>
+                <BlurView
+                    style={{position:'absolute', top:0, left:0, right:0, bottom:0, backgroundColor: "rgba(0,0,0,0.4)"}}
+                    blurType="light"
+                    blurAmount={1}
+                    blurRadius={2}
+                />
                 <TouchableOpacity onPress={()=>this.dismiss()} style={{flex:1}} />
                 <AnimatedBox ref="animatedSelect" type='UpSlide' style={{flex:1}} durationIn={300} durationOut={200}>
                   <View style={this.modal.head}>

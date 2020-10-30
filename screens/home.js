@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { EventRegister } from 'react-native-event-listeners'
 import { StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import { BlurView } from '@react-native-community/blur'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
 import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,XScrollView,AnimatedBox} from '../components'
@@ -276,6 +277,12 @@ class AppInfos extends Component{
   showInfos(){
     const AppInfos =  <TouchableWithoutFeedback onPress={()=>clearFrontView()}>
                         <View style={this.styles.content}>
+                            <BlurView
+                                style={{position:'absolute', top:0, left:0, right:0, bottom:0, backgroundColor: "rgba(0,0,0,0.3)"}}
+                                blurType="light"
+                                blurAmount={1}
+                                blurRadius={2}
+                            />
                             <View style={this.styles.box}>
                               <View style={this.styles.boxTitle}>
                                 <XText style={this.styles.title}>iDocus</XText>
