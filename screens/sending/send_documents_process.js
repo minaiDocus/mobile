@@ -446,7 +446,7 @@ class Footer extends Component{
   render(){
     return  <View style={[{flex: 0, flexDirection: 'row', padding: 1, width: '100%'}, Theme.head.shape]}>
               <SimpleButton CStyle={[{flex: 1}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>{this.leaveScreen()}} title="<< Precedent" />
-              {this.state.sending == false && this.props.sending == false && <SimpleButton CStyle={[{flex: 1, marginLeft: '3%'}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
+              {!UploadingFiles && this.state.sending == false && this.props.sending == false && <SimpleButton CStyle={[{flex: 1, marginLeft: '3%'}, Theme.secondary_button.shape, {paddingVertical: 3}]} TStyle={Theme.secondary_button.text} onPress={()=>{this.sendingDocs()}} title="Envoyer" />}
             </View>
   }
 }
@@ -471,6 +471,11 @@ class SendScreen extends Component {
     this.ORstyle["portrait"] =  {
                                   body: { flexDirection: 'column' }
                                 }
+
+    if(UploadingFiles)
+    {
+      Notice.info({title: "Transfert en cours ...", body: "Un transfert est en cours, Veuillez patienter avant de lancer un autre!!"}, { name: "uploading_files" })
+    }
 
     this.fetchParams = this.fetchParams.bind(this)
     this.saveParams = this.saveParams.bind(this)

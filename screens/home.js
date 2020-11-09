@@ -4,7 +4,7 @@ import { StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback } from 're
 import { BlurView } from '@react-native-community/blur'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
-import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,ProgressUpload,UINotification,XScrollView,AnimatedBox} from '../components'
+import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,UINotification,XScrollView,AnimatedBox} from '../components'
 
 import { Menu } from './menu'
 import { Screen } from './layout'
@@ -357,7 +357,6 @@ class HomeScreen extends Component {
     return <View style={{flex:1, flexDirection:'row', justifyContent: 'center'}}>
               <UINotification />
               <AppInfos />
-              <ProgressUpload />
            </View>
   }
   

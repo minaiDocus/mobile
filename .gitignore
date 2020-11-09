@@ -55,5 +55,8 @@ buck-out/
 # Bundle artifact
 *.jsbundle
 
-# CocoaPods
-/ios/Pods/
+#ignore iOS or Android folder
+/ios/
+
+#ignore config
+Config.js

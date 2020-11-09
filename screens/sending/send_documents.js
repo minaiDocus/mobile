@@ -8,7 +8,7 @@ import RNFS from 'rn-fetch-blob'
 import { NavigationActions } from 'react-navigation'
 import { EventRegister } from 'react-native-event-listeners'
 
-import { XModal,XScrollView,Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList,ProgressUpload } from '../../components'
+import { XModal,XScrollView,Cropper,CropperView,Navigator,XImage,XText,SimpleButton,BoxButton,ImageButton,Swiper,BoxList } from '../../components'
 
 import { Screen } from '../layout'
 
@@ -366,7 +366,7 @@ class SendScreen extends Component {
 
     if(UploadingFiles)
     {
-      Notice.info({title: "Transfert en cours ...", body: "Un transfert est en cours, Veuillez patienter avant de lancer un autre!!"})
+      Notice.info({title: "Transfert en cours ...", body: "Un transfert est en cours, Veuillez patienter avant de lancer un autre!!"}, { name: "uploading_files" })
     }
 
     this.generateStyles()
@@ -755,12 +755,6 @@ class SendScreen extends Component {
     })
   }
 
-  renderOptions(){
-    return <View style={{flex:1, minWidth:80, flexDirection:'row', minHeight:'100%'}}>
-              <ProgressUpload />
-           </View>
-  }
-
   render() {
       return (
         <Screen style={[{flex:1}, Theme.body]}
@@ -768,7 +762,6 @@ class SendScreen extends Component {
                 title='Envoi documents'
                 name='Send'
                 withMenu={true}
-                options={ this.renderOptions() }
                 navigation={this.props.navigation}>
           <View style={[{flex: 1}, this.ORstyle[this.state.orientation].body]}>
             <Header orientation={this.state.orientation} takePicture={()=>this.openCamera()} openRoll={()=>this.openRoll()} />

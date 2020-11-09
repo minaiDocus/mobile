@@ -22,24 +22,19 @@ export class ProgressUpload extends Component{
   }
 
   UNSAFE_componentWillMount(){
-    EventRegister.on('progressUploadFile', this.uploadProgress)
+    EventRegister.on('progressUploadFile_UI', this.uploadProgress)
+    EventRegister.on('completeUploadFile_UI', this.dismiss)
   }
 
   componentWillUnmount(){
-    EventRegister.rm('progressUploadFile')
+    EventRegister.rm('progressUploadFile_UI')
+    EventRegister.rm('completeUploadFile_UI')
   }
 
   uploadProgress(progressEvent){
-    if(!Notice.exist("progressUploadFile"))
-    {
-      let progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100)
-      if(progress >= 99){progress = 99}
-      this.setState({value: progress, show: true})
-    }
-    else
-    {
-      this.dismiss()
-    }
+    let progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100)
+    if(progress >= 99){progress = 99}
+    this.setState({value: progress, show: true})
   }
 
   showState(){
@@ -63,14 +58,15 @@ export class ProgressUpload extends Component{
             alignItems:'center',
             justifyContent:'center',
             marginRight:5,
-            marginTop:3,
+            marginTop:-17,
             right: 0,
-            position:'absolute'
+            position:'absolute',
+            zIndex: 20
           },
       gradient: {
                   flex:0,
-                  height:35,
-                  width:35,
+                  height:40,
+                  width:40,
                   borderRadius:100,
                   alignItems:'center',
                   justifyContent:'center'
@@ -87,19 +83,18 @@ export class ProgressUpload extends Component{
   }
 
   render(){
-    const colorGrad = ['#422D14', '#422D14', '#C0D838']
-    if(this.state.show && this.state.value < 99 && UploadingFiles)
+    // const colorGrad = ['#422D14', '#422D14', '#C0D838']
+    const colorGrad = ['#bb0b0b', '#fe1b00', '#f2f2f2']
+    if(this.state.show)
     {
-      return <View style={this.styles.box}>
-              <AnimatedBox ref="progressUpload" type="RightSlide" style={{flex: 0, borderColor:'#422D14',
-            borderWidth:2, borderRadius:100,}}>
-                <LinearGradient colors={colorGrad} style={this.styles.gradient}>
-                  <TouchableOpacity onPress={this.showState}>
+      return  <TouchableOpacity style={this.styles.box} onPress={this.showState}>
+                <AnimatedBox ref="progressUpload" type="RightSlide" style={{flex: 0, borderColor:'#FFF',
+                borderWidth:2, borderRadius:100,}}>
+                  <LinearGradient colors={colorGrad} style={this.styles.gradient}>
                     <XText style={this.styles.text}>{this.state.value} %</XText>
-                  </TouchableOpacity>
-                </LinearGradient>
-             </AnimatedBox>
-            </View>
+                  </LinearGradient>
+                </AnimatedBox>
+              </TouchableOpacity>
     }
     else
     {
@@ -146,9 +141,11 @@ export class UploderFiles{
 
   onProgress(progressEvent){
     EventRegister.emit('progressUploadFile', progressEvent)
+    EventRegister.emit('progressUploadFile_UI', progressEvent)
     let progress = progressEvent.loaded / progressEvent.total
     if(progress >= 0.99){progress = 0.99}
-    if(Notice.exist("progressUploadFile") || progress <= 0.05 || progress >= 0.95)
+
+    if(progress > 0.05)
       Notice.info(`Transfert de documents ${Math.floor(progress * 100)} %`, { permanent: true, name: "progressUploadFile" })
   }
 
@@ -157,10 +154,12 @@ export class UploderFiles{
     Document.syncDocs(Document.sending(), 'sent')
     UploadingFiles = false
     EventRegister.emit('completeUploadFile', result)
+    EventRegister.emit('completeUploadFile_UI', result)
   }
 
   onError(result){
     Notice.remove("progressUploadFile")
+    EventRegister.emit('completeUploadFile_UI', result)
 
     this.listLastSent = Document.sending()
 
