@@ -55,6 +55,8 @@ buck-out/
 # Bundle artifact
 *.jsbundle
 
+.gitignore
+
 #ignore iOS or Android folder
 ios/Pods
 android/
