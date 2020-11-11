@@ -123,8 +123,6 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    lintOptions { checkReleaseBuilds false }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -134,9 +132,8 @@ android {
         applicationId "com.idocus"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 24
-        versionName "2.04"
-        multiDexEnabled true
+        versionCode 1
+        versionName "1.0"
     }
     splits {
         abi {
@@ -153,20 +150,6 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release { 
-            storeFile file("../release_idocus.keystore") 
-            storePassword MYAPP_RELEASE_STORE_PASSWORD
-            keyAlias MYAPP_RELEASE_KEY_ALIAS
-            keyPassword MYAPP_RELEASE_KEY_PASSWORD
-        }
-    }
-    packagingOptions {
-       pickFirst 'lib/x86/libc++_shared.so'
-       pickFirst 'lib/x86_64/libjsc.so'
-       pickFirst 'lib/arm64-v8a/libjsc.so'
-       pickFirst 'lib/arm64-v8a/libc++_shared.so'
-       pickFirst 'lib/x86_64/libc++_shared.so'
-       pickFirst 'lib/armeabi-v7a/libc++_shared.so'
     }
     buildTypes {
         debug {
@@ -198,6 +181,7 @@ android {
 }
 
 dependencies {
+<<<<<<< HEAD
     implementation project(path: ":@react-native-firebase_messaging")
     implementation project(':react-native-image-size')
     implementation project(':react-native-view-shot')
@@ -222,6 +206,8 @@ dependencies {
     implementation 'com.facebook.fresco:animated-webp:1.10.0'
     implementation 'com.facebook.fresco:webpsupport:1.10.0'
 
+=======
+>>>>>>> 184ff98... Upgrade to 0.63.3
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
@@ -256,12 +242,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
-
-apply plugin: 'com.google.gms.google-services'
-
-project.ext.vectoricons = [
-    iconFontNames: [ 'FontAwesome.ttf' ] // Name of the font files you want to copy
-]
-apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

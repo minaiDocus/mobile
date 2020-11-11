@@ -371,13 +371,13 @@ export class FCMinit extends Component{
       EventRegister.rm(this.revokeTokenListener)
     }
 
-    initializeFCM(){
+    async initializeFCM(){
       FCMinitCheker = false
       // AppFcm = FCM
 
       // iOS: show permission prompt for the first call. later just check permission in user settings
       // Android: check permission in user settings
-      const authStatus = await messaging().requestPermission();
+      const authStatus = await messaging().requestPermission()
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;

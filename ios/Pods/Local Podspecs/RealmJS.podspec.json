@@ -1,6 +1,6 @@
 {
   "name": "RealmJS",
-  "version": "3.6.5",
+  "version": "10.0.1",
   "summary": "Realm is a mobile database: an alternative to SQLite and key-value stores",
   "license": "See the actual license in the file LICENSE",
   "authors": {
@@ -15,10 +15,10 @@
   "source": {
     "http": "https://github.com/realm/realm-js/blob/master/CONTRIBUTING.md#how-to-debug-react-native-podspec"
   },
-  "prepare_command": "node ./scripts/download-realm.js ios --sync",
+  "prepare_command": "./scripts/xcode-download-realm.sh ./scripts",
   "script_phases": {
     "name": "Download Realm Core & Sync",
-    "script": "echo \"Using Node.js $(node --version)\" && node ${PODS_TARGET_SRCROOT}/scripts/download-realm.js ios --sync",
+    "script": "${PODS_TARGET_SRCROOT}/scripts/xcode-download-realm.sh ${PODS_TARGET_SRCROOT}/scripts",
     "execution_position": "before_compile"
   },
   "source_files": [
@@ -33,6 +33,7 @@
     "src/object-store/src/impl/apple/*.cpp",
     "src/object-store/src/util/*.cpp",
     "src/object-store/src/util/apple/*.cpp",
+    "src/object-store/src/util/bson/*.cpp",
     "react-native/ios/RealmReact/*.mm",
     "vendor/*.cpp"
   ],
@@ -47,17 +48,18 @@
   "pod_target_xcconfig": {
     "CC": "$(PODS_TARGET_SRCROOT)/scripts/ccache-clang.sh",
     "CXX": "$(PODS_TARGET_SRCROOT)/scripts/ccache-clang++.sh",
-    "CLANG_CXX_LANGUAGE_STANDARD": "c++14",
+    "CLANG_CXX_LANGUAGE_STANDARD": "c++17",
     "CLANG_CXX_LIBRARY": "libc++",
     "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "NO",
     "CLANG_WARN_DOCUMENTATION_COMMENTS": "NO",
-    "CURRENT_PROJECT_VERSION": "3.6.5",
+    "CURRENT_PROJECT_VERSION": "10.0.1",
     "VERSIONING_SYSTEM": "apple-generic",
-    "HEADER_SEARCH_PATHS": "\"$(PODS_TARGET_SRCROOT)/src/\" \"$(PODS_TARGET_SRCROOT)/src/jsc/\" \"$(PODS_TARGET_SRCROOT)/src/object-store/src/\" \"$(PODS_TARGET_SRCROOT)/src/object-store/external/json/\" \"$(PODS_TARGET_SRCROOT)/vendor/\" \"$(PODS_TARGET_SRCROOT)/vendor/realm-ios/include/\" \"$(PODS_TARGET_SRCROOT)/react-native/ios/RealmReact/\" \"$(PODS_ROOT)/Headers/Public/React-Core/\""
+    "OTHER_CPLUSPLUSFLAGS[arch=armv7]": "-fno-aligned-new",
+    "HEADER_SEARCH_PATHS": "\"$(PODS_TARGET_SRCROOT)/src/\" \"$(PODS_TARGET_SRCROOT)/src/jsc/\" \"$(PODS_TARGET_SRCROOT)/src/object-store/src/\" \"$(PODS_TARGET_SRCROOT)/src/object-store/external/json/\" \"$(PODS_TARGET_SRCROOT)/vendor/\" \"$(PODS_TARGET_SRCROOT)/vendor/realm-ios/include/\" \"$(PODS_TARGET_SRCROOT)/vendor/realm-ios/include/realm/\" \"$(PODS_TARGET_SRCROOT)/react-native/ios/RealmReact/\" \"$(PODS_ROOT)/Headers/Public/React-Core/\""
   },
   "ios": {
     "vendored_libraries": [
-      "vendor/realm-ios/librealm-ios.a",
+      "vendor/realm-ios/librealm-sync-ios.a",
       "vendor/realm-ios/librealm-parser-ios.a"
     ]
   },

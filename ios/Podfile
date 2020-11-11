@@ -1,76 +1,75 @@
-# Uncomment the next line to define a global platform for your project
-platform :ios, '8.0'
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '10.0'
 
 target 'iDocus' do
-  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
-  # use_frameworks!
+  config = use_native_modules!
 
-  # Pods for iDocus
-  pod 'Firebase'
-  pod 'Firebase/Messaging'
-  pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
-  pod 'RNViewShot', :path => '../node_modules/react-native-view-shot'
-  pod 'RSKImageCropper'
-  pod 'QBImagePickerController'
-  pod 'React', :path => '../node_modules/react-native'
-  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga/yoga.podspec'
-  # pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
+  use_react_native!(:path => config["reactNativePath"])
+
+  pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
+
+  pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
+
+  pod 'react-native-image-editor', :path => '../node_modules/@react-native-community/image-editor'
+
+  pod 'RNCMaskedView', :path => '../node_modules/@react-native-community/masked-view'
+
+  pod 'react-native-exif', :path => '../node_modules/react-native-exif'
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
+  pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
+
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+
+  pod 'react-native-pdf', :path => '../node_modules/react-native-pdf'
+
+  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
+
+  pod 'RNScreens', :path => '../node_modules/react-native-screens'
+
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
+  pod 'react-native-view-shot', :path => '../node_modules/react-native-view-shot'
+
+  pod 'RealmJS', :path => '../node_modules/realm'
+
+  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
+
+  pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+
+  pod 'react-native-viewpager', :path => '../node_modules/@react-native-community/viewpager'
+
+
+  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+
+  pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
+
+  target 'iDocusTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable these next few lines.
+  use_flipper!
+  post_install do |installer|
+    flipper_post_install(installer)
+  end
+end
+
+target 'iDocus-tvOS' do
+  # Pods for iDocus-tvOS
 
   target 'iDocus-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
-
-    # pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
-    pod 'react-native-pdf', :path => '../node_modules/react-native-pdf'
-    pod 'RNImageCropPicker', :path =>  '../node_modules/react-native-image-crop-picker'
-    pod 'react-native-fcm', :path => '../node_modules/react-native-fcm'
-    pod 'react-native-exif', :path => '../node_modules/react-native-exif'
-
-    pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
-    # pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-
-
-    pod 'RNViewShot', :path => '../node_modules/react-native-view-shot'
-
-
-    pod 'react-native-image-editor', :path => '../node_modules/@react-native-community/image-editor'
-
-    pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
-
-    pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
-
-  end
-
-  target 'iDocusTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-end
-
-target 'iDocus-tvOS' do
-  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
-  # use_frameworks!
-
-  # Pods for iDocus-tvOS
-
-  #target 'iDocus-tvOSTests' do
-  #inherit! :search_paths
-      # Pods for testing
-  #end
-
-end
-
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    if target.name == 'yoga'
-      target.build_configurations.each do |config|
-        config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
-        config.build_settings['GCC_WARN_64_TO_32_BIT_CONVERSION'] = 'NO'
-      end
-    end
-    if target.name == "React"
-      target.remove_from_project
-    end
   end
 end
