@@ -56,7 +56,10 @@ buck-out/
 *.jsbundle
 
 #ignore iOS or Android folder
-ios/
+ios/Pods
+android/
 
 #ignore config
 Config.js
+
+.gitignore
