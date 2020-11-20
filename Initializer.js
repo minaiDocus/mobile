@@ -19,7 +19,7 @@ function fillWithZero(number, length_to = 2){
 
 //Globals functions && declarations
 global.FCMinitCheker = true //check initialization of FCM
-global.AppFcm = null
+// global.AppFcm = null
 
 global.Config = Config
 global.UploadingFiles = false

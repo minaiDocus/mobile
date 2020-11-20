@@ -56,7 +56,7 @@ buck-out/
 *.jsbundle
 
 #ignore iOS or Android folder
-/ios/
+ios/
 
 #ignore config
 Config.js

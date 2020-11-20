@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { StyleSheet, View, TouchableOpacity} from 'react-native'
 
-import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
+
+//import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
+import messaging from '@react-native-firebase/messaging'
 import { EventRegister } from 'react-native-event-listeners'
 
 import { ImageButton, BoxInfos, XText } from './index'
@@ -325,6 +327,7 @@ export class FCMinit extends Component{
 
       this.notifTimer = null
 
+      this.initiateNotificationListeners = this.initiateNotificationListeners.bind(this)
       this.handleMessages = this.handleMessages.bind(this)
       this.handleToken = this.handleToken.bind(this)
       this.addNotification = this.addNotification.bind(this)
@@ -340,65 +343,108 @@ export class FCMinit extends Component{
       if(FCMinitCheker)
         this.initializeFCM()
 
-      this.notificationListener = AppFcm.on(FCMEvent.Notification, async (notif) => {
-          //optional, do some component related stuff
-          this.handleMessages(notif)
-      })
+      this.initiateNotificationListeners()
 
-      this.refreshToken = AppFcm.on(FCMEvent.RefreshToken, (token) => {
-        // fcm token may not be available on first load, catch it here
-        // if(isPresent(Master.firebase_token))
-        //   FireBaseNotification.registerFirebaseToken(Master.firebase_token) //resend token to server
-        // else
+      this.refreshToken = messaging().onTokenRefresh(token => {
         this.handleToken(token)
       })
+
+      // this.notificationListener = AppFcm.on(FCMEvent.Notification, async (notif) => {
+      //     //optional, do some component related stuff
+      //     this.handleMessages(notif)
+      // })
+
+      // this.refreshToken = AppFcm.on(FCMEvent.RefreshToken, (token) => {
+      //   // fcm token may not be available on first load, catch it here
+      //   // if(isPresent(Master.firebase_token))
+      //   //   FireBaseNotification.registerFirebaseToken(Master.firebase_token) //resend token to server
+      //   // else
+      //   this.handleToken(token)
+      // })
     }
 
     componentWillUnmount(){
       // stop listening for events
-      this.notificationListener.remove()
+      this.notificationForegroundListener.remove()
+      // this.notificationBackgroundListener.remove()
       this.refreshToken.remove()
       EventRegister.rm(this.revokeTokenListener)
     }
 
     initializeFCM(){
       FCMinitCheker = false
-
-      AppFcm = FCM
+      // AppFcm = FCM
 
       // iOS: show permission prompt for the first call. later just check permission in user settings
       // Android: check permission in user settings
-      AppFcm.requestPermissions()
-          .then(()=>{/*NOTIFICATIONS ENABLED*/})
-          .catch(()=>{
-            Notice.info({ title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment" }, { permanent: false, name: "notif_block", delay: 10000 })
-          });
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
+      if (!enabled) {
+        Notice.info({ title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment" }, { permanent: false, name: "notif_block", delay: 10000 })
+      }
+
+      // AppFcm.requestPermissions()
+      //     .then(()=>{/*NOTIFICATIONS ENABLED*/})
+      //     .catch(()=>{
+      //       Notice.info({ title: "Notifications désactivés", body: "Vous pouvez activer les notifications dans les paramètres applications pour être informer des activités iDocus à tout moment" }, { permanent: false, name: "notif_block", delay: 10000 })
+      //     });
+
+
+      // getting firebase cloud messaging token
       if(!isPresent(Master.firebase_token)){
-        AppFcm.getFCMToken().then((token) => { /*getting firebase notifications token */ this.handleToken(token) })
+        messaging()
+          .getToken()
+          .then(token => {
+            return this.handleToken(token)
+          })
       }
       else{
         this.handleToken(Master.firebase_token)
       }
+
+      // if(!isPresent(Master.firebase_token)){
+      //   AppFcm.getFCMToken().then((token) => { getting firebase notifications token  this.handleToken(token) })
+      // }
+      // else{
+      //   this.handleToken(Master.firebase_token)
+      // }
       // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
       // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
       // initial notification will be triggered all the time even when open app by icon so send some action identifier when you send notification
-      AppFcm.getInitialNotification().then(notif => {
-         this.handleMessages(notif)
-      });
+      // AppFcm.getInitialNotification().then(notif => {
+      //    this.handleMessages(notif)
+      // });
+    }
+
+    initiateNotificationListeners(){
+      //Foreground Notifications
+      this.notificationForegroundListener = messaging().onMessage(async notif => {
+        //optional, do some component related stuff
+        this.handleMessages(notif)
+      })
+
+      //Background an Quit notifications (We don't use background notifications to wake up app for now)
+      // this.notificationBackgroundListener = messaging().setBackgroundMessageHandler(async notif => {
+      //   this.handleMessages(notif)
+      // })
     }
 
     revokeToken(){
       FCMinitCheker = true
 
-      AppFcm.deleteInstanceId()
-          .then(() => {
-            //Deleted instance id successfully
-            //This will reset Instance ID and revokes all tokens.
-          })
-          .catch(error => {
-            //Error while deleting instance id
-          });
+      messaging().deleteToken()
+
+      // AppFcm.deleteInstanceId()
+      //     .then(() => {
+      //       //Deleted instance id successfully
+      //       //This will reset Instance ID and revokes all tokens.
+      //     })
+      //     .catch(error => {
+      //       //Error while deleting instance id
+      //     });
     }
 
     handleMessages(notif){
@@ -417,7 +463,7 @@ export class FCMinit extends Component{
             }
 
             this.notifTimer = setInterval(openNotif, 1500)
-            AppFcm.removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
+            messaging().removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
           }
         }
       }

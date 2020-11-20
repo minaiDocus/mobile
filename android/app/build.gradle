@@ -198,12 +198,12 @@ android {
 }
 
 dependencies {
+    implementation project(path: ":@react-native-firebase_messaging")
     implementation project(':react-native-image-size')
     implementation project(':react-native-view-shot')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-image-resizer')
     implementation project(':react-native-exif')
-    implementation project(':react-native-fcm')
     implementation project(':realm')
     implementation project(':react-native-pdf')
     implementation project(':react-native-linear-gradient')
