@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View } from 'react-native'
-import DatePic from 'react-native-datepicker'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import { ImageButton, XText } from './index'
 
 export class DatePicker extends Component {
@@ -71,18 +71,16 @@ export class DatePicker extends Component {
   render(){
     return <View style={{flex: 1, flexDirection: 'row', alignItems:'center', justifyContent:'center'}}>
             { this.label && <View style={this.styles.labelBox}><XText style={[{flex: 0}, Theme.inputs.label]}>{this.label}</XText></View> }
-            <DatePic
-              date={this.state.date}
+            <DateTimePicker
+              value={this.state.date}
               mode="date"
               placeholder='select date'
               format="YYYY-MM-DD"
-              minDate={this.props.minDate || "2015-01-01"}
-              maxDate={this.props.maxDate || new Date()}
-              confirmBtnText="Confirm"
-              cancelBtnText="Cancel"
+              minimumDate={this.props.minDate || "2015-01-01"}
+              maximumDate={this.props.maxDate || new Date()}
               customStyles={this.styles}
               style={this.props.style}
-              onDateChange={(date) => this.handleChangeDate(date)}
+              onChange={(date) => this.handleChangeDate(date)}
             />
             {this.props.allowBlank && <ImageButton  source={{icon:"close"}}
                                                     CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:20}}

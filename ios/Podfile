@@ -50,6 +50,8 @@ target 'iDocus' do
 
   pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
 
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
   target 'iDocusTests' do
     inherit! :complete
     # Pods for testing
