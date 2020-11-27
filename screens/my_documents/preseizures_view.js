@@ -1058,7 +1058,8 @@ class CustomTabNav extends Component{
     DocumentsFetcher.waitFor([`getPreseizures(${s_id}, '${GLOB.source}',  ${this.page}, ${JSON.stringify(GLOB.dataFilter)})`], responses => {
       if(responses[0].error)
       {
-        Notice.danger(responses[0].message, { name: responses[0].message })
+        if(!responses[0].uniq_request)
+          Notice.danger(responses[0].message, { name: responses[0].message })
       }
       else
       {
@@ -1067,8 +1068,9 @@ class CustomTabNav extends Component{
         this.limit_page = responses[0].nb_pages
       }
 
-      this.setState({ready: true})
-    })
+      if(!responses[0].uniq_request)
+        this.setState({ready: true})
+    }, true)
   }
 
   render(){

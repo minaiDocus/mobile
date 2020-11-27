@@ -22,7 +22,7 @@ export class Requester {
     })
   }
 
-  async waitFor(func=[], callback){
+  async waitFor(func=[], callback, uniq_request=false){
     let slf = this
     setTimeout(()=>{
       let responses = []
@@ -38,18 +38,35 @@ export class Requester {
           callback(responses)
       }
 
+      const releaseRequest = (f)=>{
+        RemoteRequests = RemoteRequests.filter( k => { return k.toString() != f.toString() })
+      }
+
       const launchRequests = (f)=>{
-        // let func_name = f.split('(')[0].trim()
-        // let params = f.replace(/([^()]*)[(](.*)[)]/,'$2').trim()
+        let reqFound = false
+        if( RemoteRequests.find( k => { return k.toString() == f.toString() }) ){
+          reqFound = true
+        }
+        else{
+          RemoteRequests.push(f.toString())
+        }
 
-        // if(func_name == params){ params = '' }
-
-        // if(isPresent(params))
-        //   slf[func_name](eval(params)).then(r => handleResponses(r)).catch(r => handleResponses(r))
-        // else
-        //   slf[func_name]().then(r => handleResponses(r)).catch(r => handleResponses(r))
-        promises[i] = eval(`slf.${f}`)
-        promises[i].then(r => handleResponses(r)).catch(r => handleResponses(r))
+        if(reqFound && uniq_request){
+          handleResponses({ error: true, message: `Protected uniq Request: ${f.toString()}`, uniq_request: true })
+        } else {
+          promises[i] = eval(`slf.${f}`)
+          promises[i]
+            .then(r => {
+                handleResponses(r)
+                releaseRequest(f)
+              }
+            )
+            .catch(r => {
+                handleResponses(r)
+                releaseRequest(f)
+              }
+            )
+        }
       }
 
       launchRequests(func[0])

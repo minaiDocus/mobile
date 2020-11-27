@@ -606,7 +606,8 @@ class CustomTabNav extends Component{
     DocumentsFetcher.waitFor([`getDocumentsProcessed(${pack_id}, ${this.pagePublished}, ${JSON.stringify(GLOB.dataFilter)})`], responses => {
       if(responses[0].error)
       {
-        Notice.danger(responses[0].message, { name: responses[0].message })
+        if(!responses[0].uniq_request)
+          Notice.danger(responses[0].message, { name: responses[0].message })
       }
       else
       {
@@ -615,13 +616,16 @@ class CustomTabNav extends Component{
         this.limit_pagePublished = responses[0].nb_pages
       }
 
-      if(load_publishing)
+      if(!responses[0].uniq_request)
       {
-        this.refreshDocsPublishing(renew)
-      }
+        if(load_publishing)
+        {
+          this.refreshDocsPublishing(renew)
+        }
 
-      this.setState({published_ready: true})
-    })
+        this.setState({published_ready: true})
+      }
+    }, true)
   }
 
   refreshDocsPublishing(renew = true){
@@ -636,7 +640,8 @@ class CustomTabNav extends Component{
       DocumentsFetcher.waitFor([`getDocumentsProcessing(${pack_id}, ${this.pagePublishing})`], responses => {
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message, { name: responses[0].message })
+          if(!responses[0].uniq_request)
+            Notice.danger(responses[0].message, { name: responses[0].message })
         }
         else
         {
@@ -646,7 +651,7 @@ class CustomTabNav extends Component{
         }
 
         this.setState({publishing_ready: true})
-      })
+      }, true)
     }
     else
     {

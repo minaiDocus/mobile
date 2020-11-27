@@ -1,17 +1,23 @@
 import React, { Component } from 'react'
-import { View } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { ImageButton, XText } from './index'
+import { ImageButton, XText } from '../index'
 
 export class DatePicker extends Component {
   constructor(props){
     super(props)
+
+    let c_date = new Date()
+    try{
+      c_date = new Date(this.props.value.toString())
+    }catch{
+      c_date = new Date()
+    }
     
-    let c_date = this.props.value || new Date()
     if(this.props.allowBlank && !isPresent(this.props.value))
       c_date = null
 
-    this.state = { date: c_date }
+    this.state = { pickerShown: false, currentValue: c_date }
 
     if(this.props.onChange)
       this.props.onChange(c_date)
@@ -19,19 +25,39 @@ export class DatePicker extends Component {
     this.label = this.props.label || this.props.placeholder || null
     this.editable = (this.props.editable == false)? false : true
 
+    this.minDate = this.props.minDate || '2010-01-01'
+    this.maxDate = this.props.maxDate || formatDate(new Date, 'YYYY-MM-DD')
+
+    this.showPicker       = this.showPicker.bind(this)
+    this.handleChangeDate = this.handleChangeDate.bind(this)
+
     this.generateStyles()
   }
 
-  handleChangeDate(date){
+  showPicker(){
+    if(this.editable)
+      this.setState({ pickerShown: true })
+  }
+
+  handleChangeDate(event, date){
     if(this.editable){
-      this.setState({date: date})
-      if(this.props.onChange)
-        this.props.onChange(date)
+      let next_date = this.state.currentValue
+      if(event.type == 'set')
+        next_date = date
+
+      this.setState({ pickerShown: false, currentValue: next_date })
+
+      if(this.props.onChange){
+        if(next_date)
+          this.props.onChange(formatDate(next_date, 'YYYY-MM-DD'))
+        else
+          this.props.onChange(null)
+      }
     }
   }
 
   generateStyles(){
-    const date_input = Object.assign({height: 30, paddingLeft: 5, alignItems: 'flex-start'}, Theme.inputs.shape, {borderTopLeftRadius: 0, borderBottomLeftRadius: 0})
+    const date_input = Object.assign({height: 30, alignItems: 'flex-start'}, Theme.inputs.shape, {borderTopLeftRadius: 0, borderBottomLeftRadius: 0})
 
     this.styles = {
                       labelBox:{
@@ -48,20 +74,12 @@ export class DatePicker extends Component {
                         paddingLeft: 5,
                         backgroundColor: '#FFF',
                       },
-                      dateIcon: {
-                            position: 'absolute',
-                            left: 0,
-                            top: 4,
-                            marginLeft: 0
-                          },
                       dateInput: date_input,
                       dateText: {
-                        paddingLeft: 36,
                         color: Theme.inputs.text.color,
                         fontSize: Theme.global_text.fontSize || 12
                       },
                       placeholderText:{
-                        paddingLeft: 36,
                         color: Theme.inputs.text.color,
                         fontSize: Theme.global_text.fontSize || 12
                       }
@@ -69,23 +87,33 @@ export class DatePicker extends Component {
   }
 
   render(){
+    let true_value = this.props.placeholder || 'Choisissez une date'
+    let txt_style = this.styles.placeholderText
+    if (this.state.currentValue !== null){
+      txt_style  = this.styles.dateText
+      true_value = formatDate(this.state.currentValue, 'DD-MM-YYYY')
+    }
+
     return <View style={{flex: 1, flexDirection: 'row', alignItems:'center', justifyContent:'center'}}>
             { this.label && <View style={this.styles.labelBox}><XText style={[{flex: 0}, Theme.inputs.label]}>{this.label}</XText></View> }
-            <DateTimePicker
-              value={this.state.date}
-              mode="date"
-              placeholder='select date'
-              format="YYYY-MM-DD"
-              minimumDate={this.props.minDate || "2015-01-01"}
-              maximumDate={this.props.maxDate || new Date()}
-              customStyles={this.styles}
-              style={this.props.style}
-              onChange={(date) => this.handleChangeDate(date)}
-            />
+            <TouchableOpacity style={[{flex: 1}, this.styles.dateInput]} onPress={this.showPicker}>
+              <XText style={[{flex: 1, width:'100%', paddingTop: 4, paddingLeft: 5}, txt_style]}>{true_value}</XText>
+            </TouchableOpacity>
             {this.props.allowBlank && <ImageButton  source={{icon:"close"}}
                                                     CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:20}}
                                                     IStyle={{flex:0, width:19, height:19}}
-                                                    onPress={()=>{this.handleChangeDate(null)}} />}
+                                                    onPress={()=>{this.handleChangeDate({type: 'set'}, null)}} />}
+            {
+              this.state.pickerShown &&
+              <DateTimePicker
+                  value={this.state.currentValue || new Date()}
+                  mode="date"
+                  minimumDate={new Date(this.minDate.toString())}
+                  maximumDate={new Date(this.maxDate.toString())}
+                  display="default"
+                  onChange={(event, date) => this.handleChangeDate(event, date)}
+              />
+            }
           </View>
   }
 }

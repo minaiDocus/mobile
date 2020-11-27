@@ -19,8 +19,10 @@ function fillWithZero(number, length_to = 2){
 
 //Globals functions && declarations
 global.FCMinitCheker = true //check initialization of FCM
+global.AutoFCMNotif = false
 // global.AppFcm = null
 
+global.RemoteRequests = []
 global.Config = Config
 global.UploadingFiles = false
 global.Notice = Notice

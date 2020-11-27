@@ -3,7 +3,6 @@ import { EventRegister } from 'react-native-event-listeners'
 import { StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 import { BlurView } from '@react-native-community/blur'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
-
 import { XImage,XText,TabNav,Navigator,BoxButton,ImageButton,LinkButton,UINotification,XScrollView,AnimatedBox} from '../components'
 
 import { Menu } from './menu'
@@ -345,12 +344,17 @@ class HomeScreen extends Component {
     this.setState({updated: false})
 
     DocumentsFetcher.waitFor(['refreshPacks()'], responses=>{
-      if(responses[0].error)
-        Notice.danger(responses[0].message, { name: responses[0].message })
-      else
+      if(responses[0].error){
+        if(!responses[0].uniq_request)
+          Notice.danger(responses[0].message, { name: responses[0].message })
+      }
+      else{
         GLOB.datas = responses[0].packs || []
-      this.setState({updated: true})
-    })
+      }
+
+      if(!responses[0].uniq_request)
+        this.setState({updated: true})
+    }, true)
   }
 
   renderOptions(){

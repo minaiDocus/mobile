@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { StyleSheet, View, TouchableOpacity} from 'react-native'
 
-
-//import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm'
 import messaging from '@react-native-firebase/messaging'
 import { EventRegister } from 'react-native-event-listeners'
 
@@ -11,137 +9,6 @@ import { ImageButton, BoxInfos, XText } from './index'
 import { User, Notification } from '../models'
 
 import { FireBaseNotification } from '../requests'
-
-/* SIMPLE USAGE >>
-    // this shall be called regardless of app state: running, background or not running. Won't be called when app is killed by user in iOS
-    FCM.on(FCMEvent.Notification, async (notif) => {
-        // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
-        if(notif.local_notification){
-          //this is a local notification
-        }
-        if(notif.opened_from_tray){
-          //iOS: app is open/resumed because user clicked banner
-          //Android: app is open/resumed because user clicked banner or tapped app icon
-        }
-        // await someAsyncCall();
-
-        if(Platform.OS ==='ios'){
-          //optional
-          //iOS requires developers to call completionHandler to end notification process. If you do not call it your background remote notifications could be throttled, to read more about it see https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623013-application.
-          //This library handles it for you automatically with default behavior (for remote notification, finish with NoData; for WillPresent, finish depend on "show_in_foreground"). However if you want to return different result, follow the following code to override
-          //notif._notificationType is available for iOS platfrom
-          switch(notif._notificationType){
-            case NotificationType.Remote:
-              notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
-              break;
-            case NotificationType.NotificationResponse:
-              notif.finish();
-              break;
-            case NotificationType.WillPresent:
-              notif.finish(WillPresentNotificationResult.All) //other types available: WillPresentNotificationResult.None
-              break;
-          }
-        }
-    });
-    FCM.on(FCMEvent.RefreshToken, (token) => {
-        console.log(token)
-        // fcm token may not be available on first load, catch it here
-    });
-<< END USAGE */
-/*
-class Example extends Component {
-    componentDidMount() {
-        // iOS: show permission prompt for the first call. later just check permission in user settings
-        // Android: check permission in user settings
-        FCM.requestPermissions().then(()=>console.log('granted')).catch(()=>console.log('notification permission rejected'));
-        
-        FCM.getFCMToken().then(token => {
-            console.log(token)
-            // store fcm token in your server
-        });
-        
-        this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
-            // optional, do some component related stuff
-        });
-        
-        // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
-        // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
-        // initial notification will be triggered all the time even when open app by icon so send some action identifier when you send notification
-        FCM.getInitialNotification().then(notif => {
-           console.log(notif)
-        });
-    }
-
-    componentWillUnmount() {
-        // stop listening for events
-        this.notificationListener.remove();
-    }
-
-    otherMethods(){
-
-        FCM.subscribeToTopic('/topics/foo-bar');
-        FCM.unsubscribeFromTopic('/topics/foo-bar');
-        FCM.presentLocalNotification({
-            id: "UNIQ_ID_STRING",                               // (optional for instant notification)
-            title: "My Notification Title",                     // as FCM payload
-            body: "My Notification Message",                    // as FCM payload (required)
-            sound: "default",                                   // as FCM payload
-            priority: "high",                                   // as FCM payload
-            click_action: "ACTION",                             // as FCM payload
-            badge: 10,                                          // as FCM payload IOS only, set 0 to clear badges
-            number: 10,                                         // Android only
-            ticker: "My Notification Ticker",                   // Android only
-            auto_cancel: true,                                  // Android only (default true)
-            large_icon: "ic_launcher",                           // Android only
-            icon: "ic_launcher",                                // as FCM payload, you can relace this with custom icon you put in mipmap
-            big_text: "Show when notification is expanded",     // Android only
-            sub_text: "This is a subText",                      // Android only
-            color: "red",                                       // Android only
-            vibrate: 300,                                       // Android only default: 300, no vibration if you pass 0
-            wake_screen: true,                                  // Android only, wake up screen when notification arrives
-            group: "group",                                     // Android only
-            picture: "https://google.png",                      // Android only bigPicture style
-            ongoing: true,                                      // Android only
-            my_custom_data:'my_custom_field_value',             // extra data you want to throw
-            lights: true,                                       // Android only, LED blinking (default false)
-            show_in_foreground                                  // notification when app is in foreground (local & remote)
-        });
-
-        FCM.scheduleLocalNotification({
-            fire_date: new Date().getTime(),      //RN's converter is used, accept epoch time and whatever that converter supports
-            id: "UNIQ_ID_STRING",    //REQUIRED! this is what you use to lookup and delete notification. In android notification with same ID will override each other
-            body: "from future past",
-            repeat_interval: "week" //day, hour
-        })
-
-        FCM.getScheduledLocalNotifications().then(notif=>console.log(notif));
-
-        //these clears notification from notification center/tray
-        FCM.removeAllDeliveredNotifications()
-        FCM.removeDeliveredNotification("UNIQ_ID_STRING")
-
-        //these removes future local notifications
-        FCM.cancelAllLocalNotifications()
-        FCM.cancelLocalNotification("UNIQ_ID_STRING")
-
-        FCM.setBadgeNumber(1);                                       // iOS and supporting android.
-        FCM.getBadgeNumber().then(number=>console.log(number));     // iOS and supporting android.
-        FCM.send('984XXXXXXXXX', {
-          my_custom_data_1: 'my_custom_field_value_1',
-          my_custom_data_2: 'my_custom_field_value_2'
-        });
-
-        FCM.deleteInstanceId()
-            .then( () => {
-              //Deleted instance id successfully
-              //This will reset Instance ID and revokes all tokens.
-            })
-            .catch(error => {
-              //Error while deleting instance id
-            });
-    }
-}
-*/
 
 export class UINotification extends Component{
     constructor(props){
@@ -170,6 +37,7 @@ export class UINotification extends Component{
       })
 
       this.openNotifsListener = EventRegister.on('openNotifications', ()=>{
+        AutoFCMNotif = false
         this.toggleListNotifications()
       })
     }
@@ -209,14 +77,15 @@ export class UINotification extends Component{
       FireBaseNotification.waitFor(['getNotifications()'], responses=>{
         if(responses[0].error)
         {
-          Notice.danger(responses[0].message, { name: responses[0].message })
+          if(!responses[0].uniq_request)
+            Notice.danger(responses[0].message, { name: responses[0].message })
         }
         else
         {
           let datas = responses[0].notifications || []
           this.addNotifToRealm(datas)
         }
-      })
+      }, true)
     }
 
     addNotifToRealm(datas){
@@ -235,6 +104,7 @@ export class UINotification extends Component{
       {
         this.listNotifView = null
         this.releaseNewNotif()
+        Notice.remove('push_notification_alert', true)
         clearFrontView()
       }
 
@@ -365,9 +235,9 @@ export class FCMinit extends Component{
 
     componentWillUnmount(){
       // stop listening for events
-      this.notificationForegroundListener.remove()
-      // this.notificationBackgroundListener.remove()
-      this.refreshToken.remove()
+      this.notificationForegroundListener = null
+      this.notificationBackgroundListener = null
+      this.refreshToken = null
       EventRegister.rm(this.revokeTokenListener)
     }
 
@@ -423,13 +293,13 @@ export class FCMinit extends Component{
       //Foreground Notifications
       this.notificationForegroundListener = messaging().onMessage(async notif => {
         //optional, do some component related stuff
-        this.handleMessages(notif)
+        this.handleMessages(notif, 'foreground')
       })
 
-      //Background an Quit notifications (We don't use background notifications to wake up app for now)
-      // this.notificationBackgroundListener = messaging().setBackgroundMessageHandler(async notif => {
-      //   this.handleMessages(notif)
-      // })
+      //Background an Quit notifications
+      this.notificationBackgroundListener = messaging().setBackgroundMessageHandler(async notif => {
+        this.handleMessages(notif, 'background')
+      })
     }
 
     revokeToken(){
@@ -447,26 +317,9 @@ export class FCMinit extends Component{
       //     });
     }
 
-    handleMessages(notif){
-      if(isPresent(notif))
-      {
-        if(typeof(notif.message) != "undefined")
-        {
-          this.addNotification(notif)
-
-          if(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray)
-          {
-            const openNotif = ()=>{
-              EventRegister.emit("openNotifications")
-              clearInterval(this.notifTimer)
-              this.notifTimer = null
-            }
-
-            this.notifTimer = setInterval(openNotif, 1500)
-            messaging().removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
-          }
-        }
-      }
+    handleMessages(notif, type='foreground'){
+      if(isPresent(notif) && isPresent(notif.notification))
+        this.addNotification(notif, type)
     }
 
     handleToken(token = ""){
@@ -483,20 +336,31 @@ export class FCMinit extends Component{
       }
     }
 
-    addNotification(notif){
-      let notification = []
-
+    addNotification(notif, type='foreground'){
       let message = ""
-      if(isPresent(notif.message)){
-        message = JSON.parse(notif.message)
+      if(isPresent(notif.notification)){
+        if(isPresent(notif.data)){
+          try{
+            message = JSON.parse(notif.data.toString())
+          }catch(e){
+            message = notif.data
+          }
+        }
+        else
+        {
+          try{
+            message = JSON.parse(notif.notification.toString())
+          }catch(e){
+            message = notif.notification
+          }
+        }
       }
 
-      if(!(typeof(notif.opened_from_tray) !== "undefined" && notif.opened_from_tray))
-      {
+      if(type == 'foreground'){
         const mess_obj =  <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
                             <View style={{flex:1, paddingHorizontal:20}}>
                               <XText style={{flex:1, color:'#FFF', fontWeight:"bold"}}>Nouvelle notification</XText>
-                              <XText style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!!</XText>
+                              <XText style={{flex:1, color:'#C0D838', fontSize:10}}>Vous avez un nouveau message!! : {message.title}</XText>
                             </View>
                             <ImageButton  source={{icon:"bell"}}
                               IOptions={{color: '#FFF'}}
@@ -507,11 +371,12 @@ export class FCMinit extends Component{
         Notice.info(mess_obj, { permanent: true, name: "push_notification_alert" })
       }
 
-      if(isPresent(message) && message.to_be_added == true)
+      if(isPresent(message) && (message.to_be_added == true || message.to_be_added == 'true'))
       {
-        let sendDate = formatDate((notif["google.sent_time"] || new Date()), "YYYY-MM-DDTHH:ii:ss")
+        let notification = []
+        let sendDate = formatDate((notif["sentTime"] || new Date()), "YYYY-MM-DDTHH:ii:ss")
         notification = [{
-                          "id": notif["google.message_id"] || sendDate,
+                          "id": notif["messageId"] || sendDate,
                           "title": message.title,
                           "message": message.body,
                           "created_at": sendDate,
@@ -523,6 +388,20 @@ export class FCMinit extends Component{
       else
       {
         EventRegister.emit('refreshNotifications')
+      }
+
+      if(type == 'background' && AutoFCMNotif == false)
+      {
+        AutoFCMNotif = true
+
+        const openNotif = ()=>{
+          EventRegister.emit("openNotifications")
+          clearInterval(this.notifTimer)
+          this.notifTimer = null
+        }
+
+        this.notifTimer = setInterval(openNotif, 1500)
+        // messaging().removeAllDeliveredNotifications() //clear all notification from center/tray when one of them has been taped
       }
     }
 

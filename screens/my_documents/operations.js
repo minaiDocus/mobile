@@ -503,8 +503,10 @@ class OperationsScreen extends Component {
           responses.map(r=>{
             if(r.error)
             {
-              Notice.danger(r.message, { name: r.message })
-              this.setState({ready: true, limitPage: 1, total: 0})
+              if(!r.uniq_request){
+                Notice.danger(r.message, { name: r.message })
+                this.setState({ready: true, limitPage: 1, total: 0})
+              }
             }
             else
             {
@@ -513,7 +515,7 @@ class OperationsScreen extends Component {
               this.setState({ready: true, datas: datas, limitPage: r.nb_pages, total: r.total, waiting_operations_count: r.waiting_operations_count})
             }
         })
-      })
+      }, true)
     }
     else
     {

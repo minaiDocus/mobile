@@ -3,7 +3,7 @@ import { View, BackHandler, PanResponder, SafeAreaView} from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { EventRegister } from 'react-native-event-listeners'
 import PropTypes from 'prop-types'
-import { NoticeBox, ProgressUpload, XImage, XText, AnimatedBox, ImageButton, Navigator, XModal, UINotification } from '../components'
+import { NoticeBox, ProgressUpload, XImage, XText, AnimatedBox, ImageButton, Navigator, XModal, UINotification, FCMinit as FCM} from '../components'
 
 import { Menu } from './menu'
 
@@ -392,7 +392,7 @@ export class Screen extends Component{
               </LinearGradient>
               <FrontView ref='main_front_view' />
               <NoticeBox />
-              { /* !this.noFCM && <FCM /> */ }
+              { !this.noFCM && <FCM /> }
               { !this.noFCMUi && !this.noFCM && <UINotification visible={false} /> }
            </SafeAreaView>
   }

@@ -42,7 +42,7 @@ class Inputs extends Component{
               <View style={{flex: 1}}>
                 {type == 'input' && <XTextInput {...this.props} placeholder={this.props.label} editable={this.props.editable} value={this.state.value} onChangeText={(value)=>{this.changeValue(value)}} CStyle={[{flex:1}, inputStyle]} />}
                 {type == 'select' && <SelectInput placeholder={this.props.label} editable={this.props.editable} selectedItem={this.state.value} CStyle={{flex:1}} style={inputStyle} dataOptions={this.props.dataOptions} onChange={(value) => {this.changeValue(value)}} />}
-                {type == 'date' && <DatePicker placeholder={this.props.label} editable={this.props.editable} value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1}} minDate={this.props.options.minDate} maxDate={this.props.options.maxDate} allowBlank={this.props.options.allowBlank || false} />}
+                {type == 'date' && <DatePicker label={this.props.label} placeholder={'Choisissez une date'} editable={this.props.editable} value={this.state.value} onChange={(date)=>this.changeValue(date)} style={{flex:1}} minDate={this.props.options.minDate} maxDate={this.props.options.maxDate} allowBlank={this.props.options.allowBlank || false} />}
                 {type == 'radio' && <RadioButton label={this.props.label} editable={this.props.editable} value={this.state.value} dataOptions={this.props.dataOptions} onChange={(value)=>this.changeValue(value)} CStyle={{flex:1}} />}
                 {isPresent(this.props.hint) && <XText style={[{flex: 1, paddingTop: 3, color: '#A6A6A6'}, Theme.textItalic]}>{this.props.hint}</XText>}
               </View>

@@ -4,7 +4,7 @@ const Config = {
   build_code: 9,
   version: '2.04',
   cp_year: '2020',
-  platform: 'ios', 
+  platform: 'android', 
 
   // http_host: "http://192.168.0.36:3000/",
   // server:"local",

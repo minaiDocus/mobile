@@ -65,6 +65,7 @@ class Header extends Component{
 
   closeFilter(withFilter="none"){
     const form = this.refs.form_1
+
     GLOB.dataFilter = {}
 
     GLOB.dataFilter['by_all'] = {
@@ -328,8 +329,10 @@ class DataBloc extends Component {
         responses.map(r=>{
           if(r.error)
           {
-            Notice.danger(r.message, { name: r.message })
-            this.setState({ready: true, limitPage: 1, total: 0})
+            if(!r.uniq_request){
+              Notice.danger(r.message, { name: r.message })
+              this.setState({ready: true, limitPage: 1, total: 0})
+            }
           }
           else
           {
@@ -342,7 +345,7 @@ class DataBloc extends Component {
             this.setState({ready: true, datas: datas, limitPage: r.nb_pages, total: r.total})
           }
       })
-    })
+    }, true)
   }
 
   changePage(page=1){
