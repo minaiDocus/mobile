@@ -118,7 +118,7 @@ export class DatePicker extends Component {
     return <View style={{flex: 1, flexDirection: 'row', alignItems:'center', justifyContent:'center'}}>
             { this.label && <View style={this.styles.labelBox}><XText style={[{flex: 0}, Theme.inputs.label]}>{this.label}</XText></View> }
             <TouchableOpacity style={[{flex: 1}, this.styles.dateInput]} onPress={this.showPicker}>
-              <XText style={[{flex: 1, width:'100%', paddingTop: 7, paddingLeft: 5}, txt_style]}>{true_value}</XText>
+              <XText style={[{flex: 1, width:'100%', paddingTop: (Config.platform == 'android' ? 5 : 6), paddingLeft: 6}, txt_style]}>{true_value}</XText>
             </TouchableOpacity>
             {this.props.allowBlank && this.editable && <ImageButton  source={{icon:"close"}}
                                                     CStyle={{flex:0, flexDirection:'column', alignItems:'center', justifyContent:'center', width:20}}
