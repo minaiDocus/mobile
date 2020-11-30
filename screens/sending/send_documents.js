@@ -159,7 +159,7 @@ class BoxZoom extends Component{
                   }
                 </View>
                 { this.state.ready &&
-                  <View style={{flex:0,flexDirection:'row'}}>
+                  <View style={{flex:0, flexDirection:'row', backgroundColor: '#FFF', paddingVertical: 4}}>
                     <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.hideModal()} title="Retour" />
                     <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.cropElement()} title="Recadrer" />
                     <SimpleButton CStyle={[{flex:1, marginHorizontal:3}, Theme.primary_button.shape]} TStyle={Theme.primary_button.text} onPress={()=>this.deleteElement()} title="Enlever" />
