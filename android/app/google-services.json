@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "943977158450",
+    "firebase_url": "https://idocus-2018.firebaseio.com",
+    "project_id": "idocus-2018",
+    "storage_bucket": "idocus-2018.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:943977158450:android:0a33ea579c87c31d",
+        "android_client_info": {
+          "package_name": "com.idocus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "943977158450-n56jgld92n48cmscoqbncqi3cj2oj17m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFIYzry0Pic8psZAPocrbirAzyhYdGk5w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
