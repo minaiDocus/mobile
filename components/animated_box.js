@@ -616,8 +616,15 @@ export class AnimatedBox extends Component{
     const visibility = this.state.ready? {opacity:1} : {opacity:0}
     const final_style = [stylePlus, visibility, animationStyle]
 
-    return  <Animated.View style={final_style} onLayout={this.onLayoutOnce}>
-              {this.props.children}
-            </Animated.View>
+    try{
+      return  <Animated.View style={final_style} onLayout={this.onLayoutOnce}>
+                {this.props.children}
+              </Animated.View>
+    }catch(e){
+      console.warn('Animation error')
+      return  <Animated.View style={[stylePlus, visibility]} onLayout={this.onLayoutOnce}>
+                {this.props.children}
+              </Animated.View>
+    }
   }
 }

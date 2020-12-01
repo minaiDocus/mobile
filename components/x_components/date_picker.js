@@ -131,8 +131,8 @@ export class DatePicker extends Component {
                       indication={false}
                       visible={true}
                       onRequestClose={()=>{}} >
-                <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.7)'}}>
-                  <View style={{flex: 1, backgroundColor: '#FFF', marginVertical: '30%', marginHorizontal: 12, paddingTop: 15, justifyContent: 'center'}}>
+                <TouchableOpacity style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.7)'}} onPress={()=>this.closePicker('dismiss')}>
+                  <TouchableOpacity style={{flex: 1, backgroundColor: '#FFF', marginVertical: '30%', marginHorizontal: 12, paddingTop: 15, justifyContent: 'center'}} onPress={null}>
                     <View style={{flex: 0}}>
                       { picker() }
                     </View>
@@ -140,8 +140,8 @@ export class DatePicker extends Component {
                       <SimpleButton title='Annuler' CStyle={[Theme.primary_button.shape, {flex: 1, marginRight: 7}]} TStyle={Theme.primary_button.text} onPress={()=>this.closePicker('dismiss')} />
                       <SimpleButton title='Ok' CStyle={[Theme.primary_button.shape, {flex: 1}]} TStyle={Theme.primary_button.text} onPress={()=>this.closePicker('set')} />
                     </View>
-                  </View>
-                </View>
+                  </TouchableOpacity>
+                </TouchableOpacity>
               </XModal>
             }
             {
