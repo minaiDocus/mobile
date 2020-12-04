@@ -210,17 +210,18 @@ class Body extends Component{
         FileUploader.waitFor(["refreshFormUsers()"], responses => {
           if(responses[0].error)
           {
-            Notice.danger(responses[0].message, { name: responses[0].message })
+            if(!responses[0].uniq_request)
+              Notice.danger(responses[0].message, { name: responses[0].message })
           }
           else
           {
             users = User.findByListOf("code", responses[0].userList)
 
             this.customers = [{value:"", label:"Choisir un client"}].concat(User.createSelection(users))
-            this.handleChangeCustomer(GLOB.customer, true)
+            window.setTimeout( ()=>{ this.handleChangeCustomer(GLOB.customer, true)}, 700 )
           }
           this.setState({ready: true, paramsReady: true, period_start: "", period_expired: ""})
-        })
+        }, true)
       }
     }
     loading()
@@ -247,7 +248,7 @@ class Body extends Component{
   }
 
   handleChangeCustomer(value, init=false){
-    if(!init){ this.setState({ paramsReady: false, comptaAnalysisActivated: false, comptaAnalysisResume: false }) }
+    this.setState({ paramsReady: false, comptaAnalysisActivated: false, comptaAnalysisResume: false })
 
     let opt_period = []
     let opt_journal = []
@@ -259,7 +260,9 @@ class Body extends Component{
         if(opt_journal.length > 0) GLOB.journal = GLOB.journal || opt_journal[0].value || ''
         if(opt_period.length > 0) GLOB.period =  GLOB.period || opt_period[0].value || ''
 
-        GLOB.customer = value.toString()
+        if(isPresent(value))
+          GLOB.customer = value.toString()
+
         this.setState({ paramsReady: true, journalsOptions: opt_journal, periodsOptions: opt_period, comptaAnalysisActivated: compta_analysis, comptaAnalysisResume: ModalComptaAnalysis.exist() })
     }
 
@@ -271,26 +274,28 @@ class Body extends Component{
       }
 
       FileUploader.waitFor([`refreshFormParams(${value})`], responses => {
-        const file_upload_params = responses[0].data
-        if(isPresent(file_upload_params))
+        if(!(responses[0].error && responses[0].uniq_request))
         {
-          opt_journal = [].concat(file_upload_params.journals.map((journal, index) => { return {value: journal.split(" ")[0].toString(), label: journal.toString()} }))
-          opt_period = [].concat(file_upload_params.periods.map((prd, index) => { return {value: prd[1].toString(), label: prd[0].toString()} }))
-          compta_analysis = file_upload_params.compta_analysis
-          if(!compta_analysis){ GLOB.analysis = ModalComptaAnalysis.reset() }
-          message = file_upload_params.message
+          const file_upload_params = responses[0].data
+          if(isPresent(file_upload_params))
+          {
+            opt_journal = [].concat(file_upload_params.journals.map((journal, index) => { return {value: journal.split(" ")[0].toString(), label: journal.toString()} }))
+            opt_period = [].concat(file_upload_params.periods.map((prd, index) => { return {value: prd[1].toString(), label: prd[0].toString()} }))
+            compta_analysis = file_upload_params.compta_analysis
+            if(!compta_analysis){ GLOB.analysis = ModalComptaAnalysis.reset() }
+            message = file_upload_params.message
+          }
+          refreshParams()
         }
-        refreshParams()
-      })
+      }, true)
     }
     else
     {
       if(init){
         GLOB.journal = GLOB.period = GLOB.customer = ''
         GLOB.analysis = ModalComptaAnalysis.reset()
-      }else{
-        refreshParams()
       }
+      refreshParams()
     }
   }
 
@@ -370,6 +375,10 @@ class Body extends Component{
   const valueProgress = this.props.progress
   const analysis_message = (ModalComptaAnalysis.exist()) ? 'Compta analytique (modifier)' : 'Compta analytique (ajouter)'
 
+  let baseColor = null
+  if(valueProgress == 1)
+    baseColor = ['#0e6b0e', '#0f0']
+
   return  <View style={{flex:1}}>
             <SelectInput textInfo={`Clients (${this.customers.length - 1})`} filterSearch={true} selectedItem={GLOB.customer} dataOptions={this.customers} CStyle={this.styles.select} style={{color:'#707070'}} onChange={(value)=>this.handleChangeCustomer(value)}/>
             {this.state.paramsReady &&
@@ -395,7 +404,7 @@ class Body extends Component{
             {!this.state.paramsReady && this.renderLoading()}
             {valueProgress > 0 &&
               <View style={this.styles.progressBar}>
-                <ProgressBar progress={valueProgress} />
+                <ProgressBar progress={valueProgress} baseColor={baseColor} />
                 <XText style={{flex:1, textAlign:'center', color:'#FFF', textShadowColor:'#5f85bf', textShadowOffset:{width: 1, height: 1}, textShadowRadius:0.1}}>{(valueProgress < 1)? "Téléversement en cours ..." : "Téléversement terminé"}</XText>
               </View>
             }

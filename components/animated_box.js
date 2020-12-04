@@ -213,9 +213,9 @@ export class AnimatedBox extends Component{
       if(this.state.manualMove)
       {
         if(this.css == 'left')
-          sValue = this.current_position.x || this.startAnim
+          sValue = this.current_position.x || this.startAnim || 0
         else if(this.css == 'top')
-          sValue = this.current_position.y || this.startAnim
+          sValue = this.current_position.y || this.startAnim || 0
       }
       await this.setState({cssAnim: new Animated.Value(sValue), manualMove: false, ready: true})
     }

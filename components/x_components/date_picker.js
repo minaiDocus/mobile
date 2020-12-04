@@ -9,11 +9,11 @@ export class DatePicker extends Component {
 
     let c_date = new Date()
     try{
-      c_date = new Date(this.props.value.toString())
-    }catch{
+      c_date = new Date(this.props.value)
+    }catch(e){
       c_date = new Date()
     }
-    
+
     if(this.props.allowBlank && !isPresent(this.props.value))
       c_date = null
 
@@ -21,8 +21,12 @@ export class DatePicker extends Component {
 
     this.next_date = new Date()
 
-    if(this.props.onChange)
-      this.props.onChange(c_date)
+    let formated_date = null
+    if(c_date)
+      formated_date = formatDate(c_date, 'YYYY-MM-DD')
+
+    if(this.props.onChange && formated_date != this.props.value)
+      this.props.onChange(formated_date)
 
     this.label = this.props.label || this.props.placeholder || null
     this.editable = (this.props.editable == false)? false : true

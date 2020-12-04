@@ -7,7 +7,7 @@ export class ProgressBar extends Component{
   constructor(props){
     super(props)
 
-    this.state = {width: 0}
+    this.state = {width: 0, baseColor: this.props.baseColor || ['#00F', '#26C4EC']}
     this.generateStyles()
   }
 
@@ -18,6 +18,9 @@ export class ProgressBar extends Component{
   UNSAFE_componentWillReceiveProps(nextProps){
     if(isPresent(nextProps.progress) && nextProps.progress > 0)
       this.calculateProgress(nextProps.progress)
+
+    if(isPresent(nextProps.baseColor))
+      this.setState({ baseColor: nextProps.baseColor })
   }
 
   calculateProgress(progress){
@@ -55,7 +58,7 @@ export class ProgressBar extends Component{
     this.generateStyles()
     const stylePlus = this.props.style || {}
     return  <LinearGradient colors={['#FFF', '#CECECE']} style={[this.styles.container, stylePlus]}>
-              <LinearGradient colors={['#00F', '#26C4EC']} style={[this.styles.bar, {width: `${this.state.width}%`}]}>
+              <LinearGradient colors={this.state.baseColor} style={[this.styles.bar, {width: `${this.state.width}%`}]}>
                 <XText style={this.styles.text}>{Math.ceil(this.state.width)} %</XText>
               </LinearGradient>
             </LinearGradient>

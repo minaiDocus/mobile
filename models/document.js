@@ -109,7 +109,7 @@ class _document extends ActiveRecord {
       let newPath = null
       if(uri.toString().match(/rct\-image\-store\:/))
         newPath = this.RNFS.dirs.CacheDir
-      this.RNFS.readFile(uri, 'base64').then(data64 => resolve({data64, newPath})).catch(failure => reject(failure))
+      this.RNFS.readFile(uri.replace('file://', ''), 'base64').then(data64 => resolve({data64, newPath})).catch(failure => reject(failure))
     })
   }
 
