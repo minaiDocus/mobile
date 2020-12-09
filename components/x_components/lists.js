@@ -67,6 +67,8 @@ export class BoxList extends Component{
     this.datas = this.props.datas || []
     this.itemCount = 0
     this.padding = 2
+    this.width   = 0
+    this.elements = 1
 
     this.state = {view: null}
 
@@ -134,6 +136,7 @@ export class BoxList extends Component{
 
   renderItems(item, key){
     const wd = (this.width) / this.elements
+
     return  <View key={key} style={[this.styles.children, this.childStylePlus, {width: (wd - this.padding), padding: this.padding, margin: 0}]}>{this.props.renderItems(item, key)}</View>
   }
 
