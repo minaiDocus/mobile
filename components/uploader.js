@@ -34,7 +34,12 @@ export class ProgressUpload extends Component{
   uploadProgress(progressEvent){
     let progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100)
     if(progress >= 99){progress = 99}
-    this.setState({value: progress, show: true})
+
+    let _show = this.state.show
+    if((progress > 5 && progress <= 10) || (progress > 94 && progress <= 99))
+      _show = true
+
+    this.setState({value: progress, show: _show})
   }
 
   showState(){
@@ -145,7 +150,7 @@ export class UploderFiles{
     let progress = progressEvent.loaded / progressEvent.total
     if(progress >= 0.99){progress = 0.99}
 
-    if(progress > 0.05)
+    if((progress > 0.05 && progress <= 0.10) || (progress > 0.94 && progress <= 0.99))
       Notice.info(`Transfert de documents ${Math.floor(progress * 100)} %`, { permanent: true, name: "progressUploadFile" })
   }
 
