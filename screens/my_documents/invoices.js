@@ -15,6 +15,7 @@ class Header extends Component{
   constructor(props){
     super(props)
     this.state = {search: "", ready: false, filter: false}
+    this.show_preseizures = (Parameters.getParameter('show_preseizures') == 'false')? false : true
 
     GLOB.clientId = 0
     GLOB.dataFilter = {}
@@ -79,17 +80,20 @@ class Header extends Component{
                                     content: form.values.content,
                                     tags: form.values.tags,
                                   }
-    GLOB.dataFilter['by_preseizure'] =  {
-                                          is_delivered: form.values.is_delivered,
-                                          third_party: form.values.third_party,
-                                          piece_number: form.values.piece_number,
-                                          delivery_tried_at: form.values.delivery_tried_at,
-                                          delivery_tried_at_operation: isPresent(form.values.delivery_tried_at)? '0' : '',
-                                          date: form.values.date,
-                                          date_operation: isPresent(form.values.date)? '0' : '',
-                                          amount: form.values.amount,
-                                          amount_operation: isPresent(form.values.amount)? '0' : '',
-                                        }
+
+    if(this.show_preseizures){
+      GLOB.dataFilter['by_preseizure'] =  {
+                                            is_delivered: form.values.is_delivered,
+                                            third_party: form.values.third_party,
+                                            piece_number: form.values.piece_number,
+                                            delivery_tried_at: form.values.delivery_tried_at,
+                                            delivery_tried_at_operation: isPresent(form.values.delivery_tried_at)? '0' : '',
+                                            date: form.values.date,
+                                            date_operation: isPresent(form.values.date)? '0' : '',
+                                            amount: form.values.amount,
+                                            amount_operation: isPresent(form.values.amount)? '0' : '',
+                                          }
+    }
 
     GLOB.dataFilter = jsonCompact(GLOB.dataFilter, true)
 
@@ -145,19 +149,23 @@ class Header extends Component{
     }
     const max_date = `${year}-${formatNumber(month, '00')}-${day}`
 
-    const inputs =  [
+    let inputs =  [
                       { label:'Nom du lot', name: 'name', value: name },
                       { label:'Contenu', name: 'content', value: content },
                       { label:'N° de pièce iDocus', name: 'position', keyboardType: 'numeric', value: position },
                       { label:'Tags', name: 'tags', value: tags },
-                      { separator:'Filtre lié à la pré-affectation' },
-                      { label:'Livraison écriture comptable', name: 'is_delivered', type: 'select', dataOptions:[{label: 'Tous', value: ''}, {label: 'Livrée', value: '1'}, {label: 'Non livrée', value: '2'}], value: is_delivered },
-                      { label:'Date livraison', name: 'delivery_tried_at', type: 'date', allowBlank: true, value: delivery_tried_at },
-                      { label:'Date facture', name: 'date', type: 'date', maxDate: max_date, allowBlank: true, value: date },
-                      { label:'Nom de tiers', name: 'third_party', value: third_party },
-                      { label:'N° de pièce d\'origine', name: 'piece_number', value: piece_number },
-                      { label:'Montant', name: 'amount', keyboardType: 'decimal-pad', value: amount },
-                    ]
+                  ]
+    if(this.show_preseizures){
+      inputs = inputs.concat([
+                              { separator:'Filtre lié à la pré-affectation' },
+                              { label:'Livraison écriture comptable', name: 'is_delivered', type: 'select', dataOptions:[{label: 'Tous', value: ''}, {label: 'Livrée', value: '1'}, {label: 'Non livrée', value: '2'}], value: is_delivered },
+                              { label:'Date livraison', name: 'delivery_tried_at', type: 'date', allowBlank: true, value: delivery_tried_at },
+                              { label:'Date facture', name: 'date', type: 'date', maxDate: max_date, allowBlank: true, value: date },
+                              { label:'Nom de tiers', name: 'third_party', value: third_party },
+                              { label:'N° de pièce d\'origine', name: 'piece_number', value: piece_number },
+                              { label:'Montant', name: 'amount', keyboardType: 'decimal-pad', value: amount },
+                            ])
+    }
 
     return inputs
   }

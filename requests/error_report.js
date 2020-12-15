@@ -5,7 +5,7 @@ class error_report {
     const params =  {
                       title: title, 
                       error: error, 
-                      user_id: Master.id || "not connected",
+                      user_id: Master.id_idocus || "not connected",
                       user_token: Master.auth_token || "not connected",
                       platform: Config.platform,
                       version: Config.version,

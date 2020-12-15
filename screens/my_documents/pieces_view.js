@@ -10,6 +10,8 @@ import { ModalComptaAnalysis } from '../modals/compta_analytics'
 
 import { DocumentsFetcher, FileUploader } from "../../requests"
 
+import { Parameters } from '../../models'
+
 let GLOB = { Pack:{}, pagesPublished:[], pagesPublishing:[], idZoom:"", dataFilter: {}, selectedItems:[], press_action: 'zoom', currPiecePagePublished: 1, currPiecePagePublishing: 1, currPieceTab: 0 }
 
 function getImgStampOf(state=''){
@@ -112,6 +114,7 @@ class BoxZoom extends Component{
 
     exist = GLOB.selectedItems.find(elem => { return elem == this.props.data.id })
 
+    this.show_preseizures = (Parameters.getParameter('show_preseizures') == 'false')? false : true
     this.src = null
     this.state = { nb_pages: 0, current_page: 1, is_selected: exist? true : false }
 
@@ -220,7 +223,9 @@ class BoxZoom extends Component{
 
     const selection_img = this.state.is_selected ? 'ban' : 'check'
 
-    let stamp_img = getImgStampOf(this.props.data.state)
+    let stamp_img = 'none'
+    if(this.show_preseizures)
+      stamp_img = getImgStampOf(this.props.data.state)
 
     let piece_number = GLOB.idZoom + 1
     let style_number = {backgroundColor:'#BEBEBD'}
@@ -353,6 +358,7 @@ class ImgBox extends Component{
     this.state = { is_selected: false }
 
     this.selectionListener = null
+    this.show_preseizures = (Parameters.getParameter('show_preseizures') == 'false')? false : true
 
     this.prepareSelection = this.prepareSelection.bind(this)
     this.selectItem = this.selectItem.bind(this)
@@ -506,7 +512,9 @@ class ImgBox extends Component{
   }
 
   render(){
-    let stamp_img = getImgStampOf(this.props.data.state)
+    let stamp_img = 'none'
+    if(this.show_preseizures)
+      stamp_img = getImgStampOf(this.props.data.state)
 
     let src = {uri: "logo"}
     let local = true
